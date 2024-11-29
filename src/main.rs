@@ -30,7 +30,7 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 
-#[get("/ip")]
+#[get("/client_info")]
 fn ip(client_info: ClientInfo) -> String {
     format!(
         "client_ip: {}, user_agent: {}",
