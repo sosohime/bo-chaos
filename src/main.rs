@@ -2,17 +2,26 @@
 extern crate rocket;
 use rocket::request::{FromRequest, Outcome, Request};
 
-struct Host<'r>(&'r str);
+struct ClientInfo<'r> {
+    client_ip: &'r str,
+    user_agent: &'r str,
+}
 
 #[rocket::async_trait]
-impl<'r> FromRequest<'r> for Host<'r> {
+impl<'r> FromRequest<'r> for ClientInfo<'r> {
     type Error = ();
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        match req.headers().get_one("x-real-ip") {
-            None => Outcome::Success(Host("")),
-            Some(key) => Outcome::Success(Host(key)),
-        }
+        // 获取client_ip和user_agent
+        let client_ip = req
+            .headers()
+            .get_one("x-forwarded-for")
+            .unwrap_or("unknown");
+        let user_agent = req.headers().get_one("user-agent").unwrap_or("unknown");
+        Outcome::Success(ClientInfo {
+            client_ip,
+            user_agent,
+        })
     }
 }
 
@@ -22,8 +31,11 @@ fn index() -> &'static str {
 }
 
 #[get("/ip")]
-fn ip(ip: Host) -> String {
-    ip.0.to_string()
+fn ip(client_info: ClientInfo) -> String {
+    format!(
+        "client_ip: {}, user_agent: {}",
+        client_info.client_ip, client_info.user_agent
+    )
 }
 
 // 获取请求头，打印请求IP
