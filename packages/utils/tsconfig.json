@@ -1,0 +1,6 @@
+{
+  "extends": "@mono/config-ts",
+  "include": [
+    "src"
+  ],
+}

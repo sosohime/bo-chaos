@@ -1,0 +1,14 @@
+{
+  "extends": "@mono/config-ts",
+  "include": [
+    "src"
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "@mono/config-tailwind",
+  "version": "1.0.0",
+  "description": "",
+  "exports": {
+    ".": "./tailwind.config.ts",
+    "./global.css": "./global.css"
+  }
+}
