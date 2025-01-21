@@ -5,7 +5,9 @@
   "scripts": {
     "start:nest": "pnpm -C apps/backend-nest start",
     "start:astro": "pnpm -C apps/frontend-astro dev",
+    "test": "echo \"Error: no test specified\"",
     "prepare": "husky",
+    "commit": "commit",
     "commitlint": "commitlint --edit"
   },
   "keywords": [],
@@ -26,6 +28,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/prompt-cli": "^19.7.0",
     "autoprefixer": "^10.4.20",
     "husky": "^9.1.7",
     "postcss": "^8.5.1",

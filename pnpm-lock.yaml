@@ -42,6 +42,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^19.6.0
         version: 19.6.0
+      '@commitlint/prompt-cli':
+        specifier: ^19.7.0
+        version: 19.7.0(@types/node@22.10.7)(typescript@5.7.3)
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.5.1)
@@ -497,6 +500,15 @@ packages:
 
   '@commitlint/parse@19.5.0':
     resolution: {integrity: sha512-cZ/IxfAlfWYhAQV0TwcbdR1Oc0/r0Ik1GEessDJ3Lbuma/MRO8FRQX76eurcXtmhJC//rj52ZSZuXUg0oIX0Fw==}
+    engines: {node: '>=v18'}
+
+  '@commitlint/prompt-cli@19.7.0':
+    resolution: {integrity: sha512-90HgFdMrjFXKa2QXgRjJ8SClD/oTvtEx9FXsIQDG/tjr6NbFagsj4nKjRGCGz7zl7wI1MskGKRj1kyxQvyry/A==}
+    engines: {node: '>=v18'}
+    hasBin: true
+
+  '@commitlint/prompt@19.7.0':
+    resolution: {integrity: sha512-C2t/lTcfQRH6RKyBx9cyCwMK7X8Ke/vP2+IHe2xLM8rFZfR+UhsBNcFtlfYWIPo6gnA3MMQcxpOsmOU4k+FSkg==}
     engines: {node: '>=v18'}
 
   '@commitlint/read@19.5.0':
@@ -3047,6 +3059,10 @@ packages:
     resolution: {integrity: sha512-QQnnxNyfvmHFIsj7gkPcYymR8Jdw/o7mp5ZFihxn6h8Ci6fh3Dx4E1gPjpQEpIuPo9XVNY/ZUwh4BPMjGyL01g==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
+  inquirer@9.3.7:
+    resolution: {integrity: sha512-LJKFHCSeIRq9hanN14IlOtPSTe3lNES7TYDTE2xxdAy1LS5rYphajK1qtwvj3YmQXvvk0U2Vbmcni8P9EIQW9w==}
+    engines: {node: '>=18'}
+
   inspect-with-kind@1.0.5:
     resolution: {integrity: sha512-MAQUJuIo7Xqk8EVNP+6d3CKq9c80hi4tjIbIAT6lmGW9W6WzlHiu9PS8uSuUYU+Do+j1baiFp3H25XEVxDIG2g==}
 
@@ -3747,6 +3763,10 @@ packages:
     resolution: {integrity: sha512-ywPWvcDMeH+z9gQq5qYHCCy+ethsk4goepZ45GLD63fOu0YcNecQxi64nDs3qluZB+murG3/D4dJ7+dGctcCQQ==}
     engines: {node: '>= 6.0.0'}
 
+  mute-stream@1.0.0:
+    resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
   mute-stream@2.0.0:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
     engines: {node: ^18.17.0 || >=20.5.0}
@@ -4259,6 +4279,10 @@ packages:
   router@2.0.0:
     resolution: {integrity: sha512-dIM5zVoG8xhC6rnSN8uoAgFARwTE7BQs8YwHEvK0VCmfxQXMaOuA1uiR1IPwsW7JyK5iTt7Od/TC9StasS2NPQ==}
     engines: {node: '>= 0.10'}
+
+  run-async@3.0.0:
+    resolution: {integrity: sha512-540WwVDOMxA6dN6We19EcT9sc3hkXPw5mzRNGM3FkdN/vtE9NFvj5lFAPNwUDmJjXidm3v7TC1cTE7t17Ulm1Q==}
+    engines: {node: '>=0.12.0'}
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
@@ -5493,6 +5517,26 @@ snapshots:
       '@commitlint/types': 19.5.0
       conventional-changelog-angular: 7.0.0
       conventional-commits-parser: 5.0.0
+
+  '@commitlint/prompt-cli@19.7.0(@types/node@22.10.7)(typescript@5.7.3)':
+    dependencies:
+      '@commitlint/prompt': 19.7.0(@types/node@22.10.7)(typescript@5.7.3)
+      inquirer: 9.3.7
+      tinyexec: 0.3.2
+    transitivePeerDependencies:
+      - '@types/node'
+      - typescript
+
+  '@commitlint/prompt@19.7.0(@types/node@22.10.7)(typescript@5.7.3)':
+    dependencies:
+      '@commitlint/ensure': 19.5.0
+      '@commitlint/load': 19.6.1(@types/node@22.10.7)(typescript@5.7.3)
+      '@commitlint/types': 19.5.0
+      chalk: 5.4.1
+      inquirer: 9.3.7
+    transitivePeerDependencies:
+      - '@types/node'
+      - typescript
 
   '@commitlint/read@19.5.0':
     dependencies:
@@ -8307,6 +8351,21 @@ snapshots:
 
   ini@4.1.1: {}
 
+  inquirer@9.3.7:
+    dependencies:
+      '@inquirer/figures': 1.0.9
+      ansi-escapes: 4.3.2
+      cli-width: 4.1.0
+      external-editor: 3.1.0
+      mute-stream: 1.0.0
+      ora: 5.4.1
+      run-async: 3.0.0
+      rxjs: 7.8.1
+      string-width: 4.2.3
+      strip-ansi: 6.0.1
+      wrap-ansi: 6.2.0
+      yoctocolors-cjs: 2.1.2
+
   inspect-with-kind@1.0.5:
     dependencies:
       kind-of: 6.0.3
@@ -9299,6 +9358,8 @@ snapshots:
       type-is: 1.6.18
       xtend: 4.0.2
 
+  mute-stream@1.0.0: {}
+
   mute-stream@2.0.0: {}
 
   mz@2.7.0:
@@ -9836,6 +9897,8 @@ snapshots:
       path-to-regexp: 8.2.0
       setprototypeof: 1.2.0
       utils-merge: 1.0.1
+
+  run-async@3.0.0: {}
 
   run-parallel@1.2.0:
     dependencies:
