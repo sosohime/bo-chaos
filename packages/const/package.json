@@ -1,0 +1,13 @@
+{
+  "name": "@mono/const",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {},
+  "keywords": [],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@mono/config-ts": "workspace:^"
+  }
+}
