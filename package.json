@@ -5,6 +5,7 @@
   "scripts": {
     "start:nest": "pnpm -C apps/backend-nest start",
     "start:astro": "pnpm -C apps/frontend-astro dev",
+    "build:astro": "pnpm -C apps/frontend-astro build",
     "test": "echo \"Error: no test specified\"",
     "prepare": "husky",
     "commit": "commit",

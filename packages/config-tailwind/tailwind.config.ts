@@ -23,6 +23,7 @@ const config: Omit<Config, "content"> = {
     },
     extend: {
       colors: {
+        'tencent-primary': '#0052d9',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
