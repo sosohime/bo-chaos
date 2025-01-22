@@ -47,7 +47,7 @@ export default function Tuixiu() {
           用锐驰变 rich 🥰
           <ArrowUpRight />
         </a>
-        <a className={buttonVariants({ variant: 'link' })} href="./reckful">
+        <a className={buttonVariants({ variant: 'link' })} href="../reckful">
           切换科兴双子
           <ArrowRightLeft />
         </a>

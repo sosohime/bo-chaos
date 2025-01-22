@@ -44,7 +44,7 @@ export default function Tuixiu() {
           充值加速退休进度
           <ArrowUpRight />
         </a>
-        <a className={buttonVariants({ variant: 'link' })} href="./bo">
+        <a className={buttonVariants({ variant: 'link' })} href="../bo">
           切换科兴双子
           <ArrowRightLeft />
         </a>
