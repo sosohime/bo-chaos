@@ -23,11 +23,28 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install pnpm
       uses: pnpm/action-setup@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
+
     - name: Install dependencies
       run: pnpm install
     - run: pnpm run build:astro
+
+          # 添加打包步骤
+    - name: Archive production artifacts
+      run: |
+        cd apps/frontend-astro
+        tar -czf dist.tar.gz dist/
+
+    # 添加上传步骤
+    - name: Upload to server
+      run: |
+        curl -v -X POST https://yuanbo.online/oss_service/upload \
+          -F "file=@apps/frontend-astro/dist.tar.gz" \
+          -F "path=tuixiu" \
+          -F "should_unzip=true" \
+          -F "token=${{ secrets.OSS_RS_UPLOAD_TOKEN }}"
