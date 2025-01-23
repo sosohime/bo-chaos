@@ -42,7 +42,8 @@ jobs:
 
     # 添加上传步骤
     - name: Upload to server
-      run: |
+      run: ls
+    - run: |
         curl -v -X POST https://yuanbo.online/oss_service/upload \
           -F "file=@dist.tar.gz" \
           -F "path=tuixiu" \
