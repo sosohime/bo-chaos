@@ -8,7 +8,7 @@ function completeToTargetDigits(number: number | string, digits = 2) {
   return String(number).padStart(digits, '0');
 }
 
-interface CountDown {
+export interface CountDown {
   'yyyyMMDD hhmmss': string;
   milliseconds: string;
 }
