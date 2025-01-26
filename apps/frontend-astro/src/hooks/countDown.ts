@@ -15,17 +15,19 @@ export interface CountDown {
 
 export function getCountDown(tuixiu: dayjs.Dayjs): CountDown {
   const now = dayjs();
-
   const diff = tuixiu.diff(now);
   const duration = dayjs.duration(diff);
-  const days = duration.asDays();
-  const hours = duration.hours();
+
+  // 修改计算逻辑
+  const totalHours = Math.floor(duration.asHours());
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
   const minutes = duration.minutes();
   const seconds = duration.seconds();
   const milliseconds = duration.milliseconds();
 
   return {
-    'yyyyMMDD hhmmss': `${Math.floor(days)} 天 ${completeToTargetDigits(hours)}:${completeToTargetDigits(minutes)}:${completeToTargetDigits(seconds)}`,
+    'yyyyMMDD hhmmss': `${days} 天 ${completeToTargetDigits(hours)}:${completeToTargetDigits(minutes)}:${completeToTargetDigits(seconds)}`,
     milliseconds: completeToTargetDigits(milliseconds, 3),
   };
 }
