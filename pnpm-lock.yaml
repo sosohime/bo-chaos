@@ -42,8 +42,8 @@ importers:
         specifier: ^15.14.0
         version: 15.14.0
       lucide-react:
-        specifier: ^0.473.0
-        version: 0.473.0(react@19.0.0)
+        specifier: 0.474.0
+        version: 0.474.0(react@19.0.0)
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
@@ -194,12 +194,6 @@ importers:
       eslint-plugin-react:
         specifier: ^7.37.4
         version: 7.37.4(eslint@9.18.0(jiti@2.4.2))
-
-  packages/config-eslint:
-    devDependencies:
-      '@mono/config-ts':
-        specifier: workspace:*
-        version: link:../config-ts
 
   packages/config-tailwind: {}
 
@@ -3896,6 +3890,11 @@ packages:
 
   lucide-react@0.473.0:
     resolution: {integrity: sha512-KW6u5AKeIjkvrxXZ6WuCu9zHE/gEYSXCay+Gre2ZoInD0Je/e3RBtP4OHpJVJ40nDklSvjVKjgH7VU8/e2dzRw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lucide-react@0.474.0:
+    resolution: {integrity: sha512-CmghgHkh0OJNmxGKWc0qfPJCYHASPMVSyGY8fj3xgk4v84ItqDg64JNKFZn5hC6E0vHi6gxnbCgwhyVB09wQtA==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -10117,6 +10116,10 @@ snapshots:
       yallist: 3.1.1
 
   lucide-react@0.473.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+
+  lucide-react@0.474.0(react@19.0.0):
     dependencies:
       react: 19.0.0
 
