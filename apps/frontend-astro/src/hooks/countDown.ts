@@ -1,8 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import dayjs from 'dayjs';
-import durationPlugin from 'dayjs/plugin/duration';
-
-dayjs.extend(durationPlugin);
+import { dayjs } from '@mono/utils';
 
 function completeToTargetDigits(number: number | string, digits = 2) {
   return String(number).padStart(digits, '0');
@@ -14,7 +11,7 @@ export interface CountDown {
 }
 
 export function getCountDown(tuixiu: dayjs.Dayjs): CountDown {
-  const now = dayjs();
+  const now: dayjs.Dayjs = dayjs();
   const diff = tuixiu.diff(now);
   const duration = dayjs.duration(diff);
 
