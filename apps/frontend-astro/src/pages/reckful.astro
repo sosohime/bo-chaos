@@ -5,8 +5,13 @@ import Tuixiu from '../components/tuixiu/reckful'
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { tuixiu } from '@mono/const';
+import { getCountDown } from '../hooks/countDown'
+const { reckfulTuiXiuDay } = tuixiu
+
+const initCountDown = getCountDown(reckfulTuiXiuDay)
 ---
 
 <Layout  title="Reckful退休倒计时">
-	<Tuixiu client:load />
+	<Tuixiu client:load initCountDown={initCountDown} />
 </Layout>
