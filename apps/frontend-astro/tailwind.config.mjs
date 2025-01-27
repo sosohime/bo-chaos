@@ -1,1 +1,1 @@
-export * from "@mono/config-tailwind";
+export * from '@mono/config-tailwind';
