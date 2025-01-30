@@ -1,34 +1,27 @@
 import React from 'react';
 import { useTuixiuCountDown, getCountDown } from '../../hooks/countDown';
 import { tuixiu } from '@mono/const';
-import type { CountDown } from '../../hooks/countDown';
 import CopyToClipboardButton from '../copyToClipboard';
 import { ArrowUpRight, ArrowRightLeft } from 'lucide-react';
 import { buttonVariants } from '@mono/ui/button';
 
 const { reckfulTuiXiuDay, reckfulChangQiFuWu } = tuixiu;
 
-export default function Tuixiu({
-  initCountDown,
-}: {
-  initCountDown: CountDown;
-}) {
+export default function Tuixiu() {
   const countDown = useTuixiuCountDown(reckfulTuiXiuDay);
   const changQiFuWuCountDown = useTuixiuCountDown(reckfulChangQiFuWu);
 
   const getTuiClipboardText = React.useCallback(() => {
-    const tui = getCountDown(reckfulTuiXiuDay || initCountDown);
-    return `你李进爷爷还有 ${tui['yyyyMMDD hhmmss']} 就退休了！`;
+    const tui = getCountDown(reckfulTuiXiuDay);
+    return `道路是曲折的，前途是光明的，虽然张某人还有 ${tui['yyyyMMDD hhmmss']} 就退休了，但忠诚和奋斗是终身的！`;
   }, []);
 
   return (
     <div className="text-center h-full w-full flex flex-col justify-center items-center">
       <h1 className="text-2xl pb-4">距离Reckful退休还有</h1>
       <p className="text-4xl pb-4">
-        {(countDown || initCountDown)['yyyyMMDD hhmmss']}
-        <span className="text-xl pl-1">
-          {(countDown || initCountDown).milliseconds}
-        </span>
+        {countDown?.['yyyyMMDD hhmmss']}
+        <span className="text-xl pl-1">{countDown?.milliseconds}</span>
       </p>
 
       <p className="pb-4">

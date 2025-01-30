@@ -1,17 +1,12 @@
 ---
-import '@mono/config-tailwind/global.css'; // shared css variables and config
+import '@mono/config-tailwind/global.css';
 import Layout from '../layouts/Layout.astro';
 import Tuixiu from '../components/tuixiu/reckful';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
-import { tuixiu } from '@mono/const';
-import { getCountDown } from '../hooks/countDown';
-const { reckfulTuiXiuDay } = tuixiu;
-
-const initCountDown = getCountDown(reckfulTuiXiuDay);
 ---
 
-<Layout title="Reckful退休倒计时">
-  <Tuixiu client:load initCountDown={initCountDown} />
+<Layout
+  title="Reckful退休倒计时"
+  description="Reckful reckful reckful reckzhang 洛克王国 洛克王国世界 魔方 腾讯 退休"
+>
+  <Tuixiu client:only="react" />
 </Layout>

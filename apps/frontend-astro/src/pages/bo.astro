@@ -1,12 +1,12 @@
 ---
-import '@mono/config-tailwind/global.css'; // shared css variables and config
+import '@mono/config-tailwind/global.css';
 import Layout from '../layouts/Layout.astro';
 import Tuixiu from '../components/tuixiu/bo.tsx';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout title="博之退休倒计时">
+<Layout
+  title="博之退休倒计时"
+  description="袁博 yuanbo boyuan boyuan0222 腾讯 腾讯云 lighthouse DNSPod 退休"
+>
   <Tuixiu client:only="react" />
 </Layout>
