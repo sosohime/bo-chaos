@@ -5,13 +5,8 @@ import Tuixiu from '../components/tuixiu/bo.tsx';
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
-import { tuixiu } from '@mono/const';
-import { getCountDown } from '../hooks/countDown';
-const { boTuiXiuDay } = tuixiu;
-
-const initCountDown = getCountDown(boTuiXiuDay);
 ---
 
 <Layout title="博之退休倒计时">
-  <Tuixiu client:load initCountDown={initCountDown} />
+  <Tuixiu client:only="react" />
 </Layout>
