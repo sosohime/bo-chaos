@@ -44,8 +44,8 @@ jobs:
     - name: Upload to server
       run: |
         cd apps/frontend-astro
-        curl -v -X POST https://yuanbo.online/oss_service/upload \
+        curl -v POST https://yuanbo.online/oss_service/upload \
           -F "file=@dist.tar.gz" \
-          -F "path=tuixiu_test" \
+          -F "path=tuixiu" \
           -F "should_unzip=true" \
           -F "token=${{ secrets.OSS_RS_UPLOAD_TOKEN }}"
