@@ -6,7 +6,8 @@
 .
 ├── apps                  // 应用
 │   ├── backend-nest         // nest后端
-│   └── frontend-astro       // astro前短
+│   ├── frontend-astro       // astro前短
+│   └── miniapp-taro         // 博Fans小程序
 ├── packages              // 公共依赖
 │   ├── config-tailwind      // taiwindcss配置
 │   ├── config-ts            // typescript配置
