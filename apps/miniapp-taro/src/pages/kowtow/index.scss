@@ -1,0 +1,33 @@
+.kowtow-container {
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  .utc {
+    font-size: 12px;
+    transform: scale(0.8);
+  }
+  text {
+    padding-bottom: 20px;
+  }
+  .love {
+    padding-top: 12px;
+    font-size: 20px;
+    animation: rainbow 5s linear infinite;
+  }
+  .submit-kowtow {
+    margin-top: 20px;
+    width: 80%;
+  }
+}
+
+@keyframes rainbow {
+  0% { color: #ff0000; }  // 红
+  17% { color: #ff8000; } // 橙
+  33% { color: #ffff00; } // 黄
+  50% { color: #00ff00; } // 绿
+  67% { color: #0000ff; } // 蓝
+  83% { color: #4b0082; } // 靛
+  100% { color: #9400d3; } // 紫
+}
