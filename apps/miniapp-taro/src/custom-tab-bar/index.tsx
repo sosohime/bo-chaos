@@ -3,41 +3,51 @@ import Taro from "@tarojs/taro";
 import { CoverView, CoverImage } from "@tarojs/components";
 
 import "./index.scss";
+import KowtowIcon from "../images/tab-bar/kowtow.png";
+import KowtowActiveIcon from "../images/tab-bar/kowtow-active.png";
+import TravelIcon from "../images/tab-bar/travel.png";
+import TravelActiveIcon from "../images/tab-bar/travel-active.png";
+import HistoryIcon from "../images/tab-bar/history.png";
+import HistoryActiveIcon from "../images/tab-bar/history-active.png";
+import MyIcon from "../images/tab-bar/my.png";
+import MyActiveIcon from "../images/tab-bar/my-active.png";
+import TeaseIcon from "../images/tab-bar/tease.png";
+import TeaseActiveIcon from "../images/tab-bar/tease-active.png";
 
 export default class Index extends Component {
   state = {
     selected: 0,
     color: "#000000",
-    selectedColor: "#DC143C",
+    selectedColor: "#0052d9",
     list: [
       {
         pagePath: "/pages/kowtow/index",
-        selectedIconPath: "../images/tabbar_kowtow_on.png",
-        iconPath: "../images/tabbar_kowtow.png",
+        iconPath: KowtowIcon,
+        selectedIconPath: KowtowActiveIcon,
         text: "磕",
       },
       {
         pagePath: "/pages/history/index",
-        selectedIconPath: "../images/tabbar_history_on.png",
-        iconPath: "../images/tabbar_history.png",
+        iconPath: HistoryIcon,
+        selectedIconPath: HistoryActiveIcon,
         text: "史",
       },
       {
         pagePath: "/pages/travel/index",
-        selectedIconPath: "../images/tabbar_travel_on.png",
-        iconPath: "../images/tabbar_travel.png",
+        iconPath: TravelIcon,
+        selectedIconPath: TravelActiveIcon,
         text: "游",
       },
       {
         pagePath: "/pages/tease/index",
-        selectedIconPath: "../images/tabbar_tease_on.png",
-        iconPath: "../images/tabbar_tease.png",
+        iconPath: TeaseIcon,
+        selectedIconPath: TeaseActiveIcon,
         text: "逗",
       },
       {
         pagePath: "/pages/my/index",
-        selectedIconPath: "../images/tabbar_my_on.png",
-        iconPath: "../images/tabbar_my.png",
+        iconPath: MyIcon,
+        selectedIconPath: MyActiveIcon,
         text: "我",
       },
     ],
@@ -67,7 +77,9 @@ export default class Index extends Component {
               className="tab-bar-item"
               onClick={this.switchTab.bind(this, index, item.pagePath)}
             >
-              {/* <CoverImage src={selected === index ? item.selectedIconPath : item.iconPath} /> */}
+              <CoverImage
+                src={selected === index ? item.selectedIconPath : item.iconPath}
+              />
               <CoverView
                 style={{ color: selected === index ? selectedColor : color }}
               >

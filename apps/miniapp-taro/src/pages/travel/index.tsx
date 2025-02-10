@@ -15,7 +15,7 @@ export default function ImageUpload() {
 
   return (
     <View className="travel-container">
-      <Text>今日已磕人数: 6</Text>
+      <Text>旅</Text>
     </View>
   );
 }

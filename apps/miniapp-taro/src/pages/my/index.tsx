@@ -1,4 +1,4 @@
-import { View, Button, Image } from "@tarojs/components";
+import { View, Button, Image, Text } from "@tarojs/components";
 import { useState } from "react";
 import Taro from "@tarojs/taro";
 import "./index.scss";
@@ -10,8 +10,12 @@ export default function ImageUpload() {
 
   Taro.useDidShow(() => {
     const tabbar = Taro.getTabBar<CustomTabBar>(pageCtx);
-    tabbar?.setSelected(2);
+    tabbar?.setSelected(4);
   });
 
-  return <View className="my-container"></View>;
+  return (
+    <View className="my-container">
+      <Text>我</Text>
+    </View>
+  );
 }

@@ -1,4 +1,4 @@
-import { View, Button, Image } from "@tarojs/components";
+import { View, Button, Image, Text } from "@tarojs/components";
 import { useState } from "react";
 import Taro from "@tarojs/taro";
 import "./index.scss";
@@ -13,5 +13,9 @@ export default function ImageUpload() {
     tabbar?.setSelected(1);
   });
 
-  return <View className="history-container"></View>;
+  return (
+    <View className="history-container">
+      <Text>史</Text>
+    </View>
+  );
 }
