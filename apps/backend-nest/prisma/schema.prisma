@@ -27,9 +27,9 @@ model User {
 
 model Category {
   id        Int      @default(autoincrement()) @id
-  system String
+  system String // history | travel | tease
   name      String
-  secondCategory String
+  secondCategory String @default("default")
   updatedAt DateTime @updatedAt
   photos    Photo[]
   @@unique([name, secondCategory])
@@ -44,17 +44,17 @@ model Photo {
   category  Category @relation(fields: [categoryId], references: [id])
   categoryId Int
   published Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  author    User?    @relation(fields: [authorOpenId], references: [openId])
+  authorOpenId  String?
   votes     PhotoVote[]
 }
 
 model PhotoVote {
   id        Int      @default(autoincrement()) @id
   photoId   Int
-  userId    Int
+  userOpenId    String
   updatedAt DateTime @updatedAt
   photo     Photo    @relation(fields: [photoId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-  @@unique([photoId, userId])
+  user      User     @relation(fields: [userOpenId], references: [openId])
+  @@unique([photoId, userOpenId])
 }

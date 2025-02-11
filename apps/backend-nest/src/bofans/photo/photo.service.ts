@@ -20,14 +20,16 @@ export class PhotoService {
     cursor?: Prisma.PhotoWhereUniqueInput;
     where?: Prisma.PhotoWhereInput;
     orderBy?: Prisma.PhotoOrderByWithRelationInput;
+    include?: Prisma.PhotoInclude;
   }): Promise<Photo[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take, cursor, where, orderBy, include } = params;
     return this.prisma.photo.findMany({
       skip,
       take,
       cursor,
       where,
       orderBy,
+      include,
     });
   }
 
