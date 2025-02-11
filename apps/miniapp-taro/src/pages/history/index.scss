@@ -1,3 +1,42 @@
 .history-container {
+  height: 100vh;
+  box-sizing: border-box;
   
+  .scroll-container {
+    height: 100%;
+    box-sizing: border-box;
+  }
+  
+  padding: 20px;
+}
+
+.category-section {
+  margin-bottom: 20px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f5f5f5;
+  
+  &.active {
+    background: #e0e0e0;
+  }
+  
+  .arrow {
+    font-size: 12px;
+    color: #666;
+  }
+}
+
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
 }

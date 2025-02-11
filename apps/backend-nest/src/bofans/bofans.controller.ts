@@ -23,10 +23,10 @@ export class BoFansController {
     private readonly photoService: PhotoService,
   ) {}
 
-  @Get('photo/:id')
-  async getPostById(@Param('id') id: string): Promise<PhotoModel | null> {
-    return this.photoService.photo({ id: Number(id) });
-  }
+  // @Get('photo/:id')
+  // async getPostById(@Param('id') id: string): Promise<PhotoModel | null> {
+  //   return this.photoService.photo({ id: Number(id) });
+  // }
 
   //   @Get('feed')
   //   async getPublishedPosts(): Promise<PhotoModel[]> {

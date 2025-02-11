@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/library/prisma.service';
-import { Photo, Prisma } from '@prisma/client';
+import { Photo, PhotoVote, Prisma } from '@prisma/client';
 
 @Injectable()
 export class PhotoService {
   constructor(private prisma: PrismaService) {}
 
-  async photo(
-    postWhereUniqueInput: Prisma.PhotoWhereUniqueInput,
-  ): Promise<Photo | null> {
-    return this.prisma.photo.findUnique({
-      where: postWhereUniqueInput,
-    });
+  async photo(params: {
+    where: Prisma.PhotoWhereUniqueInput;
+    include?: Prisma.PhotoInclude;
+  }): Promise<Photo | null> {
+    return this.prisma.photo.findUnique(params);
   }
 
   async photos(params: {
@@ -54,5 +53,40 @@ export class PhotoService {
     return this.prisma.photo.delete({
       where,
     });
+  }
+
+  async votePhoto(data: Prisma.PhotoVoteCreateInput): Promise<boolean> {
+    try {
+      await this.prisma.photoVote.create({
+        data,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async findVote(params: { photoId: number; userOpenId: string }) {
+    const { photoId, userOpenId } = params;
+    return this.prisma.photoVote.findUnique({
+      where: {
+        photoId_userOpenId: {
+          photoId,
+          userOpenId,
+        },
+      },
+    });
+  }
+
+  async createVote(data: Prisma.PhotoVoteCreateInput) {
+    return this.prisma.photoVote.create({
+      data,
+    });
+  }
+
+  async deleteVote(
+    where: Prisma.PhotoVoteWhereUniqueInput,
+  ): Promise<PhotoVote> {
+    return this.prisma.photoVote.delete({ where });
   }
 }
