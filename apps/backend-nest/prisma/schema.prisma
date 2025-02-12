@@ -23,6 +23,7 @@ model User {
   kowtowCount Int @default(0)
   photos      Photo[]
   votes       PhotoVote[]
+  categories  Category[] @relation("UserCategories")
 }
 
 model Category {
@@ -30,6 +31,9 @@ model Category {
   system String // history | travel | tease
   name      String
   secondCategory String @default("default")
+  author    User?    @relation(fields: [authorOpenId], references: [openId], name: "UserCategories")
+  authorOpenId  String
+  published Boolean? @default(false)
   updatedAt DateTime @updatedAt
   photos    Photo[]
   @@unique([name, secondCategory])

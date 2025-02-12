@@ -3,9 +3,13 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 50px;
+  height: 80px;
   background: white;
   display: flex;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom); // 适配 iPhone 底部
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+  
   padding-bottom: env(safe-area-inset-bottom);
 }
 

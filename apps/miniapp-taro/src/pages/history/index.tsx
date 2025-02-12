@@ -47,8 +47,7 @@ export interface Vote {
   updatedAt: Date;
 }
 
-export default function ImageUpload() {
-  const pageCtx = Taro.getCurrentInstance().page;
+export default function History() {
   const [photoData, setPhotoData] = useState<
     {
       secondCategory: string;
@@ -57,10 +56,11 @@ export default function ImageUpload() {
   >([]);
   const [activeCategory, setActiveCategory] = useState<string>("");
 
-  Taro.useDidShow(() => {
-    const tabbar = Taro.getTabBar<CustomTabBar>(pageCtx);
-    tabbar?.setSelected(1);
-  });
+  // Taro.useDidShow(() => {
+  //   const pageCtx = Taro.getCurrentInstance().page;
+  //   const tabbar = Taro.getTabBar<CustomTabBar>(pageCtx);
+  //   tabbar?.setSelected(1);
+  // });
 
   const fetchData = async () => {
     try {

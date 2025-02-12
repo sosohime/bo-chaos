@@ -5,13 +5,13 @@ import "./index.scss";
 
 import type CustomTabBar from "../../custom-tab-bar";
 
-export default function ImageUpload() {
+export default function Tease() {
   const pageCtx = Taro.getCurrentInstance().page;
 
-  Taro.useDidShow(() => {
-    const tabbar = Taro.getTabBar<CustomTabBar>(pageCtx);
-    tabbar?.setSelected(3);
-  });
+  // Taro.useDidShow(() => {
+  //   const tabbar = Taro.getTabBar<CustomTabBar>(pageCtx);
+  //   tabbar?.setSelected(3);
+  // });
 
   return (
     <View className="tease-container">

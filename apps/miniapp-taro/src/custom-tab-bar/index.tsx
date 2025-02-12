@@ -1,6 +1,7 @@
-import { Component } from "react";
+import { useState, useContext } from "react";
 import Taro from "@tarojs/taro";
 import { CoverView, CoverImage } from "@tarojs/components";
+import { AppContext } from "../lib/context";
 
 import "./index.scss";
 import KowtowIcon from "../images/tab-bar/kowtow.png";
@@ -14,81 +15,68 @@ import MyActiveIcon from "../images/tab-bar/my-active.png";
 import TeaseIcon from "../images/tab-bar/tease.png";
 import TeaseActiveIcon from "../images/tab-bar/tease-active.png";
 
-export default class Index extends Component {
-  state = {
-    selected: 0,
-    color: "#000000",
-    selectedColor: "#0052d9",
-    list: [
-      {
-        pagePath: "/pages/kowtow/index",
-        iconPath: KowtowIcon,
-        selectedIconPath: KowtowActiveIcon,
-        text: "磕",
-      },
-      {
-        pagePath: "/pages/history/index",
-        iconPath: HistoryIcon,
-        selectedIconPath: HistoryActiveIcon,
-        text: "史",
-      },
-      {
-        pagePath: "/pages/travel/index",
-        iconPath: TravelIcon,
-        selectedIconPath: TravelActiveIcon,
-        text: "游",
-      },
-      {
-        pagePath: "/pages/tease/index",
-        iconPath: TeaseIcon,
-        selectedIconPath: TeaseActiveIcon,
-        text: "逗",
-      },
-      {
-        pagePath: "/pages/my/index",
-        iconPath: MyIcon,
-        selectedIconPath: MyActiveIcon,
-        text: "我",
-      },
-    ],
+const list = [
+  {
+    pagePath: "/pages/kowtow/index",
+    iconPath: KowtowIcon,
+    selectedIconPath: KowtowActiveIcon,
+    text: "磕",
+  },
+  {
+    pagePath: "/pages/history/index",
+    iconPath: HistoryIcon,
+    selectedIconPath: HistoryActiveIcon,
+    text: "史",
+  },
+  {
+    pagePath: "/pages/travel/index",
+    iconPath: TravelIcon,
+    selectedIconPath: TravelActiveIcon,
+    text: "游",
+  },
+  {
+    pagePath: "/pages/tease/index",
+    iconPath: TeaseIcon,
+    selectedIconPath: TeaseActiveIcon,
+    text: "逗",
+  },
+  {
+    pagePath: "/pages/my/index",
+    iconPath: MyIcon,
+    selectedIconPath: MyActiveIcon,
+    text: "我",
+  },
+];
+
+export default function TabBar() {
+  const { selectedTab, setSelectedTab } = useContext(AppContext);
+  const color = "#000000";
+  const selectedColor = "#0052d9";
+
+  const switchTab = (index: number, url: string) => {
+    setSelectedTab(index);
+    Taro.switchTab({ url });
   };
 
-  switchTab(index, url) {
-    this.setSelected(index);
-    Taro.switchTab({ url });
-  }
-
-  setSelected(idx: number) {
-    this.setState({
-      selected: idx,
-    });
-  }
-
-  render() {
-    const { list, selected, color, selectedColor } = this.state;
-
-    return (
-      <CoverView className="tab-bar">
-        <CoverView className="tab-bar-border"></CoverView>
-        {list.map((item, index) => {
-          return (
-            <CoverView
-              key={index}
-              className="tab-bar-item"
-              onClick={this.switchTab.bind(this, index, item.pagePath)}
-            >
-              <CoverImage
-                src={selected === index ? item.selectedIconPath : item.iconPath}
-              />
-              <CoverView
-                style={{ color: selected === index ? selectedColor : color }}
-              >
-                {item.text}
-              </CoverView>
-            </CoverView>
-          );
-        })}
-      </CoverView>
-    );
-  }
+  return (
+    <CoverView className="tab-bar">
+      <CoverView className="tab-bar-border"></CoverView>
+      {list.map((item, index) => (
+        <CoverView
+          key={index}
+          className="tab-bar-item"
+          onClick={() => switchTab(index, item.pagePath)}
+        >
+          <CoverImage
+            src={selectedTab === index ? item.selectedIconPath : item.iconPath}
+          />
+          <CoverView
+            style={{ color: selectedTab === index ? selectedColor : color }}
+          >
+            {item.text}
+          </CoverView>
+        </CoverView>
+      ))}
+    </CoverView>
+  );
 }
