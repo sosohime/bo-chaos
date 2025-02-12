@@ -185,7 +185,7 @@ export class PhotoController {
     photoDto: {
       name: string;
       system: string;
-      categoryId?: number;
+      categoryId?: string;
       newCategory?: string;
       filePath: string;
     },
@@ -205,7 +205,7 @@ export class PhotoController {
 
     try {
       // 如果传入了categoryId，先查询对应categoryId是否存在，不存在则抛出错误
-      let categoryId = photoDto.categoryId;
+      let categoryId = Number(photoDto.categoryId);
       if (categoryId) {
         const existingCategory = await this.categoryService.findCategory({
           id: +categoryId,
@@ -224,7 +224,7 @@ export class PhotoController {
         });
 
         if (existingCategory) {
-          categoryId = existingCategory.id;
+          categoryId = +existingCategory.id;
         } else {
           const newCategory = await this.categoryService.createCategory({
             secondCategory: photoDto.newCategory,
@@ -265,7 +265,7 @@ export class PhotoController {
       // 插入Photo表
       const photo = await this.photoService.createPhoto({
         filename: `https://yuanbo.online/bofans_static/photo/${filename}`,
-        category: { connect: { id: categoryId! } },
+        category: { connect: { id: categoryId } },
         author: { connect: { openId } },
         published: false, // 默认未发布，需要审核
       });
