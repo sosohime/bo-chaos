@@ -38,9 +38,7 @@ export class AuthService {
     }
     Logger.log(`user sign in success: ${JSON.stringify(user)}`);
     return {
-      access_token: this.jwtService.sign({ openId: user.openId }),
-      session_key: wxRes.session_key,
-      user,
+      access_token: this.jwtService.sign({ openId: wxRes.openid }),
     };
   }
 }
