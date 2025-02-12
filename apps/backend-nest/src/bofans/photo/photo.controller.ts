@@ -208,7 +208,7 @@ export class PhotoController {
       let categoryId = photoDto.categoryId;
       if (categoryId) {
         const existingCategory = await this.categoryService.findCategory({
-          id: categoryId,
+          id: +categoryId,
           system: photoDto.system,
         });
         if (!existingCategory) {

@@ -119,7 +119,7 @@ export default function My() {
         item.secondCategory === secondCategory,
     );
     if (category) {
-      setSelectedCategory(category.name);
+      setSelectedCategory(category.secondCategory);
       setSelectedCategoryId(+category.id);
     }
   };
@@ -196,7 +196,7 @@ export default function My() {
       const tasks = selectedImages.map((img) => ({
         name: selectedSystem.label,
         system: selectedSystem.value,
-        categoryId: selectedCategoryId,
+        categoryId: +selectedCategoryId,
         newCategory: newCategoryName,
         filePath: img,
       }));
