@@ -1,4 +1,4 @@
 export default definePageConfig({
-  navigationBarTitleText: "磕",
+  navigationBarTitleText: "磕袁",
   usingComponents: {},
 });

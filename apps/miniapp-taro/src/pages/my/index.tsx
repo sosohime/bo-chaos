@@ -1,11 +1,13 @@
 import { View, Button, Image, Text, Input, Picker } from "@tarojs/components";
 import { useState, useEffect } from "react";
+import dayjs from "dayjs";
 import Taro from "@tarojs/taro";
 import { groupBy } from "es-toolkit";
 import { getCategories } from "../../api/category";
 import { uploadAvatar, getUserInfo, updateNickname } from "../../api/user";
 import { uploadPhoto, getMyUploadedPhotos } from "../../api/photo";
 import Criminal from "../../images/criminal.png";
+import Edit from "../../images/edit.png";
 
 import "./index.scss";
 
@@ -14,6 +16,7 @@ interface UserInfo {
   nickname: string;
   kowtowCount: number;
   lastKowtowTime: string;
+  joinTime: string;
 }
 
 export interface CategoryType {
@@ -30,6 +33,7 @@ export default function My() {
     nickname: "",
     kowtowCount: 0,
     lastKowtowTime: "",
+    joinTime: "",
   });
   const [isEditingName, setIsEditingName] = useState(false);
   const [editingName, setEditingName] = useState("");
@@ -275,34 +279,57 @@ export default function My() {
           src={userInfo.avatarUrl || Criminal}
           onClick={handleAvatarClick}
         />
-        {isEditingName ? (
-          <View className="nickname-edit">
-            <Input
-              className="nickname-input"
-              value={editingName}
-              onInput={(e) => setEditingName(e.detail.value)}
-              placeholder={userInfo.nickname}
-            />
-            <View className="nickname-buttons">
-              <Text className="confirm" onClick={handleNameChange}>
-                确定
-              </Text>
-              <Text className="cancel" onClick={handleNameCancel}>
-                取消
-              </Text>
+        <View className="user-name">
+          <Text className="hello">你好，</Text>
+          {isEditingName ? (
+            <View className="nickname-edit">
+              <Input
+                className="nickname-input"
+                value={editingName}
+                onInput={(e) => setEditingName(e.detail.value)}
+                placeholder={userInfo.nickname}
+              />
+              <View className="nickname-buttons">
+                <Text className="confirm" onClick={handleNameChange}>
+                  确定
+                </Text>
+                <Text className="cancel" onClick={handleNameCancel}>
+                  取消
+                </Text>
+              </View>
             </View>
-          </View>
-        ) : (
-          <Text
-            className="nickname"
-            onClick={() => {
-              setIsEditingName(true);
-              setEditingName(userInfo.nickname);
-            }}
-          >
-            {userInfo.nickname || "点击设置昵称"}
-          </Text>
-        )}
+          ) : (
+            <View
+              onClick={() => {
+                setIsEditingName(true);
+                setEditingName(userInfo.nickname);
+              }}
+            >
+              <Text className="nickname">
+                {userInfo.nickname || "点击设置昵称"}
+              </Text>
+              <Image
+                className="nickname-edit-icon"
+                mode="aspectFit"
+                src={Edit}
+              />
+            </View>
+          )}
+        </View>
+      </View>
+
+      <View className="record-section">
+        <View className="section-title">磕头记录</View>
+        <Text>
+          加入BoFans的{" "}
+          {userInfo.joinTime
+            ? Math.max(
+                1,
+                Math.ceil(dayjs().diff(dayjs(userInfo.joinTime), "day", true)),
+              )
+            : 0}{" "}
+          天中， 累计磕头 {userInfo.kowtowCount} 次
+        </Text>
       </View>
 
       <View className="upload-section">
@@ -399,26 +426,34 @@ export default function My() {
       <View className="history-section">
         <View className="section-title">审核中</View>
         <View className="photo-grid">
-          {pendingPhotos.map((photo, index) => (
-            <Image
-              key={index}
-              src={photo.filename}
-              mode="aspectFit"
-              className="history-image"
-            />
-          ))}
+          {pendingPhotos.length > 0 ? (
+            pendingPhotos.map((photo, index) => (
+              <Image
+                key={index}
+                src={photo.filename}
+                mode="aspectFit"
+                className="history-image"
+              />
+            ))
+          ) : (
+            <Text>妹有</Text>
+          )}
         </View>
 
         <View className="section-title">已通过</View>
         <View className="photo-grid">
-          {approvedPhotos.map((photo, index) => (
-            <Image
-              key={index}
-              src={photo.filename}
-              mode="aspectFit"
-              className="history-image"
-            />
-          ))}
+          {approvedPhotos.length ? (
+            approvedPhotos.map((photo, index) => (
+              <Image
+                key={index}
+                src={photo.filename}
+                mode="aspectFit"
+                className="history-image"
+              />
+            ))
+          ) : (
+            <Text>{pendingPhotos.length > 0 ? "妹有" : "也妹有"}</Text>
+          )}
         </View>
       </View>
     </View>

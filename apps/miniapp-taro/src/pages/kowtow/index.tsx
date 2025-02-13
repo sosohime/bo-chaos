@@ -5,20 +5,12 @@ import { getKowtowStats, kowtowOnce } from "../../api/kowtow";
 import "./index.scss";
 import God from "../../images/god.png";
 
-import type CustomTabBar from "../../custom-tab-bar";
-
 export default function Kowtow() {
-  const pageCtx = Taro.getCurrentInstance().page;
   const [kowtowStats, setKowtowStats] = useState({
     todayKowtowedUser: "-",
     totalCount: "-",
     iKowtowedToday: false,
   });
-
-  // Taro.useDidShow(() => {
-  //   const tabbar = Taro.getTabBar<CustomTabBar>(pageCtx);
-  //   tabbar?.setSelected(0);
-  // });
 
   // 每隔两秒调用一次，查询最新磕头状态
   useEffect(() => {

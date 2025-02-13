@@ -13,26 +13,71 @@
   z-index: 100;
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 12px 20px;
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   .avatar {
-    width: 60px;
-    height: 60px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     margin-right: 15px;
   }
-
-  .nickname {
-    font-size: 18px;
-    color: #333;
+  .user-name {
+    display: flex;
+    align-items: center;
+    & > text:first-child {
+      font-size: 16px;
+      padding: 4px 0;
+      line-height: 20px;
+      padding-right: 2px;
+    }
   }
 
-  .nickname-input {
-    font-size: 18px;
-    border-bottom: 1px solid #ddd;
+  .nickname {
+    font-size: 16px;
+    color: #333;
     padding: 4px 0;
+    line-height: 20px;
+  }
+
+  .nickname-edit-icon {
+    padding-left: 8px;
+    height: 12px;
+    width: 12px;
+  }
+
+  .nickname-edit {
+    position: relative;
+    .nickname-input {
+      font-size: 16px;
+      border-bottom: 1px solid #ddd;
+      padding: 4px 0;
+    }
+    .nickname-buttons {
+      position: absolute;
+      right: 0;
+      text-align: right;
+      // padding-top: 2px;
+      .confirm {
+        margin-right: 8px;
+      }
+      .cancel {
+        color: #bbb;
+      }
+    }
+  }
+}
+
+.record-section {
+  margin: 20px;
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  .section-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
   }
 }
 
@@ -137,8 +182,10 @@
 
 
 .history-section {
-  margin-top: 20px;
-  padding: 0 16px;
+  margin: 20px;
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
 
   .section-title {
     font-size: 16px;

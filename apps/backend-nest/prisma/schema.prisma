@@ -16,6 +16,7 @@ datasource db {
 model User {
   id    Int     @default(autoincrement()) @id
   openId String  @unique
+  joinTime DateTime @default(now())
   sessionKey  String?
   nickname String
   avatarUrl String?

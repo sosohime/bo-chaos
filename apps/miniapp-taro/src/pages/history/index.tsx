@@ -4,11 +4,6 @@ import { useEffect, useState } from "react";
 import Taro from "@tarojs/taro";
 import PhotoItem from "../../components/photoItem";
 import { getPhotoBySystem } from "../../api/photo";
-import VoteImage from "../../images/vote.png";
-import VoteActiveImage from "../../images/vote-active.png";
-import DownloadImage from "../../images/download.png";
-
-import type CustomTabBar from "../../custom-tab-bar";
 
 import "./index.scss";
 
@@ -67,12 +62,15 @@ export default function History() {
       const res = await getPhotoBySystem("history");
       const data = res as unknown as PhotoDataType[];
       const group = groupBy(data, (item) => item.category.secondCategory);
-      setPhotoData(
-        Object.entries(group).map(([k, v]) => ({
-          secondCategory: k,
-          photos: v,
-        })),
-      );
+      const groupedData = Object.entries(group).map(([k, v]) => ({
+        secondCategory: k,
+        photos: v,
+      }));
+      setPhotoData(groupedData);
+      // 如果有数据且没有选中的分类，则默认展开第一个
+      if (groupedData.length > 0 && !activeCategory) {
+        setActiveCategory(groupedData[0].secondCategory);
+      }
     } catch (error) {
       Taro.showToast({
         title: "加载失败",
@@ -133,40 +131,56 @@ export default function History() {
         refresherTriggered={refreshing}
         onRefresherRefresh={onRefresh}
       >
-        {photoData.map((category) => (
-          <View key={category.secondCategory} className="category-section">
-            <View
-              className={`category-header ${activeCategory === category.secondCategory ? "active" : ""}`}
-              onClick={() => handleCategoryClick(category.secondCategory)}
-            >
-              <Text>{category.secondCategory}</Text>
-              <Text className="arrow">
-                {activeCategory === category.secondCategory ? "▼" : "▶"}
-              </Text>
-            </View>
-
-            {activeCategory === category.secondCategory && (
-              <View className="photo-grid">
-                {category.photos.map((photo) => (
-                  <PhotoItem
-                    key={photo.id}
-                    photoData={photo}
-                    onPreview={(url) =>
-                      handlePreview(
-                        url,
-                        category.photos.map((p) => p.filename),
-                      )
-                    }
-                    size={{
-                      height: "150px",
-                      width: "100%",
-                    }}
-                  />
-                ))}
+        {photoData.length > 0 ? (
+          photoData.map((category) => (
+            <View key={category.secondCategory} className="category-section">
+              <View
+                className={`category-header ${
+                  activeCategory === category.secondCategory ? "active" : ""
+                }`}
+                onClick={() => handleCategoryClick(category.secondCategory)}
+              >
+                <View className="category-title">
+                  <Text className="category-name">
+                    {category.secondCategory}
+                  </Text>
+                  <Text className="photo-count">
+                    ({category.photos.length})
+                  </Text>
+                </View>
+                <Text className="arrow">
+                  {activeCategory === category.secondCategory ? "▼" : "▶"}
+                </Text>
               </View>
-            )}
+
+              {activeCategory === category.secondCategory && (
+                <View className="photo-grid">
+                  {category.photos.map((photo) => (
+                    <View key={photo.id} className="photo-item-wrapper">
+                      <PhotoItem
+                        photoData={photo}
+                        onPreview={(url) =>
+                          handlePreview(
+                            url,
+                            category.photos.map((p) => p.filename),
+                          )
+                        }
+                        size={{
+                          height: "200px",
+                          width: "100%",
+                        }}
+                      />
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          ))
+        ) : (
+          <View className="empty-state">
+            <Text>暂无数据</Text>
           </View>
-        ))}
+        )}
       </ScrollView>
     </View>
   );

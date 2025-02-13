@@ -1,4 +1,4 @@
-import { View, Image, Text } from "@tarojs/components";
+import { View, Image, Text, ITouchEvent } from "@tarojs/components";
 import { useState } from "react";
 import { votePhoto, cancelPhotoVote, getPhotoById } from "../../api/photo";
 import Taro from "@tarojs/taro";
@@ -30,7 +30,9 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const handleDownload = () => {
+  const handleDownload = (e: ITouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     Taro.downloadFile({
       url: data.filename,
       success: (res) => {
@@ -70,7 +72,8 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
     }
   };
 
-  const onVote = async () => {
+  const onVote = async (e: ITouchEvent) => {
+    e.stopPropagation();
     if (data.hasVoted) {
       await cancelPhotoVote(data.id);
       setData((perv) => ({
@@ -96,27 +99,29 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
         width: size.width,
       }}
     >
-      {loading && (
-        <View className="loading-container">
-          <Text>加载中...</Text>
-        </View>
-      )}
+      <View className="photo-box">
+        {loading && (
+          <View className="loading-container">
+            <Text>加载中...</Text>
+          </View>
+        )}
 
-      {error ? (
-        <View className="error-container" onClick={handleRetry}>
-          <Text>加载失败</Text>
-          <Text className="retry-text">点击重试</Text>
-        </View>
-      ) : (
-        <Image
-          src={data.filename}
-          className="photo"
-          mode="aspectFit"
-          onClick={() => onPreview(data.filename)}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-        />
-      )}
+        {error ? (
+          <View className="error-container" onClick={handleRetry}>
+            <Text>加载失败</Text>
+            <Text className="retry-text">点击重试</Text>
+          </View>
+        ) : (
+          <Image
+            src={data.filename}
+            className="photo"
+            mode="aspectFit"
+            onClick={() => onPreview(data.filename)}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
+        )}
+      </View>
 
       <View className="photo-actions">
         <Image
@@ -127,7 +132,7 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
         <Image
           src={data.hasVoted ? VoteActiveImage : VoteImage}
           className="action-icon"
-          onClick={() => onVote()}
+          onClick={onVote}
         />
         <Text className="vote-count">{data.votesCount}</Text>
       </View>
