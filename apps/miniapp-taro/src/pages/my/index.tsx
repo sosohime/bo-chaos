@@ -1,4 +1,12 @@
-import { View, Button, Image, Text, Input, Picker } from "@tarojs/components";
+import {
+  View,
+  Button,
+  Image,
+  Text,
+  Input,
+  Picker,
+  ScrollView,
+} from "@tarojs/components";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import Taro from "@tarojs/taro";
@@ -28,6 +36,7 @@ export interface CategoryType {
 }
 
 export default function My() {
+  const [refreshing, setRefreshing] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     avatarUrl: "",
     nickname: "",
@@ -73,6 +82,28 @@ export default function My() {
     fetchCategories();
     fetchPhotos();
   }, []);
+
+  const onRefresh = async () => {
+    try {
+      setRefreshing(true);
+      Taro.showNavigationBarLoading();
+      await Promise.all([fetchUserInfo(), fetchCategories(), fetchPhotos()]);
+      Taro.hideNavigationBarLoading();
+      Taro.showToast({
+        title: "刷新成功",
+        icon: "success",
+      });
+    } catch (error) {
+      console.error("刷新失败:", error);
+      Taro.hideNavigationBarLoading();
+      Taro.showToast({
+        title: "刷新失败",
+        icon: "error",
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const fetchCategories = async () => {
     try {
@@ -162,6 +193,15 @@ export default function My() {
   const handleNameCancel = () => {
     setIsEditingName(false);
     setEditingName(""); // 清空临时存储的名字
+  };
+
+  const handleSystemChange = (e) => {
+    setSelectedSystem(systems[e.detail.value]);
+    // 清空分类相关的状态
+    setSelectedCategory("");
+    setSelectedCategoryId(0);
+    setNewCategoryName("");
+    setIsNewCategory(false);
   };
 
   const handleAddImages = async () => {
@@ -272,190 +312,200 @@ export default function My() {
 
   return (
     <View className="my-container">
-      <View className="user-info">
-        <Image
-          className="avatar"
-          mode="aspectFit"
-          src={userInfo.avatarUrl || Criminal}
-          onClick={handleAvatarClick}
-        />
-        <View className="user-name">
-          <Text className="hello">你好，</Text>
-          {isEditingName ? (
-            <View className="nickname-edit">
-              <Input
-                className="nickname-input"
-                value={editingName}
-                onInput={(e) => setEditingName(e.detail.value)}
-                placeholder={userInfo.nickname}
-              />
-              <View className="nickname-buttons">
-                <Text className="confirm" onClick={handleNameChange}>
-                  确定
-                </Text>
-                <Text className="cancel" onClick={handleNameCancel}>
-                  取消
-                </Text>
-              </View>
-            </View>
-          ) : (
-            <View
-              onClick={() => {
-                setIsEditingName(true);
-                setEditingName(userInfo.nickname);
-              }}
-            >
-              <Text className="nickname">
-                {userInfo.nickname || "点击设置昵称"}
-              </Text>
-              <Image
-                className="nickname-edit-icon"
-                mode="aspectFit"
-                src={Edit}
-              />
-            </View>
-          )}
-        </View>
-      </View>
-
-      <View className="record-section">
-        <View className="section-title">磕头记录</View>
-        <Text>
-          加入BoFans的{" "}
-          {userInfo.joinTime
-            ? Math.max(
-                1,
-                Math.ceil(dayjs().diff(dayjs(userInfo.joinTime), "day", true)),
-              )
-            : 0}{" "}
-          天中， 累计磕头 {userInfo.kowtowCount} 次
-        </Text>
-      </View>
-
-      <View className="upload-section">
-        <View className="section-title">珍贵资料上传</View>
-        <Picker
-          mode="selector"
-          range={systems}
-          rangeKey="label"
-          onChange={(e) => {
-            setSelectedSystem(systems[e.detail.value]);
-          }}
-        >
-          <View className="picker">{selectedSystem?.label || "选择板块"}</View>
-        </Picker>
-
-        {selectedSystem && (
-          <>
-            <View className="category-section">
-              {!isNewCategory ? (
-                <Picker
-                  mode="selector"
-                  range={Object.keys(categoryMap)}
-                  onChange={(e) =>
-                    handleCategorySelect(
-                      Object.keys(categoryMap)[e.detail.value],
-                    )
-                  }
-                >
-                  <View className="picker">
-                    {selectedCategory || "选择分类"}
-                  </View>
-                </Picker>
-              ) : (
+      <ScrollView
+        scrollY
+        className="scroll-container"
+        refresherEnabled
+        refresherTriggered={refreshing}
+        onRefresherRefresh={onRefresh}
+      >
+        <View className="user-info">
+          <Image
+            className="avatar"
+            mode="aspectFit"
+            src={userInfo.avatarUrl || Criminal}
+            onClick={handleAvatarClick}
+          />
+          <View className="user-name">
+            <Text className="hello">你好，</Text>
+            {isEditingName ? (
+              <View className="nickname-edit">
                 <Input
-                  className="category-input"
-                  value={newCategoryName}
-                  onInput={(e) => setNewCategoryName(e.detail.value)}
-                  placeholder="输入新分类名称"
+                  className="nickname-input"
+                  value={editingName}
+                  onInput={(e) => setEditingName(e.detail.value)}
+                  placeholder={userInfo.nickname}
                 />
-              )}
-              <View
-                className={`checkbox ${isSubmitting ? "disabled" : ""}`}
-                onClick={() =>
-                  !isSubmitting && setIsNewCategory(!isNewCategory)
-                }
-              >
-                <Text>{isNewCategory ? "✓" : ""}</Text>
-                <Text>创建新分类</Text>
+                <View className="nickname-buttons">
+                  <Text className="confirm" onClick={handleNameChange}>
+                    确定
+                  </Text>
+                  <Text className="cancel" onClick={handleNameCancel}>
+                    取消
+                  </Text>
+                </View>
               </View>
-
-              <Button
-                className="add-image"
-                disabled={isSubmitting}
-                onClick={handleAddImages}
+            ) : (
+              <View
+                onClick={() => {
+                  setIsEditingName(true);
+                  setEditingName(userInfo.nickname);
+                }}
               >
-                添加图片
-              </Button>
-
-              <Button
-                className={`submit-btn ${isSubmitting ? "loading" : ""}`}
-                disabled={isSubmitting}
-                onClick={handleSubmit}
-              >
-                {isSubmitting ? "上传中..." : "提交"}
-              </Button>
-            </View>
-
-            {selectedImages.length > 0 && (
-              <View className="image-list">
-                {selectedImages.map((img, index) => (
-                  <View key={index} className="image-item">
-                    <Image
-                      src={img}
-                      mode="aspectFit"
-                      className="preview-image"
-                    />
-                    <View
-                      className="remove-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveImage(index);
-                      }}
-                    >
-                      ✕
-                    </View>
-                  </View>
-                ))}
+                <Text className="nickname">
+                  {userInfo.nickname || "点击设置昵称"}
+                </Text>
+                <Image
+                  className="nickname-edit-icon"
+                  mode="aspectFit"
+                  src={Edit}
+                />
               </View>
             )}
-          </>
-        )}
-      </View>
+          </View>
+        </View>
 
-      <View className="history-section">
-        <View className="section-title">审核中</View>
-        <View className="photo-grid">
-          {pendingPhotos.length > 0 ? (
-            pendingPhotos.map((photo, index) => (
-              <Image
-                key={index}
-                src={photo.filename}
-                mode="aspectFit"
-                className="history-image"
-              />
-            ))
-          ) : (
-            <Text>妹有</Text>
+        <View className="record-section">
+          <View className="section-title">磕头记录</View>
+          <Text>
+            加入BoFans的{" "}
+            {userInfo.joinTime
+              ? Math.max(
+                  1,
+                  Math.ceil(
+                    dayjs().diff(dayjs(userInfo.joinTime), "day", true),
+                  ),
+                )
+              : 0}{" "}
+            天中， 累计磕头 {userInfo.kowtowCount} 次
+          </Text>
+        </View>
+
+        <View className="upload-section">
+          <View className="section-title">珍贵资料上传</View>
+          <Picker
+            mode="selector"
+            range={systems}
+            rangeKey="label"
+            onChange={handleSystemChange}
+          >
+            <View className="picker">
+              {selectedSystem?.label || "选择板块"}
+            </View>
+          </Picker>
+
+          {selectedSystem && (
+            <>
+              <View className="category-section">
+                {!isNewCategory ? (
+                  <Picker
+                    mode="selector"
+                    range={Object.keys(categoryMap)}
+                    onChange={(e) =>
+                      handleCategorySelect(
+                        Object.keys(categoryMap)[e.detail.value],
+                      )
+                    }
+                  >
+                    <View className="picker">
+                      {selectedCategory || "选择分类"}
+                    </View>
+                  </Picker>
+                ) : (
+                  <Input
+                    className="category-input"
+                    value={newCategoryName}
+                    onInput={(e) => setNewCategoryName(e.detail.value)}
+                    placeholder="输入新分类名称"
+                  />
+                )}
+                <View
+                  className={`checkbox ${isSubmitting ? "disabled" : ""}`}
+                  onClick={() =>
+                    !isSubmitting && setIsNewCategory(!isNewCategory)
+                  }
+                >
+                  <Text>{isNewCategory ? "✓" : ""}</Text>
+                  <Text>创建新分类</Text>
+                </View>
+
+                <Button
+                  className="add-image"
+                  disabled={isSubmitting}
+                  onClick={handleAddImages}
+                >
+                  添加图片
+                </Button>
+
+                <Button
+                  className={`submit-btn ${isSubmitting ? "loading" : ""}`}
+                  disabled={isSubmitting}
+                  onClick={handleSubmit}
+                >
+                  {isSubmitting ? "上传中..." : "提交"}
+                </Button>
+              </View>
+
+              {selectedImages.length > 0 && (
+                <View className="image-list">
+                  {selectedImages.map((img, index) => (
+                    <View key={index} className="image-item">
+                      <Image
+                        src={img}
+                        mode="aspectFit"
+                        className="preview-image"
+                      />
+                      <View
+                        className="remove-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveImage(index);
+                        }}
+                      >
+                        ✕
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </>
           )}
         </View>
 
-        <View className="section-title">已通过</View>
-        <View className="photo-grid">
-          {approvedPhotos.length ? (
-            approvedPhotos.map((photo, index) => (
-              <Image
-                key={index}
-                src={photo.filename}
-                mode="aspectFit"
-                className="history-image"
-              />
-            ))
-          ) : (
-            <Text>{pendingPhotos.length > 0 ? "妹有" : "也妹有"}</Text>
-          )}
+        <View className="history-section">
+          <View className="section-title">审核中</View>
+          <View className="photo-grid">
+            {pendingPhotos.length > 0 ? (
+              pendingPhotos.map((photo, index) => (
+                <Image
+                  key={index}
+                  src={photo.filename}
+                  mode="aspectFit"
+                  className="history-image"
+                />
+              ))
+            ) : (
+              <Text>妹有</Text>
+            )}
+          </View>
+
+          <View className="section-title">已通过</View>
+          <View className="photo-grid">
+            {approvedPhotos.length ? (
+              approvedPhotos.map((photo, index) => (
+                <Image
+                  key={index}
+                  src={photo.filename}
+                  mode="aspectFit"
+                  className="history-image"
+                />
+              ))
+            ) : (
+              <Text>{pendingPhotos.length > 0 ? "妹有" : "也妹有"}</Text>
+            )}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }

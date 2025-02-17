@@ -1,14 +1,14 @@
 .travel-container {
-  min-height: 100vh;
+  height: 100vh;
   background: #f5f5f5;
-  padding: 16px;
   box-sizing: border-box;
 
   .scroll-container {
-    height: calc(100vh - 32px);
+    height: calc(100vh - env(safe-area-inset-bottom) - 64px);
   }
 
   .category-section {
+    margin: 12px 20px;
     background: #fff;
     border-radius: 12px;
     margin-bottom: 16px;

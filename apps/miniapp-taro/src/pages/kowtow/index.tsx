@@ -48,6 +48,9 @@ export default function Kowtow() {
       .fields({ node: true, size: true })
       .exec((res) => {
         const canvas = res[0].node;
+        if (!canvas) {
+          return;
+        }
         const ctx = canvas.getContext("2d");
 
         const startX = canvas.width / 8;

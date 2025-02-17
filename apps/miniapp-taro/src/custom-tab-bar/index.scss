@@ -3,14 +3,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 54px;
   background: white;
   display: flex;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom); // 适配 iPhone 底部
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
-  
-  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .tab-bar-border {
@@ -33,7 +31,7 @@
 }
 
 .tab-bar-item cover-image {
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   width: 20px;
   height: 20px;
 }
