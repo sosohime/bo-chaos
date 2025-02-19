@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/library/prisma.service';
-import { Photo, PhotoVote, Prisma } from '@prisma/client';
+import { Photo, PhotoVote, Prisma } from '@mono/prisma-client';
 
 @Injectable()
 export class PhotoService {

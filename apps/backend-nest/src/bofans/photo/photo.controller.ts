@@ -19,7 +19,7 @@ import axios from 'axios';
 import { PhotoService } from './photo.service';
 import { CategoryService } from '../category/category.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { Photo, PhotoVote } from '@prisma/client';
+import { Photo, PhotoVote } from '@mono/prisma-client';
 
 @UseGuards(AuthGuard)
 @Controller('bofans/photo')

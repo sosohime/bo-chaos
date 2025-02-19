@@ -1,8 +1,9 @@
 import Taro from "@tarojs/taro";
 import request, { BASE_URL } from "../lib/request";
+import type { User } from "@mono/prisma-client";
 
 export function getUserInfo() {
-  return request.get("/users/userInfo");
+  return request.get<User>("/users/userInfo");
 }
 
 export function updateNickname(nickname: string) {
