@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDidShow, useDidHide } from "@tarojs/taro";
 import { AppContext } from "./lib/context";
+
 // 全局样式
 import "./app.scss";
 

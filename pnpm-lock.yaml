@@ -133,6 +133,9 @@ importers:
       '@eslint/js':
         specifier: ^9.18.0
         version: 9.18.0
+      '@mono/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@nestjs/cli':
         specifier: ^11.0.0
         version: 11.0.0(@swc/cli@0.6.0(@swc/core@1.10.8)(chokidar@4.0.3))(@swc/core@1.10.8)(@types/node@22.10.7)
@@ -209,9 +212,6 @@ importers:
       '@mono/config-tailwind':
         specifier: workspace:*
         version: link:../../packages/config-tailwind
-      '@mono/config-ts':
-        specifier: workspace:*
-        version: link:../../packages/config-ts
       '@mono/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -230,6 +230,9 @@ importers:
       '@babel/runtime':
         specifier: ^7.21.5
         version: 7.26.0
+      '@mono/const':
+        specifier: workspace:*
+        version: link:../../packages/const
       '@nutui/nutui-react-taro':
         specifier: ^2.6.14
         version: 2.7.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -360,23 +363,16 @@ importers:
 
   packages/config-tailwind: {}
 
-  packages/config-ts: {}
-
   packages/const:
     dependencies:
       '@mono/utils':
         specifier: workspace:^
         version: link:../utils
-    devDependencies:
-      '@mono/config-ts':
-        specifier: workspace:^
-        version: link:../config-ts
+
+  packages/types: {}
 
   packages/ui:
     dependencies:
-      '@mono/config-ts':
-        specifier: workspace:*
-        version: link:../config-ts
       '@mono/utils':
         specifier: workspace:*
         version: link:../utils
@@ -388,11 +384,7 @@ importers:
         specifier: workspace:*
         version: link:../config-tailwind
 
-  packages/utils:
-    devDependencies:
-      '@mono/config-ts':
-        specifier: workspace:^
-        version: link:../config-ts
+  packages/utils: {}
 
 packages:
 

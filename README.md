@@ -10,7 +10,6 @@
 │   └── miniapp-taro         // 博Fans小程序
 ├── packages              // 公共依赖
 │   ├── config-tailwind      // taiwindcss配置
-│   ├── config-ts            // typescript配置
 │   ├── const                // 常量
 │   ├── ui                   // 前端组件
 │   └── utils                // 工具函数

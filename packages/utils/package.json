@@ -1,13 +1,16 @@
 {
   "name": "@mono/utils",
   "version": "1.0.0",
-  "description": "",
-  "scripts": {},
   "keywords": [],
-  "exports": {
-    ".": "./src/index.ts"
+  "description": "",
+  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "scripts": {
+    "prod": "pnpm run build",
+    "build": "tsc"
   },
-  "devDependencies": {
-    "@mono/config-ts": "workspace:^"
-  }
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {}
 }

@@ -1,6 +1,12 @@
 {
-  "extends": "@mono/config-ts",
-  "include": [
-    "src"
-  ],
+  "extends": "../../tsconfig.root.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "rootDir": "./src",
+    "module": "commonjs",
+    "sourceMap": true,
+    "declaration": true
+  },
+  "include": ["src"]
 }
