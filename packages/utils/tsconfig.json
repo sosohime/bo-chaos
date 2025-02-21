@@ -2,12 +2,10 @@
   "extends": "../../tsconfig.root.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "dist",
-    "rootDir": "./src",
-    "module": "commonjs",
-    "sourceMap": true,
     "declaration": true,
-    "esModuleInterop": true
+    "outDir": "dist",
+    "module": "ESNext",
+    "sourceMap": false
   },
-  "include": ["src"]
+  "include": ["src", "rollup.config.ts"]
 }

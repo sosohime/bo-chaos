@@ -1,2 +1,2 @@
 export { cn } from "./cn";
-export { dayjs } from "./dayjs";
+export { default as dayjs } from "./dayjs";

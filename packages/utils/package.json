@@ -5,12 +5,14 @@
   "description": "",
   "types": "dist/index.d.ts",
   "main": "./dist/index.js",
+  "module": "dist/index.esm.js",
   "scripts": {
     "prod": "pnpm run build",
-    "build": "tsc"
+    "prebuild": "rimraf ./dist",
+    "build": "pnpm run rollup --environment NODE_ENV:production",
+    "rollup": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript --bundleConfigAsCjs"
   },
   "files": [
     "dist"
-  ],
-  "devDependencies": {}
+  ]
 }

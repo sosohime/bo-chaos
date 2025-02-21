@@ -3,16 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "keywords": [],
-  "types": "./dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "main": "./dist/index.js",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "prod": "pnpm run build",
-    "build": "tsc"
+    "prebuild": "rimraf ./dist",
+    "build": "pnpm run rollup --environment NODE_ENV:production",
+    "rollup": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript --bundleConfigAsCjs"
   },
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "@mono/utils": "workspace:^"
-  }
+  ]
 }
