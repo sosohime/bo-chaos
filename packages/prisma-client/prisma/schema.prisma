@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../dist"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @default(autoincrement()) @id
+  openId String  @unique
+  joinTime DateTime @default(now())
+  sessionKey  String?
+  nickname String
+  avatarUrl String?
+  lastKowtowTime DateTime? 
+  kowtowCount Int @default(0)
+  photos      Photo[]
+  votes       PhotoVote[]
+  categories  Category[] @relation("UserCategories")
+}
+
+model Category {
+  id        Int      @default(autoincrement()) @id
+  system String // history | travel | tease
+  name      String
+  secondCategory String @default("default")
+  author    User?    @relation(fields: [authorOpenId], references: [openId], name: "UserCategories")
+  authorOpenId  String
+  published Boolean? @default(false)
+  updatedAt DateTime @updatedAt
+  photos    Photo[]
+  @@unique([name, secondCategory])
+}
+
+model Photo {
+  id        Int      @default(autoincrement()) @id
+  filename String
+  name     String? @default("")
+  description   String? @default("")
+  viewedTimes    Int      @default(0)
+  category  Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  published Boolean? @default(false)
+  author    User?    @relation(fields: [authorOpenId], references: [openId])
+  authorOpenId  String?
+  votes     PhotoVote[]
+}
+
+model PhotoVote {
+  id        Int      @default(autoincrement()) @id
+  photoId   Int
+  userOpenId    String
+  updatedAt DateTime @updatedAt
+  photo     Photo    @relation(fields: [photoId], references: [id])
+  user      User     @relation(fields: [userOpenId], references: [openId])
+  @@unique([photoId, userOpenId])
+}

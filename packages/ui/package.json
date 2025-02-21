@@ -4,7 +4,6 @@
   "description": "",
   "keywords": [],
   "dependencies": {
-    "@mono/config-ts": "workspace:*",
     "@mono/utils": "workspace:*",
     "@radix-ui/react-slot": "1.0.2"
   },

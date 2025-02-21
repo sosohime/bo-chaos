@@ -1,0 +1,17 @@
+{
+  "name": "@mono/prisma-client",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "postinstall": "prisma generate",
+    "dev": "pnpm prisma migrate dev && pnpm generate",
+    "update_db": "npx prisma migrate deploy"
+  },
+  "dependencies": {
+    "@prisma/client": "6.3.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.3.1"
+  }
+}

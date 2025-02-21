@@ -2,15 +2,22 @@
   "name": "@mono/const",
   "version": "1.0.0",
   "description": "",
-  "scripts": {},
   "keywords": [],
+  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "prod": "pnpm run build",
+    "prebuild": "rimraf ./dist",
+    "build": "pnpm run rollup --environment NODE_ENV:production",
+    "rollup": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript --bundleConfigAsCjs"
+  },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@mono/utils": "workspace:^"
-  },
-  "devDependencies": {
-    "@mono/config-ts": "workspace:^"
   }
 }

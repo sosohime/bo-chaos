@@ -32,7 +32,12 @@ jobs:
 
     - name: Install dependencies
       run: pnpm install
-    - run: pnpm run build:astro
+      
+    - name: Build
+      run: pnpm run build
+
+    - name: build astro
+      run: pnpm run build:astro
 
           # 添加打包步骤
     - name: Archive production artifacts
