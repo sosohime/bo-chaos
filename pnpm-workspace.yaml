@@ -4,7 +4,7 @@ packages:
   - '!**/test/**'
 
 dependencies:
-  utils:
+  '@mono/utils':
     dependsOn: []
-  const:
-    dependsOn: [utils]
+  '@mono/const':
+    dependsOn: ['@mono/utils']
