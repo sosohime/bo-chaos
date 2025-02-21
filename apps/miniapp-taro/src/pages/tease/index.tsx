@@ -1,6 +1,7 @@
 import { View, Image, Text, ScrollView } from "@tarojs/components";
 import { useEffect, useState, useRef } from "react";
 import Taro from "@tarojs/taro";
+import BoSheng from "@/components/boSheng";
 import { getPhotoBySystem } from "../../api/photo";
 import type { PhotoDataType } from "../history";
 import PhotoItem from "../../components/photoItem";
@@ -124,6 +125,7 @@ export default function Tease() {
         refresherTriggered={refreshing}
         onRefresherRefresh={onRefresh}
       >
+        <BoSheng boxStyle={{ padding: "10px 0 10px" }} />
         {photos.length === 0 ? (
           <View className="empty-state">
             <Text>暂无数据</Text>

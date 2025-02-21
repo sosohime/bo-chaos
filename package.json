@@ -7,6 +7,7 @@
     "prepare": "husky",
     "start:nest": "pnpm -C apps/backend-nest start",
     "start:astro": "pnpm -C apps/frontend-astro dev",
+    "start:weapp": "pnpm -C apps/miniapp-taro dev:weapp",
     "build": "pnpm -r --filter=./packages/* prod",
     "build:astro": "pnpm -C apps/frontend-astro build",
     "test": "echo \"Error: no test specified\"",

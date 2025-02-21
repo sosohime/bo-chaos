@@ -8,8 +8,9 @@ import {
   ScrollView,
 } from "@tarojs/components";
 import { useState, useEffect } from "react";
-import dayjs from "dayjs";
+import { dayjs } from "@mono/utils";
 import Taro from "@tarojs/taro";
+import BoSheng from "@/components/boSheng";
 import { groupBy } from "es-toolkit";
 import { getCategories } from "../../api/category";
 import { uploadAvatar, getUserInfo, updateNickname } from "../../api/user";
@@ -365,6 +366,8 @@ export default function My() {
           </View>
         </View>
 
+        <BoSheng boxStyle={{ padding: "14px 20px 0 20px" }} />
+
         <View className="record-section">
           <View className="section-title">磕头记录</View>
           <Text>
@@ -501,7 +504,9 @@ export default function My() {
                 />
               ))
             ) : (
-              <Text>{pendingPhotos.length > 0 ? "妹有" : "也妹有"}</Text>
+              <Text>
+                {pendingPhotos.length > 0 ? "妹有" : "也妹有，应该有"}
+              </Text>
             )}
           </View>
         </View>

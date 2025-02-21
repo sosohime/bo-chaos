@@ -1,6 +1,7 @@
 import { View, Button, Image, Text, Canvas } from "@tarojs/components";
 import { useState, useEffect, useRef } from "react";
 import Taro from "@tarojs/taro";
+import BoSheng from "@/components/boSheng";
 import { getKowtowStats, kowtowOnce } from "../../api/kowtow";
 import "./index.scss";
 import God from "../../images/god.png";
@@ -98,6 +99,7 @@ export default function Kowtow() {
 
   return (
     <View className="kowtow-container">
+      <BoSheng />
       <Text>全球博粉累计磕头 {kowtowStats.totalCount} 次</Text>
       <Text>
         今日签到博粉 {kowtowStats.todayKowtowedUser}{" "}

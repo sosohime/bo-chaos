@@ -1,0 +1,55 @@
+.birthday-container {
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f7d794);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-radius: 10px;
+
+  .bosheng {
+    font-size: 24px;
+    padding: 0;
+    font-weight: bold;
+    white-space: nowrap;
+    position: absolute;
+    animation: marquee 10s linear infinite, colorChange 4s infinite;
+    animation-delay: -5s;
+  }
+
+  .bosheng + .bosheng {
+    animation-delay: 0s;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes colorChange {
+  0% { color: #fff; }
+  25% { color: #ffeb3b; }
+  50% { color: #ff4081; }
+  75% { color: #00bcd4; }
+  100% { color: #fff; }
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

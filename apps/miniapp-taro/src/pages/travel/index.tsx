@@ -2,6 +2,7 @@ import { View, Button, Image, Text, ScrollView } from "@tarojs/components";
 import { groupBy } from "es-toolkit";
 import { useEffect, useState } from "react";
 import Taro from "@tarojs/taro";
+import BoSheng from "@/components/boSheng";
 import PhotoItem from "../../components/photoItem";
 import { getPhotoBySystem } from "../../api/photo";
 
@@ -118,6 +119,7 @@ export default function Travel() {
         refresherTriggered={refreshing}
         onRefresherRefresh={onRefresh}
       >
+        <BoSheng boxStyle={{ padding: "20px 20px 4px" }} />
         {photoData.length > 0 ? (
           photoData.map((category) => (
             <View key={category.secondCategory} className="category-section">

@@ -230,6 +230,9 @@ importers:
       '@mono/const':
         specifier: workspace:*
         version: link:../../packages/const
+      '@mono/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@nutui/nutui-react-taro':
         specifier: ^2.6.14
         version: 2.7.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -297,6 +300,9 @@ importers:
       '@mono/prisma-client':
         specifier: workspace:*
         version: link:../../packages/prisma-client
+      '@mono/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@pmmmwh/react-refresh-webpack-plugin':
         specifier: ^0.5.5
         version: 0.5.15(react-refresh@0.11.0)(type-fest@4.33.0)(webpack-dev-server@4.15.2(webpack@5.78.0(@swc/core@1.3.96)))(webpack@5.78.0(@swc/core@1.3.96))
