@@ -393,7 +393,11 @@ importers:
 
   packages/config-tailwind: {}
 
-  packages/const: {}
+  packages/const:
+    dependencies:
+      '@mono/utils':
+        specifier: workspace:^
+        version: link:../utils
 
   packages/prisma-client:
     dependencies:

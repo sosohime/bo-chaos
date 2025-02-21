@@ -4,7 +4,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "generate": "prisma generate",
     "postinstall": "prisma generate",
     "dev": "pnpm prisma migrate dev && pnpm generate",
     "update_db": "npx prisma migrate deploy"

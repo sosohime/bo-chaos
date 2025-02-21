@@ -16,5 +16,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@mono/utils": "workspace:^"
+  }
 }

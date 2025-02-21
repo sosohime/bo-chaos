@@ -2,9 +2,3 @@ packages:
   - 'packages/**'
   - 'apps/**'
   - '!**/test/**'
-
-dependencies:
-  '@mono/utils':
-    dependsOn: []
-  '@mono/const':
-    dependsOn: ['@mono/utils']
