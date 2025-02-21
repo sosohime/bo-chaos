@@ -5,7 +5,8 @@
 ## 数据库初始化
 
 ```bash
-$ pnpx prisma migrate dev --name init
+cd ../..
+pnpm run build
 ```
 
 ## Compile and run the project
