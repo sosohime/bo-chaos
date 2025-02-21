@@ -2,3 +2,9 @@ packages:
   - 'packages/**'
   - 'apps/**'
   - '!**/test/**'
+
+dependencies:
+  utils:
+    dependsOn: []
+  const:
+    dependsOn: [utils]
