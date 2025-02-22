@@ -1,11 +1,5 @@
 import Taro from "@tarojs/taro";
 
-interface ResponseData<T = any> {
-  code: number;
-  data: T;
-  message: string;
-}
-
 // 基础配置
 // export const BASE_URL = "http://127.0.0.1:3000/bofans";
 export const BASE_URL = "https://yuanbo.online/rpg/bofans";
@@ -33,9 +27,7 @@ export const wxLogin = async () => {
 };
 
 // 请求拦截器
-const request = async <T>(
-  options: Taro.request.Option,
-): Promise<ResponseData<T>> => {
+const request = async <T>(options: Taro.request.Option): Promise<T> => {
   try {
     // 添加token
     const token = Taro.getStorageSync("token");

@@ -1,4 +1,5 @@
 export default defineAppConfig({
+  lazyCodeLoading: "requiredComponents",
   pages: [
     "pages/kowtow/index",
     "pages/history/index",

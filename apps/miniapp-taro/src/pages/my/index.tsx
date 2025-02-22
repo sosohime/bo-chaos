@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { dayjs } from "@mono/utils";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
+import { useShare } from "@/lib/share";
 import { groupBy } from "es-toolkit";
 import { getCategories } from "../../api/category";
 import { uploadAvatar, getUserInfo, updateNickname } from "../../api/user";
@@ -59,6 +60,12 @@ export default function My() {
   const [approvedPhotos, setApprovedPhotos] = useState<any>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+
+  useShare({
+    title: "快来博Fans，今天你磕了没？",
+    path: "/pages/kowtow/index",
+    imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
+  });
 
   // 删除静态的 systems 和 categoryMap
   const systems = Object.values(

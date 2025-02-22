@@ -3,6 +3,7 @@ import { groupBy } from "es-toolkit";
 import { useEffect, useState } from "react";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
+import { useShare } from "@/lib/share";
 import PhotoItem from "../../components/photoItem";
 import { getPhotoBySystem } from "../../api/photo";
 
@@ -52,6 +53,12 @@ export default function Travel() {
   >([]);
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [refreshing, setRefreshing] = useState(false);
+
+  useShare({
+    title: "来博Fans，看博哥环游世界！",
+    path: "/pages/kowtow/index",
+    imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
+  });
 
   const fetchData = async () => {
     try {

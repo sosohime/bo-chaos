@@ -1,4 +1,6 @@
 export default {
   navigationBarTitleText: "我",
-  usingComponents: {},
+  enableShareAppMessage: true,
+  enableShareTimeline: true,
+  // usingComponents: {},
 };

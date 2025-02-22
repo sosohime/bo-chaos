@@ -2,6 +2,7 @@ import { View, Image, Text, ScrollView } from "@tarojs/components";
 import { useEffect, useState, useRef } from "react";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
+import { useShare } from "@/lib/share";
 import { getPhotoBySystem } from "../../api/photo";
 import type { PhotoDataType } from "../history";
 import PhotoItem from "../../components/photoItem";
@@ -14,6 +15,12 @@ export default function Tease() {
   const [columns, setColumns] = useState<PhotoDataType[][]>([[], [], []]);
   const columnsHeight = useRef<number[]>([0, 0, 0]);
   const columnWidth = Taro.getSystemInfoSync().windowWidth / 3;
+
+  useShare({
+    title: "快来博Fans，跟博哥一起欢乐！",
+    path: "/pages/kowtow/index",
+    imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
+  });
 
   const getMinHeightColumnIndex = () => {
     return columnsHeight.current.indexOf(Math.min(...columnsHeight.current));

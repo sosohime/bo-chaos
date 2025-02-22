@@ -1,4 +1,6 @@
 export default definePageConfig({
   navigationBarTitleText: "博史",
-  usingComponents: {},
+  enableShareAppMessage: true,
+  enableShareTimeline: true,
+  // usingComponents: {},
 });

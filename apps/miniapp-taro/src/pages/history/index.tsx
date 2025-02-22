@@ -3,6 +3,7 @@ import { groupBy } from "es-toolkit";
 import { useEffect, useState } from "react";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
+import { useShare } from "@/lib/share";
 import PhotoItem from "../../components/photoItem";
 import { getPhotoBySystem } from "../../api/photo";
 
@@ -57,6 +58,12 @@ export default function History() {
   //   const tabbar = Taro.getTabBar<CustomTabBar>(pageCtx);
   //   tabbar?.setSelected(1);
   // });
+
+  useShare({
+    title: "来博Fans，一起磕！",
+    path: "/pages/history/index",
+    imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
+  });
 
   const fetchData = async () => {
     try {

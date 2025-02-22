@@ -1,19 +1,13 @@
 import { Text, View } from "@tarojs/components";
-import { useState } from "react";
-import { dayjs } from "@mono/utils";
-import { birthday } from "@mono/const";
+import { isBoSheng } from "@/lib/bosheng";
 import "./index.scss";
-
-const boBirthday = birthday.boBirthday;
 
 export default function BoSheng({
   boxStyle,
 }: {
   boxStyle?: React.CSSProperties;
 }) {
-  const [isBirthday] = useState(
-    boBirthday.format("MM-DD") === dayjs().format("MM-DD"),
-  );
+  const isBirthday = isBoSheng();
 
   const content = (
     <View className="birthday-container">

@@ -1,4 +1,6 @@
 export default definePageConfig({
-  navigationBarTitleText: "磕袁",
+  navigationBarTitleText: "博Fans",
+  enableShareAppMessage: true,
+  enableShareTimeline: true,
   usingComponents: {},
 });
