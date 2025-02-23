@@ -9,7 +9,7 @@ export class GlobalController {
   @Get('systemConfig')
   systemConfig(): BofansSystemConfigType {
     return {
-      inReview: true,
+      inReview: false,
     };
   }
 }
