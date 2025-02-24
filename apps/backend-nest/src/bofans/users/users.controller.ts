@@ -77,7 +77,7 @@ export class UsersController {
       formData.append('token', env.OSS_RS_UPLOAD_TOKEN);
 
       const uploadRes = await axios.post(
-        'https://yuanbo.online/oss_service/upload',
+        'https://zhangyiming.online/oss_service/upload',
         formData,
         {
           headers: {
@@ -88,7 +88,7 @@ export class UsersController {
 
       Logger.log('调用oss_service res', uploadRes.data);
       if (uploadRes.status === 200) {
-        const avatarUrl = `https://yuanbo.online/bofans_static/avatars/${filename}`;
+        const avatarUrl = `https://zhangyiming.online/bofans_static/avatars/${filename}`;
         const user = await this.usersService.updateUser({
           where: { openId },
           data: { avatarUrl },
