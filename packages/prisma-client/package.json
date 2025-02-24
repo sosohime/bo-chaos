@@ -5,7 +5,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "postinstall": "prisma generate",
-    "dev": "pnpm prisma migrate dev && pnpm run generate",
+    "dev": "pnpm prisma migrate dev && pnpm generate",
     "update_db": "npx prisma migrate deploy"
   },
   "dependencies": {

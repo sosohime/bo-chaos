@@ -8,7 +8,6 @@
     "start:nest": "pnpm -C apps/backend-nest start",
     "start:astro": "pnpm -C apps/frontend-astro dev",
     "start:weapp": "pnpm -C apps/miniapp-taro dev:weapp",
-    "start:admin": "pnpm -C apps/front-next-admin dev",
     "build": "pnpm -r --filter=./packages/* prod",
     "build:astro": "pnpm -C apps/frontend-astro build",
     "test": "echo \"Error: no test specified\"",
@@ -34,7 +33,7 @@
     "prettier": "^3.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "3.0.2",
+    "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
@@ -47,16 +46,16 @@
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
-    "@tailwindcss/postcss": "^4.0.8",
     "autoprefixer": "^10.4.20",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "lodash-es": "^4.17.21",
+    "postcss": "^8.5.1",
     "prettier-eslint": "^16.3.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.34.8",
     "rollup-plugin-node-externals": "^8.0.0",
     "rollup-plugin-ts": "^3.4.5",
-    "tailwindcss": "4.0.8"
+    "tailwindcss": "^3.4.17"
   }
 }
