@@ -17,6 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
 import * as FormData from 'form-data';
 import axios from 'axios';
+import { env } from '@/const/env';
 import { UsersService } from '../users/users.service';
 import { PhotoService } from './photo.service';
 import { CategoryService } from '../category/category.service';
@@ -251,7 +252,7 @@ export class PhotoController {
       formData.append('token', process.env.OSS_RS_UPLOAD_TOKEN);
 
       const uploadRes = await axios.post(
-        'https://zhangyiming.online/oss_service/upload',
+        `${env.PHOTO_OSS_HOST}/oss_service/upload`,
         formData,
         {
           headers: {
@@ -267,7 +268,7 @@ export class PhotoController {
 
       // 插入Photo表
       const photo = await this.photoService.createPhoto({
-        filename: `https://zhangyiming.online/bofans_static/photo/${filename}`,
+        filename: `${env.PHOTO_OSS_HOST}/bofans_static/photo/${filename}`,
         category: { connect: { id: categoryId } },
         author: { connect: { openId } },
         published: false, // 默认未发布，需要审核
