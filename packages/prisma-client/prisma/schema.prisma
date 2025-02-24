@@ -18,6 +18,7 @@ model User {
   id    Int     @default(autoincrement()) @id
   openId String  @unique
   joinTime DateTime @default(now())
+  photoReviewer Boolean @default(false)
   sessionKey  String?
   nickname String
   avatarUrl String?

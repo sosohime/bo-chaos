@@ -1,8 +1,8 @@
-import type { Config } from "tailwindcss"
-import tailwindAnimate from "tailwindcss-animate"
+import type { Config } from "tailwindcss";
+import tailwindAnimate from "tailwindcss-animate";
 
-const config: Omit<Config, "content"> = {
-  darkMode: ["class"],
+const config: Config = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -10,7 +10,7 @@ const config: Omit<Config, "content"> = {
     "./src/**/*.{ts,tsx}",
     "../../packages/ui/src/**/*.{ts,tsx}", // 复用 shadcn 组件
     "../../packages/lib/src/**/*.{ts,tsx}", // 复用自定义组件
-    './src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'
+    "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}",
   ],
   prefix: "",
   theme: {
@@ -23,7 +23,7 @@ const config: Omit<Config, "content"> = {
     },
     extend: {
       colors: {
-        'tencent-primary': '#0052d9',
+        "tencent-primary": "#0052d9",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -80,6 +80,6 @@ const config: Omit<Config, "content"> = {
     },
   },
   plugins: [tailwindAnimate],
-}
+};
 
-export default config
+export default config;

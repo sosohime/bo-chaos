@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "exports": {
-    ".": "./tailwind.config.ts",
-    "./global.css": "./global.css"
+    ".": "./tailwind.config.ts"
+  },
+  "dependencies": {
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "tailwindcss": "4.0.8"
   }
 }
