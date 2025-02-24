@@ -11,12 +11,14 @@ import {
   Body,
   Logger,
   Post,
+  ForbiddenException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
 import * as FormData from 'form-data';
 import axios from 'axios';
 import { env } from '@/const/env';
+import { UsersService } from '../users/users.service';
 import { PhotoService } from './photo.service';
 import { CategoryService } from '../category/category.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -28,6 +30,7 @@ export class PhotoController {
   constructor(
     private photoService: PhotoService,
     private categoryService: CategoryService,
+    private usersService: UsersService,
   ) {}
 
   @HttpCode(HttpStatus.OK)
@@ -265,7 +268,7 @@ export class PhotoController {
 
       // 插入Photo表
       const photo = await this.photoService.createPhoto({
-        filename: `${env.PHOTO_OSS_HOST}/photo/${filename}`,
+        filename: `${env.PHOTO_OSS_HOST}/bofans_static/photo/${filename}`,
         category: { connect: { id: categoryId } },
         author: { connect: { openId } },
         published: false, // 默认未发布，需要审核
@@ -287,6 +290,58 @@ export class PhotoController {
     return this.photoService.photos({
       where: {
         authorOpenId: openId,
+      },
+    });
+  }
+
+  @Get('reviewList')
+  async reviewList(@Request() req: { user: { openId: string } }) {
+    const openId = req.user.openId;
+    Logger.log(`openId get reviewList: ${openId}`);
+    return this.photoService.photos({
+      where: {
+        published: false,
+      },
+    });
+  }
+
+  @Post('batchReviewPass')
+  async batchReviewPass(
+    @Request() req: { user: { openId: string } },
+    @Body() photoDto: { ids: number[] },
+  ) {
+    const openId = req.user.openId;
+    const user = await this.usersService.user({ openId });
+    if (!user || !user.photoReviewer) {
+      throw new ForbiddenException('无权限');
+    }
+    Logger.log(`openId ${openId} passed photos ${photoDto.ids.join(',')}`);
+    return this.photoService.updatePhotos({
+      where: {
+        id: {
+          in: photoDto.ids,
+        },
+      },
+      data: {
+        published: true,
+      },
+    });
+  }
+
+  @Post('batchReviewReject')
+  async batchReviewReject(
+    @Request() req: { user: { openId: string } },
+    @Body() photoDto: { ids: number[] },
+  ) {
+    const openId = req.user.openId;
+    const user = await this.usersService.user({ openId });
+    if (!user || !user.photoReviewer) {
+      throw new ForbiddenException('无权限');
+    }
+    Logger.log(`openId ${openId} reject photos ${photoDto.ids.join(',')}`);
+    return this.photoService.deletePhotos({
+      id: {
+        in: photoDto.ids,
       },
     });
   }

@@ -49,8 +49,27 @@ export class PhotoService {
     });
   }
 
+  async updatePhotos(params: {
+    where: Prisma.PhotoWhereInput;
+    data: Prisma.PhotoUpdateInput;
+  }): Promise<Photo[]> {
+    const { data, where } = params;
+    return await this.prisma.photo.updateManyAndReturn({
+      data,
+      where,
+    });
+  }
+
   async deletePhoto(where: Prisma.PhotoWhereUniqueInput): Promise<Photo> {
     return this.prisma.photo.delete({
+      where,
+    });
+  }
+
+  async deletePhotos(
+    where: Prisma.PhotoWhereInput,
+  ): Promise<Prisma.BatchPayload> {
+    return this.prisma.photo.deleteMany({
       where,
     });
   }
