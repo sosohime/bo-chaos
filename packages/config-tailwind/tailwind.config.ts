@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
 import tailwindAnimate from "tailwindcss-animate";
 
-const config: Config = {
-  darkMode: "class",
+const config: Omit<Config, "content"> = {
+  darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
