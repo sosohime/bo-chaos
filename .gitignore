@@ -27,3 +27,13 @@ dist-ssr
 
 # environments
 .env
+
+
+.nx/cache
+.nx/workspace-data
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+
+# Next.js
+.next
+out
