@@ -31,7 +31,7 @@ astro退休倒计时
 
 - [ ] SEO优化 - 各种搜索引擎搜索“袁博退休”可以搜得到
   - [x] Google
-  - [ ] Bing
+  - [x] Bing
   - [ ] ~~Baidu~~
 - [x] VSCode插件: [bo-retire](https://marketplace.visualstudio.com/items?itemName=zhangyiming.bo-retire)
   - [x] 状态栏显示倒计时、跳转、一次性提示
