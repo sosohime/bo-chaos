@@ -20,6 +20,21 @@ import background from '../assets/background.svg';
       // @ts-ignore
       gtag('config', 'G-ZEB8YFKSCR');
     </script>
+    <script>
+      import { onCLS, onINP, onLCP } from 'web-vitals';
+      function sendToGoogleAnalytics({ name, delta, value, id }: any) {
+        // @ts-ignore
+        window?.gtag('event', name, {
+          value: delta, // Use `delta` so the value can be summed.
+          metric_id: id, // Needed to aggregate events.
+          metric_value: value, // Optional.
+          metric_delta: delta, // Optional.
+        });
+      }
+      onCLS(sendToGoogleAnalytics);
+      onINP(sendToGoogleAnalytics);
+      onLCP(sendToGoogleAnalytics);
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/retire/bo.ico" />
@@ -32,19 +47,6 @@ import background from '../assets/background.svg';
     </div>
     <slot />
   </body>
-  <script>
-    (function () {
-      var script = document.createElement('script');
-      script.src = 'https://unpkg.com/web-vitals@5/dist/web-vitals.iife.js';
-      script.onload = function () {
-        window.webVitals.onFCP(console.log);
-        window.webVitals.onCLS(console.log);
-        window.webVitals.onINP(console.log);
-        window.webVitals.onLCP(console.log);
-      };
-      document.head.appendChild(script);
-    })();
-  </script>
 </html>
 
 <style>
