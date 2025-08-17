@@ -23,7 +23,7 @@ import background from '../assets/background.svg';
 
       function sendToGoogleAnalytics({ name, delta, value, id }: any) {
         // @ts-ignore
-        window?.gtag('event', name, {
+        gtag('event', name, {
           value: delta, // Use `delta` so the value can be summed.
           metric_id: id, // Needed to aggregate events.
           metric_value: value, // Optional.
