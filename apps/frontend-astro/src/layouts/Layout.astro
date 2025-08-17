@@ -1,21 +1,5 @@
 ---
 import background from '../assets/background.svg';
-import { onTTFB, onFCP, onLCP, onCLS, onINP } from 'web-vitals/attribution';
-onTTFB((metric) => {
-  console.log('web-vitals: onTTFB ', metric);
-});
-onFCP((metric) => {
-  console.log('web-vitals: onFCP ', metric);
-});
-onLCP((metric) => {
-  console.log('web-vitals: onLCP ', metric);
-});
-onCLS((metric) => {
-  console.log('web-vitals: onCLS ', metric);
-});
-onINP((metric) => {
-  console.log('web-vitals: onINP ', metric);
-});
 ---
 
 <!doctype html>
@@ -48,6 +32,19 @@ onINP((metric) => {
     </div>
     <slot />
   </body>
+  <script>
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://unpkg.com/web-vitals@5/dist/web-vitals.iife.js';
+      script.onload = function () {
+        window.webVitals.onFCP(console.log);
+        window.webVitals.onCLS(console.log);
+        window.webVitals.onINP(console.log);
+        window.webVitals.onLCP(console.log);
+      };
+      document.head.appendChild(script);
+    })();
+  </script>
 </html>
 
 <style>
