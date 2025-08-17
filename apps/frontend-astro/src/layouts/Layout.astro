@@ -9,6 +9,7 @@ import background from '../assets/background.svg';
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEB8YFKSCR"
     ></script>
     <script>
+      import { onCLS, onINP, onLCP } from 'web-vitals';
       // @ts-ignore
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -19,9 +20,7 @@ import background from '../assets/background.svg';
       gtag('js', new Date());
       // @ts-ignore
       gtag('config', 'G-ZEB8YFKSCR');
-    </script>
-    <script>
-      import { onCLS, onINP, onLCP } from 'web-vitals';
+
       function sendToGoogleAnalytics({ name, delta, value, id }: any) {
         // @ts-ignore
         window?.gtag('event', name, {
@@ -35,6 +34,7 @@ import background from '../assets/background.svg';
       onINP(sendToGoogleAnalytics);
       onLCP(sendToGoogleAnalytics);
     </script>
+    <script></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/retire/bo.ico" />
