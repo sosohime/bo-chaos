@@ -13,7 +13,9 @@
     "start:admin": "pnpm -C apps/front-next-admin dev",
     "build": "pnpm -r --filter=./packages/* prod",
     "build:astro": "pnpm -C apps/frontend-astro build",
+    "update:lighthouse-news": "pnpm -C apps/frontend-astro update:lighthouse-news",
     "test": "pnpm -r --filter=./packages/* test",
+    "agent:lint": "node scripts/agent-lint.mjs",
     "commit": "commit",
     "commitlint": "commitlint --edit"
   },

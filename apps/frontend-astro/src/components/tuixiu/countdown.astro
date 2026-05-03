@@ -1,0 +1,432 @@
+---
+interface Props {
+  targetMs: number;
+  copyTemplate: string;
+  secondaryTargetMs?: number;
+  secondaryPrefix?: string;
+  secondaryHighlight?: string;
+  secondarySuffix?: string;
+  footerLeftText?: string;
+  footerRightText?: string;
+  variant?: 'default' | 'command';
+}
+
+const {
+  targetMs,
+  copyTemplate,
+  secondaryTargetMs,
+  secondaryPrefix,
+  secondaryHighlight,
+  secondarySuffix,
+  footerLeftText,
+  footerRightText,
+  variant = 'default',
+} = Astro.props;
+
+const isCommand = variant === 'command';
+const commandFooterLeftText = footerLeftText ?? 'AI焕新';
+const commandFooterRightText = footerRightText ?? '智启新局';
+const commandFooterText = `${commandFooterLeftText} · ${commandFooterRightText}`;
+const mainClass = isCommand ? 'sr-only' : 'pb-4 text-4xl';
+const millisecondsClass = isCommand ? 'sr-only' : 'pl-1 text-xl';
+const timezoneClass = isCommand ? 'sr-only' : 'scale-50 pb-4 text-xs';
+const buttonWrapClass = 'pb-4';
+const buttonClass = isCommand
+  ? 'inline-flex h-7 items-center justify-center justify-self-end gap-1.5 whitespace-nowrap border border-[#0052D9]/25 bg-white/75 px-2.5 font-mono text-[11px] text-neutral-500 transition-colors hover:border-[#0052D9]/45 hover:text-neutral-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0052D9] focus-visible:ring-offset-2'
+  : 'inline-flex h-9 items-center justify-center rounded-md border border-neutral-200 bg-white/70 px-3 text-xs font-medium text-neutral-900 ring-offset-background transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2';
+---
+
+<div
+  data-retire-countdown
+  data-target-ms={targetMs}
+  data-copy-template={copyTemplate}
+  data-secondary-target-ms={secondaryTargetMs}
+>
+  {
+    isCommand ? (
+      <div class="mx-auto flex w-full max-w-[31rem] flex-col sm:w-fit sm:max-w-full">
+        <div
+          class="relative max-w-full px-5 pb-4 pt-7 text-center sm:px-6 md:px-8"
+          aria-label="退休倒计时"
+        >
+          <span
+            class="absolute left-0 top-0 h-7 w-7 border-l border-t border-neutral-950/45"
+            aria-hidden="true"
+          />
+          <span class="absolute left-5 top-2 bg-white/80 px-1 font-mono text-[10px] leading-none text-[#0052D9]/85">
+            UTC+8
+          </span>
+          <span
+            class="absolute right-0 top-0 h-7 w-7 border-r border-t border-neutral-950/45"
+            aria-hidden="true"
+          />
+          <span
+            class="absolute bottom-0 left-0 h-7 w-7 border-b border-l border-neutral-950/45"
+            aria-hidden="true"
+          />
+          <span
+            class="absolute bottom-0 right-0 h-7 w-7 border-b border-r border-neutral-950/45"
+            aria-hidden="true"
+          />
+
+          <p class="sr-only">
+            <span data-countdown-main />
+          </p>
+
+          <div class="grid grid-cols-[auto_minmax(0,auto)] items-end justify-center gap-x-[clamp(1rem,4vw,2.75rem)] font-mono leading-none text-neutral-950 tabular-nums">
+            <span class="flex items-baseline gap-2 text-left">
+              <span
+                class="block text-[clamp(2.65rem,15vw,5.5rem)] font-semibold"
+                data-countdown-days
+              />
+              <span class="pb-[0.48em] text-[clamp(0.85rem,3vw,1.05rem)] leading-none text-neutral-500">
+                天
+              </span>
+            </span>
+
+            <span class="grid -translate-y-2 grid-cols-[2ch_auto_2ch_auto_2ch_auto] items-baseline justify-start pb-[0.24rem] text-[clamp(1.35rem,6.4vw,3rem)]">
+              <span
+                class="col-start-1 row-start-1 text-right leading-none"
+                data-countdown-hours
+              />
+              <span class="col-start-2 row-start-1 px-[0.18em] text-[0.78em] leading-none text-neutral-500">
+                :
+              </span>
+              <span
+                class="col-start-3 row-start-1 text-right leading-none"
+                data-countdown-minutes
+              />
+              <span class="col-start-4 row-start-1 px-[0.18em] text-[0.78em] leading-none text-neutral-500">
+                :
+              </span>
+              <span
+                class="col-start-5 row-start-1 text-right leading-none"
+                data-countdown-seconds
+              />
+              <span class="col-start-6 row-start-1 pl-[0.22rem] text-[0.34em] leading-none text-neutral-400 sm:pl-[0.3rem] sm:text-[0.38em]">
+                .<span data-countdown-milliseconds />
+              </span>
+              <span class="col-start-1 row-start-2 mt-1 text-right text-[10px] leading-none text-neutral-500">
+                时
+              </span>
+              <span class="col-start-3 row-start-2 mt-1 text-right text-[10px] leading-none text-neutral-500">
+                分
+              </span>
+              <span class="col-start-5 row-start-2 mt-1 text-right text-[10px] leading-none text-neutral-500">
+                秒
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+          <span aria-hidden="true" />
+          <p class="justify-self-center text-center font-mono text-[11px] text-neutral-500 sm:text-xs">
+            <span
+              class="bo-command-slogan inline-block whitespace-nowrap"
+              data-command-slogan
+            >
+              {commandFooterText}
+            </span>
+          </p>
+          <button class={buttonClass} type="button" data-copy-countdown>
+            <svg
+              aria-hidden="true"
+              class="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              viewBox="0 0 24 24"
+            >
+              <rect x="8" y="8" width="10" height="10" rx="1.5" />
+              <path d="M6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            <span data-copy-countdown-label>复制文案</span>
+          </button>
+        </div>
+      </div>
+    ) : (
+      <p class={mainClass}>
+        <span data-countdown-main />
+        <span class={millisecondsClass} data-countdown-milliseconds />
+      </p>
+    )
+  }
+
+  {
+    secondaryTargetMs && (
+      <p class="pb-4">
+        {secondaryPrefix}
+        <span class="text-tencent-primary">{secondaryHighlight}</span>
+        {secondarySuffix}&nbsp;&nbsp;
+        <span data-countdown-secondary />
+      </p>
+    )
+  }
+
+  <div class={timezoneClass}>(UTC+8)</div>
+
+  {
+    !isCommand && (
+      <div class={buttonWrapClass}>
+        <button class={buttonClass} type="button" data-copy-countdown>
+          <span data-copy-countdown-label>复制倒计时</span>
+        </button>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .bo-command-slogan {
+    position: relative;
+    letter-spacing: 0;
+    color: #0052d9;
+    background: linear-gradient(
+      90deg,
+      #0052d9 0%,
+      #00a4ff 34%,
+      #111827 50%,
+      #0052d9 72%,
+      #7c3aed 100%
+    );
+    background-size: 240% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 18px rgb(0 82 217 / 18%);
+    animation:
+      bo-slogan-flow 3.6s linear infinite,
+      bo-slogan-pulse 2.4s ease-in-out infinite;
+  }
+
+  .bo-command-slogan::after {
+    position: absolute;
+    right: 0;
+    bottom: -0.35rem;
+    left: 0;
+    height: 1px;
+    content: '';
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(0 82 217 / 70%),
+      transparent
+    );
+    transform: scaleX(0.18);
+    transform-origin: center;
+    animation: bo-slogan-scan 1.8s ease-in-out infinite;
+  }
+
+  @keyframes bo-slogan-flow {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    100% {
+      background-position: 240% 50%;
+    }
+  }
+
+  @keyframes bo-slogan-pulse {
+    0%,
+    100% {
+      filter: drop-shadow(0 0 0 rgb(0 82 217 / 0%));
+    }
+
+    50% {
+      filter: drop-shadow(0 0 8px rgb(0 82 217 / 22%));
+    }
+  }
+
+  @keyframes bo-slogan-scan {
+    0%,
+    100% {
+      opacity: 0.25;
+      transform: scaleX(0.18);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bo-command-slogan,
+    .bo-command-slogan::after {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    '[data-retire-countdown]',
+  );
+
+  function pad(value: number, digits = 2) {
+    return String(value).padStart(digits, '0');
+  }
+
+  function getCountDown(targetMs: number) {
+    const diff = Math.max(0, targetMs - Date.now());
+    const totalHours = Math.floor(diff / 1000 / 60 / 60);
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    const minutes = Math.floor(diff / 1000 / 60) % 60;
+    const seconds = Math.floor(diff / 1000) % 60;
+    const milliseconds = diff % 1000;
+
+    return {
+      days,
+      hours,
+      minutes,
+      seconds,
+      main: `${days} 天 ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+      milliseconds: pad(milliseconds, 3),
+    };
+  }
+
+  function copyTextBySelection(text: string) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.readOnly = true;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '0';
+    textarea.style.top = '0';
+    textarea.style.width = '1px';
+    textarea.style.height = '1px';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, text.length);
+
+    try {
+      const didCopy = document.execCommand('copy');
+      if (!didCopy) {
+        throw new Error('copy command failed');
+      }
+    } finally {
+      textarea.remove();
+    }
+  }
+
+  async function copyText(text: string) {
+    try {
+      copyTextBySelection(text);
+      return;
+    } catch {
+      // Fall through to the async Clipboard API when selection-copy is blocked.
+    }
+
+    if (navigator.clipboard?.writeText && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    throw new Error('copy unavailable');
+  }
+
+  for (const root of roots) {
+    if (root.dataset.ready === 'true') {
+      continue;
+    }
+
+    root.dataset.ready = 'true';
+
+    const targetMs = Number(root.dataset.targetMs);
+    const secondaryTargetMs = Number(root.dataset.secondaryTargetMs);
+    const copyTemplate = root.dataset.copyTemplate ?? '{countdown}';
+    const main = root.querySelector<HTMLElement>('[data-countdown-main]');
+    const milliseconds = root.querySelector<HTMLElement>(
+      '[data-countdown-milliseconds]',
+    );
+    const days = root.querySelector<HTMLElement>('[data-countdown-days]');
+    const hours = root.querySelector<HTMLElement>('[data-countdown-hours]');
+    const minutes = root.querySelector<HTMLElement>('[data-countdown-minutes]');
+    const seconds = root.querySelector<HTMLElement>('[data-countdown-seconds]');
+    const secondary = root.querySelector<HTMLElement>(
+      '[data-countdown-secondary]',
+    );
+    const copyButton = root.querySelector<HTMLButtonElement>(
+      '[data-copy-countdown]',
+    );
+    const copyButtonLabel = root.querySelector<HTMLElement>(
+      '[data-copy-countdown-label]',
+    );
+
+    function render() {
+      const countDown = getCountDown(targetMs);
+
+      if (main) {
+        main.textContent = countDown.main;
+      }
+
+      if (milliseconds) {
+        milliseconds.textContent = countDown.milliseconds;
+      }
+
+      if (days) {
+        days.textContent = String(countDown.days);
+      }
+
+      if (hours) {
+        hours.textContent = pad(countDown.hours);
+      }
+
+      if (minutes) {
+        minutes.textContent = pad(countDown.minutes);
+      }
+
+      if (seconds) {
+        seconds.textContent = pad(countDown.seconds);
+      }
+
+      if (secondary && Number.isFinite(secondaryTargetMs)) {
+        secondary.textContent = getCountDown(secondaryTargetMs).main;
+      }
+
+      return countDown;
+    }
+
+    render();
+    const timer = window.setInterval(render, 16);
+
+    copyButton?.addEventListener('click', async () => {
+      const countDown = render();
+      const originalText =
+        copyButtonLabel?.textContent ?? copyButton.textContent ?? '复制倒计时';
+      const setButtonText = (text: string) => {
+        if (copyButtonLabel) {
+          copyButtonLabel.textContent = text;
+          return;
+        }
+
+        copyButton.textContent = text;
+      };
+
+      try {
+        await copyText(copyTemplate.replace('{countdown}', countDown.main));
+        setButtonText('已复制');
+      } catch {
+        setButtonText('复制失败');
+      } finally {
+        window.setTimeout(() => {
+          setButtonText(originalText);
+        }, 1500);
+      }
+    });
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        window.clearInterval(timer);
+      },
+      { once: true },
+    );
+  }
+</script>

@@ -1,0 +1,161 @@
+---
+import lighthouseActivities from '../../../data/lighthouse-activities.json';
+
+const activities = lighthouseActivities.items.slice(0, 4);
+const activityMeta = ['[ AI Agent ]', '[ IM 接入 ]', '[ 公测 ]', '[ 产品 ]'];
+---
+
+<div
+  class="min-h-screen w-full bg-[#f6f8ff] px-3 py-3 text-neutral-950 md:grid md:items-center"
+>
+  <main class="mx-auto w-full max-w-none 2xl:max-w-[72rem]">
+    <div
+      class="border border-neutral-950/10 bg-white shadow-[0_18px_70px_rgba(15,23,42,0.06)]"
+    >
+      <section
+        class="relative overflow-hidden border-b border-neutral-950/10 px-3 py-4 text-center sm:py-5"
+        aria-labelledby="bo-countdown-title"
+      >
+        <div
+          class="pointer-events-none absolute inset-2 opacity-70"
+          style="background-image: linear-gradient(rgba(15, 23, 42, 0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 23, 42, 0.055) 1px, transparent 1px); background-size: 28px 28px;"
+          aria-hidden="true"
+        >
+        </div>
+        <div
+          class="relative mb-5 flex items-start justify-between text-left font-mono text-[10px] leading-4 text-neutral-400"
+        >
+          <div>
+            <p>$ whoami</p>
+            <p>&gt; yuanbo</p>
+            <p>$ status</p>
+            <p>&gt; building cool things</p>
+          </div>
+          <div
+            class="flex items-center gap-1.5 text-[9px] uppercase text-neutral-500"
+          >
+            <span>SYSTEM OK</span>
+            <span class="h-1.5 w-1.5 rounded-full bg-[#0052D9]"></span>
+          </div>
+        </div>
+
+        <div class="relative">
+          <h1 id="bo-countdown-title" class="text-xl font-medium sm:text-2xl">
+            距离博哥退休还有
+          </h1>
+          <div class="mt-4">
+            <slot />
+          </div>
+        </div>
+      </section>
+
+      <div
+        class="grid divide-y divide-neutral-950/10 md:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] md:divide-y-0 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,28rem)]"
+      >
+        <section
+          aria-labelledby="bo-lighthouse-news"
+          class="px-3 py-4 md:border-r md:border-neutral-950/10 md:pb-5"
+        >
+          <div>
+            <h2
+              id="bo-lighthouse-news"
+              class="flex items-center gap-3 text-base font-semibold text-neutral-950"
+            >
+              <span class="font-mono text-xs text-[#0052D9]">▹</span>
+              动态
+            </h2>
+          </div>
+
+          <ul class="mt-3 space-y-2.5">
+            {
+              activities.map((activity, index) => (
+                <li>
+                  <a
+                    class="group grid grid-cols-[auto_1fr_auto] items-start gap-3 text-sm leading-5 text-neutral-800 underline-offset-4 hover:text-neutral-950 hover:underline"
+                    href={activity.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span class="font-mono text-xs text-[#0052D9]">›</span>
+                    <span>{activity.summary || activity.title}</span>
+                    <span class="hidden font-mono text-[11px] text-neutral-500 transition-colors group-hover:text-[#0052D9] sm:inline">
+                      {activityMeta[index] ?? '[ 动态 ]'}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <div class="divide-y divide-neutral-950/10">
+          <section aria-labelledby="bo-peripherals" class="px-3 py-4 md:pb-5">
+            <div>
+              <h2
+                id="bo-peripherals"
+                class="flex items-center gap-3 text-base font-semibold text-neutral-950"
+              >
+                <span class="font-mono text-xs text-[#0052D9]">▹</span>
+                周边
+              </h2>
+            </div>
+
+            <a
+              class="group mt-3 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 text-sm text-neutral-800 underline-offset-4 hover:text-neutral-950 hover:underline"
+              href="https://yuanbo.online/dagezi"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span class="font-mono text-xs text-[#0052D9]">›</span>
+              <span>
+                <span class="block">合成大鸽子</span>
+                <span class="mt-1 block text-xs text-neutral-500">
+                  合成大鸽子，成就大鸽皇。
+                </span>
+              </span>
+              <span class="font-mono text-[11px] text-[#0052D9]"
+                >[ 当前 1 个 ]</span
+              >
+            </a>
+          </section>
+
+          <section aria-labelledby="bo-fans" class="px-3 py-4 md:pb-5">
+            <div class="flex items-center justify-between gap-4">
+              <h2
+                id="bo-fans"
+                class="flex items-center gap-3 text-base font-semibold text-neutral-950"
+              >
+                <span class="font-mono text-xs text-[#0052D9]">▹</span>
+                Fans
+              </h2>
+            </div>
+
+            <a
+              class="group mt-3 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 text-sm text-neutral-800 underline-offset-4 hover:text-neutral-950 hover:underline"
+              href="../reckful"
+            >
+              <span class="font-mono text-xs text-[#0052D9]">›</span>
+              <span>
+                <span class="block">Reckful</span>
+                <span class="mt-1 block text-xs text-neutral-500">
+                  早期伙伴 · 资深粉丝
+                </span>
+              </span>
+              <span
+                class="font-mono text-lg text-neutral-400 transition-colors group-hover:text-[#0052D9]"
+              >
+                →
+              </span>
+            </a>
+          </section>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-neutral-950/10 px-3 py-3 font-mono text-[10px] text-neutral-400"
+      >
+        $ keep shipping
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,8 +1,9 @@
 ---
 import '@mono/config-tailwind/global.css';
+import { tuixiu } from '@mono/const';
 import Layout from '../layouts/Layout.astro';
-import Tuixiu from '../components/tuixiu/reckful';
-import Dynamic from '../components/tuixiu/reckful/dynamic';
+import Tuixiu from '../components/tuixiu/reckful/index.astro';
+import Countdown from '../components/tuixiu/countdown.astro';
 ---
 
 <Layout
@@ -10,6 +11,13 @@ import Dynamic from '../components/tuixiu/reckful/dynamic';
   description="Reckful reckful reckful reckzhang 洛克王国 洛克王国世界 魔方 腾讯 退休"
 >
   <Tuixiu>
-    <Dynamic client:only="react" />
+    <Countdown
+      targetMs={tuixiu.reckfulTuiXiuDay.valueOf()}
+      secondaryTargetMs={tuixiu.reckfulChangQiFuWu.valueOf()}
+      secondaryPrefix="距离获得"
+      secondaryHighlight="长期服务假"
+      secondarySuffix="还有"
+      copyTemplate="道路是曲折的，前途是光明的，虽然张某人还有 {countdown} 就退休了，但忠诚和奋斗是终身的！"
+    />
   </Tuixiu>
 </Layout>

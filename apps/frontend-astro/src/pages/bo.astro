@@ -1,8 +1,9 @@
 ---
 import '@mono/config-tailwind/global.css';
+import { tuixiu } from '@mono/const';
 import Layout from '../layouts/Layout.astro';
-import Tuixiu from '../components/tuixiu/bo/index.tsx';
-import TuixiuDynamic from '../components/tuixiu/bo/dynamic.tsx';
+import Tuixiu from '../components/tuixiu/bo/index.astro';
+import Countdown from '../components/tuixiu/countdown.astro';
 ---
 
 <Layout
@@ -10,6 +11,12 @@ import TuixiuDynamic from '../components/tuixiu/bo/dynamic.tsx';
   description="距离腾讯云核心产品经理袁博（boyuan）退休还有多少时间？腾讯云lighthouse和DNSPod又该何去何从，让我们拭目以待。"
 >
   <Tuixiu>
-    <TuixiuDynamic client:only="react" />
+    <Countdown
+      targetMs={tuixiu.boTuiXiuDay.valueOf()}
+      copyTemplate="普大喜奔，距离博哥退休还有{countdown}，转发到五个群再看你的头像，是真的！"
+      footerLeftText="AI焕新"
+      footerRightText="智启新局"
+      variant="command"
+    />
   </Tuixiu>
 </Layout>

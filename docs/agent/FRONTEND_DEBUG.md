@@ -1,0 +1,61 @@
+# Agent Frontend Debug Workflow
+
+Use this when changing or debugging admin, Astro, or browser-rendered UI.
+
+## Preferred Flow
+
+1. Identify the app with `docs/agent/ROUTING.md`.
+2. Start the relevant dev server.
+3. Open the local URL with Browser Use when available.
+4. Check rendered state, console errors, network failures, and responsive layout.
+5. If the verification needs to be repeated, write a small Playwright script.
+
+Local frontend debugging is autonomous work. Do not ask the user before starting/stopping local dev servers, checking ports, opening `localhost` / `127.0.0.1`, reading console logs, taking screenshots, or running local `curl -I` checks.
+
+## Local Targets
+
+| App        | Command                               | URL                               |
+| ---------- | ------------------------------------- | --------------------------------- |
+| Admin Next | `pnpm -C apps/front-next-admin dev`   | `http://localhost:3001/rpg/admin` |
+| Astro      | `pnpm -C apps/frontend-astro dev`     | `http://localhost:4321`           |
+| Backend    | `pnpm -C apps/backend-nest start:dev` | `http://localhost:3000`           |
+
+## Astro Static Data
+
+- `/bo` renders Lighthouse activity links from `apps/frontend-astro/src/data/lighthouse-activities.json`.
+- Refresh the data with `pnpm update:lighthouse-news` before build-only checks when the task touches the news/activity section.
+- The refresh script only performs public read requests to Tencent Cloud and should not submit forms or call console APIs.
+- The refresh script should prioritize product capability signals such as AI Agent, one-click deployment, public beta, product experience, and best practices over generic pricing promotions.
+- Astro dev/preview responses set `Cache-Control: no-store` to avoid stale Vite chunks in external Chrome during iterative UI work.
+
+## Admin Production API Hazard
+
+`apps/front-next-admin/next.config.ts` currently rewrites `/api/:path*` to:
+
+`https://yuanbo.online/rpg/bofans/:path*`
+
+Because of this:
+
+- Do not perform admin UI actions that create, update, approve, reject, upload, or delete real data unless the user explicitly approves.
+- Read-only page loading and screenshot checks are okay.
+- For write-flow testing, prefer mocking, a local backend rewrite, or a test environment in a separate approved change.
+
+## Browser Use Checklist
+
+- Navigate to the relevant route.
+- Wait for the page to settle.
+- Inspect visible UI state and console.
+- Capture a screenshot when visual layout matters.
+- Try keyboard navigation for changed controls.
+- Report anything blocked by auth or production API safety.
+- Keep dev servers under agent control and stop any server started for verification before finishing, unless the user explicitly wants it left running.
+
+## Playwright Pattern
+
+Use Playwright when the workflow should be repeatable:
+
+- Wait for `networkidle` before DOM inspection on dynamic pages.
+- Discover selectors from rendered output before acting.
+- Prefer role/text selectors when possible.
+- Keep scripts focused on the changed behavior.
+- Close browsers and stop servers after verification.
