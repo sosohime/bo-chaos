@@ -1,0 +1,14 @@
+<svg width="640" height="360" viewBox="0 0 640 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="640" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1D4ED8"/>
+      <stop offset="1" stop-color="#22C55E"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="24" fill="url(#g)"/>
+  <circle cx="112" cy="96" r="36" fill="white" fill-opacity="0.3"/>
+  <rect x="176" y="76" width="320" height="28" rx="14" fill="white" fill-opacity="0.85"/>
+  <rect x="176" y="120" width="220" height="20" rx="10" fill="white" fill-opacity="0.65"/>
+  <rect x="64" y="188" width="512" height="108" rx="16" fill="white" fill-opacity="0.2"/>
+  <text x="88" y="250" fill="white" font-size="28" font-family="Arial, sans-serif" font-weight="700">BoFans · image2</text>
+</svg>
