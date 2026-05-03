@@ -50,6 +50,19 @@ Because of this:
 - Report anything blocked by auth or production API safety.
 - Keep dev servers under agent control and stop any server started for verification before finishing, unless the user explicitly wants it left running.
 
+## Visual Fast Lane Checklist
+
+Use this checklist for repeated visual micro-iterations on one page or component:
+
+- Record the current route and viewport class, such as mobile, iPad, desktop, or the exact browser size when known.
+- Name the target region being changed and the frozen regions that must not change.
+- Keep text semantics and interactive behavior stable unless the user explicitly asks otherwise.
+- Check console after each local reload.
+- Use screenshots or DOM checks when alignment, overflow, copied text, or responsive behavior matters.
+- Defer full build and `pnpm agent:lint` until the user accepts the visual result, scope changes, or the turn ends.
+
+Exit Visual Fast Lane if the change touches behavior, data fetching, routing, cache settings, package/config files, copy logic, shared components, or multiple apps.
+
 ## Playwright Pattern
 
 Use Playwright when the workflow should be repeatable:

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -45,6 +45,21 @@ function addIssue(level, id, description, what, fix, ref) {
 
 function readLines(file) {
   return readFileSync(rel(file), 'utf8').split(/\r?\n/);
+}
+
+function readText(file) {
+  return readFileSync(rel(file), 'utf8');
+}
+
+function taskFiles(dir) {
+  if (!existsSync(rel(dir))) {
+    return [];
+  }
+
+  return readdirSync(rel(dir), { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => `${dir}/${entry.name}`)
+    .sort();
 }
 
 function gitChangedFiles() {
@@ -127,6 +142,57 @@ for (const skill of requiredSkills) {
 const changed = gitChangedFiles();
 const changedSet = new Set(changed);
 const docsChanged = changed.filter((file) => file.startsWith('docs/agent/'));
+const activeTaskFiles = taskFiles('.agents/tasks/active');
+const archiveTaskBasenames = new Set(
+  taskFiles('.agents/tasks/archive').map((file) => path.basename(file)),
+);
+
+if (activeTaskFiles.length > 1) {
+  addIssue(
+    'WARNING',
+    'multiple-active-tasks',
+    `${activeTaskFiles.length} active task records are present.`,
+    'Multiple active records often mean repeated visual feedback is being split into many small tasks.',
+    'Merge related UI micro-iterations into one Visual Fast Lane record, or keep multiple records only when tasks are genuinely independent.',
+    'docs/agent/WORKFLOW.md',
+  );
+}
+
+for (const file of activeTaskFiles) {
+  const basename = path.basename(file);
+  if (archiveTaskBasenames.has(basename)) {
+    addIssue(
+      'ERROR',
+      'active-archive-duplicate',
+      `${basename} exists in both active and archive task directories.`,
+      'A completed task must not remain active after it has been archived.',
+      `Remove .agents/tasks/active/${basename} or move the unfinished work back out of archive.`,
+      'docs/agent/WORKFLOW.md',
+    );
+  }
+}
+
+const taskFilesNeedingMode = new Set([
+  ...activeTaskFiles,
+  ...changed.filter((file) => file.startsWith('.agents/tasks/') && file.endsWith('.md')),
+]);
+
+for (const file of [...taskFilesNeedingMode].sort()) {
+  if (!existsSync(rel(file))) {
+    continue;
+  }
+
+  if (!/^-\s*Mode:\s*(full|visual-fast-lane)\s*$/m.test(readText(file))) {
+    addIssue(
+      'WARNING',
+      'task-record-mode-missing',
+      `${file} does not declare a valid task mode.`,
+      'Task records need an explicit mode so agents can choose Full Task or Visual Fast Lane verification.',
+      'Add `- Mode: full` or `- Mode: visual-fast-lane` near the top of the task record.',
+      '.agents/templates/task-record.md',
+    );
+  }
+}
 
 function changedAny(prefix) {
   return changed.some((file) => file.startsWith(prefix));

@@ -59,7 +59,9 @@ Default to maximum autonomy for normal engineering work:
 ## Task Records
 
 - For non-trivial work, create a task record from `.agents/templates/task-record.md` in `.agents/tasks/active/`.
+- Use `Mode: full` by default; use `Mode: visual-fast-lane` only for repeated same-page visual micro-iterations.
 - Record actions, decisions, verification evidence, and acceptance boundaries as work progresses.
+- In Visual Fast Lane, batch CSS/layout feedback into one record and defer full build/lint until acceptance or scope change.
 - Move completed, handed-off, or blocked records to `.agents/tasks/archive/` before the final response.
 
 ## Local Skills

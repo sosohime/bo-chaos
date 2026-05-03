@@ -23,7 +23,10 @@ Use this file to choose checks for a change. Prefer narrow checks that prove the
 | Admin UI                   | `pnpm -C apps/front-next-admin build` when feasible            | Browser Use / Playwright local verification                             |
 | Taro mini app              | `pnpm -C apps/miniapp-taro build:weapp` when feasible          | manual WeChat devtools verification noted as not run                    |
 | Astro UI                   | `pnpm -C apps/frontend-astro build`                            | browser verification                                                    |
+| Visual Fast Lane UI polish | during iteration: Browser Use plus console inspection          | final acceptance: relevant build plus `pnpm agent:lint`                 |
 | VS Code extension          | `pnpm -C apps/bo-retire-vsc-extension compile`                 | extension tests if environment supports them                            |
+
+Visual Fast Lane is only for visual micro-iterations in one page or component. Do not use it for behavior, data, routing, scripts, dependencies, package/config files, cache policy, copy-to-clipboard behavior, shared components, or deployment-related changes.
 
 ## Browser Verification
 
@@ -40,6 +43,7 @@ For admin, avoid write actions against production data because local `/api` rewr
 Before final response:
 
 - Active task record captures actions, acceptance boundaries, and verification evidence.
+- Visual Fast Lane tasks capture intermediate browser checks and deferred final verification in one record.
 - Relevant docs/skills are updated or explicitly unaffected.
 - `pnpm agent:lint` ran or the reason it could not run is stated.
 - Relevant tests/builds/browser checks ran or are listed as not run.
