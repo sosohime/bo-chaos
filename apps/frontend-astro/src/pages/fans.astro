@@ -1,0 +1,21 @@
+---
+import '@mono/config-tailwind/global.css';
+import Layout from '../layouts/Layout.astro';
+import image2 from '../assets/image2.svg';
+---
+
+<Layout title="BoFans 页面" description="BoFans 退休成员简介与 image2 示例图。">
+  <main
+    class="mx-auto mt-10 max-w-3xl rounded-2xl bg-white/70 p-6 shadow-lg backdrop-blur"
+  >
+    <h1 class="mb-4 text-2xl font-bold">BoFans</h1>
+    <p class="mb-4 text-slate-700">
+      这是一个简洁的 fans 页面：姚金龟（已退休），先放一张 image2 示意图。
+    </p>
+    <img
+      src={image2.src}
+      alt="image2 示例图"
+      class="w-full rounded-xl border border-slate-200"
+    />
+  </main>
+</Layout>
