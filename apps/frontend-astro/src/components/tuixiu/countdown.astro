@@ -143,6 +143,11 @@ const buttonClass = isCommand
               <rect x="8" y="8" width="10" height="10" rx="1.5" />
               <path d="M6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
             </svg>
+            <span
+              class="bo-copy-loading-icon"
+              data-copy-loading-icon
+              aria-hidden="true"
+            />
             <span data-copy-countdown-label>复制文案</span>
           </button>
         </div>
@@ -172,6 +177,11 @@ const buttonClass = isCommand
     !isCommand && (
       <div class={buttonWrapClass}>
         <button class={buttonClass} type="button" data-copy-countdown>
+          <span
+            class="bo-copy-loading-icon"
+            data-copy-loading-icon
+            aria-hidden="true"
+          />
           <span data-copy-countdown-label>复制倒计时</span>
         </button>
       </div>
@@ -180,6 +190,22 @@ const buttonClass = isCommand
 </div>
 
 <style>
+  .bo-copy-loading-icon {
+    display: none;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 9999px;
+    border: 1.5px solid currentColor;
+    border-right-color: transparent;
+    animation: bo-copy-spin 0.7s linear infinite;
+  }
+
+  @keyframes bo-copy-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   .bo-command-slogan {
     position: relative;
     letter-spacing: 0;
@@ -430,6 +456,9 @@ const buttonClass = isCommand
     const copyButtonLabel = root.querySelector<HTMLElement>(
       '[data-copy-countdown-label]',
     );
+    const copyLoadingIcon = root.querySelector<HTMLElement>(
+      '[data-copy-loading-icon]',
+    );
 
     function render() {
       const countDown = getCountDown(targetMs);
@@ -489,7 +518,10 @@ const buttonClass = isCommand
       const loadingSeconds = randomInt(2, 5);
 
       try {
-        setButtonText(`AI生成中 ${loadingSeconds}s...`);
+        if (copyLoadingIcon) {
+          copyLoadingIcon.style.display = 'inline-block';
+        }
+        setButtonText('AI生成中...');
         await sleep(loadingSeconds * 1000);
         const selectedTemplate = pickCopyTemplate(copyTemplate);
         await copyText(selectedTemplate.replace('{countdown}', countDown.main));
@@ -499,6 +531,9 @@ const buttonClass = isCommand
       } finally {
         window.setTimeout(() => {
           setButtonText(originalText);
+          if (copyLoadingIcon) {
+            copyLoadingIcon.style.display = 'none';
+          }
           copyButton.disabled = false;
         }, 1500);
       }
