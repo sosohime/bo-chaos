@@ -143,6 +143,11 @@ const buttonClass = isCommand
               <rect x="8" y="8" width="10" height="10" rx="1.5" />
               <path d="M6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
             </svg>
+            <span
+              class="bo-copy-loading-icon"
+              data-copy-loading-icon
+              aria-hidden="true"
+            />
             <span data-copy-countdown-label>复制文案</span>
           </button>
         </div>
@@ -172,6 +177,11 @@ const buttonClass = isCommand
     !isCommand && (
       <div class={buttonWrapClass}>
         <button class={buttonClass} type="button" data-copy-countdown>
+          <span
+            class="bo-copy-loading-icon"
+            data-copy-loading-icon
+            aria-hidden="true"
+          />
           <span data-copy-countdown-label>复制倒计时</span>
         </button>
       </div>
@@ -180,6 +190,22 @@ const buttonClass = isCommand
 </div>
 
 <style>
+  .bo-copy-loading-icon {
+    display: none;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 9999px;
+    border: 1.5px solid currentColor;
+    border-right-color: transparent;
+    animation: bo-copy-spin 0.7s linear infinite;
+  }
+
+  @keyframes bo-copy-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   .bo-command-slogan {
     position: relative;
     letter-spacing: 0;
@@ -315,6 +341,78 @@ const buttonClass = isCommand
     }
   }
 
+  const aiCopyTemplates = [
+    '最新进度：距离博哥退休还有{countdown}，请各单位知悉。',
+    '系统播报：博哥退休倒计时{countdown}，情绪稳定，继续观测。',
+    '今日份好消息：博哥距离退休仅剩{countdown}。',
+    '不传谣不信谣，只传一个真相：博哥还有{countdown}就退休。',
+    '据不完全统计，博哥退休还差{countdown}。',
+    '温馨提示：博哥退休倒计时{countdown}，建议提前庆祝。',
+    '你离下班还有几小时？博哥离退休还有{countdown}。',
+    '头条快讯：博哥退休进入T-{countdown}阶段。',
+    '知识点：博哥退休时间剩余{countdown}，请背诵全文。',
+    '今天也要告诉你：博哥退休还剩{countdown}。',
+    '打工人日报：博哥退休倒计时{countdown}，我们继续上班。',
+    '高能预警：博哥退休还有{countdown}，请保持期待。',
+    '经AI推演，博哥退休剩余时间为{countdown}。',
+    '天空一声巨响，博哥退休倒计时{countdown}登场。',
+    '来自未来的消息：博哥还有{countdown}退休。',
+    '一键同步：博哥退休倒计时已更新为{countdown}。',
+    '认真脸播报：博哥退休进度条还剩{countdown}。',
+    '小道消息转正：博哥退休还有{countdown}。',
+    '群公告：距离博哥退休还有{countdown}，收到请回复1。',
+    '摸鱼提醒：博哥退休倒计时{countdown}，继续保持。',
+    '今日宜转发：博哥还有{countdown}退休。',
+    '事实核查通过：博哥退休还差{countdown}。',
+    '项目里程碑：博哥退休节点剩余{countdown}。',
+    '别急，博哥退休还要{countdown}，但真的快了。',
+    '经过严谨计算，博哥退休倒计时是{countdown}。',
+    '给你一个微笑，再给你一个数字：{countdown}。',
+    '最新战报：博哥退休剩余{countdown}，优势在我。',
+    '播报完毕：博哥退休还有{countdown}，明天再报。',
+    '转发这条，博哥退休进度+1（实际还剩{countdown}）。',
+    '今日份电子木鱼：博哥退休倒计时{countdown}。',
+    '信我，博哥退休真的只剩{countdown}。',
+    '快乐源泉：博哥离退休还有{countdown}。',
+    '时间管理大师说：博哥退休倒计时{countdown}。',
+    '你负责努力，我负责提醒：博哥还有{countdown}退休。',
+    '友情提示：博哥退休剩余{countdown}，可喜可贺。',
+    '请查收：博哥退休实时进度{countdown}。',
+    '这不是演习：博哥退休倒计时{countdown}。',
+    '新鲜出炉：博哥退休还剩{countdown}。',
+    '宇宙级真相：博哥退休进入{countdown}倒计时。',
+    '赛博锣鼓已敲响：博哥退休还有{countdown}。',
+    '再说一遍：博哥退休剩余{countdown}。',
+    '叮咚，您的退休提醒已送达：{countdown}。',
+    '把期待拉满：博哥退休倒计时{countdown}。',
+    'AI日报：博哥退休时间窗口剩余{countdown}。',
+    '进度可视化结果：博哥退休还需{countdown}。',
+    '心情指数上涨，因为博哥退休还有{countdown}。',
+    '今日关键词：退休、博哥、{countdown}。',
+    '路过的朋友请记住：博哥退休倒计时{countdown}。',
+    '终端输出：bo.retire = {countdown};',
+    '最后通知（今天版）：博哥退休还剩{countdown}。',
+  ] as const;
+
+  function randomInt(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function pickCopyTemplate(defaultTemplate: string) {
+    if (aiCopyTemplates.length === 0) {
+      return defaultTemplate;
+    }
+
+    const index = randomInt(0, aiCopyTemplates.length - 1);
+    return aiCopyTemplates[index] ?? defaultTemplate;
+  }
+
+  function sleep(ms: number) {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
+  }
+
   async function copyText(text: string) {
     try {
       copyTextBySelection(text);
@@ -358,6 +456,9 @@ const buttonClass = isCommand
     const copyButtonLabel = root.querySelector<HTMLElement>(
       '[data-copy-countdown-label]',
     );
+    const copyLoadingIcon = root.querySelector<HTMLElement>(
+      '[data-copy-loading-icon]',
+    );
 
     function render() {
       const countDown = getCountDown(targetMs);
@@ -397,6 +498,10 @@ const buttonClass = isCommand
     const timer = window.setInterval(render, 16);
 
     copyButton?.addEventListener('click', async () => {
+      if (copyButton.disabled) {
+        return;
+      }
+
       const countDown = render();
       const originalText =
         copyButtonLabel?.textContent ?? copyButton.textContent ?? '复制倒计时';
@@ -409,14 +514,27 @@ const buttonClass = isCommand
         copyButton.textContent = text;
       };
 
+      copyButton.disabled = true;
+      const loadingSeconds = randomInt(2, 5);
+
       try {
-        await copyText(copyTemplate.replace('{countdown}', countDown.main));
+        if (copyLoadingIcon) {
+          copyLoadingIcon.style.display = 'inline-block';
+        }
+        setButtonText('AI生成中...');
+        await sleep(loadingSeconds * 1000);
+        const selectedTemplate = pickCopyTemplate(copyTemplate);
+        await copyText(selectedTemplate.replace('{countdown}', countDown.main));
         setButtonText('已复制');
       } catch {
         setButtonText('复制失败');
       } finally {
         window.setTimeout(() => {
           setButtonText(originalText);
+          if (copyLoadingIcon) {
+            copyLoadingIcon.style.display = 'none';
+          }
+          copyButton.disabled = false;
         }, 1500);
       }
     });
