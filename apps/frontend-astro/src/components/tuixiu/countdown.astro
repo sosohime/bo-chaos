@@ -8,7 +8,7 @@ interface Props {
   secondarySuffix?: string;
   footerLeftText?: string;
   footerRightText?: string;
-  variant?: 'default' | 'command';
+  variant?: 'default' | 'command' | 'map';
 }
 
 const {
@@ -24,16 +24,19 @@ const {
 } = Astro.props;
 
 const isCommand = variant === 'command';
+const isMap = variant === 'map';
 const commandFooterLeftText = footerLeftText ?? 'AI焕新';
 const commandFooterRightText = footerRightText ?? '智启新局';
 const commandFooterText = `${commandFooterLeftText} · ${commandFooterRightText}`;
-const mainClass = isCommand ? 'sr-only' : 'pb-4 text-4xl';
-const millisecondsClass = isCommand ? 'sr-only' : 'pl-1 text-xl';
-const timezoneClass = isCommand ? 'sr-only' : 'scale-50 pb-4 text-xs';
-const buttonWrapClass = 'pb-4';
+const mainClass = isCommand || isMap ? 'sr-only' : 'pb-4 text-4xl';
+const millisecondsClass = isCommand || isMap ? 'sr-only' : 'pl-1 text-xl';
+const timezoneClass = isCommand || isMap ? 'sr-only' : 'scale-50 pb-4 text-xs';
+const buttonWrapClass = isMap ? 'retire-countdown-map-copy-wrap' : 'pb-4';
 const buttonClass = isCommand
   ? 'inline-flex h-7 items-center justify-center justify-self-end gap-1.5 whitespace-nowrap border border-[#0052D9]/25 bg-white/75 px-2.5 font-mono text-[11px] text-neutral-500 transition-colors hover:border-[#0052D9]/45 hover:text-neutral-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0052D9] focus-visible:ring-offset-2'
-  : 'inline-flex h-9 items-center justify-center rounded-md border border-neutral-200 bg-white/70 px-3 text-xs font-medium text-neutral-900 ring-offset-background transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2';
+  : isMap
+    ? 'retire-countdown-map-copy'
+    : 'inline-flex h-9 items-center justify-center rounded-md border border-neutral-200 bg-white/70 px-3 text-xs font-medium text-neutral-900 ring-offset-background transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2';
 ---
 
 <div
@@ -145,6 +148,33 @@ const buttonClass = isCommand
             </svg>
             <span data-copy-countdown-label>复制文案</span>
           </button>
+        </div>
+      </div>
+    ) : isMap ? (
+      <div class="retire-countdown-map" aria-label="退休倒计时">
+        <p class="sr-only">
+          <span data-countdown-main />
+        </p>
+        <div class="retire-countdown-map-grid">
+          <span class="retire-countdown-map-days">
+            <span data-countdown-days />
+            <span class="retire-countdown-map-unit">天</span>
+          </span>
+          <span class="retire-countdown-map-clock">
+            <span data-countdown-hours />
+            <span>:</span>
+            <span data-countdown-minutes />
+            <span>:</span>
+            <span data-countdown-seconds />
+            <span class="retire-countdown-map-ms">
+              .<span data-countdown-milliseconds />
+            </span>
+          </span>
+          <span class="retire-countdown-map-labels" aria-hidden="true">
+            <span>时</span>
+            <span>分</span>
+            <span>秒</span>
+          </span>
         </div>
       </div>
     ) : (

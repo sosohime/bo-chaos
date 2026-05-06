@@ -1,33 +1,1308 @@
 ---
+import companionImage from '../../../assets/reckful/companion-v2.png';
+import heroImage from '../../../assets/reckful/open-world-hero-v2.png';
 
+const welfareUrl = 'https://rocom.qq.com/cp/a20260303welfare/';
+
+const tasks = [
+  ['每日补给', '保持节奏，稳步前进', '已完成'],
+  ['地图探索', '点亮更多区域', '12 / 20'],
+  ['星光收集', '积累旅途能量', '236 / 500'],
+  ['王国建设', '让世界更稳定', '进行中'],
+];
+
+const stats = [
+  ['60 FPS', '帧率稳定'],
+  ['16.6 ms', '平均帧耗时'],
+  ['98.7%', '资源加载'],
+  ['256', '活跃对象'],
+];
+
+const routeNodes = [
+  ['当前区域', '在线', 'start'],
+  ['补给航点', '加速中', 'supply'],
+  ['目标航点', '2034.07', 'goal'],
+];
 ---
 
-<div
-  class="flex min-h-screen w-full items-center justify-center px-6 py-12 text-center text-neutral-950"
->
-  <main class="w-full max-w-2xl">
-    <h1 class="pb-4 text-2xl font-normal">距离Reckful退休还有</h1>
-    <slot />
+<div class="reckful-page">
+  <main class="reckful-shell" aria-labelledby="reckful-countdown-title">
+    <section class="reckful-hero" aria-label="开放世界进度地图">
+      <img
+        class="reckful-hero-bg"
+        src={heroImage.src}
+        width={heroImage.width}
+        height={heroImage.height}
+        alt=""
+        loading="eager"
+      />
+      <div class="reckful-hero-wash" aria-hidden="true"></div>
 
-    <nav
-      class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-neutral-700"
-    >
-      <a
-        class="inline-flex items-center gap-1 underline-offset-4 hover:text-neutral-950 hover:underline"
-        href="https://rocom.qq.com/"
-        target="_blank"
-        rel="noreferrer"
+      <div class="reckful-hero-grid">
+        <section class="reckful-mission" aria-label="退休进度">
+          <p class="reckful-kicker">
+            <span aria-hidden="true"></span>
+            开放世界进度地图
+          </p>
+
+          <header class="reckful-title">
+            <h1 id="reckful-countdown-title">Reckful 的<br />退休进度</h1>
+            <p>长期服务假</p>
+          </header>
+
+          <aside class="reckful-objective" aria-label="退休倒计时">
+            <div class="reckful-objective-head">
+              <span aria-hidden="true"></span>
+              <strong>距离退休还有</strong>
+              <span aria-hidden="true"></span>
+            </div>
+            <slot />
+          </aside>
+
+          <div class="reckful-actions" aria-label="页面操作">
+            <a
+              class="reckful-primary"
+              href={welfareUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span>充值加速退休进度</span>
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M5 12h13"></path>
+                <path d="m13 6 6 6-6 6"></path>
+              </svg>
+            </a>
+            <a class="reckful-secondary" href="../bo">
+              <span>返回袁博</span>
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M19 12H6"></path>
+                <path d="m12 6-6 6 6 6"></path>
+              </svg>
+            </a>
+          </div>
+        </section>
+
+        <section class="reckful-route" aria-label="旅途航线">
+          <svg
+            class="reckful-path"
+            aria-hidden="true"
+            viewBox="0 0 720 520"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M92 430 C 172 346, 210 327, 278 296 S 363 207, 437 190 S 538 126, 645 64"
+            ></path>
+          </svg>
+
+          {
+            routeNodes.map(([label, value, tone]) => (
+              <article class={`reckful-node reckful-node-${tone}`}>
+                <i aria-hidden="true" />
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </article>
+            ))
+          }
+
+          <img
+            class="reckful-companion"
+            src={companionImage.src}
+            width={companionImage.width}
+            height={companionImage.height}
+            alt=""
+            loading="eager"
+          />
+        </section>
+      </div>
+    </section>
+
+    <section class="reckful-dashboard" aria-label="旅途信息">
+      <section
+        class="reckful-panel reckful-tasks"
+        aria-labelledby="reckful-tasks-title"
       >
-        充值加速退休进度
-        <span aria-hidden="true">↗</span>
-      </a>
-      <a
-        class="inline-flex items-center gap-1 underline-offset-4 hover:text-neutral-950 hover:underline"
-        href="../bo"
+        <header>
+          <h2 id="reckful-tasks-title">旅途任务</h2>
+          <span>04</span>
+        </header>
+        <div class="reckful-task-grid">
+          {
+            tasks.map(([title, desc, value], index) => (
+              <article>
+                <i aria-hidden="true">{index + 1}</i>
+                <strong>{title}</strong>
+                <p>{desc}</p>
+                <em>{value}</em>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section
+        class="reckful-panel reckful-status"
+        aria-labelledby="reckful-status-title"
       >
-        返回袁博
-        <span aria-hidden="true">↔</span>
-      </a>
-    </nav>
+        <header>
+          <h2 id="reckful-status-title">世界运行状态</h2>
+          <span>LIVE</span>
+        </header>
+        <div class="reckful-stat-grid">
+          {
+            stats.map(([value, label]) => (
+              <article>
+                <strong>{value}</strong>
+                <span>{label}</span>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+    </section>
   </main>
 </div>
+
+<style>
+  .reckful-page {
+    --ink: #10295a;
+    --muted: #526b91;
+    --blue: #2d72de;
+    --line: rgb(39 86 150 / 22%);
+    --gold: #f6c14d;
+    min-height: 100svh;
+    overflow-x: hidden;
+    background: radial-gradient(
+        circle at 13% 8%,
+        rgb(255 255 255 / 92%),
+        transparent 20rem
+      ),
+      radial-gradient(
+        circle at 86% 7%,
+        rgb(255 235 176 / 34%),
+        transparent 18rem
+      ),
+      linear-gradient(180deg, #edf8ff 0%, #f8fcff 48%, #e7f4ff 100%);
+    color: var(--ink);
+  }
+
+  .reckful-shell {
+    display: grid;
+    gap: clamp(0.75rem, 1.4vw, 1.1rem);
+    width: min(100%, 94rem);
+    margin: 0 auto;
+    padding: clamp(0.75rem, 1.4vw, 1.2rem);
+  }
+
+  .reckful-hero {
+    position: relative;
+    min-height: min(52rem, calc(100svh - clamp(1.5rem, 2.8vw, 2.4rem)));
+    overflow: hidden;
+    border: 1px solid rgb(45 90 149 / 24%);
+    border-radius: 10px;
+    background: #b8e7ff;
+    box-shadow: 0 28px 80px rgb(22 81 142 / 20%);
+    isolation: isolate;
+  }
+
+  .reckful-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 58% 48%;
+  }
+
+  .reckful-hero-wash {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: linear-gradient(
+        90deg,
+        rgb(239 249 255 / 92%) 0%,
+        rgb(239 249 255 / 66%) 34%,
+        rgb(239 249 255 / 10%) 63%,
+        transparent 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgb(255 255 255 / 10%) 0%,
+        transparent 56%,
+        rgb(7 67 108 / 18%) 100%
+      );
+    pointer-events: none;
+  }
+
+  .reckful-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(20rem, 34rem) minmax(28rem, 1fr);
+    min-height: inherit;
+    gap: clamp(1rem, 2.4vw, 2.25rem);
+    align-items: stretch;
+    padding: clamp(1.1rem, 3vw, 3.2rem);
+  }
+
+  .reckful-mission {
+    display: grid;
+    align-content: center;
+    max-width: 34rem;
+    min-width: 0;
+    padding-block: clamp(0.5rem, 3vh, 2rem);
+  }
+
+  .reckful-kicker {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0 0 clamp(1rem, 2vh, 1.5rem);
+    border: 1px solid rgb(45 105 183 / 18%);
+    background: rgb(255 255 255 / 72%);
+    padding: 0.66rem 0.9rem;
+    color: #2f6ed7;
+    font-size: clamp(0.82rem, 1.4vw, 1rem);
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    box-shadow: 0 10px 28px rgb(51 112 180 / 12%);
+  }
+
+  .reckful-kicker span {
+    width: 0.62rem;
+    aspect-ratio: 1;
+    border-radius: 999px;
+    background: #52c69a;
+    box-shadow: 0 0 0 0.34rem rgb(82 198 154 / 18%);
+  }
+
+  .reckful-title h1 {
+    margin: 0;
+    color: #10285b;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(4.25rem, 7vw, 7.25rem);
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 0.9;
+    text-shadow: 0 2px 0 rgb(255 255 255 / 62%);
+  }
+
+  .reckful-title p {
+    display: grid;
+    width: min(19rem, 74%);
+    min-height: 2.3rem;
+    margin: 1.2rem 0 0 1.6rem;
+    place-items: center;
+    clip-path: polygon(0 0, 100% 0, 94% 50%, 100% 100%, 0 100%, 6% 50%);
+    color: #354c72;
+    background: linear-gradient(180deg, #fff0cc, #e5c98e);
+    font-size: clamp(0.86rem, 1.45vw, 1.05rem);
+    font-weight: 950;
+    letter-spacing: 0.18em;
+    box-shadow: 0 2px 0 rgb(116 82 32 / 18%);
+  }
+
+  .reckful-objective {
+    position: relative;
+    margin-top: clamp(1.25rem, 2.8vh, 2rem);
+    padding: clamp(0.8rem, 1.7vw, 1.1rem);
+    clip-path: polygon(
+      3% 0,
+      97% 0,
+      100% 7%,
+      100% 93%,
+      97% 100%,
+      3% 100%,
+      0 93%,
+      0 7%
+    );
+    background: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 96%),
+      rgb(239 248 255 / 95%)
+    );
+    box-shadow:
+      0 0 0 1px rgb(38 87 151 / 26%),
+      0 18px 34px rgb(19 71 127 / 18%),
+      inset 0 0 0 2px rgb(255 255 255 / 86%);
+  }
+
+  .reckful-objective::after {
+    position: absolute;
+    inset: auto 1rem 0.4rem;
+    height: 0.22rem;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(50 112 196 / 25%),
+      transparent
+    );
+    content: '';
+    pointer-events: none;
+  }
+
+  .reckful-objective-head {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--muted);
+    font-size: clamp(0.72rem, 1.25vw, 0.86rem);
+    font-weight: 950;
+  }
+
+  .reckful-objective-head span {
+    height: 1px;
+    background: var(--line);
+  }
+
+  .reckful-objective :global([data-retire-countdown]) {
+    padding: 0.35rem 0.3rem 0.42rem;
+    text-align: center;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-grid) {
+    display: grid;
+    justify-items: center;
+    color: var(--ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      monospace;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-days) {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.16em;
+    font-size: clamp(4.25rem, 7.2vw, 6rem);
+    font-weight: 950;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-unit) {
+    font-size: 0.22em;
+    font-weight: 950;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-clock),
+  .reckful-objective :global(.retire-countdown-map-labels) {
+    display: inline-grid;
+    grid-template-columns: 2ch 0.45em 2ch 0.45em 2ch 1.45em;
+    justify-items: center;
+    color: #183b78;
+    font-size: clamp(1.55rem, 2.8vw, 2.2rem);
+    font-weight: 950;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-clock) {
+    align-items: baseline;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-ms) {
+    align-self: start;
+    color: #d77722;
+    font-size: 0.32em;
+    transform: translateY(0.24em);
+  }
+
+  .reckful-objective :global(.retire-countdown-map-labels) {
+    margin-top: 0.3rem;
+    color: var(--muted);
+  }
+
+  .reckful-objective :global(.retire-countdown-map-labels span) {
+    font-size: 0.34em;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-labels span:nth-child(1)) {
+    grid-column: 1;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-labels span:nth-child(2)) {
+    grid-column: 3;
+  }
+
+  .reckful-objective :global(.retire-countdown-map-labels span:nth-child(3)) {
+    grid-column: 5;
+  }
+
+  .reckful-objective :global(.pb-4:not(.text-4xl)),
+  .reckful-objective :global(.retire-countdown-map-copy-wrap) {
+    display: none;
+  }
+
+  .reckful-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(8.5rem, 0.38fr);
+    gap: 0.8rem;
+    margin-top: clamp(1rem, 2.2vh, 1.35rem);
+  }
+
+  .reckful-primary,
+  .reckful-secondary {
+    display: inline-flex;
+    min-height: 3.55rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border-radius: 999px;
+    padding: 0 1rem;
+    color: var(--ink);
+    font-size: clamp(0.9rem, 1.35vw, 1rem);
+    font-weight: 950;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .reckful-primary svg,
+  .reckful-secondary svg {
+    width: 1.08em;
+    height: 1.08em;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2.3;
+  }
+
+  .reckful-primary {
+    border: 1px solid rgb(172 106 13 / 24%);
+    background: linear-gradient(180deg, #ffe389, #f2bb3d);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 56%),
+      0 0.34rem 0 #c18a27,
+      0 0.9rem 1.3rem rgb(126 83 13 / 24%);
+  }
+
+  .reckful-secondary {
+    border: 1px solid rgb(31 69 121 / 24%);
+    background: linear-gradient(180deg, #fff, #edf5ff);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 72%),
+      0 0.28rem 0 #cdd9e8,
+      0 0.72rem 1.1rem rgb(31 69 121 / 10%);
+  }
+
+  .reckful-route {
+    position: relative;
+    min-height: 31rem;
+  }
+
+  .reckful-path {
+    position: absolute;
+    right: 4%;
+    bottom: 7%;
+    width: min(74%, 44rem);
+    height: min(76%, 34rem);
+    filter: drop-shadow(0 2px 2px rgb(31 72 110 / 20%));
+  }
+
+  .reckful-path path {
+    fill: none;
+    stroke: rgb(255 255 255 / 88%);
+    stroke-dasharray: 16 18;
+    stroke-linecap: round;
+    stroke-width: 10;
+  }
+
+  .reckful-node {
+    position: absolute;
+    display: grid;
+    grid-template-columns: 2.3rem auto;
+    min-width: 10.6rem;
+    column-gap: 0.72rem;
+    align-items: center;
+    border: 1px solid rgb(255 255 255 / 42%);
+    border-radius: 10px;
+    padding: 0.72rem 0.9rem;
+    color: #fff;
+    background: rgb(30 52 83 / 78%);
+    box-shadow: 0 16px 28px rgb(8 29 54 / 24%);
+  }
+
+  .reckful-node i {
+    grid-row: 1 / 3;
+    display: grid;
+    width: 2.25rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 0.26rem solid #f6c24d;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 0 0 0.18rem rgb(255 255 255 / 28%);
+  }
+
+  .reckful-node span,
+  .reckful-node strong {
+    min-width: 0;
+    line-height: 1.1;
+  }
+
+  .reckful-node span {
+    font-size: 0.84rem;
+    font-weight: 900;
+  }
+
+  .reckful-node strong {
+    font-size: 0.9rem;
+    font-weight: 950;
+  }
+
+  .reckful-node-start {
+    right: 49%;
+    bottom: 13%;
+  }
+
+  .reckful-node-supply {
+    right: 27%;
+    top: 47%;
+  }
+
+  .reckful-node-goal {
+    right: 7%;
+    top: 20%;
+  }
+
+  .reckful-companion {
+    position: absolute;
+    right: min(2vw, 1.2rem);
+    bottom: 2.5rem;
+    width: clamp(8rem, 15vw, 14.5rem);
+    height: auto;
+    filter: drop-shadow(0 18px 18px rgb(13 46 92 / 24%));
+  }
+
+  .reckful-dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 2.15fr) minmax(18rem, 0.85fr);
+    gap: clamp(0.75rem, 1.4vw, 1rem);
+  }
+
+  .reckful-panel {
+    overflow: hidden;
+    border: 1px solid rgb(41 82 137 / 24%);
+    border-radius: 10px;
+    background: linear-gradient(
+      180deg,
+      rgb(251 254 255 / 96%),
+      rgb(237 247 255 / 94%)
+    );
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 88%),
+      0 16px 38px rgb(38 83 135 / 12%);
+  }
+
+  .reckful-panel header {
+    display: flex;
+    min-height: 3.8rem;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding: 0 1.45rem;
+  }
+
+  .reckful-panel h2 {
+    margin: 0;
+    color: var(--ink);
+    font-size: 1.16rem;
+    font-weight: 950;
+    letter-spacing: 0;
+  }
+
+  .reckful-panel header span {
+    color: var(--blue);
+    font-size: 0.9rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+  }
+
+  .reckful-task-grid,
+  .reckful-stat-grid {
+    display: grid;
+  }
+
+  .reckful-task-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .reckful-task-grid article {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr;
+    grid-template-rows: auto auto 1fr;
+    min-height: 7.2rem;
+    column-gap: 0.72rem;
+    align-content: center;
+    border-right: 1px solid var(--line);
+    padding: 0.9rem 1rem;
+  }
+
+  .reckful-task-grid article:last-child {
+    border-right: 0;
+  }
+
+  .reckful-task-grid i {
+    grid-row: 1 / 4;
+    display: grid;
+    width: 2.4rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid rgb(39 103 164 / 18%);
+    border-radius: 12px;
+    color: #fff;
+    background: linear-gradient(145deg, #68d1e8, #2d72de);
+    font-size: 0.86rem;
+    font-style: normal;
+    font-weight: 950;
+  }
+
+  .reckful-task-grid strong {
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 950;
+  }
+
+  .reckful-task-grid p {
+    margin: 0.16rem 0 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .reckful-task-grid em {
+    align-self: end;
+    color: var(--blue);
+    font-size: 0.82rem;
+    font-style: normal;
+    font-weight: 950;
+  }
+
+  .reckful-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .reckful-stat-grid article {
+    display: grid;
+    min-height: 5.35rem;
+    place-items: center;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .reckful-stat-grid article:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .reckful-stat-grid article:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
+  .reckful-stat-grid strong {
+    color: var(--ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      monospace;
+    font-size: 1.35rem;
+    font-weight: 950;
+  }
+
+  .reckful-stat-grid span {
+    margin-top: -0.6rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 850;
+  }
+
+  @media (max-width: 1180px) {
+    .reckful-hero-grid {
+      grid-template-columns: minmax(19rem, 29rem) minmax(24rem, 1fr);
+      padding: 1.4rem;
+    }
+
+    .reckful-title h1 {
+      font-size: clamp(3.2rem, 5.7vw, 4rem);
+    }
+
+    .reckful-objective :global(.retire-countdown-map-days) {
+      font-size: clamp(3.35rem, 7vw, 4.4rem);
+    }
+
+    .reckful-actions {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (min-width: 900px) and (max-width: 1050px) {
+    .reckful-dashboard {
+      grid-template-columns: 1fr;
+    }
+
+    .reckful-task-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .reckful-task-grid article:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .reckful-task-grid article:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .reckful-stat-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .reckful-stat-grid article,
+    .reckful-stat-grid article:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .reckful-stat-grid article:nth-child(2n) {
+      border-right: 1px solid var(--line);
+    }
+
+    .reckful-stat-grid article:last-child {
+      border-right: 0;
+    }
+  }
+
+  @media (min-width: 900px) and (max-height: 760px) {
+    .reckful-shell {
+      padding: 0.75rem;
+    }
+
+    .reckful-hero {
+      min-height: calc(100svh - 1.5rem);
+    }
+
+    .reckful-hero-grid {
+      padding: clamp(1rem, 2vw, 1.55rem) clamp(1.5rem, 2.4vw, 2rem);
+    }
+
+    .reckful-kicker {
+      margin-bottom: 0.9rem;
+      padding: 0.52rem 0.72rem;
+    }
+
+    .reckful-title h1 {
+      font-size: clamp(3.6rem, 5.7vw, 5.45rem);
+    }
+
+    .reckful-title p {
+      min-height: 2rem;
+      margin-top: 0.82rem;
+    }
+
+    .reckful-objective {
+      margin-top: 1rem;
+      padding: 0.68rem 0.82rem 0.82rem;
+    }
+
+    .reckful-objective :global([data-retire-countdown]) {
+      padding-top: 0.16rem;
+      padding-bottom: 0.2rem;
+    }
+
+    .reckful-objective :global(.retire-countdown-map-days) {
+      font-size: clamp(3.3rem, 5.5vw, 4.35rem);
+    }
+
+    .reckful-objective :global(.retire-countdown-map-clock),
+    .reckful-objective :global(.retire-countdown-map-labels) {
+      font-size: clamp(1.28rem, 2.2vw, 1.7rem);
+    }
+
+    .reckful-actions {
+      margin-top: 0.82rem;
+    }
+
+    .reckful-primary,
+    .reckful-secondary {
+      min-height: 3rem;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .reckful-shell {
+      width: 100%;
+      padding: 0.45rem;
+      gap: 0;
+    }
+
+    .reckful-hero {
+      min-height: auto;
+      border: 1px solid rgb(31 89 137 / 34%);
+      border-radius: 10px 10px 0 0;
+      box-shadow: none;
+    }
+
+    .reckful-hero-bg {
+      height: 100%;
+      object-position: 64% 0%;
+    }
+
+    .reckful-hero-wash {
+      background: linear-gradient(
+          180deg,
+          rgb(238 249 255 / 92%) 0%,
+          rgb(238 249 255 / 70%) 28%,
+          rgb(238 249 255 / 10%) 52%,
+          rgb(236 247 255 / 42%) 100%
+        ),
+        linear-gradient(90deg, rgb(238 249 255 / 74%) 0%, transparent 72%);
+    }
+
+    .reckful-hero-grid {
+      display: flex;
+      min-height: 0;
+      flex-direction: column;
+      gap: 0.82rem;
+      padding: 1.9rem 0.62rem 0.62rem;
+    }
+
+    .reckful-mission {
+      display: contents;
+    }
+
+    .reckful-kicker {
+      display: none;
+    }
+
+    .reckful-title {
+      order: 2;
+      padding-top: 0.1rem;
+      text-align: center;
+    }
+
+    .reckful-title h1 {
+      font-size: clamp(2.2rem, 11.8vw, 3rem);
+      line-height: 0.9;
+    }
+
+    .reckful-title p {
+      width: min(13.2rem, 66%);
+      min-height: 1.46rem;
+      margin: 0.58rem auto 0;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+    }
+
+    .reckful-objective {
+      order: 3;
+      margin-top: 0;
+      padding: 0.52rem 0.56rem 0.66rem;
+    }
+
+    .reckful-objective-head {
+      font-size: 0.66rem;
+    }
+
+    .reckful-objective :global(.retire-countdown-map-days) {
+      font-size: clamp(2.64rem, 13.8vw, 3.36rem);
+    }
+
+    .reckful-objective :global(.retire-countdown-map-clock),
+    .reckful-objective :global(.retire-countdown-map-labels) {
+      font-size: clamp(1.06rem, 5.4vw, 1.36rem);
+    }
+
+    .reckful-objective :global([data-retire-countdown]) {
+      padding: 0.16rem 0.2rem 0.12rem;
+    }
+
+    .reckful-actions {
+      order: 4;
+      grid-template-columns: 1fr;
+      gap: 0.46rem;
+      margin-top: 0;
+    }
+
+    .reckful-primary,
+    .reckful-secondary {
+      min-height: 2.5rem;
+      font-size: 0.78rem;
+    }
+
+    .reckful-route {
+      order: 5;
+      min-height: 18.5rem;
+      margin: 0.18rem -0.62rem -0.62rem;
+      border: 0;
+      border-radius: 0;
+      background: linear-gradient(
+        180deg,
+        rgb(238 249 255 / 8%),
+        rgb(238 249 255 / 0%) 42%,
+        rgb(238 249 255 / 26%) 100%
+      );
+      overflow: hidden;
+    }
+
+    .reckful-path {
+      right: -6%;
+      bottom: 14%;
+      width: 92%;
+      height: 72%;
+    }
+
+    .reckful-node {
+      min-width: 8.7rem;
+      grid-template-columns: 1.8rem auto;
+      gap: 0.48rem;
+      padding: 0.56rem 0.62rem;
+      border-radius: 8px;
+    }
+
+    .reckful-node i {
+      width: 1.75rem;
+      border-width: 0.2rem;
+    }
+
+    .reckful-node span {
+      font-size: 0.72rem;
+    }
+
+    .reckful-node strong {
+      font-size: 0.78rem;
+    }
+
+    .reckful-node-start {
+      right: 7%;
+      bottom: 5%;
+    }
+
+    .reckful-node-supply {
+      right: 8%;
+      top: 45%;
+    }
+
+    .reckful-node-goal {
+      right: 4%;
+      top: 10%;
+    }
+
+    .reckful-companion {
+      right: auto;
+      bottom: 0.15rem;
+      left: 0.1rem;
+      width: clamp(5.6rem, 30vw, 7.2rem);
+    }
+
+    .reckful-dashboard {
+      grid-template-columns: 1fr;
+      gap: 0.82rem;
+      padding: 0.72rem 0 0;
+      background: linear-gradient(180deg, #eef8ff, #f8fcff 46%, #e7f4ff);
+    }
+
+    .reckful-panel {
+      border-radius: 10px;
+    }
+
+    .reckful-panel header {
+      min-height: 2.55rem;
+      padding: 0 0.82rem;
+    }
+
+    .reckful-panel h2 {
+      font-size: 0.9rem;
+    }
+
+    .reckful-task-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .reckful-task-grid article {
+      grid-template-columns: 2.35rem 1fr auto;
+      grid-template-rows: auto auto;
+      min-height: 3.75rem;
+      column-gap: 0.62rem;
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 0.54rem 0.72rem;
+    }
+
+    .reckful-task-grid article:last-child {
+      border-bottom: 0;
+    }
+
+    .reckful-task-grid i {
+      grid-row: 1 / 3;
+      width: 2rem;
+      border-radius: 10px;
+      font-size: 0.76rem;
+    }
+
+    .reckful-task-grid strong {
+      font-size: 0.78rem;
+    }
+
+    .reckful-task-grid p {
+      font-size: 0.66rem;
+    }
+
+    .reckful-task-grid em {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      align-self: center;
+      justify-self: end;
+      font-size: 0.66rem;
+      white-space: nowrap;
+    }
+
+    .reckful-stat-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .reckful-stat-grid article {
+      min-height: 3.35rem;
+      border-bottom: 0;
+    }
+
+    .reckful-stat-grid article:nth-child(2n) {
+      border-right: 1px solid var(--line);
+    }
+
+    .reckful-stat-grid article:last-child {
+      border-right: 0;
+    }
+
+    .reckful-stat-grid strong {
+      font-size: 0.78rem;
+    }
+
+    .reckful-stat-grid span {
+      margin-top: -0.2rem;
+      font-size: 0.56rem;
+    }
+  }
+
+  @media (min-width: 640px) and (max-width: 899px) {
+    .reckful-hero-grid {
+      padding: 1.25rem;
+    }
+
+    .reckful-route {
+      min-height: 25rem;
+    }
+
+    .reckful-node-start {
+      right: 42%;
+      bottom: 9%;
+    }
+
+    .reckful-companion {
+      width: clamp(8.6rem, 22vw, 10.5rem);
+    }
+
+    .reckful-task-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .reckful-task-grid article {
+      border-right: 1px solid var(--line);
+    }
+
+    .reckful-task-grid article:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .reckful-task-grid article:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .reckful-stat-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .reckful-stat-grid article,
+    .reckful-stat-grid article:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .reckful-stat-grid article:nth-child(2n) {
+      border-right: 1px solid var(--line);
+    }
+
+    .reckful-stat-grid article:last-child {
+      border-right: 0;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .reckful-shell {
+      padding: 0.36rem;
+    }
+
+    .reckful-hero-grid {
+      gap: 0.68rem;
+      padding: 1.45rem 0.62rem 0.62rem;
+    }
+
+    .reckful-title h1 {
+      font-size: clamp(2.02rem, 10.7vw, 2.72rem);
+    }
+
+    .reckful-title p {
+      width: min(12rem, 62%);
+      min-height: 1.32rem;
+      margin-top: 0.5rem;
+      font-size: 0.62rem;
+    }
+
+    .reckful-objective {
+      padding: 0.48rem 0.52rem 0.58rem;
+    }
+
+    .reckful-objective :global(.retire-countdown-map-days) {
+      font-size: clamp(2.46rem, 12.9vw, 3.1rem);
+    }
+
+    .reckful-objective :global(.retire-countdown-map-clock),
+    .reckful-objective :global(.retire-countdown-map-labels) {
+      font-size: clamp(1rem, 5.1vw, 1.24rem);
+    }
+
+    .reckful-primary,
+    .reckful-secondary {
+      min-height: 2.35rem;
+    }
+
+    .reckful-route {
+      min-height: 16.6rem;
+    }
+
+    .reckful-node {
+      display: none;
+    }
+
+    .reckful-path {
+      right: 24%;
+      bottom: 11%;
+      width: 72%;
+      height: 66%;
+    }
+
+    .reckful-companion {
+      right: 0.35rem;
+      bottom: 0.2rem;
+      left: auto;
+      width: clamp(5.9rem, 32vw, 7.4rem);
+    }
+
+    .reckful-dashboard {
+      gap: 0.62rem;
+      padding: 0.62rem;
+    }
+
+    .reckful-panel header {
+      min-height: 2.2rem;
+    }
+
+    .reckful-panel h2 {
+      font-size: 0.82rem;
+    }
+
+    .reckful-panel header span {
+      font-size: 0.78rem;
+    }
+
+    .reckful-task-grid article {
+      grid-template-columns: 1.95rem 1fr auto;
+      min-height: 3.05rem;
+      column-gap: 0.5rem;
+      padding: 0.42rem 0.62rem;
+    }
+
+    .reckful-task-grid i {
+      width: 1.58rem;
+      border-radius: 8px;
+      color: transparent;
+      font-size: 0;
+      position: relative;
+    }
+
+    .reckful-task-grid i::before {
+      position: absolute;
+      inset: 0.38rem;
+      content: '';
+    }
+
+    .reckful-task-grid article:nth-child(1) i::before {
+      clip-path: polygon(50% 0, 80% 50%, 50% 100%, 20% 50%);
+      background: linear-gradient(180deg, #f7fbff, #75d3ff 52%, #2f75d7);
+    }
+
+    .reckful-task-grid article:nth-child(2) i::before {
+      inset: 0.42rem;
+      border-radius: 3px;
+      background: linear-gradient(
+          135deg,
+          transparent 42%,
+          #fff 43% 56%,
+          transparent 57%
+        ),
+        linear-gradient(145deg, #f5dca2, #70c9e8);
+    }
+
+    .reckful-task-grid article:nth-child(3) i::before {
+      clip-path: polygon(
+        50% 0,
+        61% 35%,
+        100% 35%,
+        68% 57%,
+        80% 100%,
+        50% 72%,
+        20% 100%,
+        32% 57%,
+        0 35%,
+        39% 35%
+      );
+      background: linear-gradient(180deg, #fff7c7, #f0b93e);
+    }
+
+    .reckful-task-grid article:nth-child(4) i::before {
+      inset: 0.34rem 0.38rem 0.42rem;
+      clip-path: polygon(
+        10% 100%,
+        10% 42%,
+        24% 42%,
+        24% 24%,
+        40% 24%,
+        40% 42%,
+        60% 42%,
+        60% 16%,
+        76% 16%,
+        76% 42%,
+        90% 42%,
+        90% 100%
+      );
+      background: linear-gradient(180deg, #d8d4ff, #4055b7);
+    }
+
+    .reckful-task-grid strong {
+      font-size: 0.68rem;
+    }
+
+    .reckful-task-grid p {
+      margin-top: 0.06rem;
+      font-size: 0.56rem;
+    }
+
+    .reckful-task-grid em {
+      font-size: 0.58rem;
+    }
+
+    .reckful-stat-grid article {
+      min-height: 2.7rem;
+    }
+
+    .reckful-stat-grid strong {
+      font-size: 0.7rem;
+    }
+
+    .reckful-stat-grid span {
+      font-size: 0.48rem;
+    }
+  }
+</style>

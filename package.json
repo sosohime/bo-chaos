@@ -16,6 +16,7 @@
     "update:lighthouse-news": "pnpm -C apps/frontend-astro update:lighthouse-news",
     "test": "pnpm -r --filter=./packages/* test",
     "agent:lint": "node scripts/agent-lint.mjs",
+    "visual:reckful": "node scripts/visual-reckful.mjs",
     "commit": "commit",
     "commitlint": "commitlint --edit"
   },
@@ -66,6 +67,7 @@
     "lint-staged": "^15.4.3",
     "lodash-es": "^4.17.21",
     "nx": "20.8.0",
+    "playwright": "^1.59.1",
     "postcss": "^8.5.1",
     "prettier-eslint": "^16.3.0",
     "rimraf": "^6.0.1",

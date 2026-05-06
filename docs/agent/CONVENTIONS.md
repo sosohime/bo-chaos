@@ -49,6 +49,8 @@ Follow existing code first. These conventions document current patterns and guar
 - Do not wrap a React client island inside a static React parent when an Astro wrapper can own the structure.
 - Retirement countdown pages use `src/components/tuixiu/countdown.astro` with a small browser script instead of React hooks, avoiding stale Vite React chunks in Chrome.
 - Keep countdown constants in shared packages when they apply across apps.
+- For mockup-driven Astro pages, translate the reference into explicit desktop and mobile layout structures up front. Do not rely on shrinking a desktop composition after implementation.
+- Keep sensitive or specific personal role details out of public retirement page copy unless the user explicitly asks to publish them; use visual motifs and generic status language instead.
 
 ## UI Quality
 

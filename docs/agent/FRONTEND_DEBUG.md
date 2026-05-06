@@ -49,6 +49,18 @@ Because of this:
 - Try keyboard navigation for changed controls.
 - Report anything blocked by auth or production API safety.
 - Keep dev servers under agent control and stop any server started for verification before finishing, unless the user explicitly wants it left running.
+- Use Browser Use / the in-app browser for localhost visual checks when available. Do not jump to external Chrome/headless screenshots unless Browser Use is unavailable or the user explicitly approves a fallback.
+- If Astro dev serves stale markup or styles after a component rewrite, restart the Astro dev server before diagnosing the rendered page. Record the restart and stale-state evidence in the task record.
+
+## Mockup-Driven Responsive Checks
+
+Use this when implementing an Image2/Figma/reference design that includes separate desktop and mobile compositions:
+
+- Before coding, record desktop and mobile acceptance boundaries in the task record.
+- Treat desktop and mobile as first-class layouts that share content, not as one layout squeezed with late media-query fixes.
+- Verify that the desktop view and mobile/narrow view both match the selected reference direction in structure, hierarchy, and content order before visual polish.
+- Do not mark the task complete if either target viewport has obvious overflow, clipped titles, missing primary actions, or modules that fall out of the intended order.
+- If Browser Use cannot resize to the needed viewport, state that limitation in the task record and use a user-adjusted browser width or an explicitly approved fallback.
 
 ## Visual Fast Lane Checklist
 
