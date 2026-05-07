@@ -3,39 +3,97 @@ import '@mono/config-tailwind/global.css';
 import Layout from '../layouts/Layout.astro';
 import image2 from '../assets/image2-crab.png';
 
-const crabNotes = ['中华绒螯蟹', '家养大闸蟹', '已退休'];
+const tags = [
+  '蟹塘主理人',
+  '民间总架构师',
+  '黑白锋尚凯美瑞',
+  '暗影视界冲级户',
+  'F1 气氛组',
+  'BoFans 已退休',
+];
+
+const dossier = [
+  ['出生年代', '九十年代中段出厂，公开档案只保留版本号，不暴露序列号。'],
+  ['当前坐标', '南京附近反复横跳，江湖传闻以蟹塘水位为准。'],
+  ['主业', '把大闸蟹养到膏黄肉紧，把群友年货通道维护到逢年过节自动扩容。'],
+  ['副业', '三通业务、徐公比美、沙东风味研究，均处于民间认证阶段。'],
+];
+
+const legendCards = [
+  {
+    title: '车主气场',
+    value: '27W',
+    body: '全新黑白锋尚混动凯美瑞落地以后，南京路面多了一套移动会议室。车门一关，像开架构评审；油门一点，像提交热修。',
+  },
+  {
+    title: '架构神话',
+    value: '3,000,000 QPS',
+    body: '据群内不完全口径，他曾把新能源实时监测模组讲到兆亿级，把小配两股讲成双引擎容灾，把价值创造奖讲成个人 MVP 赛季皮肤。',
+  },
+  {
+    title: '游戏履历',
+    value: '7D',
+    body: '暗影视界开服一周才满级，这不是菜，这是给服务器一点喘息空间。过早毕业显得没有人情味。',
+  },
+];
+
+const crabBusiness = [
+  '每年固定开启群友螃蟹回家孝敬模式，订单备注比需求文档还长。',
+  '传说级重卡负责物流，几百万只螃蟹负责把水面挤出绩效感。',
+  '蟹塘不是副本，是生产环境；蟹脚一动，监控大屏就有了 KPI。',
+];
+
+const feats = [
+  '能和 F1 车手五五开，前提是对方愿意先听完三页凯美瑞配置。',
+  '善与徐公比美，胜负不重要，气势必须先压住。',
+  '极其向往沙东风味，但公开资料只允许写到这一步。',
+  '私人资料全部离线封存，本页只展示可公开传说。',
+];
 ---
 
-<Layout title="姚金龟 - BoFans" description="BoFans 成员姚金龟的轻量简介。">
+<Layout
+  title="姚金龟 - BoFans"
+  description="BoFans 成员姚金龟的公开安全档案：蟹塘主理人、民间架构师、凯美瑞车主与群友传说。"
+>
   <main
-    class="min-h-screen bg-[#f7fbf8] px-4 py-6 text-stone-950 [overflow-wrap:anywhere] sm:px-6 sm:py-10"
+    class="min-h-screen bg-[#f6f7f2] px-4 py-5 text-stone-950 [overflow-wrap:anywhere] sm:px-6 sm:py-8"
   >
     <section
-      class="mx-auto grid w-full max-w-5xl min-w-0 grid-cols-1 gap-6 overflow-hidden border border-stone-900/10 bg-white shadow-[0_18px_60px_rgba(32,46,37,0.08)] md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
+      class="mx-auto grid w-full max-w-6xl min-w-0 grid-cols-1 overflow-hidden border border-stone-900/15 bg-white shadow-[0_18px_70px_rgba(36,37,31,0.1)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
     >
       <div
-        class="flex min-h-[28rem] min-w-0 flex-col justify-between gap-8 px-5 py-6 sm:px-7 sm:py-8"
+        class="flex min-h-[34rem] min-w-0 flex-col justify-between gap-8 px-5 py-6 sm:px-8 sm:py-9 lg:px-10"
       >
-        <p
-          class="font-mono text-xs uppercase tracking-[0.18em] text-emerald-800"
-        >
-          BOFANS PROFILE
-        </p>
-
-        <div>
-          <h1 class="text-4xl font-semibold leading-tight sm:text-5xl">
-            姚金龟
-          </h1>
-          <p class="mt-3 text-base leading-7 text-stone-700">
-            已退休的 BoFans 成员。页面不铺太满，留一点河风和蟹塘气息。
+        <div class="flex flex-wrap items-center gap-3">
+          <p
+            class="font-mono text-xs uppercase tracking-[0.18em] text-[#1b6c72]"
+          >
+            BOFANS DOSSIER
+          </p>
+          <span class="hidden h-px min-w-10 flex-1 bg-stone-900/10 sm:block"
+          ></span>
+          <p class="w-full font-mono text-xs text-stone-500 sm:w-auto">
+            PUBLIC SAFE MODE
           </p>
         </div>
 
-        <div class="flex flex-wrap gap-2">
+        <div class="max-w-3xl">
+          <h1
+            class="text-4xl font-semibold leading-[1.05] text-stone-950 sm:text-6xl"
+          >
+            姚金龟
+          </h1>
+          <p class="mt-4 text-lg leading-8 text-stone-700 sm:text-xl">
+            蟹塘主理人，民间架构师，黑白锋尚混动凯美瑞车主。公开档案删除了所有
+            证件、私密账户和联系方式，只保留群友多年沉淀下来的可传播神话。
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-2.5">
           {
-            crabNotes.map((note) => (
-              <span class="border border-emerald-900/15 bg-emerald-50 px-3 py-1.5 text-sm text-emerald-950">
-                {note}
+            tags.map((tag) => (
+              <span class="border border-stone-900/10 bg-[#eef7f5] px-3 py-1.5 text-sm text-[#144f54]">
+                {tag}
               </span>
             ))
           }
@@ -44,42 +102,99 @@ const crabNotes = ['中华绒螯蟹', '家养大闸蟹', '已退休'];
         <div
           class="grid min-w-0 gap-3 text-sm leading-6 text-stone-700 sm:grid-cols-2"
         >
-          <article class="min-w-0 border border-stone-900/10 bg-[#fffaf0] p-4">
-            <h2 class="mb-2 font-medium text-stone-950">公开状态</h2>
-            <p>BoFans · 已退休。适合轻轻放在列表里，点进来有个记号。</p>
-          </article>
-
-          <article class="min-w-0 border border-stone-900/10 bg-[#f0fbf8] p-4">
-            <h2 class="mb-2 font-medium text-stone-950">家传元素</h2>
-            <p>家里养大闸蟹，所以主视觉交给中华绒螯蟹出场。</p>
-          </article>
+          {
+            dossier.map(([label, value]) => (
+              <article class="min-w-0 border border-stone-900/10 bg-[#fffaf0] p-4">
+                <h2 class="mb-2 font-mono text-xs uppercase tracking-[0.12em] text-[#8b4d13]">
+                  {label}
+                </h2>
+                <p>{value}</p>
+              </article>
+            ))
+          }
         </div>
       </div>
 
-      <div class="flex min-w-0 flex-col justify-between bg-[#e9f7f2] p-3">
-        <figure class="overflow-hidden border border-emerald-950/10 bg-white">
+      <div class="flex min-w-0 flex-col bg-[#e6f1ee] p-3">
+        <figure class="overflow-hidden border border-stone-900/10 bg-white">
           <img
             src={image2.src}
             alt="两只中华绒螯蟹停在竹筛上的蟹塘插画"
-            class="aspect-[16/9] h-full w-full object-cover"
+            class="aspect-[16/11] h-full w-full object-cover"
           />
         </figure>
 
         <div
-          class="mt-3 grid grid-cols-[auto_minmax(0,1fr)] gap-3 border border-emerald-950/10 bg-white p-4 text-sm leading-6 text-stone-700"
+          class="grid flex-1 grid-cols-1 gap-3 pt-3 sm:grid-cols-3 lg:grid-cols-1"
         >
-          <span class="font-mono text-emerald-800">01</span>
-          <p>绒螯、竹篓、浅水蟹塘，给这个轻量页面加一点独有的辨识度。</p>
+          {
+            legendCards.map((card) => (
+              <article class="min-w-0 border border-stone-900/10 bg-white p-4">
+                <div class="mb-3 flex items-start justify-between gap-4">
+                  <h2 class="text-base font-semibold text-stone-950">
+                    {card.title}
+                  </h2>
+                  <span class="font-mono text-sm text-[#0052d9]">
+                    {card.value}
+                  </span>
+                </div>
+                <p class="text-sm leading-6 text-stone-700">{card.body}</p>
+              </article>
+            ))
+          }
         </div>
       </div>
     </section>
 
-    <section class="mx-auto mt-4 w-full max-w-5xl">
+    <section
+      class="mx-auto grid w-full max-w-6xl min-w-0 grid-cols-1 border-x border-b border-stone-900/15 bg-white lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]"
+    >
+      <div
+        class="min-w-0 border-b border-stone-900/10 p-5 sm:p-7 lg:border-b-0 lg:border-r"
+      >
+        <p class="font-mono text-xs uppercase tracking-[0.18em] text-[#1b6c72]">
+          CRAB OPS
+        </p>
+        <h2 class="mt-3 text-2xl font-semibold text-stone-950">
+          蟹塘业务不是副业，是集团军
+        </h2>
+        <div class="mt-5 grid gap-3">
+          {
+            crabBusiness.map((item, index) => (
+              <p class="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border border-stone-900/10 bg-[#f7fbf8] p-4 text-sm leading-6 text-stone-700">
+                <span class="font-mono text-[#1b6c72]">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span>{item}</span>
+              </p>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="min-w-0 p-5 sm:p-7">
+        <p class="font-mono text-xs uppercase tracking-[0.18em] text-[#8b4d13]">
+          GROUP LORE
+        </p>
+        <h2 class="mt-3 text-2xl font-semibold text-stone-950">公开可讲版本</h2>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          {
+            feats.map((item) => (
+              <p class="min-w-0 border border-stone-900/10 bg-[#fffaf0] p-4 text-sm leading-6 text-stone-700">
+                {item}
+              </p>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto mt-4 w-full max-w-6xl">
       <a
         href="../"
         class="inline-flex items-center gap-2 text-sm text-stone-600 underline-offset-4 hover:text-stone-950 hover:underline"
       >
-        <span class="font-mono text-emerald-800">←</span>
+        <span class="font-mono text-[#1b6c72]">←</span>
         返回退休页
       </a>
     </section>
