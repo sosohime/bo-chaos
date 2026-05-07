@@ -4,18 +4,73 @@ import Layout from '../layouts/Layout.astro';
 import image2 from '../assets/image2.svg';
 ---
 
-<Layout title="BoFans 页面" description="BoFans 退休成员简介与 image2 示例图。">
-  <main
-    class="mx-auto mt-10 max-w-3xl rounded-2xl bg-white/70 p-6 shadow-lg backdrop-blur"
-  >
-    <h1 class="mb-4 text-2xl font-bold">BoFans</h1>
-    <p class="mb-4 text-slate-700">
-      这是一个简洁的 fans 页面：姚金龟（已退休），先放一张 image2 示意图。
-    </p>
-    <img
-      src={image2.src}
-      alt="image2 示例图"
-      class="w-full rounded-xl border border-slate-200"
-    />
+<Layout title="BoFans 页面" description="BoFans 成员姚金龟的个人简介。">
+  <main class="mx-auto mt-10 max-w-4xl px-4">
+    <section
+      class="relative overflow-hidden rounded-3xl border border-cyan-300/30 bg-slate-950/90 p-6 text-slate-100 shadow-[0_0_60px_-20px_rgba(34,211,238,0.6)] backdrop-blur"
+    >
+      <div
+        class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.22),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(99,102,241,0.2),transparent_32%)]"
+      >
+      </div>
+      <div
+        class="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(148,163,184,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.16)_1px,transparent_1px)] [background-size:24px_24px]"
+      >
+      </div>
+
+      <div class="relative z-10">
+        <p
+          class="mb-2 inline-flex rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs tracking-[0.18em] text-cyan-200"
+        >
+          BOFANS PROFILE
+        </p>
+        <h1 class="mb-2 text-3xl font-bold tracking-wide">姚金龟</h1>
+        <p class="mb-6 text-sm text-slate-300">
+          BoFans 成员 · 南京 · AI × 新能源汽车
+        </p>
+
+        <div
+          class="mb-6 overflow-hidden rounded-2xl border border-cyan-200/30 bg-slate-900/70"
+        >
+          <img
+            src={image2.src}
+            alt="姚金龟个人页示意图"
+            class="h-auto w-full object-cover opacity-95"
+          />
+        </div>
+
+        <section
+          class="grid gap-4 text-sm leading-7 text-slate-200 md:grid-cols-2"
+        >
+          <article
+            class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4"
+          >
+            <h2 class="mb-2 text-cyan-200">个人概览</h2>
+            <p>
+              94 年生，现居南京，长期关注 AI
+              与新能源汽车方向，偏好把复杂问题拆解成可执行的小目标。
+            </p>
+          </article>
+
+          <article
+            class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4"
+          >
+            <h2 class="mb-2 text-indigo-200">工程关注</h2>
+            <p>
+              工作中重视稳定性、实时性与可观测性，持续关注高并发场景下的系统设计与工程落地。
+            </p>
+          </article>
+
+          <article
+            class="rounded-xl border border-slate-700/80 bg-slate-900/70 p-4 md:col-span-2"
+          >
+            <h2 class="mb-2 text-emerald-200">兴趣与说明</h2>
+            <p>
+              业余时间会研究养殖与农产品经营，也喜欢游戏与文学阅读，最喜欢的作家是海明威。页面仅保留公开、积极且适合展示的信息，隐私数据与不当内容均已移除。
+            </p>
+          </article>
+        </section>
+      </div>
+    </section>
   </main>
 </Layout>
