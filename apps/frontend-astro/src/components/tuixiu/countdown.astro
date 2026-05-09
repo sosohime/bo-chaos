@@ -181,6 +181,32 @@ const buttonClass = isCommand
             <span>秒</span>
           </span>
         </div>
+        <div class="retire-countdown-map-footer">
+          <p class="retire-countdown-map-slogan" data-command-slogan>
+            AI焕新 · 智启新局
+          </p>
+          <button class={buttonClass} type="button" data-copy-countdown>
+            <svg
+              aria-hidden="true"
+              class="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              viewBox="0 0 24 24"
+            >
+              <rect x="8" y="8" width="10" height="10" rx="1.5" />
+              <path d="M6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            <span
+              class="bo-copy-loading-icon"
+              data-copy-loading-icon
+              aria-hidden="true"
+            />
+            <span data-copy-countdown-label>复制文案</span>
+          </button>
+        </div>
       </div>
     ) : (
       <p class={mainClass}>
@@ -316,6 +342,46 @@ const buttonClass = isCommand
       animation: none;
     }
   }
+
+  .retire-countdown-map-footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+  }
+
+  .retire-countdown-map-slogan {
+    margin: 0;
+    justify-self: start;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      monospace;
+    font-size: clamp(0.65rem, 1.15vw, 0.72rem);
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .retire-countdown-map-copy {
+    display: inline-flex;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border: 1px solid rgb(31 69 121 / 28%);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 74%);
+    padding: 0 0.75rem;
+    color: #14396f;
+    font-size: 0.76rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+  }
+
+  .retire-countdown-map-copy:hover {
+    border-color: rgb(20 57 111 / 48%);
+    color: #0e2e59;
+    background: rgb(255 255 255 / 90%);
+  }
 </style>
 
 <script>
@@ -371,7 +437,7 @@ const buttonClass = isCommand
     }
   }
 
-  const aiCopyTemplates = [
+  const boAiCopyTemplates = [
     '最新进度：距离博哥退休还有{countdown}，请各单位知悉。',
     '系统播报：博哥退休倒计时{countdown}，情绪稳定，继续观测。',
     '今日份好消息：博哥距离退休仅剩{countdown}。',
@@ -392,49 +458,79 @@ const buttonClass = isCommand
     '小道消息转正：博哥退休还有{countdown}。',
     '群公告：距离博哥退休还有{countdown}，收到请回复1。',
     '摸鱼提醒：博哥退休倒计时{countdown}，继续保持。',
-    '今日宜转发：博哥还有{countdown}退休。',
-    '事实核查通过：博哥退休还差{countdown}。',
-    '项目里程碑：博哥退休节点剩余{countdown}。',
-    '别急，博哥退休还要{countdown}，但真的快了。',
-    '经过严谨计算，博哥退休倒计时是{countdown}。',
-    '给你一个微笑，再给你一个数字：{countdown}。',
-    '最新战报：博哥退休剩余{countdown}，优势在我。',
-    '播报完毕：博哥退休还有{countdown}，明天再报。',
-    '转发这条，博哥退休进度+1（实际还剩{countdown}）。',
-    '今日份电子木鱼：博哥退休倒计时{countdown}。',
-    '信我，博哥退休真的只剩{countdown}。',
-    '快乐源泉：博哥离退休还有{countdown}。',
-    '时间管理大师说：博哥退休倒计时{countdown}。',
-    '你负责努力，我负责提醒：博哥还有{countdown}退休。',
-    '友情提示：博哥退休剩余{countdown}，可喜可贺。',
-    '请查收：博哥退休实时进度{countdown}。',
-    '这不是演习：博哥退休倒计时{countdown}。',
-    '新鲜出炉：博哥退休还剩{countdown}。',
-    '宇宙级真相：博哥退休进入{countdown}倒计时。',
-    '赛博锣鼓已敲响：博哥退休还有{countdown}。',
-    '再说一遍：博哥退休剩余{countdown}。',
-    '叮咚，您的退休提醒已送达：{countdown}。',
-    '把期待拉满：博哥退休倒计时{countdown}。',
-    'AI日报：博哥退休时间窗口剩余{countdown}。',
-    '进度可视化结果：博哥退休还需{countdown}。',
-    '心情指数上涨，因为博哥退休还有{countdown}。',
-    '今日关键词：退休、博哥、{countdown}。',
-    '路过的朋友请记住：博哥退休倒计时{countdown}。',
-    '终端输出：bo.retire = {countdown};',
-    '最后通知（今天版）：博哥退休还剩{countdown}。',
+  ] as const;
+
+  const reckfulAiCopyTemplates = [
+    '开放世界播报：退休还有{countdown}，长期服务假还有{secondaryCountdown}。',
+    '旅途提醒：距离Reckful退休{countdown}，距离长期服务假{secondaryCountdown}。',
+    '地图更新：终点倒计时{countdown}，补给节点{secondaryCountdown}。',
+    '星图快讯：退休剩余{countdown}，长期服务假剩余{secondaryCountdown}。',
+    '作战简报：主线退休{countdown}，支线长期服务假{secondaryCountdown}。',
+    '任务栏：退休还有{countdown}，长期服务假还有{secondaryCountdown}。',
+    '航线提示：退休T-{countdown}，长期服务假T-{secondaryCountdown}。',
+    '今日进度：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '实时状态：退休剩余{countdown}，长期服务假剩余{secondaryCountdown}。',
+    '冒险家通告：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '副本倒计时：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '能源核心显示：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '系统日志：退休剩余{countdown}；长期服务假剩余{secondaryCountdown}。',
+    '指挥台播报：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '世界频道：退休还有{countdown}，长期服务假还有{secondaryCountdown}。',
+    '里程碑追踪：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '补给站消息：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '高光时刻：退休倒计时{countdown}，长期服务假倒计时{secondaryCountdown}。',
+    '探索报告：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '观测站数据：退休{countdown}，长期服务假{secondaryCountdown}。',
+    'AI预估：退休剩余{countdown}，长期服务假剩余{secondaryCountdown}。',
+    '同步通知：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '全服公告：退休还有{countdown}，长期服务假还有{secondaryCountdown}。',
+    '进度折线：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '路径规划：先到长期服务假{secondaryCountdown}，再到退休{countdown}。',
+    '晴雨播报：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '今日宜转发：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '战术板更新：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '坐标定位：退休终点距今{countdown}，长期服务假距今{secondaryCountdown}。',
+    '节奏提醒：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '旅人手册：退休还有{countdown}，长期服务假还有{secondaryCountdown}。',
+    '故事继续：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '章节标题：主线退休{countdown}，番外长期服务假{secondaryCountdown}。',
+    '远征周报：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '进度条刷新：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '每日一报：退休剩余{countdown}，长期服务假剩余{secondaryCountdown}。',
+    '世界状态LIVE：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '巡航提示：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '探路雷达：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '路线卡片：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '里程提示：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '情报员播报：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '开放世界日报：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '副官提醒：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '进度存档：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '锦囊妙计：先盯长期服务假{secondaryCountdown}，再看退休{countdown}。',
+    '路线终端输出：retire={countdown}; leave={secondaryCountdown};',
+    '祝福弹幕：退休{countdown}，长期服务假{secondaryCountdown}。',
+    '这不是演习：退休还有{countdown}，长期服务假还有{secondaryCountdown}。',
+    '最终提示（今天版）：退休{countdown}，长期服务假{secondaryCountdown}。',
   ] as const;
 
   function randomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  function pickCopyTemplate(defaultTemplate: string) {
-    if (aiCopyTemplates.length === 0) {
+  function pickCopyTemplate(
+    defaultTemplate: string,
+    hasSecondaryCountdown: boolean,
+  ) {
+    const templates = hasSecondaryCountdown
+      ? reckfulAiCopyTemplates
+      : boAiCopyTemplates;
+
+    if (templates.length === 0) {
       return defaultTemplate;
     }
 
-    const index = randomInt(0, aiCopyTemplates.length - 1);
-    return aiCopyTemplates[index] ?? defaultTemplate;
+    const index = randomInt(0, templates.length - 1);
+    return templates[index] ?? defaultTemplate;
   }
 
   function sleep(ms: number) {
@@ -553,8 +649,18 @@ const buttonClass = isCommand
         }
         setButtonText('AI生成中...');
         await sleep(loadingSeconds * 1000);
-        const selectedTemplate = pickCopyTemplate(copyTemplate);
-        await copyText(selectedTemplate.replace('{countdown}', countDown.main));
+        const secondaryCountDown = Number.isFinite(secondaryTargetMs)
+          ? getCountDown(secondaryTargetMs).main
+          : '';
+        const selectedTemplate = pickCopyTemplate(
+          copyTemplate,
+          Number.isFinite(secondaryTargetMs),
+        );
+        await copyText(
+          selectedTemplate
+            .replace('{countdown}', countDown.main)
+            .replace('{secondaryCountdown}', secondaryCountDown),
+        );
         setButtonText('已复制');
       } catch {
         setButtonText('复制失败');
