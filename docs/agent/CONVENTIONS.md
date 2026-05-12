@@ -47,6 +47,8 @@ Follow existing code first. These conventions document current patterns and guar
 - Prefer Astro components for static route shells, layout, and link sections.
 - Keep React components as narrow client islands for stateful interactions such as countdowns and copy buttons.
 - Do not wrap a React client island inside a static React parent when an Astro wrapper can own the structure.
+- Public site routes are deployed under `/retire`. Build internal links and public asset URLs with `sitePath('/...')` from `apps/frontend-astro/src/lib/site-paths.ts`; do not hard-code `/retire` in page/component source.
+- Place public assets relative to the deploy root, such as `apps/frontend-astro/public/codex-pets/example.png`, not under `apps/frontend-astro/public/retire/`.
 - Retirement countdown pages use `src/components/tuixiu/countdown.astro` with a small browser script instead of React hooks, avoiding stale Vite React chunks in Chrome.
 - Keep countdown constants in shared packages when they apply across apps.
 - For mockup-driven Astro pages, translate the reference into explicit desktop and mobile layout structures up front. Do not rely on shrinking a desktop composition after implementation.
