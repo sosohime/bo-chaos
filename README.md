@@ -11,6 +11,7 @@
 │   ├── bo-retire-vsc-extension   // 博退休之vscode插件
 │   └── miniapp-taro              // 博Fans小程序
 ├── packages                 // 公共依赖
+│   ├── codex-pets                 // Codex 桌面宠物资源
 │   ├── config-tailwind            // taiwindcss配置
 │   ├── const                      // 常量
 │   ├── prisma-client              // 数据库客户端，可以共享model定义
@@ -20,6 +21,24 @@
 ├── package.json             // 全局依赖
 └── pnpm-workspace.yaml      // pnpm工作区配置
 ```
+
+## Codex 博哥小宠物
+
+资源包在 `packages/codex-pets`，GitHub 地址：<https://github.com/sosohime/bo-chaos/tree/main/packages/codex-pets>。
+
+macOS / Linux / Git Bash 复制下面这条命令到 Codex 或终端执行，即可安装 ExpertBo：
+
+```bash
+bash -lc "$(curl -fsSL https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/codex-pets/install-expertbo.sh)"
+```
+
+Windows PowerShell 安装命令：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/codex-pets/install-expertbo.ps1 | iex"
+```
+
+安装后在 Codex `Settings -> Appearance -> Pets` 点击 `Refresh`，选择 `ExpertBo`。
 
 # TODO
 
