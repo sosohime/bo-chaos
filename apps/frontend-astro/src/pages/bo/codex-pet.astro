@@ -1,10 +1,11 @@
 ---
 import '@mono/config-tailwind/global.css';
 import Layout from '../../layouts/Layout.astro';
+import { sitePath } from '../../lib/site-paths';
 
 const githubUrl =
   'https://github.com/sosohime/bo-chaos/tree/main/packages/codex-pets';
-const previewImageSrc = '/retire/codex-pets/expertbo-preview.png';
+const previewImageSrc = sitePath('/codex-pets/expertbo-preview.png');
 const macInstallCommand =
   'bash -lc "$(curl -fsSL https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/codex-pets/install-expertbo.sh)"';
 const windowsInstallCommand =
@@ -33,7 +34,7 @@ const windowsInstallCommand =
         <div class="relative flex items-center justify-between gap-3">
           <a
             class="font-mono text-xs text-[#0052D9] underline-offset-4 hover:underline"
-            href="/retire/bo"
+            href={sitePath('/bo')}
           >
             ← back to bo
           </a>

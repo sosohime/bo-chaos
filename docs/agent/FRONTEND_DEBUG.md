@@ -23,6 +23,7 @@ Local frontend debugging is autonomous work. Do not ask the user before starting
 ## Astro Static Data
 
 - `/bo` renders Lighthouse activity links from `apps/frontend-astro/src/data/lighthouse-activities.json`.
+- The Astro deploy job uploads `dist/` to server path `retire`, so `public/foo.png` is served as `/retire/foo.png` online. Do not put files under `public/retire/`; use `sitePath('/foo.png')` in source.
 - Refresh the data with `pnpm update:lighthouse-news` before build-only checks when the task touches the news/activity section.
 - The refresh script only performs public read requests to Tencent Cloud and should not submit forms or call console APIs.
 - The refresh script should prioritize product capability signals such as AI Agent, one-click deployment, public beta, product experience, and best practices over generic pricing promotions.

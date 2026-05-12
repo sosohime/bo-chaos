@@ -202,6 +202,30 @@ function changedExact(file) {
   return changedSet.has(file);
 }
 
+function walkFiles(dir, predicate = () => true) {
+  const root = rel(dir);
+  if (!existsSync(root)) {
+    return [];
+  }
+
+  const files = [];
+  const stack = [dir];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    for (const entry of readdirSync(rel(current), { withFileTypes: true })) {
+      const file = `${current}/${entry.name}`;
+      if (entry.isDirectory()) {
+        stack.push(file);
+      } else if (entry.isFile() && predicate(file)) {
+        files.push(file);
+      }
+    }
+  }
+
+  return files.sort();
+}
+
 function warnDocSync(id, description, source, requiredDoc) {
   if (changedAny(source) && !changedExact(requiredDoc)) {
     addIssue(
@@ -265,6 +289,44 @@ if (
     'Update docs/agent/COMMANDS.md or mention why command docs are unaffected.',
     'docs/agent/COMMANDS.md',
   );
+}
+
+const astroPublicRetireFiles = walkFiles('apps/frontend-astro/public/retire');
+if (astroPublicRetireFiles.length > 0) {
+  addIssue(
+    'ERROR',
+    'astro-public-retire-prefix',
+    'Astro public assets must not live under apps/frontend-astro/public/retire.',
+    `Found ${astroPublicRetireFiles.length} file(s), including ${astroPublicRetireFiles[0]}. The deploy job uploads dist/ to server path retire, so public/retire/* becomes /retire/retire/* online.`,
+    'Move the asset under apps/frontend-astro/public/ and reference it through sitePath("/...").',
+    'docs/agent/CONVENTIONS.md',
+  );
+}
+
+const astroPathHelper = 'apps/frontend-astro/src/lib/site-paths.ts';
+const astroRouteFiles = walkFiles('apps/frontend-astro/src', (file) =>
+  /\.(astro|ts|tsx|js|jsx)$/.test(file),
+);
+const prefixedPathLiteral = /["']\/retire(?:\/|["'])/;
+const rootSiteAttribute =
+  /\b(?:href|src)=["']\/(?:bo|fans|reckful|codex-pets|bo\.ico)(?:\/|["'])/;
+
+for (const file of astroRouteFiles) {
+  if (file === astroPathHelper) {
+    continue;
+  }
+
+  const text = readText(file);
+  if (prefixedPathLiteral.test(text) || rootSiteAttribute.test(text)) {
+    addIssue(
+      'ERROR',
+      'astro-hardcoded-site-prefix',
+      `${file} hard-codes an Astro site path or deploy prefix.`,
+      'The Astro app is deployed under /retire, but route and public asset paths should be produced by one helper so source files do not mix deploy-prefix and public-directory rules.',
+      'Import `sitePath` from apps/frontend-astro/src/lib/site-paths.ts and call sitePath("/...") for internal routes and public assets.',
+      'docs/agent/CONVENTIONS.md',
+    );
+  }
 }
 
 if (docsChanged.length > 0 && !changedExact('AGENTS.md')) {

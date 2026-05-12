@@ -2,7 +2,7 @@
 
 这里放 bo-chaos 维护的 Codex 桌面宠物资源。当前包含 `ExpertBo`，后续可以在 `pets/` 下继续增加其他宠物。
 
-![ExpertBo preview](../../apps/frontend-astro/public/retire/codex-pets/expertbo-preview.png)
+![ExpertBo preview](../../apps/frontend-astro/public/codex-pets/expertbo-preview.png)
 
 ## ExpertBo
 
