@@ -24,7 +24,7 @@
 
 ## Codex 博哥小宠物
 
-资源包在 `packages/codex-pets`，GitHub 地址：<https://github.com/sosohime/bo-chaos/tree/main/packages/codex-pets>。
+资源包在 `packages/codex-pets`，当前包含 ExpertBo 和 影流Bo。GitHub 地址：<https://github.com/sosohime/bo-chaos/tree/main/packages/codex-pets>。
 
 macOS / Linux / Git Bash 复制下面这条命令到 Codex 或终端执行，即可安装 ExpertBo：
 
@@ -38,7 +38,19 @@ Windows PowerShell 安装命令：
 powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/codex-pets/install-expertbo.ps1 | iex"
 ```
 
-安装后在 Codex `Settings -> Appearance -> Pets` 点击 `Refresh`，选择 `ExpertBo`。
+macOS / Linux / Git Bash 安装影流Bo：
+
+```bash
+bash -lc "$(curl -fsSL https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/codex-pets/install-shadowbo.sh)"
+```
+
+Windows PowerShell 安装影流Bo：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/codex-pets/install-shadowbo.ps1 | iex"
+```
+
+安装后在 Codex `Settings -> Appearance -> Pets` 点击 `Refresh`，选择 `ExpertBo` 或 `影流Bo`。
 
 # TODO
 
