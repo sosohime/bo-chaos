@@ -53,8 +53,27 @@ Default to maximum autonomy for normal engineering work:
 - Astro dev: `pnpm -C apps/frontend-astro dev`
 - Mini app dev: `pnpm -C apps/miniapp-taro dev:weapp`
 - Package tests: `pnpm test`
+- Non-watch CI tests: `pnpm run test:ci`
 - Backend tests: `pnpm -C apps/backend-nest test`
+- Default verification: `pnpm run verify`
 - Agent harness check: `pnpm agent:lint`
+
+`pnpm test` may enter package-local watch modes. Prefer `pnpm run test:ci` for automated checks.
+
+## Verification Policy
+
+- For shared utility changes, run `pnpm -C packages/utils test:run` and `pnpm run build:packages`.
+- For backend changes, run `pnpm -C apps/backend-nest test -- --runInBand` and `pnpm run build:backend`.
+- For Astro page changes, run `pnpm run build:astro`.
+- For broad changes, run `pnpm run verify`.
+- Admin and Taro builds can be heavier or environment-sensitive; run their app-level scripts when the change touches them and note any blockers.
+
+## OpenSpec Usage
+
+- Use `openspec/project.md` for product/domain context.
+- Use `openspec/specs/*/spec.md` for accepted current behavior.
+- Use `openspec/changes/<change-id>/proposal.md` for proposed behavior before larger changes.
+- Keep specs concise and executable: include scenarios, data states, and verification commands.
 
 ## Task Records
 
