@@ -64,7 +64,7 @@ cat <<EOF
 Done.
 
 Use it by asking:
-  用博哥说
+  让博哥说
   来点博哥味
   上点强度
   博哥锐评一下

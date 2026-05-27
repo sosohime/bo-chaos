@@ -46,5 +46,5 @@ switch ($target) {
 Write-Host ""
 Write-Host "Done."
 Write-Host ""
-Write-Host "Use it by asking: 用博哥说 / 来点博哥味 / 上点强度 / 博哥锐评一下"
+Write-Host "Use it by asking: 让博哥说 / 来点博哥味 / 上点强度 / 博哥锐评一下"
 Write-Host "Disable it by asking: 关闭博哥口吻 / 正常说话 / 这句正常点"

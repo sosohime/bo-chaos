@@ -64,20 +64,20 @@ const removePrompt =
 const agentRequests = [
   {
     id: 'agent-both',
-    title: '装到自己的 agent',
-    prompt: `帮我安装博说 Skill。安装源是 ${githubUrl}`,
+    title: '安装/更新到自己的 agent',
+    prompt: `帮我安装/更新博说 Skill。安装源是 ${githubUrl}`,
   },
   {
     id: 'agent-project',
-    title: '装到当前项目',
-    prompt: `帮我把博说 Skill 装进当前仓库的 .agents，让这个项目里的 agent 都能用。安装源是 ${githubUrl}`,
+    title: '安装/更新到当前项目',
+    prompt: `帮我把博说 Skill 安装/更新到当前仓库的 .agents，让这个项目里的 agent 都能用。安装源是 ${githubUrl}`,
   },
 ];
 ---
 
 <Layout
-  title="安装博说 Skill - 博Fans"
-  description="安装博说 Skill 到 Codex、Claude Code 或项目 .agents 目录，并了解如何启用、关闭和删除。"
+  title="安装/更新博说 Skill - 博Fans"
+  description="安装/更新博说 Skill 到 Codex、Claude Code 或项目 .agents 目录，并了解如何启用、关闭和删除。"
 >
   <main
     class="min-h-screen w-full overflow-x-hidden bg-[#f6f8ff] px-3 py-3 text-neutral-950 sm:px-4 sm:py-4"
@@ -148,7 +148,7 @@ const agentRequests = [
               这b玩意有点闹心。
             </div>
             <div class="border border-neutral-950/10 bg-white/82 px-3 py-2">
-              都是说法，你懂我意思吧。
+              都是说法。
             </div>
           </div>
         </div>
@@ -166,7 +166,7 @@ const agentRequests = [
           <h1
             class="mt-3 text-2xl font-semibold leading-tight text-neutral-950 sm:text-3xl"
           >
-            安装博说 Skill
+            安装/更新博说 Skill
           </h1>
           <p
             class="mt-3 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-base"
