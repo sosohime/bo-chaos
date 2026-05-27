@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SKILL_ID="${SKILL_ID:-boge-oral-persona}"
+SKILL_ID="${SKILL_ID:-boshuo}"
 BASE_URL="${BASE_URL:-https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/agent-skills}"
 TARGET="${AGENT_TARGET:-both}"
 SOURCE_URL="$BASE_URL/skills/$SKILL_ID/SKILL.md"

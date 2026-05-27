@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$skillId = if ($env:SKILL_ID) { $env:SKILL_ID } else { "boge-oral-persona" }
+$skillId = if ($env:SKILL_ID) { $env:SKILL_ID } else { "boshuo" }
 $baseUrl = if ($env:BASE_URL) { $env:BASE_URL } else { "https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/agent-skills" }
 $target = if ($env:AGENT_TARGET) { $env:AGENT_TARGET } else { "both" }
 $sourceUrl = "$baseUrl/skills/$skillId/SKILL.md"

@@ -1,10 +1,10 @@
-# Task Record: Boge persona skill install page
+# Task Record: Boshuo skill install page
 
 - State: complete
 - Mode: full
 - Started: 2026-05-26
 - Branch: codex/boge-persona-sampling-plan
-- Request: Build a public page like Bo Codex pets so users can install and use the 博哥口语 persona skill in Codex and Claude Code, including enable/disable and global/project install guidance.
+- Request: Build a public page like Bo Codex pets so users can install and use the 博说 persona skill in Codex and Claude Code, including enable/disable and global/project install guidance.
 
 ## Acceptance Boundaries
 
@@ -17,7 +17,7 @@
 ## Actions
 
 - Routed the request to `apps/frontend-astro` and a new static package under `packages/agent-skills`.
-- Added `packages/agent-skills/skills/boge-oral-persona/SKILL.md`.
+- Added `packages/agent-skills/skills/boshuo/SKILL.md`.
 - Added macOS/Linux and Windows installer scripts for Codex, Claude Code, both, and project `.agents` targets.
 - Added `/bo/boge-skill` Astro install page with copyable install/remove commands and enable/disable guidance.
 - Added a Bo homepage entry linking to the skill install page.
@@ -29,6 +29,7 @@
 - Removed internal negative guidance from the public skill and simplified it into triggers, voice particles, sentence shapes, and examples.
 - Reduced the install page's primary path to two copyable "tell the agent" prompts; moved shell commands and delete commands into backup details blocks.
 - Removed leftover instruction-like trigger wording; kept natural triggers like `用博哥说`, `来点博哥味`, `上点强度`, and `博哥锐评一下`.
+- Renamed the public skill to 博说, including the installed skill id `boshuo` and installer script names.
 
 ## Iteration Log
 
@@ -47,17 +48,17 @@
 ## Files Touched
 
 - `.agents/tasks/active/2026-05-26-boge-skill-install-page.md`
-- `packages/agent-skills/skills/boge-oral-persona/SKILL.md`
-- `packages/agent-skills/install-boge-oral-persona.sh`
-- `packages/agent-skills/install-boge-oral-persona.ps1`
+- `packages/agent-skills/skills/boshuo/SKILL.md`
+- `packages/agent-skills/install-boshuo.sh`
+- `packages/agent-skills/install-boshuo.ps1`
 - `apps/frontend-astro/src/pages/bo/boge-skill.astro`
 - `apps/frontend-astro/src/components/tuixiu/bo/index.astro`
 
 ## Verification Evidence
 
-- `bash -n packages/agent-skills/install-boge-oral-persona.sh`: passed.
-- `CODEX_HOME=/private/tmp/boge-skill-install-codex-test BASE_URL=file:///Users/heyesheng/Documents/code/github/bo-chaos/packages/agent-skills AGENT_TARGET=codex bash packages/agent-skills/install-boge-oral-persona.sh`: installed `SKILL.md`.
-- `BASE_URL=file:///Users/heyesheng/Documents/code/github/bo-chaos/packages/agent-skills AGENT_TARGET=agents PROJECT_AGENTS_DIR=/private/tmp/boge-skill-install-agents-test/.agents/skills bash packages/agent-skills/install-boge-oral-persona.sh`: installed project `.agents` skill.
+- `bash -n packages/agent-skills/install-boshuo.sh`: passed.
+- `CODEX_HOME=/private/tmp/boge-skill-install-codex-test BASE_URL=file:///Users/heyesheng/Documents/code/github/bo-chaos/packages/agent-skills AGENT_TARGET=codex bash packages/agent-skills/install-boshuo.sh`: installed `SKILL.md`.
+- `BASE_URL=file:///Users/heyesheng/Documents/code/github/bo-chaos/packages/agent-skills AGENT_TARGET=agents PROJECT_AGENTS_DIR=/private/tmp/boge-skill-install-agents-test/.agents/skills bash packages/agent-skills/install-boshuo.sh`: installed project `.agents` skill.
 - `pnpm -C apps/frontend-astro build`: passed; generated `/bo/boge-skill/index.html`.
 - `pnpm agent:lint`: passed with `agent-lint: ok`.
 - Local dev server opened at `http://localhost:4322/bo/boge-skill`; page rendered install commands, enable/disable guidance, project install, and delete sections.
@@ -65,6 +66,8 @@
 - Updated verification: `pnpm -C apps/frontend-astro build` and `pnpm agent:lint` passed again after layout and install-flow revisions.
 - Updated verification: public skill/page trigger scans found no leftover instruction-like trigger wording after cleanup.
 - Updated verification: `pnpm -C apps/frontend-astro build` and `pnpm agent:lint` passed again before pushing to `main`.
+- Updated verification: public page and skill references now use 博说 / `boshuo`; legacy `boge-oral-persona` appears only in delete commands for cleanup compatibility.
+- Updated verification: local file-URL installer tests installed `boshuo` for Codex and project `.agents` targets.
 
 ## Handoff / Archive Notes
 
