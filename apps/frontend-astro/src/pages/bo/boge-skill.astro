@@ -9,6 +9,10 @@ const rawBaseUrl =
   'https://raw.githubusercontent.com/sosohime/bo-chaos/main/packages/agent-skills';
 const macInstaller = `${rawBaseUrl}/install-boshuo.sh`;
 const windowsInstaller = `${rawBaseUrl}/install-boshuo.ps1`;
+const darkCodeBlockClass =
+  'max-w-full overflow-x-auto whitespace-pre-wrap break-all bg-neutral-950 p-3 text-xs leading-5 text-white sm:text-sm sm:leading-6';
+const lightCodeBlockClass =
+  'max-w-full overflow-x-auto whitespace-pre-wrap break-all bg-neutral-50 p-3 text-xs leading-5 text-neutral-800 sm:text-sm sm:leading-6';
 
 const commands = [
   {
@@ -213,7 +217,7 @@ const agentRequests = [
                       复制
                     </button>
                   </div>
-                  <pre class="max-w-full overflow-x-auto whitespace-pre-wrap break-all bg-neutral-950 p-3 text-xs leading-5 text-white sm:text-sm sm:leading-6">
+                  <pre class={darkCodeBlockClass}>
                     <code>{item.prompt}</code>
                   </pre>
                 </section>
@@ -272,12 +276,11 @@ const agentRequests = [
                         </button>
                       </div>
                       <pre
-                        class:list={[
-                          'max-w-full overflow-x-auto whitespace-pre-wrap break-all p-3 text-xs leading-5 sm:text-sm sm:leading-6',
+                        class={
                           item.tone === 'dark'
-                            ? 'bg-neutral-950 text-white'
-                            : 'bg-neutral-50 text-neutral-800',
-                        ]}
+                            ? darkCodeBlockClass
+                            : lightCodeBlockClass
+                        }
                       >
                         <code>{item.command}</code>
                       </pre>
@@ -347,8 +350,7 @@ const agentRequests = [
                   复制
                 </button>
               </div>
-              <pre
-                class="max-w-full overflow-x-auto whitespace-pre-wrap break-all bg-neutral-950 p-3 text-xs leading-5 text-white sm:text-sm sm:leading-6"><code>{removePrompt}</code></pre>
+              <pre class={darkCodeBlockClass}><code>{removePrompt}</code></pre>
             </div>
             <details class="mt-4 border border-neutral-950/10 bg-neutral-50">
               <summary
@@ -374,7 +376,7 @@ const agentRequests = [
                           复制
                         </button>
                       </div>
-                      <pre class="max-w-full overflow-x-auto whitespace-pre-wrap break-all bg-neutral-50 p-3 text-xs leading-5 text-neutral-800 sm:text-sm sm:leading-6">
+                      <pre class={lightCodeBlockClass}>
                         <code>{item.command}</code>
                       </pre>
                     </section>
