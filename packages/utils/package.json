@@ -4,15 +4,15 @@
   "keywords": [],
   "description": "",
   "types": "./dist/src/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.esm.js",
+  "main": "./dist/src/index.js",
+  "module": "./dist/src/index.js",
   "type": "module",
   "scripts": {
     "test": "vitest",
+    "test:run": "vitest run",
     "prod": "pnpm run build",
     "prebuild": "rimraf ./dist",
-    "build": "pnpm run rollup --environment NODE_ENV:production",
-    "rollup": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript --bundleConfigAsCjs"
+    "build": "tsc -p tsconfig.json"
   },
   "files": [
     "dist"

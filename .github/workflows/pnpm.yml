@@ -40,22 +40,21 @@ jobs:
       if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
       run: pnpm run update:lighthouse-news
       
-    - name: Build
-      run: pnpm run build
-
-    - name: build astro
+    - name: Verify
       env:
         ASTRO_SENTRY_AUTH_TOKEN: ${{ secrets.ASTRO_SENTRY_AUTH_TOKEN }}
-      run: pnpm run build:astro
+      run: pnpm run verify
 
-          # 添加打包步骤
+    # 添加打包步骤
     - name: Archive production artifacts
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         cd apps/frontend-astro
         tar -czf dist.tar.gz dist/
 
     # 添加上传步骤
     - name: Upload to server
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         cd apps/frontend-astro
         curl -v POST https://yuanbo.online/oss_service/upload \
