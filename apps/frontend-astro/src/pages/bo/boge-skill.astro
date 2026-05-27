@@ -65,7 +65,7 @@ const agentRequests = [
   {
     id: 'agent-both',
     title: '装到自己的 agent',
-    prompt: `帮我安装博说 Skill，Codex 和 Claude Code 都装好。安装源是 ${githubUrl}`,
+    prompt: `帮我安装博说 Skill。安装源是 ${githubUrl}`,
   },
   {
     id: 'agent-project',
@@ -217,9 +217,7 @@ const agentRequests = [
                       复制
                     </button>
                   </div>
-                  <pre class={darkCodeBlockClass}>
-                    <code>{item.prompt}</code>
-                  </pre>
+                  <pre class={darkCodeBlockClass} set:text={item.prompt} />
                 </section>
               ))
             }
@@ -281,9 +279,8 @@ const agentRequests = [
                             ? darkCodeBlockClass
                             : lightCodeBlockClass
                         }
-                      >
-                        <code>{item.command}</code>
-                      </pre>
+                        set:text={item.command}
+                      />
                     </section>
                   ))
                 }
@@ -350,7 +347,7 @@ const agentRequests = [
                   复制
                 </button>
               </div>
-              <pre class={darkCodeBlockClass}><code>{removePrompt}</code></pre>
+              <pre class={darkCodeBlockClass} set:text={removePrompt} />
             </div>
             <details class="mt-4 border border-neutral-950/10 bg-neutral-50">
               <summary
@@ -376,9 +373,10 @@ const agentRequests = [
                           复制
                         </button>
                       </div>
-                      <pre class={lightCodeBlockClass}>
-                        <code>{item.command}</code>
-                      </pre>
+                      <pre
+                        class={lightCodeBlockClass}
+                        set:text={item.command}
+                      />
                     </section>
                   ))
                 }
