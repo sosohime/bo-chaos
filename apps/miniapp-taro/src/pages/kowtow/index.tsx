@@ -154,21 +154,7 @@ export default function Kowtow() {
     });
   };
 
-  // 点赞图标库
-  const goodIcon = [
-    "🌼",
-    "👍",
-    "🌹",
-    "🚀",
-    "⭐",
-    "🦄",
-    "🥳",
-    "🧸",
-    "🧨",
-    "🤩",
-    "😎",
-    "🍔",
-  ];
+  const pulseLabels = ["BO", "+1", "AI", "UP", "OK", "赞"];
 
   // useEffect(() => {
   //   // 初始化 canvas context
@@ -181,9 +167,9 @@ export default function Kowtow() {
   // }, []);
   // 创建点赞动画
   const createLikeAnimation = () => {
-    let currentNumber = Math.floor(Math.random() * 12);
+    const currentNumber = Math.floor(Math.random() * pulseLabels.length);
     const query = Taro.createSelectorQuery();
-    const fontSize = 36;
+    const fontSize = 20;
     query
       .select("#god-bo-canvas")
       .fields({ node: true, size: true })
@@ -201,7 +187,7 @@ export default function Kowtow() {
           id: animationId,
           x: startX,
           y: startY,
-          text: goodIcon[currentNumber],
+          text: pulseLabels[currentNumber],
           opacity: 1,
         });
         // image = null;
@@ -230,12 +216,10 @@ export default function Kowtow() {
           animationQueue.current.map((animation: Animation) => {
             // 绘制阶段
             ctx.save();
-            ctx.font = `${fontSize}px serif`;
-            ctx.fillStyle = `rgba(255, 0, 0, ${animation.opacity})`;
+            ctx.font = `700 ${fontSize}px sans-serif`;
+            ctx.fillStyle = `rgba(0, 82, 217, ${animation.opacity})`;
             ctx.textAlign = "center";
-            ctx.scale(3, 1);
             ctx.fillText(animation.text, animation.x, animation.y);
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.restore();
           });
           if (animationQueue.current.length > 0) {
@@ -299,7 +283,7 @@ export default function Kowtow() {
           {kowtowStats.totalCount !== "-" && (
             <Text className="kowtow-copy">
               {kowtowStats.iKowtowedToday
-                ? "今日已磕，博哥对你很满意👍"
+                ? "今日已磕，博哥对你很满意"
                 : "今天你还没磕，抓紧"}
             </Text>
           )}

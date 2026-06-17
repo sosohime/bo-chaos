@@ -1,56 +1,41 @@
 import { useContext } from "react";
 import Taro from "@tarojs/taro";
-import { CoverView, CoverImage } from "@tarojs/components";
+import { CoverView } from "@tarojs/components";
 import { AppContext } from "../lib/context";
 import { getMiniappConfig, isUgcEnabled } from "@/lib/runtime-config";
 
 import "./index.scss";
-import RetireIcon from "../images/tab-bar/retire.png";
-import RetireActiveIcon from "../images/tab-bar/retire-active.png";
-import KowtowIcon from "../images/tab-bar/kowtow.png";
-import KowtowActiveIcon from "../images/tab-bar/kowtow-active.png";
-import TravelIcon from "../images/tab-bar/travel.png";
-import TravelActiveIcon from "../images/tab-bar/travel-active.png";
-import HistoryIcon from "../images/tab-bar/history.png";
-import HistoryActiveIcon from "../images/tab-bar/history-active.png";
-import MyIcon from "../images/tab-bar/my.png";
-import MyActiveIcon from "../images/tab-bar/my-active.png";
 
 const list = [
   {
     key: "retire",
     pagePath: "/pages/retire/index",
-    iconPath: RetireIcon,
-    selectedIconPath: RetireActiveIcon,
     text: "退",
+    glyph: "T",
   },
   {
     key: "kowtow",
     pagePath: "/pages/kowtow/index",
-    iconPath: KowtowIcon,
-    selectedIconPath: KowtowActiveIcon,
     text: "磕",
+    glyph: "K",
   },
   {
     key: "history",
     pagePath: "/pages/history/index",
-    iconPath: HistoryIcon,
-    selectedIconPath: HistoryActiveIcon,
     text: "史",
+    glyph: "H",
   },
   {
     key: "travel",
     pagePath: "/pages/travel/index",
-    iconPath: TravelIcon,
-    selectedIconPath: TravelActiveIcon,
     text: "游",
+    glyph: "Y",
   },
   {
     key: "my",
     pagePath: "/pages/my/index",
-    iconPath: MyIcon,
-    selectedIconPath: MyActiveIcon,
     text: "我",
+    glyph: "M",
   },
 ];
 
@@ -78,13 +63,12 @@ export default function TabBar() {
       {visibleTabs.map((item, index) => (
         <CoverView
           key={index}
-          className="tab-bar-item"
+          className={`tab-bar-item ${selectedTab === index ? "active" : ""}`}
           onClick={() => switchTab(index, item.pagePath)}
         >
-          <CoverImage
-            className="tab-bar-icon"
-            src={selectedTab === index ? item.selectedIconPath : item.iconPath}
-          />
+          <CoverView className="tab-bar-icon">
+            <CoverView className="tab-bar-icon-core">{item.glyph}</CoverView>
+          </CoverView>
           <CoverView
             className="tab-bar-label"
             style={{ color: selectedTab === index ? selectedColor : color }}

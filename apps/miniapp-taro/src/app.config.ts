@@ -44,16 +44,16 @@ export default defineAppConfig({
   ],
   window: {
     backgroundTextStyle: "light",
-    navigationBarBackgroundColor: "#08111f",
+    navigationBarBackgroundColor: "#f7fbff",
     navigationBarTitleText: "Bo Fans",
-    navigationBarTextStyle: "white",
+    navigationBarTextStyle: "black",
   },
   tabBar: {
     custom: true,
-    color: "#7f91aa",
-    selectedColor: "#67e8f9",
-    backgroundColor: "#08111f",
-    borderStyle: "black",
+    color: "#5d6f8f",
+    selectedColor: "#0052d9",
+    backgroundColor: "#ffffff",
+    borderStyle: "white",
     list: tabBarList,
   },
 });

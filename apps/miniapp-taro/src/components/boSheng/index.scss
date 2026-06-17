@@ -2,19 +2,18 @@
   width: 100%;
   height: 40px;
   overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(5, 12, 24, 0.92), rgba(9, 30, 52, 0.9)),
-    radial-gradient(circle at 15% 50%, rgba(103, 232, 249, 0.24), transparent 32%);
+  background: linear-gradient(90deg, #ffffff, #eef7ff);
   display: flex;
   align-items: center;
   position: relative;
-  border: 1px solid rgba(103, 232, 249, 0.2);
+  border: 1px solid rgba(0, 82, 217, 0.14);
   border-radius: 8px;
+  box-shadow: 0 10px 22px rgba(0, 59, 145, 0.08);
 
   .bosheng {
     font-size: 16px;
     padding: 0;
-    color: #bff3ff;
+    color: #0052d9;
     font-weight: 700;
     white-space: nowrap;
     position: absolute;

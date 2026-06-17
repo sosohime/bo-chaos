@@ -1,13 +1,13 @@
-
 .swiper-block {
   position: relative;
   width: 100%;
   height: calc(100vw * 0.75 - 44px);
   z-index: 1;
   overflow: hidden;
-  border: 1px solid rgba(125, 211, 252, 0.18);
+  border: 1px solid rgba(0, 82, 217, 0.12);
   border-radius: 8px;
-  background: #08111f;
+  background: #ffffff;
+  box-shadow: 0 16px 34px rgba(0, 59, 145, 0.1);
 }
 .swiper-item {
   width: 100%;

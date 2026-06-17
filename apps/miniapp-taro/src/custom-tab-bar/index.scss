@@ -39,9 +39,35 @@
 }
 
 .tab-bar-icon {
-  margin-bottom: 4px;
-  width: 21px;
-  height: 21px;
+  margin-bottom: 3px;
+  width: 28px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: rgba(0, 82, 217, 0.06);
+  border: 1px solid rgba(0, 82, 217, 0.1);
+  box-sizing: border-box;
+}
+
+.tab-bar-icon-core {
+  color: #5d6f8f;
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 800;
+}
+
+.tab-bar-item.active {
+  .tab-bar-icon {
+    background: linear-gradient(135deg, #0052d9, #00a4ff);
+    border-color: rgba(0, 82, 217, 0.32);
+    box-shadow: 0 6px 14px rgba(0, 82, 217, 0.2);
+  }
+
+  .tab-bar-icon-core {
+    color: #ffffff;
+  }
 }
 
 .tab-bar-label {
