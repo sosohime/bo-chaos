@@ -4,11 +4,14 @@
   padding: 20px 18px 100px;
   flex-direction: column;
   align-items: center;
-  color: #e6edf7;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.2), transparent 34%),
-    radial-gradient(circle at 88% 18%, rgba(52, 211, 153, 0.12), transparent 28%),
-    linear-gradient(180deg, #0d1424, #070b13 74%);
+  color: #17233d;
+  background: radial-gradient(
+      circle at 50% 0%,
+      rgba(0, 82, 217, 0.12),
+      transparent 34%
+    ),
+    radial-gradient(circle at 88% 18%, rgba(0, 168, 255, 0.1), transparent 28%),
+    linear-gradient(180deg, #eef7ff, #f7fbff 74%);
   box-sizing: border-box;
 
   .utc {
@@ -18,7 +21,7 @@
 
   .kowtow-copy {
     padding-bottom: 12px;
-    color: #c9d7e8;
+    color: #445b7f;
     font-size: 14px;
   }
 
@@ -36,7 +39,7 @@
 
   .love {
     padding-top: 12px;
-    color: #67e8f9;
+    color: #0052d9;
     font-size: 20px;
     font-weight: 800;
   }
@@ -44,8 +47,8 @@
   .submit-kowtow {
     margin-top: 18px;
     width: 80%;
-    color: #07111f;
-    background: linear-gradient(90deg, #67e8f9, #34d399);
+    color: #ffffff;
+    background: linear-gradient(90deg, #0052d9, #00a4ff);
     border-radius: 8px;
     font-weight: 800;
 
@@ -55,7 +58,7 @@
   }
 
   .sync-warning {
-    color: #facc15;
+    color: #0052d9;
     font-size: 13px;
   }
 }

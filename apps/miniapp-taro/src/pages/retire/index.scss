@@ -1,105 +1,82 @@
 .retire-scroll {
   min-height: 100vh;
-  background: #070b13;
+  background: #f3f8ff;
 }
 
 .retire-page {
   min-height: 100vh;
-  color: #e6edf7;
+  color: #17233d;
   background: radial-gradient(
       circle at 50% -8%,
-      rgba(103, 232, 249, 0.22),
+      rgba(0, 82, 217, 0.16),
       transparent 34%
     ),
     radial-gradient(
       circle at 100% 18%,
-      rgba(245, 158, 11, 0.12),
+      rgba(0, 168, 255, 0.12),
       transparent 30%
     ),
-    linear-gradient(180deg, #0d1424, #070b13 76%);
+    linear-gradient(180deg, #eef7ff, #f7fbff 72%);
   box-sizing: border-box;
 }
 
 .retire-hero {
-  padding: 28px 20px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  padding: 22px 16px 8px;
   box-sizing: border-box;
 }
 
-.retire-orbit {
-  position: relative;
-  width: 132px;
-  height: 132px;
-  margin-bottom: 18px;
-}
-
-.retire-orbit-ring {
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(103, 232, 249, 0.28);
-  border-radius: 50%;
-  box-shadow:
-    inset 0 0 30px rgba(103, 232, 249, 0.12),
-    0 0 34px rgba(103, 232, 249, 0.12);
-}
-
-.retire-orbit-ring::after {
-  content: "";
-  position: absolute;
-  top: 16px;
-  right: 9px;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: #facc15;
-  box-shadow: 0 0 18px rgba(250, 204, 21, 0.7);
-}
-
-.retire-orbit-core {
-  position: absolute;
-  inset: 35px;
+.retire-console-head {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #07111f;
-  background: linear-gradient(135deg, #67e8f9, #34d399);
-  border-radius: 50%;
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 82, 217, 0.14);
+  border-radius: 8px;
+  box-shadow: 0 14px 32px rgba(0, 59, 145, 0.1);
 }
 
 .retire-eyebrow {
-  color: #67e8f9;
+  display: block;
+  color: #0052d9;
   font-size: 11px;
   font-weight: 800;
 }
 
 .retire-title {
   margin-top: 8px;
-  color: #f8fbff;
-  font-size: 28px;
+  color: #17233d;
+  font-size: 26px;
   font-weight: 900;
-  line-height: 34px;
+  line-height: 32px;
+}
+
+.retire-status {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  color: #0052d9;
+  background: rgba(0, 82, 217, 0.08);
+  border: 1px solid rgba(0, 82, 217, 0.16);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .retire-subtitle {
-  width: 88%;
+  display: block;
   margin-top: 10px;
-  color: #9fb3c8;
+  color: #5d6f8f;
   font-size: 14px;
   line-height: 21px;
 }
 
 .retire-panel {
-  background: rgba(12, 20, 34, 0.84);
-  border: 1px solid rgba(126, 169, 215, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 82, 217, 0.12);
   border-radius: 8px;
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 16px 36px rgba(0, 59, 145, 0.1);
+  backdrop-filter: blur(14px);
 }
 
 .retire-panel {
@@ -112,7 +89,7 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  color: #8fa3bb;
+  color: #5d6f8f;
   font-size: 12px;
 }
 
@@ -125,14 +102,14 @@
 }
 
 .retire-days-number {
-  color: #f8fbff;
+  color: #17233d;
   font-size: 56px;
   font-weight: 900;
   line-height: 64px;
 }
 
 .retire-days-unit {
-  color: #67e8f9;
+  color: #0052d9;
   font-size: 18px;
   font-weight: 800;
 }
@@ -142,7 +119,7 @@
   display: flex;
   justify-content: center;
   gap: 7px;
-  color: #c9d7e8;
+  color: #2b3f66;
   font-size: 22px;
   font-weight: 800;
 }
@@ -152,13 +129,13 @@
   margin-top: 18px;
   overflow: hidden;
   border-radius: 5px;
-  background: rgba(148, 163, 184, 0.14);
+  background: rgba(0, 82, 217, 0.08);
 }
 
 .retire-progress-fill {
   height: 100%;
   border-radius: 5px;
-  background: linear-gradient(90deg, #67e8f9, #34d399, #facc15);
+  background: linear-gradient(90deg, #0052d9, #00a4ff);
 }
 
 .retire-progress-meta {
@@ -169,7 +146,7 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  color: #657790;
+  color: #6b7f9f;
   font-size: 10px;
 }
 
@@ -192,12 +169,12 @@
 }
 
 .retire-primary {
-  color: #07111f;
-  background: linear-gradient(90deg, #67e8f9, #34d399);
+  color: #ffffff;
+  background: linear-gradient(90deg, #0052d9, #00a4ff);
 }
 
 .retire-secondary {
-  color: #dbeafe;
-  background: rgba(148, 163, 184, 0.14);
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  color: #0052d9;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(0, 82, 217, 0.16);
 }

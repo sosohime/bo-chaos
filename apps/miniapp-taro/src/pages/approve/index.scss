@@ -1,8 +1,11 @@
 .approval-page {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 15% -4%, rgba(34, 211, 238, 0.18), transparent 34%),
-    linear-gradient(180deg, #0d1424, #070b13 76%);
+  background: radial-gradient(
+      circle at 15% -4%,
+      rgba(0, 82, 217, 0.12),
+      transparent 34%
+    ),
+    linear-gradient(180deg, #eef7ff, #f7fbff 76%);
 }
 
 .approval-container {
@@ -21,15 +24,16 @@
 .approval-card {
   min-width: 0;
   overflow: hidden;
-  background: rgba(12, 20, 34, 0.84);
-  border: 1px solid rgba(126, 169, 215, 0.18);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 82, 217, 0.12);
   border-radius: 8px;
+  box-shadow: 0 12px 26px rgba(0, 59, 145, 0.08);
 }
 
 .approval-image {
   width: 100%;
   height: 132px;
-  background: #08111f;
+  background: #eef5ff;
 }
 
 .approval-meta {
@@ -38,7 +42,7 @@
   justify-content: space-between;
   gap: 6px;
   padding: 7px 8px 8px;
-  color: #c9d7e8;
+  color: #445b7f;
   font-size: 12px;
   box-sizing: border-box;
 
@@ -51,7 +55,7 @@
 
   .approval-status {
     flex: 0 0 auto;
-    color: #67e8f9;
+    color: #0052d9;
   }
 }
 
@@ -61,16 +65,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #8fa3bb;
+  color: #5d6f8f;
   font-size: 14px;
-  background: rgba(12, 20, 34, 0.84);
-  border: 1px solid rgba(126, 169, 215, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 82, 217, 0.12);
   border-radius: 8px;
 }
 
 .approval-footer {
   padding: 6px 0 104px;
   text-align: center;
-  color: #7487a0;
+  color: #6b7f9f;
   font-size: 12px;
 }

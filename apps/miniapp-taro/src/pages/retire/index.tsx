@@ -80,12 +80,13 @@ export default function Retire() {
     <ScrollView scrollY className="retire-scroll" enableBackToTop>
       <View className="retire-page">
         <View className="retire-hero">
-          <View className="retire-orbit">
-            <View className="retire-orbit-ring" />
-            <View className="retire-orbit-core">BO</View>
+          <View className="retire-console-head">
+            <View>
+              <Text className="retire-eyebrow">退休时间服务</Text>
+              <Text className="retire-title">博退休倒计时</Text>
+            </View>
+            <Text className="retire-status">运行中</Text>
           </View>
-          <Text className="retire-eyebrow">RETIREMENT CONTROL</Text>
-          <Text className="retire-title">博退休倒计时</Text>
           <Text className="retire-subtitle">
             目标日与退休站保持一致，实时更新剩余时间。
           </Text>

@@ -56,8 +56,8 @@ const list = [
 
 export default function TabBar() {
   const { selectedTab, setSelectedTab, systemConfig } = useContext(AppContext);
-  const color = "#7f91aa";
-  const selectedColor = "#67e8f9";
+  const color = "#5d6f8f";
+  const selectedColor = "#0052d9";
   const miniapp = getMiniappConfig(systemConfig);
   const ugcEnabled = isUgcEnabled(systemConfig);
   const visibleTabs = list.filter((item) => {
