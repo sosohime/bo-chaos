@@ -91,6 +91,7 @@ Repo-local skills live in `.agents/skills/`:
 - `bo-chaos-backend`
 - `bo-chaos-admin-frontend`
 - `bo-chaos-miniapp`
+- `bo-chaos-miniapp-visual-design`
 - `bo-chaos-doc-sync`
 
 Use them as playbooks when the request matches their descriptions.

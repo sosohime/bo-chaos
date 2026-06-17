@@ -1,0 +1,40 @@
+---
+name: bo-chaos-miniapp-visual-design
+description: Use when redesigning or polishing the bo-chaos Taro mini app UI, visual taste, tab bar states, photo feeds, retirement page, loading/empty/error states, or AI/tech styling direction.
+---
+
+# BoChaos Miniapp Visual Design
+
+Use this after `bo-chaos-miniapp` when the work touches mini app visual direction.
+
+## Direction
+
+- Aim for a Tencent Cloud product-console feel: clean white surfaces, quiet blue actions, gray-blue data text, precise dividers, compact resource cards, and clear operational states.
+- Add AI/tech feeling through information architecture, status chips, subtle grid/rule accents, restrained blue highlights, and state labels.
+- Keep the app honest and usable. Do not create official-site, sales-page, fake SaaS dashboard, or generic AI-glow visuals.
+- Prefer real product states over decorative imagery. Use generated bitmap assets only when they clarify a concrete screen, resource, or branded scene.
+
+## Anti-Slop Checks
+
+Before finishing a visual change, scan the touched screens for:
+
+- Marketing hero sections, oversized slogans, fake metrics, fake diagnostics, or “官网截图感”.
+- Lazy-loaded list counts derived from loaded items instead of backend totals.
+- Tab bar active/inactive states that change size, jump, or use mismatched icon weights.
+- Dark/purple neon, glow blobs, busy gradients, or decorative cards nested inside cards.
+- Empty/loading/error states that look like placeholders instead of product resource states.
+- Copy that exposes private employment detail, hard-codes retirement rules, or invents progress labels.
+
+## Component Rules
+
+- Photo feeds: keep true `Image lazyLoad`, stable card dimensions, visible loading/error/empty/footer states, and no eager image probes.
+- Tab bar: keep icon/text rhythm stable; active state should feel selected without becoming a floating marketing pill.
+- Retirement page: show canonical countdown/progress facts from shared constants only; avoid filler KPIs.
+- UGC controls: honor runtime config and the single UGC kill switch across tabs, upload, history, and fetch behavior.
+- Approval/upload states: present as queue/resource states with clear retry paths and no fake system claims.
+
+## Verification
+
+- Run `pnpm -C apps/miniapp-taro build:weapp` when feasible.
+- Run `pnpm agent:lint` before finishing non-trivial UI work.
+- Note whether WeChat DevTools visual verification was run; if unavailable, say so explicitly.

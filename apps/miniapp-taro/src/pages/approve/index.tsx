@@ -102,13 +102,21 @@ export default function ApprovalPage() {
           </View>
           {active.items.length === 0 && active.loading && (
             <View className="approval-state">
-              <Text>加载中...</Text>
+              <Text className="approval-state-kicker">队列同步</Text>
+              <Text className="approval-state-title">加载中</Text>
+              <Text className="approval-state-copy">正在同步当前审核队列</Text>
             </View>
           )}
           {active.items.length === 0 && !active.loading && (
             <View className="approval-state">
-              <Text>
-                {active.error ? "加载失败，下拉重试" : "这里还没有图片"}
+              <Text className="approval-state-kicker">
+                {active.error ? "同步异常" : "队列状态"}
+              </Text>
+              <Text className="approval-state-title">
+                {active.error ? "加载失败" : "这里还没有图片"}
+              </Text>
+              <Text className="approval-state-copy">
+                {active.error ? "下拉重试当前队列" : "当前队列暂无图片资源"}
               </Text>
             </View>
           )}

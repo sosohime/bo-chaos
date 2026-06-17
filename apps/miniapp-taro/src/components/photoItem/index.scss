@@ -43,15 +43,34 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      color: #5d6f8f;
+      gap: 4px;
+      color: #66758f;
       font-size: 12px;
       background: #eef5ff;
     }
 
+    .media-state-kicker,
+    .media-state-title {
+      display: block;
+    }
+
+    .media-state-kicker {
+      color: #0052d9;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .media-state-title {
+      color: #17233d;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     .error-container {
       .retry-text {
-        margin-top: 6px;
         color: #0052d9;
+        font-size: 11px;
+        font-weight: 700;
       }
     }
   }

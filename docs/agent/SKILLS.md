@@ -34,6 +34,7 @@ Repo-local playbooks live in `.agents/skills/`:
 - `bo-chaos-backend`: Nest + Prisma backend workflow.
 - `bo-chaos-admin-frontend`: Next admin UI workflow and browser debug.
 - `bo-chaos-miniapp`: Taro mini app workflow.
+- `bo-chaos-miniapp-visual-design`: mini app visual taste, Tencent Cloud console styling, AI/tech polish, and anti-slop checks.
 - `bo-chaos-doc-sync`: keep agent docs aligned with code.
 
 These skills should point back to `docs/agent/` instead of duplicating all context.

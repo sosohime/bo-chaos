@@ -127,13 +127,15 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
         </View>
         {loading && (
           <View className="loading-container">
-            <Text>加载中...</Text>
+            <Text className="media-state-kicker">图片资源</Text>
+            <Text className="media-state-title">加载中</Text>
           </View>
         )}
 
         {error ? (
           <View className="error-container" onClick={handleRetry}>
-            <Text>加载失败</Text>
+            <Text className="media-state-kicker">同步异常</Text>
+            <Text className="media-state-title">加载失败</Text>
             <Text className="retry-text">点击重试</Text>
           </View>
         ) : (

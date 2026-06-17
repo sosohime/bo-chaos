@@ -225,13 +225,37 @@
   min-height: 180px;
   margin: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #5d6f8f;
-  font-size: 14px;
+  gap: 7px;
+  padding: 22px;
+  color: #66758f;
+  font-size: 13px;
   background: #ffffff;
   border: 1px solid #dbe7f7;
   border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
+  box-sizing: border-box;
+}
+
+.approval-state-kicker {
+  color: #0052d9;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.approval-state-title {
+  color: #17233d;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.approval-state-copy {
+  color: #66758f;
+  font-size: 13px;
+  line-height: 20px;
 }
 
 .approval-footer {
