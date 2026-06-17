@@ -1,24 +1,36 @@
 import { useState } from "react";
-import { useLaunch } from "@tarojs/taro";
+import Taro, { useLaunch } from "@tarojs/taro";
 import { AppContext } from "./lib/context";
 import { getSystemConfig } from "@/api/system";
 import { BofansSystemConfigType } from "@mono/types";
+import {
+  DEFAULT_SYSTEM_CONFIG,
+  normalizeSystemConfig,
+} from "@/lib/runtime-config";
 
 // 全局样式
 import "./app.scss";
 
 function App(props) {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [systemConfig, setSystemConfig] = useState<BofansSystemConfigType>({});
+  const [systemConfig, setSystemConfig] = useState<BofansSystemConfigType>(
+    DEFAULT_SYSTEM_CONFIG,
+  );
 
   useLaunch(() => {
+    const cachedConfig = Taro.getStorageSync("bofansSystemConfig");
+    if (cachedConfig) {
+      setSystemConfig(normalizeSystemConfig(cachedConfig));
+    }
     loadSystemConfig();
   });
 
   async function loadSystemConfig() {
     try {
       const res = await getSystemConfig();
-      setSystemConfig(res);
+      const nextConfig = normalizeSystemConfig(res);
+      setSystemConfig(nextConfig);
+      Taro.setStorageSync("bofansSystemConfig", nextConfig);
     } catch (e) {
       console.log("获取系统配置失败", e);
     }

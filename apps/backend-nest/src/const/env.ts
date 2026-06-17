@@ -26,6 +26,7 @@ export const env: {
   ADMIN_COOKIE_SECURE: boolean;
   CORS_ORIGINS: string[];
   MAX_UPLOAD_BYTES: number;
+  BOFANS_WEAPP_RUNTIME_CONFIG: string;
 } = {
   JWT_SECRET: required('JWT_SECRET'),
   APP_ID: required('APP_ID'),
@@ -44,4 +45,5 @@ export const env: {
     .map((origin) => origin.trim())
     .filter(Boolean),
   MAX_UPLOAD_BYTES: Number(process.env.MAX_UPLOAD_BYTES || 8 * 1024 * 1024),
+  BOFANS_WEAPP_RUNTIME_CONFIG: process.env.BOFANS_WEAPP_RUNTIME_CONFIG || '',
 };

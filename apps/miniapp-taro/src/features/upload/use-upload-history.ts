@@ -25,10 +25,14 @@ const initialState: UploadHistoryState = {
   total: 0,
 };
 
-export function useUploadHistory(status: UploadedPhotoStatusFilter) {
+export function useUploadHistory(
+  status: UploadedPhotoStatusFilter,
+  enabled = true,
+) {
   const [state, setState] = useState<UploadHistoryState>(initialState);
 
   const fetchPage = async (nextPage: number, reset = false) => {
+    if (!enabled) return;
     if (!reset && (state.loading || !state.hasMore)) return;
     setState((current) => ({ ...current, loading: true, error: false }));
     try {
@@ -59,13 +63,18 @@ export function useUploadHistory(status: UploadedPhotoStatusFilter) {
 
   useEffect(() => {
     setState(initialState);
+    if (!enabled) return;
     fetchPage(1, true).catch(() => {
       Taro.showToast({ title: "加载失败", icon: "none" });
     });
-  }, [status]);
+  }, [status, enabled]);
 
   const refresh = async () => {
     setState((current) => ({ ...current, refreshing: true }));
+    if (!enabled) {
+      setState((current) => ({ ...current, refreshing: false }));
+      return;
+    }
     await fetchPage(1, true);
   };
 

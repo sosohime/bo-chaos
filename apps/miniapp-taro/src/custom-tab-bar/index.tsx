@@ -2,6 +2,7 @@ import { useContext } from "react";
 import Taro from "@tarojs/taro";
 import { CoverView, CoverImage } from "@tarojs/components";
 import { AppContext } from "../lib/context";
+import { getMiniappConfig, isUgcEnabled } from "@/lib/runtime-config";
 
 import "./index.scss";
 import RetireIcon from "../images/tab-bar/retire.png";
@@ -17,30 +18,35 @@ import MyActiveIcon from "../images/tab-bar/my-active.png";
 
 const list = [
   {
+    key: "retire",
     pagePath: "/pages/retire/index",
     iconPath: RetireIcon,
     selectedIconPath: RetireActiveIcon,
     text: "退",
   },
   {
+    key: "kowtow",
     pagePath: "/pages/kowtow/index",
     iconPath: KowtowIcon,
     selectedIconPath: KowtowActiveIcon,
     text: "磕",
   },
   {
+    key: "history",
     pagePath: "/pages/history/index",
     iconPath: HistoryIcon,
     selectedIconPath: HistoryActiveIcon,
     text: "史",
   },
   {
+    key: "travel",
     pagePath: "/pages/travel/index",
     iconPath: TravelIcon,
     selectedIconPath: TravelActiveIcon,
     text: "游",
   },
   {
+    key: "my",
     pagePath: "/pages/my/index",
     iconPath: MyIcon,
     selectedIconPath: MyActiveIcon,
@@ -49,9 +55,17 @@ const list = [
 ];
 
 export default function TabBar() {
-  const { selectedTab, setSelectedTab } = useContext(AppContext);
+  const { selectedTab, setSelectedTab, systemConfig } = useContext(AppContext);
   const color = "#7f91aa";
   const selectedColor = "#67e8f9";
+  const miniapp = getMiniappConfig(systemConfig);
+  const ugcEnabled = isUgcEnabled(systemConfig);
+  const visibleTabs = list.filter((item) => {
+    if (!ugcEnabled && ["history", "travel"].includes(item.key)) {
+      return false;
+    }
+    return miniapp.tabs[item.key].visible !== false;
+  });
 
   const switchTab = (index: number, url: string) => {
     setSelectedTab(index);
@@ -61,7 +75,7 @@ export default function TabBar() {
   return (
     <CoverView className="tab-bar">
       <CoverView className="tab-bar-border"></CoverView>
-      {list.map((item, index) => (
+      {visibleTabs.map((item, index) => (
         <CoverView
           key={index}
           className="tab-bar-item"
@@ -75,7 +89,7 @@ export default function TabBar() {
             className="tab-bar-label"
             style={{ color: selectedTab === index ? selectedColor : color }}
           >
-            {item.text}
+            {miniapp.tabs[item.key].text || item.text}
           </CoverView>
         </CoverView>
       ))}

@@ -9,7 +9,7 @@ import {
   type PhotoGroup,
 } from "./photo-list";
 
-export function useSystemPhotoGroups(system: CategorySystem) {
+export function useSystemPhotoGroups(system: CategorySystem, enabled = true) {
   const [photos, setPhotos] = useState<PhotoDto[]>([]);
   const [groups, setGroups] = useState<PhotoGroup[]>([]);
   const [activeCategory, setActiveCategory] = useState("");
@@ -32,6 +32,7 @@ export function useSystemPhotoGroups(system: CategorySystem) {
   };
 
   const fetchPage = async (nextPage: number, reset = false) => {
+    if (!enabled) return;
     if (!reset && (loading || !hasMore)) return;
     setLoading(true);
     setError(false);
@@ -59,15 +60,17 @@ export function useSystemPhotoGroups(system: CategorySystem) {
     setHasMore(true);
     setActiveCategory("");
     setUserTouchedCategory(false);
+    if (!enabled) return;
     fetchPage(1, true).catch(() => {
       Taro.showToast({ title: "加载失败", icon: "error" });
     });
-  }, [system]);
+  }, [system, enabled]);
 
   const refresh = async () => {
     try {
       setRefreshing(true);
       Taro.showNavigationBarLoading();
+      if (!enabled) return;
       await fetchPage(1, true);
       Taro.showToast({ title: "刷新成功", icon: "success" });
     } catch {

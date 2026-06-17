@@ -52,6 +52,8 @@ Follow existing code first. These conventions document current patterns and guar
 - Preserve true image laziness in miniapp feeds: avoid `getImageInfo`-style eager image probes for every list item unless backend dimensions are unavailable and the UX explicitly depends on exact layout.
 - Keep upload interactions queue-based and recoverable: cap large image selections, limit concurrent uploads, leave failed items available for retry, and show a clear post-submit path to review history.
 - Keep mini app visual refreshes cohesive across page shells, navigation bar, tab bar, feed cards, upload controls, and review surfaces; avoid mixing new dark/tech page bodies with legacy blue-white chrome.
+- Keep mini app runtime behavior behind `/bofans/global/systemConfig` when it needs operational flexibility. `BOFANS_WEAPP_RUNTIME_CONFIG` accepts JSON overrides for tab labels/visibility, page copy, and the UGC kill switch; avoid app-local one-off feature flags.
+- Treat `miniapp.ugc.enabled=false` as the single UGC visibility switch. UGC pages, upload surfaces, upload history, and UGC tab entries should all honor it and avoid fetching UGC data while disabled.
 
 ## Astro
 

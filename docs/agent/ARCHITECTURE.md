@@ -26,7 +26,7 @@ Backend modules live under `apps/backend-nest/src/bofans/`.
 - `photo`: photo list/get/upload/vote/review operations.
 - `category`: `PhotoCategory` CRUD used by review and upload flows.
 - `kowtow`: kowtow behavior and daily stats.
-- `global`: global stats endpoints.
+- `global`: global stats endpoints and mini app runtime configuration from environment-backed defaults.
 - `bo`: lightweight Bo experience endpoints such as the daily inspiration card.
 
 Use `PrismaService` from `apps/backend-nest/src/library/prisma.service.ts` for database access. Keep controller methods thin and put query/update logic in services.
@@ -45,6 +45,7 @@ Mini app:
 - Pages live under `apps/miniapp-taro/src/pages/`.
 - API wrappers live under `apps/miniapp-taro/src/api/`.
 - Request/auth retry logic lives in `apps/miniapp-taro/src/lib/request.ts`.
+- Runtime system config is fetched from `/bofans/global/systemConfig`, normalized in `src/lib/runtime-config.ts`, and controls flexible mini app labels, tab visibility, and the UGC kill switch.
 - Upload history should use paginated photo APIs so old images are not loaded into the page all at once.
 
 Astro:

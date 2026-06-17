@@ -3,14 +3,18 @@ import { useContext, useEffect } from "react";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
 import CategoryPhotoSections from "@/features/photos/CategoryPhotoSections";
+import UgcDisabledState from "@/features/photos/UgcDisabledState";
 import { useSystemPhotoGroups } from "@/features/photos/use-system-photo-groups";
 import { AppContext } from "@/lib/context";
+import { getMiniappConfig, isUgcEnabled } from "@/lib/runtime-config";
 import { useShare } from "@/lib/share";
 
 import "./index.scss";
 
 export default function Travel() {
   const { systemConfig } = useContext(AppContext);
+  const ugcEnabled = isUgcEnabled(systemConfig);
+  const miniapp = getMiniappConfig(systemConfig);
   const {
     groups,
     activeCategory,
@@ -21,7 +25,7 @@ export default function Travel() {
     refresh,
     loadMore,
     toggleCategory,
-  } = useSystemPhotoGroups("travel");
+  } = useSystemPhotoGroups("travel", ugcEnabled);
 
   useShare({
     title: "来博Fans，看博哥环游世界！",
@@ -30,9 +34,9 @@ export default function Travel() {
   });
 
   useEffect(() => {
-    if (systemConfig?.inReview) {
-      Taro.setNavigationBarTitle({ title: "旅行类图片" });
-    }
+    Taro.setNavigationBarTitle({
+      title: systemConfig?.inReview ? miniapp.pages.photoTitles.travel : "旅行",
+    });
   }, [systemConfig]);
 
   return (
@@ -47,15 +51,19 @@ export default function Travel() {
     >
       <View className="photo-page-content">
         <BoSheng boxStyle={{ padding: "20px 20px 4px" }} />
-        <CategoryPhotoSections
-          groups={groups}
-          activeCategory={activeCategory}
-          loading={loading}
-          error={error}
-          hasMore={hasMore}
-          onCategoryClick={toggleCategory}
-          onRetry={refresh}
-        />
+        {ugcEnabled ? (
+          <CategoryPhotoSections
+            groups={groups}
+            activeCategory={activeCategory}
+            loading={loading}
+            error={error}
+            hasMore={hasMore}
+            onCategoryClick={toggleCategory}
+            onRetry={refresh}
+          />
+        ) : (
+          <UgcDisabledState systemConfig={systemConfig} />
+        )}
       </View>
     </ScrollView>
   );

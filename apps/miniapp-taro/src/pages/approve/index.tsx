@@ -1,8 +1,11 @@
 import Taro from "@tarojs/taro";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Image, ScrollView, Text, View } from "@tarojs/components";
 import type { UploadedPhotoStatusFilter } from "@mono/types";
+import UgcDisabledState from "@/features/photos/UgcDisabledState";
 import { useUploadHistory } from "@/features/upload/use-upload-history";
+import { AppContext } from "@/lib/context";
+import { isUgcEnabled } from "@/lib/runtime-config";
 import { normalizeMediaUrl, normalizeMediaUrls } from "@/lib/media-url";
 import "./index.scss";
 import TabHead from "./components/tabHead";
@@ -14,10 +17,12 @@ function getInitialTab(): UploadedPhotoStatusFilter {
 }
 
 export default function ApprovalPage() {
+  const { systemConfig } = useContext(AppContext);
+  const ugcEnabled = isUgcEnabled(systemConfig);
   const [activeTab, setActiveTab] =
     useState<UploadedPhotoStatusFilter>(getInitialTab);
-  const pending = useUploadHistory("pending");
-  const approved = useUploadHistory("approved");
+  const pending = useUploadHistory("pending", ugcEnabled);
+  const approved = useUploadHistory("approved", ugcEnabled);
   const active = activeTab === "pending" ? pending : approved;
   const counts = useMemo(
     () => ({
@@ -42,69 +47,73 @@ export default function ApprovalPage() {
   return (
     <View className="approval-page">
       <TabHead active={activeTab} counts={counts} onClick={setActiveTab} />
-      <ScrollView
-        scrollY
-        className="approval-container"
-        refresherEnabled
-        enableBackToTop
-        refresherTriggered={active.refreshing}
-        onRefresherRefresh={onRefresh}
-        onScrollToLower={active.loadMore}
-      >
-        {active.items.length === 0 && active.loading && (
-          <View className="approval-state">
-            <Text>加载中...</Text>
-          </View>
-        )}
-        {active.items.length === 0 && !active.loading && (
-          <View className="approval-state">
-            <Text>
-              {active.error ? "加载失败，下拉重试" : "这里还没有图片"}
-            </Text>
-          </View>
-        )}
-        {active.items.length > 0 && (
-          <View className="approval-grid">
-            {active.items.map((photo) => (
-              <View key={photo.id} className="approval-card">
-                <Image
-                  src={normalizeMediaUrl(photo.filename)}
-                  mode="aspectFill"
-                  lazyLoad
-                  className="approval-image"
-                  onClick={() =>
-                    Taro.previewImage({
-                      current: normalizeMediaUrl(photo.filename),
-                      urls: normalizeMediaUrls(
-                        active.items.map((item) => item.filename),
-                      ),
-                    })
-                  }
-                />
-                <View className="approval-meta">
-                  <Text className="approval-category">
-                    {photo.category?.name || "未分类"}
-                  </Text>
-                  <Text className="approval-status">
-                    {activeTab === "pending" ? "审核中" : "已通过"}
-                  </Text>
+      {!ugcEnabled ? (
+        <UgcDisabledState systemConfig={systemConfig} />
+      ) : (
+        <ScrollView
+          scrollY
+          className="approval-container"
+          refresherEnabled
+          enableBackToTop
+          refresherTriggered={active.refreshing}
+          onRefresherRefresh={onRefresh}
+          onScrollToLower={active.loadMore}
+        >
+          {active.items.length === 0 && active.loading && (
+            <View className="approval-state">
+              <Text>加载中...</Text>
+            </View>
+          )}
+          {active.items.length === 0 && !active.loading && (
+            <View className="approval-state">
+              <Text>
+                {active.error ? "加载失败，下拉重试" : "这里还没有图片"}
+              </Text>
+            </View>
+          )}
+          {active.items.length > 0 && (
+            <View className="approval-grid">
+              {active.items.map((photo) => (
+                <View key={photo.id} className="approval-card">
+                  <Image
+                    src={normalizeMediaUrl(photo.filename)}
+                    mode="aspectFill"
+                    lazyLoad
+                    className="approval-image"
+                    onClick={() =>
+                      Taro.previewImage({
+                        current: normalizeMediaUrl(photo.filename),
+                        urls: normalizeMediaUrls(
+                          active.items.map((item) => item.filename),
+                        ),
+                      })
+                    }
+                  />
+                  <View className="approval-meta">
+                    <Text className="approval-category">
+                      {photo.category?.name || "未分类"}
+                    </Text>
+                    <Text className="approval-status">
+                      {activeTab === "pending" ? "审核中" : "已通过"}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            ))}
-          </View>
-        )}
-        {active.items.length > 0 && (
-          <View className="approval-footer">
-            <Text>
-              {active.loading
-                ? "继续加载中..."
-                : active.hasMore
-                  ? "上拉加载更多"
-                  : "到底啦"}
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+              ))}
+            </View>
+          )}
+          {active.items.length > 0 && (
+            <View className="approval-footer">
+              <Text>
+                {active.loading
+                  ? "继续加载中..."
+                  : active.hasMore
+                    ? "上拉加载更多"
+                    : "到底啦"}
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 }

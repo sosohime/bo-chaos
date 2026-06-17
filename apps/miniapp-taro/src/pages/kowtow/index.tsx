@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useContext } from "react";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
 import { AppContext } from "@/lib/context";
+import { getMiniappConfig } from "@/lib/runtime-config";
 import { useShare } from "@/lib/share";
 import useLocalStorage from "@/hooks/use-local-storage";
 import God from "@/images/kowtow/god.png";
@@ -80,6 +81,7 @@ export default function Kowtow() {
   const animationState = useRef(false);
 
   const { systemConfig } = useContext(AppContext);
+  const miniapp = getMiniappConfig(systemConfig);
   const [kowtowStats, setKowtowStats] = useState<KowtowStats>({
     todayKowtowedUser: "-",
     totalCount: "-",
@@ -91,7 +93,9 @@ export default function Kowtow() {
   useEffect(() => {
     if (systemConfig) {
       Taro.setNavigationBarTitle({
-        title: systemConfig.inReview ? "博Fans图片压缩工具简介" : "磕袁",
+        title: systemConfig.inReview
+          ? miniapp.pages.reviewKowtowTitle
+          : miniapp.pages.kowtowTitle,
       });
     }
   }, [systemConfig]);

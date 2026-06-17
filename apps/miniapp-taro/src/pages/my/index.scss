@@ -1,9 +1,16 @@
 .my-container {
   height: 100vh;
   color: #e6edf7;
-  background:
-    radial-gradient(circle at 12% -4%, rgba(34, 211, 238, 0.18), transparent 34%),
-    radial-gradient(circle at 86% 12%, rgba(74, 222, 128, 0.12), transparent 30%),
+  background: radial-gradient(
+      circle at 12% -4%,
+      rgba(34, 211, 238, 0.18),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 86% 12%,
+      rgba(74, 222, 128, 0.12),
+      transparent 30%
+    ),
     linear-gradient(180deg, #0d1424, #070b13 76%);
   box-sizing: border-box;
   position: relative;
@@ -93,6 +100,7 @@
 .record-section,
 .upload-section,
 .history-section,
+.ugc-disabled-section,
 .bo-daily-card {
   margin: 16px;
   padding: 15px;
@@ -101,6 +109,16 @@
   border-radius: 8px;
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.24);
   backdrop-filter: blur(12px);
+}
+
+.ugc-disabled-section {
+  color: #9fb3c8;
+  font-size: 14px;
+  line-height: 22px;
+
+  .section-title {
+    margin-bottom: 8px;
+  }
 }
 
 .section-title {
@@ -122,8 +140,11 @@
 .bo-daily-card {
   margin-top: 18px;
   color: #fff;
-  background:
-    linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(14, 165, 233, 0.12)),
+  background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.16),
+      rgba(14, 165, 233, 0.12)
+    ),
     rgba(9, 15, 27, 0.9);
 
   .bo-daily-topline,

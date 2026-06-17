@@ -75,8 +75,37 @@ export interface KowtowRequest {
   count?: number;
 }
 
+export type BofansMiniappTabKey =
+  | "retire"
+  | "kowtow"
+  | "history"
+  | "travel"
+  | "my";
+
+export interface BofansMiniappTabConfig {
+  visible?: boolean;
+  text?: string;
+}
+
+export interface BofansMiniappRuntimeConfig {
+  ugc?: {
+    enabled?: boolean;
+    disabledTitle?: string;
+    disabledMessage?: string;
+  };
+  tabs?: Partial<Record<BofansMiniappTabKey, BofansMiniappTabConfig>>;
+  pages?: {
+    kowtowTitle?: string;
+    reviewKowtowTitle?: string;
+    uploadTitle?: string;
+    reviewUploadTitle?: string;
+    photoTitles?: Partial<Record<CategorySystem, string>>;
+  };
+}
+
 export interface BofansSystemConfigType {
   inReview?: boolean;
+  miniapp?: BofansMiniappRuntimeConfig;
 }
 
 export interface BoDailyCardDto {

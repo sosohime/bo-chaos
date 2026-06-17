@@ -16,7 +16,11 @@ function getEstimatedHeight(photo: PhotoDto, columnWidth: number) {
   return Math.round(columnWidth * ratio);
 }
 
-export function useWaterfallPhotos(system: CategorySystem, columnCount = 3) {
+export function useWaterfallPhotos(
+  system: CategorySystem,
+  columnCount = 3,
+  enabled = true,
+) {
   const [photos, setPhotos] = useState<PhotoDto[]>([]);
   const [columns, setColumns] = useState<PhotoCard[][]>(
     emptyPhotoColumns(columnCount),
@@ -52,6 +56,7 @@ export function useWaterfallPhotos(system: CategorySystem, columnCount = 3) {
   };
 
   const fetchPage = async (nextPage: number, reset = false) => {
+    if (!enabled) return;
     if (!reset && (loading || !hasMore)) return;
     setLoading(true);
     setError(false);
@@ -80,15 +85,17 @@ export function useWaterfallPhotos(system: CategorySystem, columnCount = 3) {
     setPage(0);
     setHasMore(true);
     resetColumns();
+    if (!enabled) return;
     fetchPage(1, true).catch(() => {
       Taro.showToast({ title: "加载失败", icon: "error" });
     });
-  }, [system]);
+  }, [system, enabled]);
 
   const refresh = async () => {
     try {
       setRefreshing(true);
       Taro.showNavigationBarLoading();
+      if (!enabled) return;
       await fetchPage(1, true);
       Taro.showToast({ title: "刷新成功", icon: "success" });
     } catch {
