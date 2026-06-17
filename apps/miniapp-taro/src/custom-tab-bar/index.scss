@@ -3,17 +3,18 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 64px;
-  background: #ffffff;
+  height: 66px;
+  background: rgba(255, 255, 255, 0.98);
   display: flex;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom); // 适配 iPhone 底部
-  border-top: 1px solid #dbe7f7;
-  box-shadow: 0 -4px 14px rgba(15, 54, 105, 0.05);
+  border-top: 1px solid #d9e5f5;
+  box-shadow: 0 -8px 22px rgba(15, 54, 105, 0.08);
+  box-sizing: border-box;
 }
 
 .tab-bar-border {
-  background: #dbe7f7;
+  background: #d9e5f5;
   position: absolute;
   left: 0;
   top: 0;
@@ -31,240 +32,75 @@
   align-items: center;
   flex-direction: column;
   color: #66758f;
+  box-sizing: border-box;
 }
 
 .tab-bar-control {
-  min-width: 42px;
-  height: 48px;
-  padding: 4px 6px;
+  position: relative;
+  width: 54px;
+  height: 54px;
+  padding: 5px 4px 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
+  background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
   box-sizing: border-box;
 }
 
-.tab-bar-icon {
+.tab-bar-indicator {
   position: relative;
-  width: 26px;
-  height: 24px;
+  top: -5px;
+  width: 20px;
+  height: 2px;
+  flex: 0 0 auto;
+  background: transparent;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+.tab-bar-icon-shell {
+  width: 25px;
+  height: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
 }
 
-.icon-part {
-  position: absolute;
-  box-sizing: border-box;
-}
-
-.tab-bar-icon-retire {
-  .icon-a {
-    left: 4px;
-    top: 3px;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #8aa0bf;
-    border-radius: 50%;
-  }
-
-  .icon-b {
-    width: 2px;
-    height: 6px;
-    top: 7px;
-    left: 12px;
-    background: #8aa0bf;
-    border-radius: 2px;
-  }
-
-  .icon-c {
-    width: 6px;
-    height: 2px;
-    top: 12px;
-    left: 12px;
-    background: #8aa0bf;
-    border-radius: 2px;
-  }
-}
-
-.tab-bar-icon-kowtow {
-  .icon-a,
-  .icon-b,
-  .icon-c {
-    bottom: 4px;
-    width: 4px;
-    border-radius: 3px;
-    background: #8aa0bf;
-  }
-
-  .icon-a {
-    left: 6px;
-    height: 9px;
-  }
-
-  .icon-b {
-    left: 12px;
-    height: 15px;
-  }
-
-  .icon-c {
-    left: 18px;
-    height: 11px;
-  }
-}
-
-.tab-bar-icon-history {
-  .icon-a,
-  .icon-b,
-  .icon-c {
-    left: 5px;
-    width: 16px;
-    height: 3px;
-    background: #8aa0bf;
-    border-radius: 3px;
-  }
-
-  .icon-a {
-    top: 6px;
-  }
-
-  .icon-b {
-    top: 11px;
-  }
-
-  .icon-c {
-    top: 16px;
-  }
-}
-
-.tab-bar-icon-travel {
-  .icon-a {
-    left: 4px;
-    top: 4px;
-    width: 18px;
-    height: 10px;
-    border: 2px solid #8aa0bf;
-    border-top: 0;
-    border-left: 0;
-    border-radius: 0 0 10px 0;
-    transform: rotate(-16deg);
-  }
-
-  .icon-b,
-  .icon-c {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #8aa0bf;
-  }
-
-  .icon-b {
-    left: 4px;
-    top: 5px;
-  }
-
-  .icon-c {
-    right: 3px;
-    bottom: 4px;
-  }
-}
-
-.tab-bar-icon-my {
-  .icon-a {
-    left: 9px;
-    top: 4px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #8aa0bf;
-  }
-
-  .icon-b {
-    left: 4px;
-    bottom: 3px;
-    width: 18px;
-    height: 9px;
-    border: 2px solid #8aa0bf;
-    border-radius: 10px 10px 4px 4px;
-  }
+.tab-bar-icon {
+  width: 25px;
+  height: 25px;
 }
 
 .tab-bar-item.active {
   color: #0052d9;
 
   .tab-bar-control {
-    min-width: 58px;
-    height: 36px;
-    padding: 0 9px;
-    flex-direction: row;
-    gap: 6px;
+    width: 54px;
+    height: 54px;
+    padding: 5px 4px 4px;
+    flex-direction: column;
+    gap: 2px;
     background: #f3f8ff;
-    border: 1px solid #bed7ff;
+    border-color: #c8dcfb;
     border-radius: 6px;
   }
 
-  .tab-bar-icon {
-    width: 22px;
-    height: 22px;
-  }
-
-  .icon-a,
-  .icon-b,
-  .icon-c {
-    border-color: #0052d9;
-  }
-
-  .tab-bar-icon-retire {
-    .icon-a {
-      background: transparent;
-    }
-
-    .icon-b,
-    .icon-c {
-      background: #0052d9;
-    }
-  }
-
-  .tab-bar-icon-kowtow,
-  .tab-bar-icon-history {
-    .icon-a,
-    .icon-b,
-    .icon-c {
-      background: #0052d9;
-    }
-  }
-
-  .tab-bar-icon-travel {
-    .icon-a {
-      background: transparent;
-    }
-
-    .icon-b,
-    .icon-c {
-      background: #0052d9;
-    }
-  }
-
-  .tab-bar-icon-my {
-    .icon-a {
-      background: #0052d9;
-    }
-
-    .icon-b {
-      background: transparent;
-    }
+  .tab-bar-indicator {
+    background: #0052d9;
   }
 }
 
 .tab-bar-label {
-  font-size: 11px;
-  line-height: 14px;
+  font-size: 10px;
+  line-height: 13px;
   font-weight: 600;
   color: #5d6f8f;
+  white-space: nowrap;
 }
 
 .tab-bar-item.active .tab-bar-label {

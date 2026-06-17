@@ -12,11 +12,11 @@ export const DEFAULT_MINIAPP_CONFIG: Required<BofansMiniappRuntimeConfig> = {
     disabledMessage: "资料区正在整理，先去看看退休进度和今日状态。",
   },
   tabs: {
-    retire: { visible: true, text: "退" },
-    kowtow: { visible: true, text: "磕" },
-    history: { visible: true, text: "史" },
-    travel: { visible: true, text: "游" },
-    my: { visible: true, text: "我" },
+    retire: { visible: true, text: "退休" },
+    kowtow: { visible: true, text: "磕袁" },
+    history: { visible: true, text: "博史" },
+    travel: { visible: true, text: "旅行" },
+    my: { visible: true, text: "我的" },
   },
   pages: {
     kowtowTitle: "磕袁",
