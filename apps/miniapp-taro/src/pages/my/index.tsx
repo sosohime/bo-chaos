@@ -674,6 +674,15 @@ export default function My() {
             )}
 
             <View className="upload-form-panel">
+              <View className="upload-form-head">
+                <View>
+                  <Text className="upload-form-kicker">TASK CONFIG</Text>
+                  <Text className="upload-form-title">上传任务配置</Text>
+                </View>
+                <Text className="upload-form-state">
+                  {selectedCategoryLabel}
+                </Text>
+              </View>
               <View className="upload-field">
                 <Text className="upload-field-label">板块</Text>
                 <Picker
@@ -764,6 +773,15 @@ export default function My() {
               <>
                 {selectedImages.length > 0 && (
                   <View className="image-list">
+                    <View className="image-list-head">
+                      <View>
+                        <Text className="image-list-kicker">UPLOAD QUEUE</Text>
+                        <Text className="image-list-title">图片队列</Text>
+                      </View>
+                      <Text className="image-list-state">
+                        {selectedImages.length}/{MAX_SELECTED_IMAGES}
+                      </Text>
+                    </View>
                     {selectedImages.map((img, index) => (
                       <View key={index} className="image-item">
                         <Image
@@ -884,9 +902,19 @@ export default function My() {
                       }
                     />
                   ))
-                : !activeHistory.loading && <Text>{activeHistoryEmpty}</Text>}
+                : !activeHistory.loading && (
+                    <View className="history-empty">
+                      <Text className="history-empty-kicker">资源状态</Text>
+                      <Text className="history-empty-title">
+                        {activeHistoryEmpty}
+                      </Text>
+                    </View>
+                  )}
               {activeHistory.loading && (
-                <Text className="history-loading">加载中...</Text>
+                <View className="history-empty">
+                  <Text className="history-empty-kicker">队列同步</Text>
+                  <Text className="history-empty-title">加载中</Text>
+                </View>
               )}
             </View>
             {activeHistory.hasMore && (
