@@ -9,8 +9,6 @@ import { AppContext } from "@/lib/context";
 import { getMiniappConfig, isUgcEnabled } from "@/lib/runtime-config";
 import { useShare } from "@/lib/share";
 
-import "./index.scss";
-
 export default function Tease() {
   const { systemConfig } = useContext(AppContext);
   const ugcEnabled = isUgcEnabled(systemConfig);
@@ -24,7 +22,7 @@ export default function Tease() {
     refreshing,
     refresh,
     loadMore,
-  } = useWaterfallPhotos("tease", 3, ugcEnabled);
+  } = useWaterfallPhotos("tease", 2, ugcEnabled);
 
   useShare({
     title: "快来博Fans，跟博哥一起欢乐！",

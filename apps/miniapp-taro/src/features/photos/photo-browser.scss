@@ -58,6 +58,10 @@
   box-sizing: border-box;
 }
 
+.waterfall-shell {
+  margin-bottom: 10px;
+}
+
 .photo-browser-toolbar {
   display: flex;
   align-items: flex-start;
@@ -205,16 +209,16 @@
 
 .waterfall {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  padding: 0 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  padding: 0 14px;
   box-sizing: border-box;
 
   .column {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 9px;
   }
 }
 

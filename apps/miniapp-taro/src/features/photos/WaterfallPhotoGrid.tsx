@@ -52,6 +52,17 @@ export default function WaterfallPhotoGrid({
 
   return (
     <>
+      <View className="photo-browser-shell waterfall-shell">
+        <View className="photo-browser-toolbar">
+          <View>
+            <Text className="photo-browser-label">图片资源</Text>
+            <Text className="photo-browser-active">瀑布流</Text>
+          </View>
+          <Text className="photo-browser-sync">
+            {loading ? "同步中" : hasMore ? "可继续加载" : "已同步"}
+          </Text>
+        </View>
+      </View>
       <View className="waterfall">
         {columns.map((column, columnIndex) => (
           <View key={columnIndex} className="column">
