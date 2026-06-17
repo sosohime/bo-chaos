@@ -19,7 +19,7 @@
   position: relative;
   overflow: hidden;
   margin: 16px 14px 8px;
-  padding: 15px 14px 14px;
+  padding: 16px 14px 14px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -27,7 +27,7 @@
   background: #ffffff;
   border: 1px solid #d4e3f7;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.08);
+  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.07);
 
   &::before {
     content: "";
@@ -45,6 +45,7 @@
   color: #0052d9;
   font-size: 11px;
   font-weight: 800;
+  letter-spacing: 0;
 }
 
 .photo-console-title {
@@ -69,7 +70,7 @@
 
 .photo-browser-shell {
   margin: 12px 14px 0;
-  padding: 12px;
+  padding: 12px 12px 11px;
   background: #ffffff;
   border: 1px solid #d4e3f7;
   border-radius: 8px;
@@ -90,8 +91,8 @@
 
 .photo-browser-title-block {
   min-width: 0;
-  padding-left: 10px;
-  border-left: 3px solid #0052d9;
+  padding-left: 11px;
+  border-left: 3px solid #0070f0;
   box-sizing: border-box;
 }
 
@@ -101,9 +102,10 @@
 }
 
 .photo-browser-label {
-  color: #7b8da8;
-  font-size: 11px;
-  font-weight: 700;
+  color: #0052d9;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .photo-browser-active {
@@ -121,8 +123,8 @@
   flex: 0 0 auto;
   padding: 5px 8px;
   color: #0052d9;
-  background: #f3f8ff;
-  border: 1px solid #c9defa;
+  background: #eef6ff;
+  border: 1px solid #c8dcfb;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
@@ -133,20 +135,20 @@
   margin: 10px 14px 0;
   overflow: hidden;
   background: #ffffff;
-  border: 1px solid #dbe7f7;
+  border: 1px solid #d4e3f7;
   border-radius: 8px;
   box-shadow: 0 4px 14px rgba(15, 54, 105, 0.045);
 
   &.active {
     border-color: #c8dcfb;
-    box-shadow: 0 8px 20px rgba(15, 54, 105, 0.07);
+    box-shadow: 0 9px 22px rgba(15, 54, 105, 0.075);
   }
 }
 
 .category-header {
   position: relative;
   min-height: 56px;
-  padding: 12px 14px 12px 17px;
+  padding: 12px 13px 12px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -154,8 +156,8 @@
   box-sizing: border-box;
 
   &.active {
-    background: #f6faff;
-    border-bottom: 1px solid #dbe7f7;
+    background: linear-gradient(180deg, #f6faff, #ffffff);
+    border-bottom: 1px solid #d4e3f7;
   }
 
   .category-rail {
@@ -194,8 +196,10 @@
 
   .category-state {
     flex: 0 0 auto;
+    min-width: 62px;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 8px;
     color: #66758f;
     font-size: 12px;
@@ -210,9 +214,9 @@
     align-items: center;
     justify-content: center;
     color: #0052d9;
-    background: #edf5ff;
-    border: 1px solid #cfe2ff;
-    border-radius: 50%;
+    background: #eef6ff;
+    border: 1px solid #c8dcfb;
+    border-radius: 4px;
     font-size: 15px;
     line-height: 1;
     box-sizing: border-box;
@@ -228,7 +232,7 @@
 }
 
 .category-body-head {
-  padding: 11px 12px 0;
+  padding: 12px 12px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -240,7 +244,7 @@
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 9px;
+  gap: 10px;
   padding: 12px;
   background: #f6faff;
   box-sizing: border-box;
@@ -249,23 +253,29 @@
 .photo-item-wrapper {
   min-width: 0;
   overflow: hidden;
-  border: 1px solid #dbe7f7;
+  border: 1px solid #cfe0f5;
   border-radius: 8px;
   background: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 54, 105, 0.035);
 }
 
 .waterfall {
+  margin: 0 14px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 9px;
-  padding: 0 14px;
+  gap: 10px;
+  padding: 10px;
+  background: #f6faff;
+  border: 1px solid #d4e3f7;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.045);
   box-sizing: border-box;
 
   .column {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 10px;
   }
 }
 
@@ -326,7 +336,7 @@
 }
 
 .list-footer {
-  padding: 8px 0 102px;
+  padding: 10px 0 102px;
   text-align: center;
   color: #6b7f9f;
   font-size: 12px;

@@ -2,8 +2,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 6px;
+  padding: 7px;
   background: #ffffff;
+  border-radius: 8px;
   box-sizing: border-box;
 
   .photo-box {
@@ -11,8 +12,15 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    border: 1px solid #d4e3f7;
     border-radius: 6px;
-    background: #eef5ff;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 82, 217, 0.08),
+        rgba(255, 255, 255, 0)
+      ),
+      #eef5ff;
+    box-sizing: border-box;
 
     .photo {
       width: 100%;
@@ -25,10 +33,10 @@
       top: 6px;
       left: 6px;
       z-index: 1;
-      padding: 3px 5px;
+      padding: 3px 6px;
       color: #0052d9;
       background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(0, 82, 217, 0.14);
+      border: 1px solid rgba(0, 82, 217, 0.18);
       border-radius: 4px;
       font-size: 9px;
       font-weight: 800;
@@ -46,7 +54,12 @@
       gap: 4px;
       color: #66758f;
       font-size: 12px;
-      background: #eef5ff;
+      background: linear-gradient(
+          135deg,
+          rgba(0, 82, 217, 0.08),
+          rgba(255, 255, 255, 0)
+        ),
+        #eef5ff;
     }
 
     .media-state-kicker,
@@ -77,7 +90,7 @@
 
   .photo-info {
     flex-shrink: 0;
-    padding: 8px 4px 4px;
+    padding: 8px 2px 5px;
     box-sizing: border-box;
   }
 
@@ -106,7 +119,7 @@
   .photo-actions {
     flex-shrink: 0;
     min-height: 28px;
-    padding: 3px 4px 0;
+    padding: 4px 2px 0;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -123,9 +136,9 @@
       align-items: center;
       justify-content: center;
       color: #0052d9;
-      background: #f3f8ff;
-      border: 1px solid #cfe2ff;
-      border-radius: 5px;
+      background: #eef6ff;
+      border: 1px solid #c8dcfb;
+      border-radius: 4px;
       font-size: 10px;
       font-weight: 700;
       box-sizing: border-box;
