@@ -23,7 +23,9 @@ export default function WaterfallPhotoGrid({
   if (photos.length === 0 && loading) {
     return (
       <View className="list-state">
-        <Text>图片加载中...</Text>
+        <Text className="state-kicker">资源同步</Text>
+        <Text className="state-title">图片加载中</Text>
+        <Text className="state-copy">正在同步当前图库资源</Text>
       </View>
     );
   }
@@ -31,8 +33,9 @@ export default function WaterfallPhotoGrid({
   if (photos.length === 0 && error) {
     return (
       <View className="list-state" onClick={onRetry}>
-        <Text>加载失败</Text>
-        <Text className="state-action">点我重试</Text>
+        <Text className="state-kicker">同步异常</Text>
+        <Text className="state-title">加载失败</Text>
+        <Text className="state-action">点击重试</Text>
       </View>
     );
   }
@@ -40,7 +43,9 @@ export default function WaterfallPhotoGrid({
   if (photos.length === 0) {
     return (
       <View className="list-state">
-        <Text>暂无数据</Text>
+        <Text className="state-kicker">图片资源</Text>
+        <Text className="state-title">暂无数据</Text>
+        <Text className="state-copy">当前列表还没有可展示图片</Text>
       </View>
     );
   }

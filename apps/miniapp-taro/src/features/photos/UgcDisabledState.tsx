@@ -12,8 +12,9 @@ export default function UgcDisabledState({
   const { ugc } = getMiniappConfig(systemConfig);
   return (
     <View className="list-state">
-      <Text>{ugc.disabledTitle}</Text>
-      <Text className="state-action">{ugc.disabledMessage}</Text>
+      <Text className="state-kicker">内容开关</Text>
+      <Text className="state-title">{ugc.disabledTitle}</Text>
+      <Text className="state-copy">{ugc.disabledMessage}</Text>
     </View>
   );
 }

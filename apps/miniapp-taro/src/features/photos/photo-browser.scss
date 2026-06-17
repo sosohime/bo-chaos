@@ -224,18 +224,42 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  gap: 8px;
-  color: #5d6f8f;
-  font-size: 14px;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 22px;
+  color: #66758f;
+  font-size: 13px;
   background: #ffffff;
   border: 1px solid #dbe7f7;
   border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
+  box-sizing: border-box;
+}
+
+.state-kicker {
+  color: #0052d9;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.state-title {
+  color: #17233d;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.state-copy {
+  max-width: 260px;
+  color: #66758f;
+  font-size: 13px;
+  line-height: 20px;
 }
 
 .state-action {
   color: #0052d9;
   font-size: 13px;
+  font-weight: 700;
 }
 
 .list-footer {
