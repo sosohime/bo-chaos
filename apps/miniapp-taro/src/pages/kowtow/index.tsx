@@ -249,34 +249,45 @@ export default function Kowtow() {
           <BoSheng />
           <View className="kowtow-console-head">
             <View>
-              <Text className="kowtow-eyebrow">互动服务</Text>
+              <Text className="kowtow-eyebrow">INTERACTION SERVICE</Text>
               <Text className="kowtow-title">磕头状态台</Text>
             </View>
             <Text className="kowtow-status">
               {syncFailed ? "需同步" : "运行中"}
             </Text>
           </View>
-          <View className="kowtow-stats">
-            <View className="kowtow-stat">
-              <Text className="kowtow-stat-label">累计磕头</Text>
-              <Text className="kowtow-stat-value">
-                {kowtowCount && kowtowStats.totalCount !== "-"
-                  ? (kowtowStats.totalCount as number) + kowtowCount
-                  : kowtowStats.totalCount}
-              </Text>
+          <View className="kowtow-console-body">
+            <View className="kowtow-stats">
+              <View className="kowtow-stat primary">
+                <Text className="kowtow-stat-label">累计磕头</Text>
+                <Text className="kowtow-stat-value">
+                  {kowtowCount && kowtowStats.totalCount !== "-"
+                    ? (kowtowStats.totalCount as number) + kowtowCount
+                    : kowtowStats.totalCount}
+                </Text>
+              </View>
+              <View className="kowtow-stat">
+                <Text className="kowtow-stat-label">
+                  今日签到 <Text className="utc">UTC+8</Text>
+                </Text>
+                <Text className="kowtow-stat-value">
+                  {kowtowStats.todayKowtowedUser}
+                </Text>
+              </View>
             </View>
-            <View className="kowtow-stat">
-              <Text className="kowtow-stat-label">
-                今日签到 <Text className="utc">UTC+8</Text>
-              </Text>
-              <Text className="kowtow-stat-value">
-                {kowtowStats.todayKowtowedUser}
+            <View className="kowtow-node-status">
+              <Text>本地队列</Text>
+              <Text className="kowtow-node-status-value">
+                {kowtowCount ? `待同步 ${kowtowCount}` : "已同步"}
               </Text>
             </View>
           </View>
           <View className="god-bo">
             <View className="god-bo-head">
-              <Text>博哥节点</Text>
+              <View>
+                <Text className="god-bo-kicker">NODE PREVIEW</Text>
+                <Text className="god-bo-title">博哥节点</Text>
+              </View>
               <Text>
                 {canvasInfo.swiperIndex + 1}/{swiperImages.length}
               </Text>
@@ -296,26 +307,28 @@ export default function Kowtow() {
               accountIndex={canvasInfo.swiperIndex}
             />
           </View>
-          <Text className="love">博爱世人</Text>
-          {kowtowStats.totalCount !== "-" && (
-            <Text className="kowtow-copy">
-              {kowtowStats.iKowtowedToday
-                ? "今日已磕，博哥对你很满意"
-                : "今天你还没磕，抓紧"}
-            </Text>
-          )}
-          {syncFailed && (
-            <Text className="sync-warning" onClick={syncKowtowStats}>
-              同步有点慢，点我重试
-            </Text>
-          )}
-          <Button
-            className={`submit-kowtow ${isKowtowing ? "loading" : ""}`}
-            type="primary"
-            onClick={handleKowtow}
-          >
-            {isKowtowing ? "提交中..." : "今日磕头"}
-          </Button>
+          <View className="kowtow-action-panel">
+            <Text className="love">博爱世人</Text>
+            {kowtowStats.totalCount !== "-" && (
+              <Text className="kowtow-copy">
+                {kowtowStats.iKowtowedToday
+                  ? "今日已磕，博哥对你很满意"
+                  : "今天你还没磕，抓紧"}
+              </Text>
+            )}
+            {syncFailed && (
+              <Text className="sync-warning" onClick={syncKowtowStats}>
+                同步有点慢，点我重试
+              </Text>
+            )}
+            <Button
+              className={`submit-kowtow ${isKowtowing ? "loading" : ""}`}
+              type="primary"
+              onClick={handleKowtow}
+            >
+              {isKowtowing ? "提交中..." : "今日磕头"}
+            </Button>
+          </View>
         </>
       )}
     </View>

@@ -4,7 +4,13 @@
   padding: 16px 16px 104px;
   flex-direction: column;
   color: #17233d;
-  background: linear-gradient(180deg, #f3f7fc, #f7f9fc 74%);
+  background: linear-gradient(180deg, rgba(239, 245, 253, 0.96), #f7f9fc 74%),
+    linear-gradient(90deg, rgba(0, 82, 217, 0.055) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(0, 82, 217, 0.045) 1px, transparent 1px);
+  background-size:
+    auto,
+    28px 28px,
+    28px 28px;
   box-sizing: border-box;
 
   .utc {
@@ -21,22 +27,36 @@
   }
 
   .kowtow-console-head,
+  .kowtow-console-body,
+  .kowtow-action-panel,
   .kowtow-review-panel,
   .god-bo {
+    position: relative;
+    overflow: hidden;
     background: #ffffff;
-    border: 1px solid #dbe7f7;
+    border: 1px solid #d4e3f7;
     border-radius: 8px;
-    box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
+    box-shadow: 0 10px 24px rgba(15, 54, 105, 0.065);
     box-sizing: border-box;
   }
 
   .kowtow-console-head {
     margin-top: 14px;
-    padding: 14px;
+    padding: 15px 14px 14px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0052d9, #00a4ff 52%, #8ab7ff);
+    }
   }
 
   .kowtow-eyebrow {
@@ -59,27 +79,36 @@
     flex: 0 0 auto;
     padding: 5px 8px;
     color: #0052d9;
-    background: #f3f8ff;
-    border: 1px solid #cfe2ff;
+    background: #eef6ff;
+    border: 1px solid #c8dcfb;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
+  }
+
+  .kowtow-console-body {
+    margin-top: 12px;
+    padding: 12px;
   }
 
   .kowtow-stats {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    margin-top: 12px;
   }
 
   .kowtow-stat {
     min-width: 0;
     padding: 12px;
-    background: #ffffff;
+    background: #f6faff;
     border: 1px solid #dbe7f7;
-    border-radius: 8px;
+    border-radius: 6px;
     box-sizing: border-box;
+
+    &.primary {
+      background: linear-gradient(180deg, #f6faff, #eef6ff);
+      border-color: #bed7ff;
+    }
   }
 
   .kowtow-stat-label {
@@ -97,6 +126,22 @@
     line-height: 30px;
   }
 
+  .kowtow-node-status {
+    margin-top: 10px;
+    padding-top: 11px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    color: #66758f;
+    border-top: 1px solid #e3edf8;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .kowtow-node-status-value {
+    color: #17233d;
+  }
+
   .god-bo {
     position: relative;
     width: 100%;
@@ -112,6 +157,7 @@
 
   .god-bo-head {
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
     padding-bottom: 10px;
@@ -119,12 +165,34 @@
     font-size: 12px;
   }
 
+  .god-bo-kicker,
+  .god-bo-title {
+    display: block;
+  }
+
+  .god-bo-kicker {
+    color: #0052d9;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .god-bo-title {
+    margin-top: 5px;
+    color: #17233d;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .kowtow-action-panel {
+    margin-top: 12px;
+    padding: 14px;
+  }
+
   .love {
-    padding-top: 12px;
+    display: block;
     color: #0052d9;
     font-size: 16px;
     font-weight: 700;
-    text-align: center;
   }
 
   .submit-kowtow {
@@ -141,6 +209,8 @@
   }
 
   .sync-warning {
+    display: block;
+    margin-top: 8px;
     color: #0052d9;
     font-size: 13px;
   }
