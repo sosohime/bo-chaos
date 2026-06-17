@@ -17,6 +17,8 @@ Follow existing code first. These conventions document current patterns and guar
 - Use `Logger` for notable backend operations and failures.
 - Keep route prefixes consistent: existing bofans routes live under `bofans/*`.
 - Avoid changing response shapes without checking all frontend consumers.
+- Return BoFans API payloads as `{ data, meta? }`; pagination metadata belongs in `meta`.
+- Keep upload handling in the shared backend upload service rather than controllers.
 
 ## Prisma
 
@@ -32,6 +34,7 @@ Follow existing code first. These conventions document current patterns and guar
 - Client pages use `"use client"` where hooks/state are needed.
 - Use existing shadcn-style UI components from `src/components/ui/`.
 - Use `apiFetch` from `src/lib/api-client.ts` unless a file already uses a narrower local wrapper.
+- Use shared DTOs from `@mono/types`; do not import `@mono/prisma-client` in admin UI code.
 - Remember `basePath` is `/rpg/admin`.
 
 ## Miniapp Taro
@@ -40,6 +43,9 @@ Follow existing code first. These conventions document current patterns and guar
 - The request helper handles JWT storage and 401 re-login.
 - Keep page config, TSX, and SCSS together under each page folder.
 - Do not switch the production `BASE_URL` casually.
+- Configure the API base URL through `BOFANS_API_BASE_URL`; do not hard-code production API targets in source.
+- Use shared DTOs from `@mono/types`; do not import `@mono/prisma-client` in miniapp code.
+- Use pagination and `lazyLoad` for image-heavy history grids instead of rendering every historical upload at once.
 
 ## Astro
 

@@ -1,62 +1,72 @@
 import Taro from "@tarojs/taro";
 import request, { BASE_URL } from "../lib/request";
+import type {
+  CategorySystem,
+  PageResponse,
+  PhotoDto,
+  UploadedPhotoStatusFilter,
+  VoteResponse,
+} from "@mono/types";
 
-type SystemType = "history" | "travel" | "tease";
-
-export function getPhotoBySystem(system: SystemType) {
-  return request.get(`/photo/list/${system}`);
+export function getPhotoBySystem(system: CategorySystem) {
+  return request.get<PageResponse<PhotoDto>>(`/photos?system=${system}`);
 }
 
 export function getPhotoById(id: number) {
-  return request.get(`/photo/get/${id}`);
+  return request.get<PhotoDto | null>(`/photos/${id}`);
 }
 
-export function getMyUploadedPhotos() {
-  return request.get("/photo/myUploaded");
+export function getMyUploadedPhotos(params?: {
+  status?: UploadedPhotoStatusFilter;
+  page?: number;
+  pageSize?: number;
+}) {
+  const query: string[] = [];
+  if (params?.status) query.push(`status=${params.status}`);
+  if (params?.page) query.push(`page=${params.page}`);
+  if (params?.pageSize) query.push(`pageSize=${params.pageSize}`);
+  const suffix = query.length ? `?${query.join("&")}` : "";
+  return request.get<PageResponse<PhotoDto>>(`/photos/my${suffix}`);
 }
 
 export function votePhoto(photoId: number) {
-  return request.post("/photo/vote", {
-    photoId,
-  });
+  return request.post<VoteResponse>(`/photos/${photoId}/vote`);
 }
 
 export function cancelPhotoVote(photoId: number) {
-  return request.post("/photo/cancelVote", {
-    photoId,
-  });
+  return request.delete<VoteResponse>(`/photos/${photoId}/vote`);
 }
 
 export function uploadPhoto(
   params: {
     name: string;
-    system: string;
+    system: CategorySystem;
     categoryId?: number;
     newCategory?: string;
     filePath: string;
   },
-  processHandle?: (number) => void,
+  processHandle?: (progress: number) => void,
 ) {
   const { filePath, ...rest } = params;
   if (rest.categoryId === 0) {
     delete rest.categoryId;
   }
-  return new Promise((res, rej) => {
+  return new Promise<PhotoDto>((res, rej) => {
     try {
       const token = Taro.getStorageSync("token");
       const task = Taro.uploadFile({
-        url: `${BASE_URL}/photo/upload_photo`, // 上传接口地址
+        url: `${BASE_URL}/photos`,
         header: {
           Authorization: token ? `Bearer ${token}` : "",
         },
-        filePath: filePath, // 文件路径（第一个选中的图片）
-        name: "file", // 后端接收文件的字段名,
+        filePath,
+        name: "file",
         formData: {
           ...rest,
         },
         success: (response) => {
-          res(JSON.parse(response.data));
-          console.log("上传完成", response.data);
+          const body = JSON.parse(response.data);
+          res(body.data);
         },
         fail: (error) => {
           console.log("上传失败", error);
@@ -64,8 +74,8 @@ export function uploadPhoto(
         },
       });
       if (processHandle) {
-        task.onProgressUpdate((res) => {
-          processHandle(res.progress);
+        task.onProgressUpdate((progress) => {
+          processHandle(progress.progress);
         });
       }
     } catch (e) {

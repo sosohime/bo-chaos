@@ -1,19 +1,26 @@
-// 用户相关接口的请求响应类型
-export interface UserLoginRequest {
-  username: string;
+export interface AdminLoginRequest {
+  account: string;
   password: string;
 }
 
-export interface UserInfo {
-  id: number;
-  username: string;
-  nickname?: string;
-  avatar?: string;
-  role: string;
-  createTime: string;
+export interface WechatLoginRequest {
+  code: string;
 }
 
-export interface UserLoginResponse {
-  token: string;
-  userInfo: UserInfo;
+export interface WechatLoginResponse {
+  accessToken: string;
+}
+
+export interface UserProfileDto {
+  id: number;
+  openId: string;
+  nickname: string;
+  avatarUrl: string | null;
+  joinTime: string;
+  photoReviewer: boolean;
+  kowtowCount: number;
+}
+
+export interface UpdateUserProfileRequest {
+  nickname: string;
 }

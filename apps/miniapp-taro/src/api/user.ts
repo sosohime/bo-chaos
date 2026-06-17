@@ -1,31 +1,31 @@
 import Taro from "@tarojs/taro";
 import request, { BASE_URL } from "../lib/request";
-import type { User } from "@mono/prisma-client";
+import type { UserProfileDto } from "@mono/types";
 
 export function getUserInfo() {
-  return request.get<User>("/users/userInfo");
+  return request.get<UserProfileDto | null>("/users/me");
 }
 
 export function updateNickname(nickname: string) {
-  return request.post("/users/updateNickname", {
+  return request.patch<UserProfileDto | null>("/users/me", {
     nickname,
   });
 }
 
-export function uploadAvatar({ filePath }) {
-  return new Promise((res, rej) => {
+export function uploadAvatar({ filePath }: { filePath: string }) {
+  return new Promise<UserProfileDto>((res, rej) => {
     try {
       const token = Taro.getStorageSync("token");
       Taro.uploadFile({
-        url: `${BASE_URL}/users/updateAvatar`, // 上传接口地址
+        url: `${BASE_URL}/users/me/avatar`,
         header: {
           Authorization: token ? `Bearer ${token}` : "",
         },
-        filePath: filePath, // 文件路径（第一个选中的图片）
-        name: "file", // 后端接收文件的字段名
+        filePath,
+        name: "file",
         success: (response) => {
-          console.log("上传成功", response.data);
-          res(JSON.parse(response.data));
+          const body = JSON.parse(response.data);
+          res(body.data);
         },
         fail: (error) => {
           rej(error);

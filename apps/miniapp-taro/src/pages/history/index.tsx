@@ -34,7 +34,6 @@ export interface Category {
   id: number;
   system: string;
   name: string;
-  secondCategory: string;
   updatedAt: Date;
 }
 
@@ -73,8 +72,8 @@ export default function History() {
   const fetchData = async () => {
     try {
       const res = await getPhotoBySystem("history");
-      const data = res as unknown as PhotoDataType[];
-      const group = groupBy(data, (item) => item.category.secondCategory);
+      const data = res.data as unknown as PhotoDataType[];
+      const group = groupBy(data, (item) => item.category.name);
       const groupedData = Object.entries(group).map(([k, v]) => ({
         secondCategory: k,
         photos: v,

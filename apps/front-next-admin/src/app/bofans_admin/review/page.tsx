@@ -36,21 +36,19 @@ import {
   batchReviewPass,
   batchReviewReject,
 } from "@/api/bofans/review";
-import { Photo } from "@mono/prisma-client";
+import type { PhotoCategoryDto, ReviewPhotoDto } from "@mono/types";
+import type { CategorySystem } from "@mono/types";
 import { getCategories, createCategory } from "@/api/bofans/category"; // 需要添加分类API
 
+const REVIEW_PAGE_SIZE = 20;
+
 // 扩展Photo类型，添加分类名称
-interface PhotoWithCategory extends Photo {
+interface PhotoWithCategory extends ReviewPhotoDto {
   categoryName?: string;
 }
 
 // 分类信息接口
-interface CategoryInfo {
-  id: number;
-  system: string; // 一级分类
-  name: string; // 一级分类名称
-  secondCategory: string; // 二级分类
-}
+type CategoryInfo = PhotoCategoryDto;
 
 export default function PhotoReviewPage() {
   const [photos, setPhotos] = useState<PhotoWithCategory[]>([]);
@@ -72,6 +70,9 @@ export default function PhotoReviewPage() {
   const [isBatchDialogOpen, setIsBatchDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [batchSystem, setBatchSystem] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
 
   // 获取分类数据
   const fetchCategories = useCallback(async () => {
@@ -97,19 +98,28 @@ export default function PhotoReviewPage() {
   const fetchPhotos = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await getReviewList();
-      setPhotos(data);
+      const data = await getReviewList({ page, pageSize: REVIEW_PAGE_SIZE });
+      setPhotos(data.items);
+      setTotal(data.total);
+      setHasMore(data.hasMore);
     } catch (error) {
       console.error("获取照片列表失败:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     fetchCategories();
+  }, [fetchCategories]);
+
+  useEffect(() => {
     fetchPhotos();
-  }, [fetchPhotos, fetchCategories]);
+  }, [fetchPhotos]);
+
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [page]);
 
   const handleSelectAll = useCallback(
     (checked: boolean) => {
@@ -127,9 +137,11 @@ export default function PhotoReviewPage() {
 
     try {
       await createCategory({
-        system: newCategory.system,
-        secondCategory: newCategory.name,
-        name: newCategory.system, // 假设一级分类名称与system相同
+        system: newCategory.system as CategorySystem,
+        systemName:
+          categoryGroups[newCategory.system]?.[0]?.systemName ||
+          newCategory.system,
+        name: newCategory.name,
       });
       await fetchCategories();
       setNewCategory({ system: "", name: "" });
@@ -245,7 +257,7 @@ export default function PhotoReviewPage() {
         <CardTitle>图片审核</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="mb-4 flex justify-between space-x-2">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex gap-4">
             <Button
               variant="default"
@@ -261,6 +273,9 @@ export default function PhotoReviewPage() {
             >
               批量拒绝
             </Button>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            待审核 {total} 张，当前第 {page} 页
           </div>
           <Dialog
             open={categoryDialogOpen}
@@ -309,7 +324,7 @@ export default function PhotoReviewPage() {
             </DialogContent>
           </Dialog>
         </div>
-        <div className="rounded-md border">
+        <div className="overflow-hidden rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
@@ -349,7 +364,8 @@ export default function PhotoReviewPage() {
                       <img
                         src={photo.filename}
                         alt={photo.name || "预览图"}
-                        className="h-20 w-20 object-cover"
+                        loading="lazy"
+                        className="h-20 w-20 rounded object-cover"
                       />
                     </TableCell>
                     <TableCell>
@@ -392,7 +408,7 @@ export default function PhotoReviewPage() {
                           {currentCategory?.system &&
                             categoryGroups[currentCategory.system]?.map((c) => (
                               <SelectItem key={c.id} value={c.id.toString()}>
-                                {c.secondCategory}
+                                {c.name}
                               </SelectItem>
                             ))}
                         </SelectContent>
@@ -426,12 +442,31 @@ export default function PhotoReviewPage() {
               {photos.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center">
-                    暂无待审核的图片
+                    {loading ? "加载中..." : "暂无待审核的图片"}
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
+        </div>
+        <div className="mt-4 flex items-center justify-between">
+          <Button
+            variant="outline"
+            disabled={page <= 1 || loading}
+            onClick={() => setPage((current) => Math.max(1, current - 1))}
+          >
+            上一页
+          </Button>
+          <div className="text-sm text-muted-foreground">
+            本页 {photos.length} 张
+          </div>
+          <Button
+            variant="outline"
+            disabled={!hasMore || loading}
+            onClick={() => setPage((current) => current + 1)}
+          >
+            下一页
+          </Button>
         </div>
       </CardContent>
 
@@ -481,7 +516,7 @@ export default function PhotoReviewPage() {
                     {batchSystem &&
                       categoryGroups[batchSystem]?.map((c) => (
                         <SelectItem key={c.id} value={c.id.toString()}>
-                          {c.secondCategory}
+                          {c.name}
                         </SelectItem>
                       ))}
                   </SelectContent>

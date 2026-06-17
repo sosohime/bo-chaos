@@ -4,15 +4,15 @@ import God2 from "@/images/kowtow/god2.jpg";
 import God3 from "@/images/kowtow/god3.png";
 
 export function getKowtowStats() {
-  return request.get("/kowtow/stats");
+  return request.get("/kowtows/stats");
 }
 
 export function kowtowOnce() {
-  return request.post("/kowtow/kowtowOnce");
+  return request.post("/kowtows");
 }
 
 export function batchKowtow(data: { count: number }): Promise<void> {
-  return request.post("/kowtow/batchKowtow", data);
+  return request.post("/kowtows", data);
 }
 
 export function getSwiper(): Promise<any[]> {

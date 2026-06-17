@@ -22,6 +22,7 @@ Use this file to choose checks for a change. Prefer narrow checks that prove the
 | Prisma schema              | update `DATA_MODEL.md`, `pnpm -C packages/prisma-client build` | migration review, backend tests                                         |
 | Admin UI                   | `pnpm -C apps/front-next-admin build` when feasible            | Browser Use / Playwright local verification                             |
 | Taro mini app              | `pnpm -C apps/miniapp-taro build:weapp` when feasible          | manual WeChat devtools verification noted as not run                    |
+| Shared API DTOs            | backend build/test plus affected frontend type/build checks    | full `pnpm run verify` when response shapes cross apps                  |
 | Astro UI                   | `pnpm -C apps/frontend-astro build`                            | browser verification                                                    |
 | Visual Fast Lane UI polish | during iteration: Browser Use plus console inspection          | final acceptance: relevant build plus `pnpm agent:lint`                 |
 | VS Code extension          | `pnpm -C apps/bo-retire-vsc-extension compile`                 | extension tests if environment supports them                            |

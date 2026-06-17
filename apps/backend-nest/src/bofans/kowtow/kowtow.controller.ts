@@ -8,35 +8,40 @@ import {
   Request,
   Body,
 } from '@nestjs/common';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
+import { ok } from '@/common/api-response';
 import { KowtowService } from './kowtow.service';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard, OptionalAuthGuard } from '../auth/auth.guard';
 
-@Controller('bofans/kowtow')
+class KowtowDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(999)
+  count?: number;
+}
+
+@Controller('bofans/kowtows')
 export class KowtowController {
   constructor(private kowtowService: KowtowService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(OptionalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('stats')
-  signIn(@Request() req: { user?: { openId: string } }) {
-    const openId = req.user?.openId;
-    return this.kowtowService.kowtowStats(openId);
+  async stats(@Request() req: { user?: { openId: string } }) {
+    return ok(await this.kowtowService.kowtowStats(req.user?.openId));
   }
 
   @UseGuards(AuthGuard)
-  @Post('kowtowOnce')
-  kowtowOnce(@Request() req: { user: { openId: string } }) {
-    const { openId } = req.user;
-    return this.kowtowService.kowtow(openId);
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('batchKowtow')
-  kowtow(
+  @Post()
+  async kowtow(
     @Request() req: { user: { openId: string } },
-    @Body() kowtowDto: { count: number },
+    @Body() kowtowDto: KowtowDto,
   ) {
-    const { openId } = req.user;
-    return this.kowtowService.kowtow(openId, kowtowDto.count);
+    return ok(
+      await this.kowtowService.kowtow(req.user.openId, kowtowDto.count),
+    );
   }
 }

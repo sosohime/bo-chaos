@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 import { basePath } from "./env";
 
+const bofansApiBaseUrl =
+  process.env.BOFANS_API_BASE_URL || "http://localhost:3000/bofans";
+
 const nextConfig: NextConfig = {
   /* config options here */
   basePath,
@@ -12,7 +15,7 @@ const nextConfig: NextConfig = {
       // },
       {
         source: "/api/:path*",
-        destination: "https://yuanbo.online/rpg/bofans/:path*",
+        destination: `${bofansApiBaseUrl}/:path*`,
       },
     ];
   },

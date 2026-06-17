@@ -54,8 +54,8 @@ Use exact commands from this file when validating changes.
 - Admin dev script uses Next on port `3001`.
 - Astro default dev port is `4321`.
 - Admin base path is `/rpg/admin`.
-- Admin `next.config.ts` rewrites `/api/:path*` to production `https://yuanbo.online/rpg/bofans/:path*`.
-- Mini app `BASE_URL` currently points to production `https://yuanbo.online/rpg/bofans`.
+- Admin `next.config.ts` rewrites `/api/:path*` to `BOFANS_API_BASE_URL`, defaulting to local backend.
+- Mini app `BASE_URL` is injected by `BOFANS_API_BASE_URL` at build time.
 
 ## Command Safety
 

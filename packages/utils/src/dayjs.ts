@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import durationPlugin from "dayjs/plugin/duration";
+import timezone from "dayjs/plugin/timezone.js";
+import durationPlugin from "dayjs/plugin/duration.js";
 
 // 扩展 dayjs 的类型定义
 declare module "dayjs" {

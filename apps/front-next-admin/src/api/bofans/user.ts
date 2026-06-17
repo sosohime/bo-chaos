@@ -1,29 +1,16 @@
-const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://yuanbo.online/rpg/bofans"
-    : "http://localhost:3001/api";
-
-function _fetch(url: string, options?: RequestInit) {
-  return fetch(`${API_BASE_URL}${url}`, options);
-}
+import { apiFetch } from "@/lib/api-client";
 
 export async function login(data: {
   account: string;
   password: string;
 }): Promise<boolean> {
-  return await _fetch("/users/login", {
+  const response = await apiFetch<boolean>("/admin/auth/login", {
     method: "post",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-    credentials: "include", // 确保Cookie能够被设置
-  }).then(async (res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    const body = await res.json();
-    throw new Error(body?.message || "登录失败");
+    credentials: "include",
   });
+  return response.data;
 }

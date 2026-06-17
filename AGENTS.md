@@ -37,7 +37,7 @@ Default to maximum autonomy for normal engineering work:
 
 ## Repository Map
 
-- `apps/backend-nest`: NestJS API for bofans features, auth, uploads, review, categories, kowtow stats.
+- `apps/backend-nest`: NestJS API for bofans features, auth, uploads, review, categories, kowtow stats, and Bo daily cards.
 - `apps/front-next-admin`: Next.js admin UI under base path `/rpg/admin`.
 - `apps/miniapp-taro`: Taro WeChat mini app.
 - `apps/frontend-astro`: Astro public pages.

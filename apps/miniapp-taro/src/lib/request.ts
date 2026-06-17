@@ -1,8 +1,9 @@
 import Taro from "@tarojs/taro";
+import type { ApiResponse } from "@mono/types";
 
-// 基础配置
-// export const BASE_URL = "http://127.0.0.1:3000/bofans";
-export const BASE_URL = "https://yuanbo.online/rpg/bofans";
+declare const BOFANS_API_BASE_URL: string;
+
+export const BASE_URL = BOFANS_API_BASE_URL;
 
 // 微信登录
 export const wxLogin = async () => {
@@ -10,14 +11,15 @@ export const wxLogin = async () => {
     const { code } = await Taro.login();
     // 调用后端登录接口
     const res = await Taro.request({
-      url: `${BASE_URL}/auth/login`,
+      url: `${BASE_URL}/auth/wechat-login`,
       method: "POST",
       data: { code },
     });
     if (res.statusCode === 200) {
+      const body = res.data as ApiResponse<{ accessToken: string }>;
       // 保存token
-      Taro.setStorageSync("token", res.data.access_token);
-      return res.data.access_token;
+      Taro.setStorageSync("token", body.data.accessToken);
+      return body.data.accessToken;
     }
     return null;
   } catch (error) {
@@ -61,7 +63,11 @@ const request = async <T>(options: Taro.request.Option): Promise<T> => {
       }
     }
 
-    return response.data;
+    const body = response.data as ApiResponse<T>;
+    if (body?.meta) {
+      return response.data as T;
+    }
+    return body?.data === undefined ? (response.data as T) : body.data;
   } catch (error) {
     Taro.showToast({
       title: error.message || "请求失败",
@@ -85,6 +91,13 @@ export const http = {
       url,
       method: "POST",
       header,
+      data,
+    });
+  },
+  patch: <T>(url: string, data?: any) => {
+    return request<T>({
+      url,
+      method: "PATCH",
       data,
     });
   },

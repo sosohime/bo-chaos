@@ -1,46 +1,40 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  UseGuards,
-  Query,
-  Logger,
-  BadRequestException,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { IsIn, IsString, MaxLength } from 'class-validator';
+import { bofans } from '@mono/const';
+import type { CreatePhotoCategoryRequest } from '@mono/types';
+import { ok } from '@/common/api-response';
 import { CategoryService } from './category.service';
 import { AuthGuard } from '../auth/auth.guard';
-@UseGuards(AuthGuard)
-@Controller('bofans/category')
+
+class CreateCategoryDto {
+  @IsIn(Object.values(bofans.CATEGORY_SYSTEM))
+  system!: string;
+
+  @IsString()
+  @MaxLength(32)
+  systemName!: string;
+
+  @IsString()
+  @MaxLength(64)
+  name!: string;
+}
+
+@Controller('bofans/categories')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
-  @Get('list')
-  async getCategories(@Query('all') all?: string) {
-    const categories = await this.categoryService.categories({
-      all: all === 'true',
-    });
-    return categories;
+  @Get()
+  async getCategories() {
+    return ok(await this.categoryService.listCategoryDtos());
   }
 
-  @Post('create')
-  async createCategory(
-    @Body()
-    categoryDto: {
-      system: string;
-      name: string;
-      secondCategory: string;
-    },
-  ) {
-    try {
-      await this.categoryService.createCategory({
-        ...categoryDto,
-        author: { connect: { openId: 'system' } },
-      });
-      return true;
-    } catch (e) {
-      Logger.error(`Create category failed: ${e}`);
-      throw new BadRequestException(e);
-    }
+  @Post()
+  @UseGuards(AuthGuard)
+  async createCategory(@Body() categoryDto: CreateCategoryDto) {
+    return ok(
+      await this.categoryService.createCategoryDto(
+        categoryDto as CreatePhotoCategoryRequest,
+      ),
+    );
   }
 }

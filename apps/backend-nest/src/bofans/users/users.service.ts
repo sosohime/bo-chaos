@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/library/prisma.service';
 import { User, Prisma } from '@mono/prisma-client';
+import type { UserProfileDto } from '@mono/types';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +29,28 @@ export class UsersService {
       ...result,
       kowtowCount: kowtowCount._sum.kowtowCount || 0,
     };
+  }
+
+  async userProfile(openId: string): Promise<UserProfileDto | null> {
+    const user = await this.user({ openId });
+    if (!user) return null;
+    return {
+      id: user.id,
+      openId: user.openId,
+      nickname: user.nickname,
+      avatarUrl: user.avatarUrl,
+      joinTime: user.joinTime.toISOString(),
+      photoReviewer: user.photoReviewer,
+      kowtowCount: user.kowtowCount,
+    };
+  }
+
+  async updateProfile(
+    openId: string,
+    data: Pick<Prisma.UserUpdateInput, 'nickname' | 'avatarUrl'>,
+  ): Promise<UserProfileDto | null> {
+    await this.updateUser({ where: { openId }, data });
+    return this.userProfile(openId);
   }
 
   async users(params: {

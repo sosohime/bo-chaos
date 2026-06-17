@@ -5,6 +5,7 @@ import { KowtowModule } from './kowtow/kowtow.module';
 import { PhotoModule } from './photo/photo.module';
 import { CategoryModule } from './category/category.module';
 import { GlobalModule } from './global/global.module';
+import { BoModule } from './bo/bo.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { GlobalModule } from './global/global.module';
     KowtowModule,
     PhotoModule,
     CategoryModule,
+    BoModule,
   ],
 })
 export class BofansModule {}

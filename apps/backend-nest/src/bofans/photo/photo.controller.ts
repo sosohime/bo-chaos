@@ -1,394 +1,218 @@
 import {
-  Controller,
-  UseInterceptors,
-  UploadedFile,
-  Get,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-  Request,
-  Param,
   Body,
-  Logger,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
   Post,
+  Query,
+  Request,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
-import * as FormData from 'form-data';
-import * as sharp from 'sharp';
-import axios from 'axios';
-import { env } from '@/const/env';
-import { UsersService } from '../users/users.service';
-import { PhotoService } from './photo.service';
-import { CategoryService } from '../category/category.service';
-import { AuthGuard } from '../auth/auth.guard';
-import { Photo, PhotoVote } from '@mono/prisma-client';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { bofans } from '@mono/const';
-import { photo as photoUtils } from '@mono/utils';
+import { ok, page } from '@/common/api-response';
+import { getPagination, PaginationDto } from '@/common/pagination';
+import { env } from '@/const/env';
+import { AuthGuard, OptionalAuthGuard } from '../auth/auth.guard';
+import { UploadService } from '../upload/upload.service';
+import { PhotoService } from './photo.service';
 
-@UseGuards(AuthGuard)
-@Controller('bofans/photo')
+class PhotoListQuery extends PaginationDto {
+  @IsIn(Object.values(bofans.CATEGORY_SYSTEM))
+  system!: string;
+}
+
+class MyPhotosQuery extends PaginationDto {
+  @IsOptional()
+  @IsIn(['pending', 'approved'])
+  status?: string;
+}
+
+class UploadPhotoDto {
+  @IsString()
+  @MaxLength(80)
+  name!: string;
+
+  @IsIn(Object.values(bofans.CATEGORY_SYSTEM))
+  system!: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  categoryId?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  newCategory?: string;
+}
+
+class ReviewPhotoDecisionDto {
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  id!: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  categoryId?: number;
+
+  @IsIn([bofans.PHOTO_STATUS.PASSED, bofans.PHOTO_STATUS.REJECTED])
+  status!: 'passed' | 'rejected';
+}
+
+class ReviewPhotosDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ReviewPhotoDecisionDto)
+  photos!: ReviewPhotoDecisionDto[];
+}
+
+@Controller('bofans')
 export class PhotoController {
   constructor(
     private photoService: PhotoService,
-    private categoryService: CategoryService,
-    private usersService: UsersService,
+    private uploadService: UploadService,
   ) {}
 
-  @HttpCode(HttpStatus.OK)
-  @Get('list/:system')
+  @Get('photos')
+  @UseGuards(OptionalAuthGuard)
   async photoList(
-    @Request() req: { user: { openId: string } },
-    @Param('system') system: string,
+    @Request() req: { user?: { openId?: string } },
+    @Query() query: PhotoListQuery,
   ) {
-    const openId = req.user.openId;
-    // 提交审核期间，不区分是否过审，只展示当前用户上传的
-    if (env.BOFANS_WEAPP_PUBLISH_STATUS === 'in_review') {
-      return (await this.photoService.photos({
-        where: {
-          category: {
-            system,
-          },
-          authorOpenId: openId,
-        },
-        include: {
-          category: true,
-          _count: {
-            select: { votes: true },
-          },
-          votes: {
-            where: {
-              userOpenId: openId,
-            },
-          },
-        },
-      })) as (Photo & {
-        votes: PhotoVote[];
-        _count: {
-          votes: number;
-        };
-      })[];
-    }
-    const list = (await this.photoService.photos({
-      where: {
-        category: {
-          system,
-        },
-        status: bofans.PHOTO_STATUS.PASSED,
-      },
-      include: {
-        category: true,
-        _count: {
-          select: { votes: true },
-        },
-        votes: {
-          where: {
-            userOpenId: openId,
-          },
-        },
-      },
-    })) as (Photo & {
-      votes: PhotoVote[];
-      _count: {
-        votes: number;
-      };
-    })[];
-
-    const res = list.map((photo) => {
-      const hasVoted = photo.votes?.length > 0;
-      const votesCount = photo._count.votes;
-      return {
-        ...photo,
-        hasVoted,
-        votesCount,
-      };
+    const { page: pageNumber, pageSize, skip } = getPagination(query);
+    const result = await this.photoService.listForSystem({
+      openId: req.user?.openId,
+      system: query.system,
+      skip,
+      take: pageSize,
     });
-    return res;
+    return page(result.items, {
+      page: pageNumber,
+      pageSize,
+      total: result.total,
+      hasMore: skip + result.items.length < result.total,
+    });
   }
 
-  @Get('get/:id')
-  async photo(
+  @Get('photos/my')
+  @UseGuards(AuthGuard)
+  async myUploaded(
     @Request() req: { user: { openId: string } },
+    @Query() query: MyPhotosQuery,
+  ) {
+    const { page: pageNumber, pageSize, skip } = getPagination(query);
+    const result = await this.photoService.listMine({
+      openId: req.user.openId,
+      status: query.status,
+      skip,
+      take: pageSize,
+    });
+    return page(result.items, {
+      page: pageNumber,
+      pageSize,
+      total: result.total,
+      hasMore: skip + result.items.length < result.total,
+    });
+  }
+
+  @Get('photos/:id')
+  @UseGuards(OptionalAuthGuard)
+  async photo(
+    @Request() req: { user?: { openId?: string } },
     @Param('id') id: string,
   ) {
-    const openId = req.user.openId;
-    const photo = (await this.photoService.photo({
-      where: {
-        status: bofans.PHOTO_STATUS.PASSED,
-        id: +id,
-      },
-      include: {
-        category: true,
-        _count: {
-          select: { votes: true },
-        },
-        votes: {
-          where: {
-            userOpenId: openId,
-          },
-        },
-      },
-    })) as Photo & {
-      votes: PhotoVote[];
-      _count: {
-        votes: number;
-      };
-    };
-    Logger.log(`get photo by id ${id}, res: `, photo);
-
-    if (photo) {
-      const hasVoted = photo.votes?.length > 0;
-      const votesCount = photo._count.votes;
-      return {
-        ...photo,
-        hasVoted,
-        votesCount,
-      };
-    }
-    return null;
+    return ok(await this.photoService.findPublicPhoto(req.user?.openId, +id));
   }
 
-  @Post('vote')
-  async vote(
-    @Request() req: { user: { openId: string } },
-    @Body() voteDto: { photoId: number },
-  ) {
-    const { openId } = req.user;
-    const { photoId } = voteDto;
-
-    try {
-      // 先检查是否已经投票
-      const existingVote = await this.photoService.findVote({
-        photoId,
-        userOpenId: openId,
-      });
-
-      // 如果已经投票，直接返回
-      if (existingVote) {
-        return {
-          success: true,
-          message: '已经投过票了',
-          data: existingVote,
-        };
-      }
-
-      // 创建新的投票记录
-      const result = await this.photoService.createVote({
-        photo: {
-          connect: { id: photoId },
-        },
-        user: {
-          connect: { openId },
-        },
-      });
-
-      return {
-        success: true,
-        data: result,
-      };
-    } catch (error) {
-      Logger.error('Vote photo failed:', error);
-      throw error;
-    }
-  }
-
-  @Post('cancelVote')
-  async cancelVote(
-    @Request() req: { user: { openId: string } },
-    @Body() voteDto: { photoId: number },
-  ) {
-    const { openId } = req.user;
-    const { photoId } = voteDto;
-
-    return await this.photoService.deleteVote({
-      photoId_userOpenId: {
-        userOpenId: openId,
-        photoId,
-      },
-    });
-  }
-
-  @Post('upload_photo')
-  @UseInterceptors(FileInterceptor('file', { storage: multer.memoryStorage() }))
+  @Post('photos')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: env.MAX_UPLOAD_BYTES },
+    }),
+  )
   async uploadPhoto(
     @Request() req: { user: { openId: string } },
     @UploadedFile() file: Express.Multer.File,
-    @Body()
-    photoDto: {
-      name: string;
-      system: string;
-      categoryId?: string;
-      newCategory?: string;
-      filePath: string;
-    },
+    @Body() photoDto: UploadPhotoDto,
   ) {
-    const openId = req.user.openId;
-
-    // 校验文件是否存在
-    if (!file) {
-      Logger.error('未接收到文件');
-      return { success: false, message: '未上传文件' };
-    }
-
-    if (!photoDto.categoryId && !photoDto.newCategory) {
-      Logger.error('未指定二级分类');
-      return { success: false, message: '未指定二级分类' };
-    }
-
-    try {
-      // 如果传入了categoryId，先查询对应categoryId是否存在，不存在则抛出错误
-      let categoryId = Number(photoDto.categoryId);
-      if (categoryId) {
-        const existingCategory = await this.categoryService.findCategory({
-          id: +categoryId,
-          system: photoDto.system,
-        });
-        if (!existingCategory) {
-          return { success: false, message: '分类不存在' };
-        }
-      }
-
-      // 如果传入了newCategory，则先创建新的category，如果已创建则跳过
-      if (photoDto.newCategory) {
-        const existingCategory = await this.categoryService.findCategory({
-          secondCategory: photoDto.newCategory,
-          system: photoDto.system,
-        });
-
-        if (existingCategory) {
-          categoryId = +existingCategory.id;
-        } else {
-          const newCategory = await this.categoryService.createCategory({
-            secondCategory: photoDto.newCategory,
-            system: photoDto.system,
-            name: photoDto.name,
-            author: { connect: { openId } },
-          });
-          categoryId = newCategory.id;
-        }
-      }
-
-      // 上传图片到oss_service
-      const formData = new FormData();
-      // 获取图片宽高
-      const imgMetadata = await sharp(file.buffer).metadata();
-
-      if (!imgMetadata.height || !imgMetadata.width) {
-        throw new Error('Image Read Failed, Get Image Size Error');
-      }
-      const filename = photoUtils.genStandardPictureName({
-        category: 'photo',
-        user: openId,
-        ext: file.originalname.substring(file.originalname.lastIndexOf('.')),
-        height: imgMetadata.height,
-        width: imgMetadata.width,
-      });
-
-      formData.append('file', file.buffer, filename);
-      formData.append('path', 'bofans/photo');
-      formData.append('should_unzip', 'false');
-      formData.append('token', process.env.OSS_RS_UPLOAD_TOKEN);
-
-      const uploadRes = await axios.post(
-        `${env.PHOTO_OSS_HOST}/oss_service/upload`,
-        formData,
-        {
-          headers: {
-            ...formData.getHeaders(),
-          },
-        },
-      );
-
-      if (uploadRes.status !== 200) {
-        Logger.error(uploadRes.data);
-        throw new Error('图片上传失败');
-      }
-
-      // 插入Photo表
-      const photo = await this.photoService.createPhoto({
-        filename: `${env.PHOTO_OSS_HOST}/bofans_static/photo/${filename}`,
-        category: { connect: { id: categoryId } },
-        author: { connect: { openId } },
-        status: bofans.PHOTO_STATUS.REVIEWING, // 默认未发布，需要审核
-      });
-
-      return {
-        success: true,
-        data: photo,
-      };
-    } catch (error) {
-      Logger.error('Upload photo failed:', error);
-      throw error;
-    }
-  }
-
-  @Get('myUploaded')
-  async myUploaded(@Request() req: { user: { openId: string } }) {
-    const openId = req.user.openId;
-    const photos = await this.photoService.photos({
-      where: {
-        authorOpenId: openId,
-        status: {
-          not: bofans.PHOTO_STATUS.REJECTED,
-        },
-      },
+    const upload = await this.uploadService.uploadImage({
+      file,
+      user: req.user.openId,
+      category: 'photo',
+      ossPath: 'bofans/photo',
     });
-
-    if (env.BOFANS_WEAPP_PUBLISH_STATUS === 'in_review') {
-      return photos.map((p) => ({
-        ...p,
-        published: true,
-      }));
-    }
-
-    return photos.map((p) => ({
-      ...p,
-      published: p.status === bofans.PHOTO_STATUS.PASSED,
-    }));
+    return ok(
+      await this.photoService.createUserPhoto({
+        openId: req.user.openId,
+        name: photoDto.name,
+        system: photoDto.system,
+        categoryId: photoDto.categoryId,
+        newCategory: photoDto.newCategory,
+        filename: upload.url,
+      }),
+    );
   }
 
-  @Get('reviewList')
-  async reviewList() {
-    return this.photoService.photos({
-      where: {
-        status: bofans.PHOTO_STATUS.REVIEWING,
-      },
-    });
-  }
-
-  @Post('batchReviewPass')
-  async batchReviewPass(
-    @Body() photoDto: { photos: { id: number; categoryId: number }[] },
+  @Post('photos/:id/vote')
+  @UseGuards(AuthGuard)
+  async vote(
+    @Request() req: { user: { openId: string } },
+    @Param('id') id: string,
   ) {
-    const { photos } = photoDto;
-
-    // 使用Promise.all处理多个照片的更新
-    const updatePromises = photos.map(async (photo) => {
-      return this.photoService.updatePhoto({
-        where: { id: photo.id },
-        data: {
-          status: bofans.PHOTO_STATUS.PASSED,
-          category: {
-            connect: { id: photo.categoryId },
-          },
-        },
-      });
-    });
-
-    return Promise.all(updatePromises);
+    return ok(await this.photoService.votePhoto(req.user.openId, +id));
   }
 
-  @Post('batchReviewReject')
-  async batchReviewReject(@Body() photoDto: { ids: number[] }) {
-    return this.photoService.updatePhotos({
-      where: {
-        id: {
-          in: photoDto.ids,
-        },
-      },
-      data: {
-        status: bofans.PHOTO_STATUS.REJECTED,
-      },
+  @Delete('photos/:id/vote')
+  @UseGuards(AuthGuard)
+  async cancelVote(
+    @Request() req: { user: { openId: string } },
+    @Param('id') id: string,
+  ) {
+    return ok(await this.photoService.cancelVote(req.user.openId, +id));
+  }
+
+  @Get('admin/photos/reviews')
+  @UseGuards(AuthGuard)
+  async reviewList(@Query() query: PaginationDto) {
+    const { page: pageNumber, pageSize, skip } = getPagination(query);
+    const result = await this.photoService.listReviews({
+      skip,
+      take: pageSize,
     });
+    return page(result.items, {
+      page: pageNumber,
+      pageSize,
+      total: result.total,
+      hasMore: skip + result.items.length < result.total,
+    });
+  }
+
+  @Patch('admin/photos/reviews')
+  @UseGuards(AuthGuard)
+  async reviewPhotos(@Body() reviewDto: ReviewPhotosDto) {
+    return ok(await this.photoService.reviewPhotos(reviewDto.photos));
   }
 }

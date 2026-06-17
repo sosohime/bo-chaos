@@ -1,8 +1,11 @@
-"use client";
-import { getReviewList } from "@/api/bofans/review";
-export default function page() {
-  getReviewList().then((res) => {
-    console.log(res);
-  });
-  return <div>123</div>;
+import Link from "next/link";
+
+export default function BofansAdminHome() {
+  return (
+    <main className="p-6">
+      <Link className="text-sm underline" href="/bofans_admin/review">
+        进入图片审核
+      </Link>
+    </main>
+  );
 }

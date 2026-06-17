@@ -32,6 +32,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@mono/prisma-client": "workspace:*",
+    "@mono/types": "workspace:*",
     "@tailwindcss/postcss": "^4.0.8",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -8,7 +8,6 @@ export function startWatchEnv() {
   chokidar.watch(path.resolve(__dirname, '../../.env')).on('change', () => {
     console.log('env file changed, write to process.env');
     const freshEnv = dotenv.config();
-    console.log('fresh env', freshEnv.parsed);
     if (freshEnv.parsed) {
       Object.assign(env, freshEnv.parsed);
     }

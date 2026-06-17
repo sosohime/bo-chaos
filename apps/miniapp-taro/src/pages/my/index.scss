@@ -80,6 +80,60 @@
   }
 }
 
+.bo-daily-card {
+  margin: 20px;
+  padding: 16px;
+  background: #151515;
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+
+  .bo-daily-topline,
+  .bo-daily-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+  }
+
+  .bo-daily-title {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  .bo-daily-skill {
+    display: inline-flex;
+    margin-top: 10px;
+    padding: 6px 10px;
+    color: #111;
+    background: #ffd95a;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .bo-daily-copy,
+  .bo-daily-action {
+    display: block;
+    margin-top: 12px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 14px;
+    line-height: 21px;
+  }
+
+  .bo-daily-action {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .bo-daily-stats {
+    margin-top: 14px;
+    justify-content: flex-start;
+  }
+}
+
 .upload-section {
   margin: 20px;
   padding: 15px;
@@ -148,7 +202,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-    
+
         .circle-progress {
           width: 60px;
           height: 60px;
@@ -156,7 +210,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-    
+
           .progress-value {
             width: 100%;
             height: 100%;
@@ -165,9 +219,9 @@
             align-items: center;
             justify-content: center;
             position: relative;
-    
+
             &::before {
-              content: '';
+              content: "";
               position: absolute;
               width: 80%;
               height: 80%;
@@ -175,7 +229,7 @@
               border-radius: 50%;
             }
           }
-    
+
           .progress-text {
             position: absolute;
             color: #fff;
@@ -183,7 +237,7 @@
           }
         }
       }
-      
+
       .upload-success {
         position: absolute;
         top: 50%;
@@ -199,13 +253,13 @@
         justify-content: center;
         font-size: 24px;
       }
-    
+
       .preview-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
-    
+
       .remove-btn {
         position: absolute;
         top: 4px;
@@ -221,7 +275,7 @@
         font-size: 14px;
         backdrop-filter: blur(2px);
         transition: all 0.2s ease;
-        
+
         &:active {
           transform: scale(0.9);
           background: rgba(0, 0, 0, 0.8);
@@ -240,7 +294,6 @@
   color: #fff;
   margin-top: 20px;
 }
-
 
 .history-section {
   margin: 20px;
@@ -267,8 +320,19 @@
     .history-image {
       width: 100%;
       height: 100px;
-      object-fit: cover;
       border-radius: 4px;
+      background: #f3f3f3;
     }
+
+    .history-loading {
+      color: #999;
+      font-size: 13px;
+    }
+  }
+
+  .load-more {
+    color: #333;
+    background: #f5f5f5;
+    font-size: 14px;
   }
 }

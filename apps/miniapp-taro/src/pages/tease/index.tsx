@@ -87,7 +87,7 @@ export default function Tease() {
       columnsHeight.current = [0, 0, 0];
 
       const res = await getPhotoBySystem("tease");
-      const data = res as unknown as PhotoDataType[];
+      const data = res.data as unknown as PhotoDataType[];
       setPhotos(data);
 
       // 逐个加载和处理图片

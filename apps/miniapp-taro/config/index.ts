@@ -18,7 +18,11 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
     sourceRoot: "src",
     outputRoot: "dist",
     plugins: ["@tarojs/plugin-html"],
-    defineConstants: {},
+    defineConstants: {
+      BOFANS_API_BASE_URL: JSON.stringify(
+        process.env.BOFANS_API_BASE_URL || "http://127.0.0.1:3000/bofans",
+      ),
+    },
     copy: {
       patterns: [],
       options: {},

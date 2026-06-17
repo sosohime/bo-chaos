@@ -14,6 +14,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PhotoStatus {
+  REVIEWING @map("reviewing")
+  PASSED    @map("passed")
+  REJECTED  @map("rejected")
+}
+
+enum CategorySystem {
+  HISTORY @map("history")
+  TRAVEL  @map("travel")
+  TEASE   @map("tease")
+}
+
 model User {
   id            Int         @id @default(autoincrement())
   openId        String      @unique
@@ -25,7 +37,7 @@ model User {
   dailyStats    UserDailyBehavior[]
   photos        Photo[]
   votes         PhotoVote[]
-  categories    Category[]  @relation("UserCategories")
+  categories    PhotoCategory[]  @relation("UserCategories")
 }
 
 model UserDailyBehavior {
@@ -47,38 +59,50 @@ model GlobalDailyStats {
   @@index([date])
 }
 
-model Category {
-  id        Int      @default(autoincrement()) @id
-  system String // history | travel | tease
-  name      String
-  secondCategory String @default("default")
-  author    User?    @relation(fields: [authorOpenId], references: [openId], name: "UserCategories")
-  authorOpenId  String?
-  updatedAt DateTime @updatedAt
-  photos    Photo[]
-  @@unique([name, secondCategory])
+model PhotoCategory {
+  id           Int            @default(autoincrement()) @id
+  system       CategorySystem
+  systemName   String
+  name         String         @default("default")
+  author       User?          @relation(fields: [authorOpenId], references: [openId], name: "UserCategories")
+  authorOpenId String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  photos       Photo[]
+
+  @@unique([system, name])
+  @@index([system])
 }
 
 model Photo {
-  id        Int      @default(autoincrement()) @id
-  filename String
-  name     String? @default("")
-  description   String? @default("")
-  viewedTimes    Int      @default(0)
-  category  Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
-  status String @default("reviewing")
-  author    User?    @relation(fields: [authorOpenId], references: [openId])
-  authorOpenId  String?
-  votes     PhotoVote[]
+  id           Int            @default(autoincrement()) @id
+  filename     String
+  name         String?        @default("")
+  description  String?        @default("")
+  viewedTimes  Int            @default(0)
+  category     PhotoCategory  @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  status       PhotoStatus    @default(REVIEWING)
+  author       User?          @relation(fields: [authorOpenId], references: [openId])
+  authorOpenId String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  votes        PhotoVote[]
+
+  @@index([authorOpenId, status])
+  @@index([categoryId])
+  @@index([status])
 }
 
 model PhotoVote {
-  id        Int      @default(autoincrement()) @id
-  photoId   Int
-  userOpenId    String
-  updatedAt DateTime @updatedAt
-  photo     Photo    @relation(fields: [photoId], references: [id])
-  user      User     @relation(fields: [userOpenId], references: [openId])
+  id         Int      @default(autoincrement()) @id
+  photoId    Int
+  userOpenId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  photo      Photo    @relation(fields: [photoId], references: [id])
+  user       User     @relation(fields: [userOpenId], references: [openId])
+
   @@unique([photoId, userOpenId])
+  @@index([userOpenId])
 }

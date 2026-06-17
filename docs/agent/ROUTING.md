@@ -10,7 +10,8 @@ Use this file to locate the right code area before broad search.
 | login, token, auth, JWT, WeChat code                      | `apps/backend-nest/src/bofans/auth/`                         | mini app `src/lib/request.ts`, admin `src/lib/api-client.ts`            |
 | photo upload, image size, OSS, sharp, multer              | `apps/backend-nest/src/bofans/photo/`                        | mini app `src/api/photo.ts`, Prisma `Photo` model                       |
 | photo list, vote, cancel vote, waterfall                  | `apps/backend-nest/src/bofans/photo/`                        | mini app `src/pages/*`, `src/components/photoItem/`                     |
-| category, second category, system history/travel/tease    | `apps/backend-nest/src/bofans/category/`                     | `packages/prisma-client/prisma/schema.prisma`                           |
+| upload history, review pagination, Bo daily card          | `apps/backend-nest/src/bofans/photo/`                        | mini app `src/pages/my/`, admin review page, backend `bo/`              |
+| category, second category, system history/travel/tease    | `apps/backend-nest/src/bofans/category/`                     | shared DTOs in `packages/types/src/api/bofans.d.ts`, Prisma schema      |
 | kowtow, daily stats, trends                               | `apps/backend-nest/src/bofans/kowtow/`                       | Prisma `UserDailyBehavior`, `GlobalDailyStats`                          |
 | mini app page, Taro, WeChat UI                            | `apps/miniapp-taro/src/pages/`                               | `apps/miniapp-taro/src/api/`, `src/lib/request.ts`                      |
 | admin UI, shadcn, sidebar, table, dialog                  | `apps/front-next-admin/src/`                                 | `packages/ui/src/ui/` if shared components are needed                   |

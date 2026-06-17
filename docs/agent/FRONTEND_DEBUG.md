@@ -41,6 +41,11 @@ Because of this:
 - Read-only page loading and screenshot checks are okay.
 - For write-flow testing, prefer mocking, a local backend rewrite, or a test environment in a separate approved change.
 
+## Image-Heavy Admin Pages
+
+- Prefer backend pagination and browser-native image lazy loading for review queues before adding heavier virtualized table dependencies.
+- Verify page controls and loading/empty states without approving or rejecting production data.
+
 ## Browser Use Checklist
 
 - Navigate to the relevant route.

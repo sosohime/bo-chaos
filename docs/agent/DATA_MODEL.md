@@ -28,17 +28,17 @@ Global daily kowtow aggregate.
 - Primary key: `date`
 - Tracks `totalKowtows`.
 
-## Category
+## PhotoCategory
 
 Photo grouping used by history/travel/tease systems and review flow.
 
 - Primary key: `id`
-- Fields: `system`, `name`, `secondCategory`
+- Fields: `system`, `systemName`, `name`
 - Optional author by `authorOpenId`
-- Unique pair: `name`, `secondCategory`
+- Unique pair: `system`, `name`
 - Relations: photos
 
-Known `system` values in app copy include `history`, `travel`, and `tease`.
+Known `system` enum values map to `history`, `travel`, and `tease`.
 
 ## Photo
 
@@ -49,10 +49,10 @@ Uploaded image/content item.
 - User-facing fields: `name`, `description`
 - Engagement: `viewedTimes`, votes relation
 - Category: required `categoryId`
-- Status: string default `reviewing`
+- Status: `PhotoStatus` enum default `reviewing`
 - Optional author by `authorOpenId`
 
-Known photo statuses come from shared constants and include `reviewing`, `passed`, and `rejected`.
+Known photo statuses are `reviewing`, `passed`, and `rejected`.
 
 ## PhotoVote
 

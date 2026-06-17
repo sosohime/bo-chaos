@@ -17,6 +17,8 @@ import { groupBy } from "es-toolkit";
 import { getCategories } from "../../api/category";
 import { uploadAvatar, getUserInfo, updateNickname } from "../../api/user";
 import { uploadPhoto, getMyUploadedPhotos } from "../../api/photo";
+import { getBoDailyCard, type BoDailyCard } from "../../api/bo";
+import type { CategorySystem, PhotoCategoryDto } from "@mono/types";
 import Criminal from "../../images/criminal.png";
 import Edit from "../../images/edit.png";
 
@@ -30,13 +32,32 @@ interface UserInfo {
   joinTime: string;
 }
 
-export interface CategoryType {
+interface UploadedPhoto {
   id: number;
-  system: string;
-  name: string;
-  secondCategory: string;
-  updatedAt: Date;
+  filename: string;
+  status: string;
+  published?: boolean;
 }
+
+interface UploadHistoryState {
+  items: UploadedPhoto[];
+  page: number;
+  hasMore: boolean;
+  loading: boolean;
+  total: number;
+}
+
+const HISTORY_PAGE_SIZE = 18;
+
+const emptyHistoryState: UploadHistoryState = {
+  items: [],
+  page: 0,
+  hasMore: true,
+  loading: false,
+  total: 0,
+};
+
+type CategoryType = PhotoCategoryDto;
 
 export default function My() {
   const { systemConfig } = useContext(AppContext);
@@ -59,10 +80,13 @@ export default function My() {
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [pendingPhotos, setPendingPhotos] = useState<any>([]);
-  const [approvedPhotos, setApprovedPhotos] = useState<any>([]);
+  const [pendingPhotos, setPendingPhotos] =
+    useState<UploadHistoryState>(emptyHistoryState);
+  const [approvedPhotos, setApprovedPhotos] =
+    useState<UploadHistoryState>(emptyHistoryState);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+  const [boDailyCard, setBoDailyCard] = useState<BoDailyCard | null>(null);
 
   useShare({
     title: "快来博Fans，今天你磕了没？",
@@ -75,7 +99,7 @@ export default function My() {
     categories.reduce((p, c) => {
       if (!p[c.system]) {
         p[c.system] = {
-          label: c.name,
+          label: c.systemName,
           value: c.system,
         };
       }
@@ -85,20 +109,26 @@ export default function My() {
 
   const categoryMap = groupBy(
     categories.filter((item) => item.system === selectedSystem?.value),
-    (item) => item.secondCategory,
+    (item) => item.name,
   );
 
   useEffect(() => {
     fetchUserInfo();
     fetchCategories();
-    fetchPhotos();
+    fetchPhotos(true);
+    fetchBoDailyCard();
   }, []);
 
   const onRefresh = async () => {
     try {
       setRefreshing(true);
       Taro.showNavigationBarLoading();
-      await Promise.all([fetchUserInfo(), fetchCategories(), fetchPhotos()]);
+      await Promise.all([
+        fetchUserInfo(),
+        fetchCategories(),
+        fetchPhotos(true),
+        fetchBoDailyCard(),
+      ]);
       Taro.hideNavigationBarLoading();
       Taro.showToast({
         title: "刷新成功",
@@ -118,7 +148,7 @@ export default function My() {
 
   const fetchCategories = async () => {
     try {
-      const categories = (await getCategories()) as unknown as CategoryType[];
+      const categories = await getCategories();
       setCategories(categories);
     } catch (error) {
       console.error("获取分类失败", error);
@@ -134,38 +164,69 @@ export default function My() {
     }
   };
 
-  const fetchPhotos = async () => {
+  const fetchBoDailyCard = async () => {
     try {
-      const res = await getMyUploadedPhotos();
-      const { pending, approved } = (res as any).reduce(
-        (p, c) => {
-          if (c.published) {
-            p.approved.push(c);
-          } else {
-            p.pending.push(c);
-          }
-          return p;
-        },
-        {
-          pending: [],
-          approved: [],
-        },
-      );
-      setPendingPhotos(pending);
-      setApprovedPhotos(approved);
+      const card = await getBoDailyCard();
+      setBoDailyCard(card as BoDailyCard);
+    } catch (error) {
+      console.error("获取Bo灵感失败:", error);
+    }
+  };
+
+  const fetchPhotoPage = async (
+    status: "pending" | "approved",
+    reset = false,
+  ) => {
+    const state = status === "pending" ? pendingPhotos : approvedPhotos;
+    if ((!reset && state.loading) || (!reset && !state.hasMore)) return;
+
+    const setState =
+      status === "pending" ? setPendingPhotos : setApprovedPhotos;
+    const nextPage = reset ? 1 : state.page + 1;
+
+    setState((prev) => ({ ...prev, loading: true }));
+    try {
+      const res = await getMyUploadedPhotos({
+        status,
+        page: nextPage,
+        pageSize: HISTORY_PAGE_SIZE,
+      });
+      setState((prev) => ({
+        items: reset ? res.data : [...prev.items, ...res.data],
+        page: res.meta.page,
+        total: res.meta.total,
+        hasMore: res.meta.hasMore,
+        loading: false,
+      }));
     } catch (error) {
       console.error("获取照片列表失败:", error);
+      setState((prev) => ({ ...prev, loading: false }));
     }
+  };
+
+  const fetchPhotos = async (reset = false) => {
+    if (reset) {
+      setPendingPhotos(emptyHistoryState);
+      setApprovedPhotos(emptyHistoryState);
+    }
+    await Promise.all([
+      fetchPhotoPage("pending", reset),
+      fetchPhotoPage("approved", reset),
+    ]);
+  };
+
+  const handleHistoryReachBottom = () => {
+    fetchPhotoPage("pending");
+    fetchPhotoPage("approved");
   };
 
   const handleCategorySelect = (secondCategory: string) => {
     const category = categories.find(
       (item) =>
-        item.system === selectedSystem?.value &&
-        item.secondCategory === secondCategory,
+        item.system === selectedSystem?.value && item.name === secondCategory,
     );
     if (category) {
-      setSelectedCategory(category.secondCategory);
+      setSelectedCategory(category.name);
       setSelectedCategoryId(+category.id);
     }
   };
@@ -269,7 +330,7 @@ export default function My() {
     try {
       const tasks = selectedImages.map((img) => ({
         name: selectedSystem.label,
-        system: selectedSystem.value,
+        system: selectedSystem.value as CategorySystem,
         categoryId: +selectedCategoryId,
         newCategory: newCategoryName,
         filePath: img,
@@ -351,7 +412,8 @@ export default function My() {
         duration: 2000,
       });
     } finally {
-      fetchPhotos();
+      fetchPhotos(true);
+      fetchBoDailyCard();
       setIsSubmitting(false);
     }
   };
@@ -364,6 +426,7 @@ export default function My() {
       enableBackToTop
       refresherTriggered={refreshing}
       onRefresherRefresh={onRefresh}
+      onScrollToLower={handleHistoryReachBottom}
     >
       <View className="user-info">
         <Image
@@ -412,6 +475,24 @@ export default function My() {
       </View>
 
       <BoSheng boxStyle={{ padding: "14px 20px 0 20px" }} />
+
+      {boDailyCard && (
+        <View className="bo-daily-card">
+          <View className="bo-daily-topline">
+            <Text>{boDailyCard.date}</Text>
+            <Text>{boDailyCard.mood}</Text>
+          </View>
+          <View className="bo-daily-title">{boDailyCard.greeting}</View>
+          <View className="bo-daily-skill">{boDailyCard.title}</View>
+          <Text className="bo-daily-copy">{boDailyCard.insight}</Text>
+          <Text className="bo-daily-action">{boDailyCard.action}</Text>
+          <View className="bo-daily-stats">
+            <Text>香火 {boDailyCard.stats.kowtowCount}</Text>
+            <Text>资料 {boDailyCard.stats.uploadCount}</Text>
+            <Text>通过 {boDailyCard.stats.approvedCount}</Text>
+          </View>
+        </View>
+      )}
 
       {!systemConfig?.inReview && (
         <View className="record-section">
@@ -544,38 +625,53 @@ export default function My() {
 
       <View className="history-section">
         <View className="section-title" onClick={() => navToApprove("peding")}>
-          审核中
+          审核中 {pendingPhotos.total ? `(${pendingPhotos.total})` : ""}
         </View>
         <View className="photo-grid">
-          {pendingPhotos.length > 0 ? (
-            pendingPhotos.map((photo, index) => (
-              <Image
-                key={index}
-                src={photo.filename}
-                mode="aspectFit"
-                className="history-image"
-              />
-            ))
-          ) : (
-            <Text>妹有</Text>
+          {pendingPhotos.items.length > 0
+            ? pendingPhotos.items.map((photo) => (
+                <Image
+                  key={photo.id}
+                  src={photo.filename}
+                  mode="aspectFill"
+                  lazyLoad
+                  className="history-image"
+                />
+              ))
+            : !pendingPhotos.loading && <Text>妹有</Text>}
+          {pendingPhotos.loading && (
+            <Text className="history-loading">加载中...</Text>
           )}
         </View>
 
-        <View className="section-title">已通过</View>
+        <View className="section-title">
+          已通过 {approvedPhotos.total ? `(${approvedPhotos.total})` : ""}
+        </View>
         <View className="photo-grid">
-          {approvedPhotos.length ? (
-            approvedPhotos.map((photo, index) => (
-              <Image
-                key={index}
-                src={photo.filename}
-                mode="aspectFit"
-                className="history-image"
-              />
-            ))
-          ) : (
-            <Text>{pendingPhotos.length > 0 ? "妹有" : "也妹有，应该有"}</Text>
+          {approvedPhotos.items.length
+            ? approvedPhotos.items.map((photo) => (
+                <Image
+                  key={photo.id}
+                  src={photo.filename}
+                  mode="aspectFill"
+                  lazyLoad
+                  className="history-image"
+                />
+              ))
+            : !approvedPhotos.loading && (
+                <Text>
+                  {pendingPhotos.items.length > 0 ? "妹有" : "也妹有，应该有"}
+                </Text>
+              )}
+          {approvedPhotos.loading && (
+            <Text className="history-loading">加载中...</Text>
           )}
         </View>
+        {(pendingPhotos.hasMore || approvedPhotos.hasMore) && (
+          <Button className="load-more" onClick={handleHistoryReachBottom}>
+            再加载一点
+          </Button>
+        )}
       </View>
     </ScrollView>
   );

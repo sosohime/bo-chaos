@@ -1,19 +1,20 @@
-// 通用响应结构
-export interface ApiResponse<T = any> {
-  code: number;
-  message: string;
+export interface ApiResponse<T = unknown> {
   data: T;
+  meta?: Record<string, unknown>;
 }
 
-// 分页响应结构
-export interface PaginatedResponse<T = any> {
-  list: T[];
-  total: number;
+export interface PageMeta {
   page: number;
   pageSize: number;
+  total: number;
+  hasMore: boolean;
 }
 
-// 分页请求参数
+export interface PageResponse<T = unknown> {
+  data: T[];
+  meta: PageMeta;
+}
+
 export interface PaginationParams {
   page?: number;
   pageSize?: number;

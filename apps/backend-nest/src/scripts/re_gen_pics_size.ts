@@ -1,5 +1,4 @@
 import { PrismaService } from '@/library/prisma.service';
-import { PhotoService } from '@/bofans/photo/photo.service';
 import { photo as photoUtils } from '@mono/utils';
 import * as sharp from 'sharp';
 import axios from 'axios';
@@ -23,10 +22,9 @@ async function getImageSize(
 
 async function main() {
   const prismaService = new PrismaService();
-  const photoService = new PhotoService(prismaService);
 
   // 获取全部图片
-  const photos = await photoService.photos({});
+  const photos = await prismaService.photo.findMany();
 
   // 过滤出非标准文件名的
   const reGenList = photos.filter((p) => {
@@ -47,7 +45,7 @@ async function main() {
 
       if (size) {
         // 更新数据库
-        await photoService.updatePhoto({
+        await prismaService.photo.update({
           where: { id: photo.id },
           data: {
             filename: photoUtils.genStandardPictureName({
