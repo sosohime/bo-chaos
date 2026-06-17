@@ -1,4 +1,4 @@
-import { Swiper, SwiperItem, Image } from "@tarojs/components";
+import { Swiper, SwiperItem, Image, View, Text } from "@tarojs/components";
 import { ReactNode } from "react";
 import "./index.scss";
 
@@ -26,7 +26,9 @@ const SwiperImg = ({
     changeSwiper(e);
   };
   return (
-    <>
+    <View className="swiper-console">
+      <View className="swiper-frame-mark top-left"></View>
+      <View className="swiper-frame-mark top-right"></View>
       <Swiper
         className="swiper-block"
         current={accountIndex}
@@ -51,7 +53,13 @@ const SwiperImg = ({
             );
           })}
       </Swiper>
-    </>
+      <View className="swiper-console-footer">
+        <Text>MEDIA PREVIEW</Text>
+        <Text>
+          {accountIndex + 1}/{images.length}
+        </Text>
+      </View>
+    </View>
   );
 };
 

@@ -1,4 +1,6 @@
 .birthday-container {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   min-height: 44px;
   background: #ffffff;
@@ -7,10 +9,20 @@
   justify-content: space-between;
   gap: 12px;
   padding: 9px 11px;
-  border: 1px solid #dbe7f7;
+  border: 1px solid #d4e3f7;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
+  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.06);
   box-sizing: border-box;
+
+  .bosheng-rail {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    background: linear-gradient(180deg, #0052d9, #00a4ff);
+    border-radius: 0 3px 3px 0;
+  }
 
   .bosheng-kicker,
   .bosheng-title {
@@ -19,8 +31,8 @@
 
   .bosheng-kicker {
     color: #0052d9;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 800;
   }
 
   .bosheng-title {
@@ -35,8 +47,8 @@
     flex: 0 0 auto;
     padding: 4px 7px;
     color: #0052d9;
-    background: #f3f8ff;
-    border: 1px solid #cfe2ff;
+    background: #eef6ff;
+    border: 1px solid #c8dcfb;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
