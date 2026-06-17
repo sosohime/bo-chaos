@@ -78,13 +78,15 @@ export default function TabBar() {
             className={`tab-bar-item ${active ? "active" : ""}`}
             onClick={() => switchTab(item.key, item.pagePath)}
           >
-            <CoverView className={`tab-bar-icon tab-bar-icon-${item.icon}`}>
-              <CoverView className="icon-part icon-a" />
-              <CoverView className="icon-part icon-b" />
-              <CoverView className="icon-part icon-c" />
-            </CoverView>
-            <CoverView className="tab-bar-label">
-              {miniapp.tabs[item.key].text || item.text}
+            <CoverView className="tab-bar-control">
+              <CoverView className={`tab-bar-icon tab-bar-icon-${item.icon}`}>
+                <CoverView className="icon-part icon-a" />
+                <CoverView className="icon-part icon-b" />
+                <CoverView className="icon-part icon-c" />
+              </CoverView>
+              <CoverView className="tab-bar-label">
+                {miniapp.tabs[item.key].text || item.text}
+              </CoverView>
             </CoverView>
           </CoverView>
         );
