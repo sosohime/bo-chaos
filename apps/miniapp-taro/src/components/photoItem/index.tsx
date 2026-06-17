@@ -28,6 +28,8 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
   const [actionLoading, setActionLoading] = useState(false);
   const { systemConfig } = useContext(AppContext);
   const imageUrl = normalizeMediaUrl(data.filename);
+  const title = data.name || data.category?.name || "图片资源";
+  const categoryName = data.category?.name || "未分类";
 
   useEffect(() => {
     setData(photoData);
@@ -120,6 +122,9 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       }}
     >
       <View className="photo-box">
+        <View className="photo-media-tag">
+          <Text>图片</Text>
+        </View>
         {loading && (
           <View className="loading-container">
             <Text>加载中...</Text>
@@ -145,9 +150,14 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
         )}
       </View>
 
+      <View className="photo-info">
+        <Text className="photo-title">{title}</Text>
+        <Text className="photo-subtitle">{categoryName}</Text>
+      </View>
+
       <View className="photo-actions">
         <View className="action-pill" onClick={handleDownload}>
-          <Text>存</Text>
+          <Text>保存</Text>
         </View>
         {systemConfig?.inReview && (
           <>

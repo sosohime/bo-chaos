@@ -49,6 +49,19 @@ export default function CategoryPhotoSections({
 
   return (
     <>
+      <View className="photo-browser-shell">
+        <View className="photo-browser-toolbar">
+          <View>
+            <Text className="photo-browser-label">资源分组</Text>
+            <Text className="photo-browser-active">
+              {activeCategory || "选择一个分组"}
+            </Text>
+          </View>
+          <Text className="photo-browser-sync">
+            {loading ? "同步中" : hasMore ? "可继续加载" : "已同步"}
+          </Text>
+        </View>
+      </View>
       {groups.map((group) => (
         <View key={group.categoryName} className="category-section">
           <View
@@ -58,27 +71,39 @@ export default function CategoryPhotoSections({
             onClick={() => onCategoryClick(group.categoryName)}
           >
             <View className="category-title">
+              <Text className="category-index">资源集</Text>
               <Text className="category-name">{group.categoryName}</Text>
             </View>
-            <Text className="arrow">
-              {activeCategory === group.categoryName ? "▼" : "▶"}
-            </Text>
+            <View className="category-state">
+              <Text>
+                {activeCategory === group.categoryName ? "已展开" : "查看"}
+              </Text>
+              <Text className="arrow">
+                {activeCategory === group.categoryName ? "−" : "+"}
+              </Text>
+            </View>
           </View>
 
           {activeCategory === group.categoryName && (
-            <View className="photo-grid">
-              {group.photos.map((photo) => (
-                <View key={photo.id} className="photo-item-wrapper">
-                  <PhotoItem
-                    photoData={photo}
-                    onPreview={(url) => previewPhotos(url, group.photos)}
-                    size={{
-                      height: "200px",
-                      width: "100%",
-                    }}
-                  />
-                </View>
-              ))}
+            <View className="category-body">
+              <View className="category-body-head">
+                <Text>当前分组</Text>
+                <Text>{loading ? "加载中" : "图片资源"}</Text>
+              </View>
+              <View className="photo-grid">
+                {group.photos.map((photo) => (
+                  <View key={photo.id} className="photo-item-wrapper">
+                    <PhotoItem
+                      photoData={photo}
+                      onPreview={(url) => previewPhotos(url, group.photos)}
+                      size={{
+                        height: "216px",
+                        width: "100%",
+                      }}
+                    />
+                  </View>
+                ))}
+              </View>
             </View>
           )}
         </View>
