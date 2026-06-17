@@ -90,14 +90,29 @@ export default function Retire() {
             </View>
             <Text className="retire-status">运行中</Text>
           </View>
-          <Text className="retire-subtitle">
-            目标日与退休站保持一致，实时更新剩余时间。
-          </Text>
+          <View className="retire-summary">
+            <View className="retire-summary-item primary">
+              <Text className="retire-summary-label">剩余天数</Text>
+              <Text className="retire-summary-value">{countdown.days}</Text>
+            </View>
+            <View className="retire-summary-item">
+              <Text className="retire-summary-label">进度</Text>
+              <Text className="retire-summary-value">
+                {countdown.percent.toFixed(2)}%
+              </Text>
+            </View>
+            <View className="retire-summary-item">
+              <Text className="retire-summary-label">目标日</Text>
+              <Text className="retire-summary-value">
+                {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
+              </Text>
+            </View>
+          </View>
         </View>
 
         <View className="retire-panel">
           <View className="retire-panel-head">
-            <Text>距离退休还有</Text>
+            <Text>时间资源</Text>
             <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
           </View>
           <View className="retire-days">
@@ -142,6 +157,10 @@ export default function Retire() {
                 {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
               </Text>
             </View>
+          </View>
+          <View className="retire-live-row">
+            <Text>状态</Text>
+            <Text>{countdown.totalMs === 0 ? "已抵达" : "倒计时中"}</Text>
           </View>
         </View>
 

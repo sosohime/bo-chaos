@@ -1,6 +1,6 @@
 .retire-scroll {
   min-height: 100vh;
-  background: #f3f8ff;
+  background: #f3f7fc;
 }
 
 .retire-page {
@@ -11,7 +11,7 @@
 }
 
 .retire-hero {
-  padding: 22px 16px 8px;
+  padding: 16px 14px 8px;
   box-sizing: border-box;
 }
 
@@ -20,11 +20,11 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 82, 217, 0.14);
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid #dbe7f7;
   border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 59, 145, 0.08);
+  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
 }
 
 .retire-eyebrow {
@@ -37,41 +37,70 @@
 .retire-title {
   margin-top: 8px;
   color: #17233d;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 800;
-  line-height: 32px;
+  line-height: 28px;
 }
 
 .retire-status {
   flex: 0 0 auto;
   padding: 5px 8px;
   color: #0052d9;
-  background: rgba(0, 82, 217, 0.08);
-  border: 1px solid rgba(0, 82, 217, 0.16);
+  background: #f3f8ff;
+  border: 1px solid #cfe2ff;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
 }
 
-.retire-subtitle {
-  display: block;
+.retire-summary {
+  display: grid;
+  grid-template-columns: 1fr 0.86fr 1.18fr;
+  gap: 8px;
   margin-top: 10px;
-  color: #5d6f8f;
-  font-size: 14px;
-  line-height: 21px;
+}
+
+.retire-summary-item {
+  min-width: 0;
+  padding: 10px 9px;
+  background: #ffffff;
+  border: 1px solid #dbe7f7;
+  border-radius: 6px;
+  box-sizing: border-box;
+
+  &.primary {
+    background: #f3f8ff;
+    border-color: #bed7ff;
+  }
+}
+
+.retire-summary-label,
+.retire-summary-value {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retire-summary-label {
+  color: #7b8da8;
+  font-size: 11px;
+}
+
+.retire-summary-value {
+  margin-top: 5px;
+  color: #13233a;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .retire-panel {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 82, 217, 0.12);
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 59, 145, 0.08);
-  backdrop-filter: blur(14px);
-}
-
-.retire-panel {
-  margin: 10px 16px 14px;
+  margin: 10px 14px 14px;
   padding: 16px;
+  background: #ffffff;
+  border: 1px solid #dbe7f7;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
 }
 
 .retire-panel-head,
@@ -79,12 +108,13 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  color: #5d6f8f;
+  color: #66758f;
   font-size: 12px;
+  font-weight: 700;
 }
 
 .retire-days {
-  margin-top: 14px;
+  margin-top: 16px;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -93,7 +123,7 @@
 
 .retire-days-number {
   color: #17233d;
-  font-size: 56px;
+  font-size: 54px;
   font-weight: 800;
   line-height: 64px;
 }
@@ -115,16 +145,16 @@
 }
 
 .retire-progress {
-  height: 9px;
+  height: 8px;
   margin-top: 18px;
   overflow: hidden;
-  border-radius: 5px;
-  background: rgba(0, 82, 217, 0.08);
+  border-radius: 999px;
+  background: #edf3fb;
 }
 
 .retire-progress-fill {
   height: 100%;
-  border-radius: 5px;
+  border-radius: 999px;
   background: #0052d9;
 }
 
@@ -154,8 +184,8 @@
 .retire-fact {
   min-width: 0;
   padding: 10px;
-  background: rgba(0, 82, 217, 0.05);
-  border: 1px solid rgba(0, 82, 217, 0.12);
+  background: #f8fbff;
+  border: 1px solid #dbe7f7;
   border-radius: 6px;
 }
 
@@ -173,18 +203,30 @@
   font-weight: 800;
 }
 
+.retire-live-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #66758f;
+  border-top: 1px solid #eef2f8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .retire-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  padding: 16px 16px 104px;
+  padding: 2px 14px 104px;
 }
 
 .retire-primary,
 .retire-secondary {
   margin: 0;
-  border-radius: 8px;
-  font-weight: 800;
+  border-radius: 6px;
+  font-weight: 700;
 }
 
 .retire-primary {
@@ -194,6 +236,6 @@
 
 .retire-secondary {
   color: #0052d9;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(0, 82, 217, 0.16);
+  background: #ffffff;
+  border: 1px solid #cfe2ff;
 }
