@@ -1,15 +1,28 @@
-.container {
-  padding: 20px;
-}
-
-page {
-  background: #f5f5f5;
-}
-
 .page-container {
   min-height: 100vh;
   padding-bottom: 100px;
   box-sizing: border-box;
   position: relative;
   z-index: 1;
+}
+
+.tech-page {
+  min-height: 100vh;
+  color: #e6edf7;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(7, 12, 22, 0.98)),
+    radial-gradient(circle at 10% 0%, rgba(33, 196, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 90% 16%, rgba(65, 255, 166, 0.14), transparent 28%);
+}
+
+.tech-card {
+  background: rgba(12, 20, 34, 0.84);
+  border: 1px solid rgba(139, 177, 218, 0.16);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(12px);
+}
+
+.tech-muted {
+  color: #8fa3bb;
 }

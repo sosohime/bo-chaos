@@ -1,0 +1,173 @@
+import { Button, ScrollView, Text, View } from "@tarojs/components";
+import Taro from "@tarojs/taro";
+import { useEffect, useMemo, useState } from "react";
+import { tuixiu } from "@mono/const";
+import { dayjs } from "@mono/utils";
+import { useShare } from "@/lib/share";
+
+import "./index.scss";
+
+type CountdownParts = {
+  totalMs: number;
+  days: number;
+  hours: string;
+  minutes: string;
+  seconds: string;
+  percent: number;
+  remainingPercent: number;
+  elapsedDays: number;
+  totalDays: number;
+};
+
+const BO_RETIRE_START = tuixiu.boTuiXiuStartDay;
+const BO_RETIRE_TARGET = tuixiu.boTuiXiuDay;
+const RETIRE_DATE_FORMAT = "YYYY-MM-DD";
+
+function pad(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function getCountdownParts(): CountdownParts {
+  const now = dayjs();
+  const totalMs = Math.max(0, BO_RETIRE_TARGET.diff(now));
+  const totalSeconds = Math.floor(totalMs / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = pad(Math.floor((totalSeconds % 86400) / 3600));
+  const minutes = pad(Math.floor((totalSeconds % 3600) / 60));
+  const seconds = pad(totalSeconds % 60);
+  const elapsed = Math.max(0, now.diff(BO_RETIRE_START));
+  const total = Math.max(1, BO_RETIRE_TARGET.diff(BO_RETIRE_START));
+  const percent = Math.min(100, Math.max(0, (elapsed / total) * 100));
+  const totalDays = Math.ceil(total / 86400000);
+  const elapsedDays = Math.min(totalDays, Math.floor(elapsed / 86400000));
+  return {
+    totalMs,
+    days,
+    hours,
+    minutes,
+    seconds,
+    percent,
+    remainingPercent: 100 - percent,
+    elapsedDays,
+    totalDays,
+  };
+}
+
+export default function Retire() {
+  const [countdown, setCountdown] =
+    useState<CountdownParts>(getCountdownParts());
+
+  useShare({
+    title: "博退休进度站",
+    path: "/pages/retire/index",
+    imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => setCountdown(getCountdownParts()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const shareCopy = useMemo(
+    () =>
+      `博退休观测进度 ${countdown.percent.toFixed(2)}%，周期 ${BO_RETIRE_START.format(RETIRE_DATE_FORMAT)} 至 ${BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}，距离终点还有 ${countdown.days} 天 ${countdown.hours}:${countdown.minutes}:${countdown.seconds}`,
+    [countdown],
+  );
+
+  const copyCountdown = async () => {
+    await Taro.setClipboardData({ data: shareCopy });
+  };
+
+  const goKowtow = () => {
+    Taro.switchTab({ url: "/pages/kowtow/index" });
+  };
+
+  return (
+    <ScrollView scrollY className="retire-scroll" enableBackToTop>
+      <View className="retire-page">
+        <View className="retire-hero">
+          <View className="retire-orbit">
+            <View className="retire-orbit-ring" />
+            <View className="retire-orbit-core">BO</View>
+          </View>
+          <Text className="retire-eyebrow">RETIREMENT CONTROL</Text>
+          <Text className="retire-title">博退休进度站</Text>
+          <Text className="retire-subtitle">
+            按官方退休周期校准，全体博粉共享的终点观测仪。
+          </Text>
+        </View>
+
+        <View className="retire-panel">
+          <View className="retire-panel-head">
+            <Text>距离退休还有</Text>
+            <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
+          </View>
+          <View className="retire-days">
+            <Text className="retire-days-number">{countdown.days}</Text>
+            <Text className="retire-days-unit">天</Text>
+          </View>
+          <View className="retire-clock">
+            <Text>{countdown.hours}</Text>
+            <Text>:</Text>
+            <Text>{countdown.minutes}</Text>
+            <Text>:</Text>
+            <Text>{countdown.seconds}</Text>
+          </View>
+          <View className="retire-progress">
+            <View
+              className="retire-progress-fill"
+              style={{ width: `${countdown.percent}%` }}
+            />
+          </View>
+          <View className="retire-progress-meta">
+            <Text>退休进度 {countdown.percent.toFixed(2)}%</Text>
+            <Text>
+              {countdown.totalMs === 0
+                ? "已抵达"
+                : `剩余 ${countdown.remainingPercent.toFixed(2)}%`}
+            </Text>
+          </View>
+          <View className="retire-progress-scale">
+            <Text>{BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}</Text>
+            <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
+          </View>
+          <View className="retire-progress-note">
+            <Text>
+              已观测 {countdown.elapsedDays} / {countdown.totalDays} 天
+            </Text>
+          </View>
+        </View>
+
+        <View className="retire-grid">
+          <View className="retire-metric">
+            <Text className="retire-metric-value">
+              {Math.ceil(countdown.days / 7)}
+            </Text>
+            <Text className="retire-metric-label">周报期</Text>
+          </View>
+          <View className="retire-metric">
+            <Text className="retire-metric-value">
+              {Math.ceil(countdown.days / 30)}
+            </Text>
+            <Text className="retire-metric-label">月度节点</Text>
+          </View>
+          <View className="retire-metric">
+            <Text className="retire-metric-value">
+              {Math.ceil(countdown.days / 365)}
+            </Text>
+            <Text className="retire-metric-label">年度阶段</Text>
+          </View>
+        </View>
+
+        <View className="retire-actions">
+          <Button className="retire-primary" onClick={copyCountdown}>
+            复制进度
+          </Button>
+          <Button className="retire-secondary" onClick={goKowtow}>
+            去磕一发
+          </Button>
+        </View>
+      </View>
+    </ScrollView>
+  );
+}

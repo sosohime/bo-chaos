@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import Taro, { useDidShow, useDidHide, useLaunch } from "@tarojs/taro";
+import { useState } from "react";
+import { useLaunch } from "@tarojs/taro";
 import { AppContext } from "./lib/context";
 import { getSystemConfig } from "@/api/system";
 import { BofansSystemConfigType } from "@mono/types";
@@ -11,18 +11,9 @@ function App(props) {
   const [selectedTab, setSelectedTab] = useState(0);
   const [systemConfig, setSystemConfig] = useState<BofansSystemConfigType>({});
 
-  // 可以使用所有的 React Hooks
-  useEffect(() => {});
-
   useLaunch(() => {
     loadSystemConfig();
   });
-
-  // 对应 onShow
-  useDidShow(() => {});
-
-  // 对应 onHide
-  useDidHide(() => {});
 
   async function loadSystemConfig() {
     try {

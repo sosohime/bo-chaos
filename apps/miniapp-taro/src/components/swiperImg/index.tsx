@@ -1,13 +1,25 @@
 import { Swiper, SwiperItem, Image } from "@tarojs/components";
 import { ReactNode } from "react";
 import "./index.scss";
+
+type SwiperImage = {
+  img: string;
+  ratio: string;
+  canvas: {
+    canvasX: string;
+    canvasY: string;
+    width: number;
+    height: number;
+  };
+};
+
 const SwiperImg = ({
   changeSwiper,
   images,
   accountIndex,
 }: {
   changeSwiper: (e: number) => void;
-  images: any;
+  images: SwiperImage[];
   accountIndex: number;
 }): ReactNode => {
   const handleChange = (e) => {
@@ -29,7 +41,12 @@ const SwiperImg = ({
           images.map((img, index) => {
             return (
               <SwiperItem key={index} className="swiper-item">
-                <Image style={`width`} className="image" src={img.img}></Image>
+                <Image
+                  style={`width`}
+                  className="image"
+                  src={img.img}
+                  lazyLoad
+                ></Image>
               </SwiperItem>
             );
           })}

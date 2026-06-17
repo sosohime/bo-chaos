@@ -1,15 +1,21 @@
-import Taro from "@tarojs/taro";
-import request, { BASE_URL } from "../lib/request";
+import request, { buildQuery, uploadFile } from "../lib/request";
 import type {
   CategorySystem,
+  PhotoListParams,
   PageResponse,
   PhotoDto,
+  UploadPhotoRequest,
   UploadedPhotoStatusFilter,
   VoteResponse,
 } from "@mono/types";
 
-export function getPhotoBySystem(system: CategorySystem) {
-  return request.get<PageResponse<PhotoDto>>(`/photos?system=${system}`);
+export function getPhotoBySystem(
+  system: CategorySystem,
+  params?: Pick<PhotoListParams, "page" | "pageSize">,
+) {
+  return request.get<PageResponse<PhotoDto>>(
+    `/photos${buildQuery({ system, ...params })}`,
+  );
 }
 
 export function getPhotoById(id: number) {
@@ -21,12 +27,7 @@ export function getMyUploadedPhotos(params?: {
   page?: number;
   pageSize?: number;
 }) {
-  const query: string[] = [];
-  if (params?.status) query.push(`status=${params.status}`);
-  if (params?.page) query.push(`page=${params.page}`);
-  if (params?.pageSize) query.push(`pageSize=${params.pageSize}`);
-  const suffix = query.length ? `?${query.join("&")}` : "";
-  return request.get<PageResponse<PhotoDto>>(`/photos/my${suffix}`);
+  return request.get<PageResponse<PhotoDto>>(`/photos/my${buildQuery(params)}`);
 }
 
 export function votePhoto(photoId: number) {
@@ -38,49 +39,17 @@ export function cancelPhotoVote(photoId: number) {
 }
 
 export function uploadPhoto(
-  params: {
-    name: string;
-    system: CategorySystem;
-    categoryId?: number;
-    newCategory?: string;
-    filePath: string;
-  },
+  params: UploadPhotoRequest & { filePath: string },
   processHandle?: (progress: number) => void,
 ) {
   const { filePath, ...rest } = params;
   if (rest.categoryId === 0) {
     delete rest.categoryId;
   }
-  return new Promise<PhotoDto>((res, rej) => {
-    try {
-      const token = Taro.getStorageSync("token");
-      const task = Taro.uploadFile({
-        url: `${BASE_URL}/photos`,
-        header: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-        filePath,
-        name: "file",
-        formData: {
-          ...rest,
-        },
-        success: (response) => {
-          const body = JSON.parse(response.data);
-          res(body.data);
-        },
-        fail: (error) => {
-          console.log("上传失败", error);
-          rej(error);
-        },
-      });
-      if (processHandle) {
-        task.onProgressUpdate((progress) => {
-          processHandle(progress.progress);
-        });
-      }
-    } catch (e) {
-      console.log(e);
-      rej(e);
-    }
+  return uploadFile<PhotoDto>({
+    url: "/photos",
+    filePath,
+    formData: rest,
+    onProgress: processHandle,
   });
 }

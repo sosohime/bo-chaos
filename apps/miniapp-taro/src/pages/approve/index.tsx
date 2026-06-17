@@ -1,59 +1,110 @@
 import Taro from "@tarojs/taro";
-import { useState } from "react";
-import { ScrollView, View } from "@tarojs/components";
-import { approveContext } from "@/lib/approve";
+import { useMemo, useState } from "react";
+import { Image, ScrollView, Text, View } from "@tarojs/components";
+import type { UploadedPhotoStatusFilter } from "@mono/types";
+import { useUploadHistory } from "@/features/upload/use-upload-history";
+import { normalizeMediaUrl, normalizeMediaUrls } from "@/lib/media-url";
 import "./index.scss";
-import TabHead from "./components/tabHead/inedx";
+import TabHead from "./components/tabHead";
+
+function getInitialTab(): UploadedPhotoStatusFilter {
+  const approval = Taro.getCurrentInstance()?.router?.params
+    ?.approval as UploadedPhotoStatusFilter;
+  return approval === "approved" ? "approved" : "pending";
+}
 
 export default function ApprovalPage() {
-  // 获取路由参数
-  const currentInstance = Taro.getCurrentInstance();
-  const router = currentInstance?.router;
-  let approve: string = "peding";
-  if (router) {
-    approve = router.params.approval!;
-  }
-  const [approveState, setApproveState] = useState(approve);
-  const [refreshing, setRefreshing] = useState(false);
-  const tabHandle = (approval: string) => {
-    if (approveState !== approval) {
-      setApproveState(approval);
-    }
-  };
+  const [activeTab, setActiveTab] =
+    useState<UploadedPhotoStatusFilter>(getInitialTab);
+  const pending = useUploadHistory("pending");
+  const approved = useUploadHistory("approved");
+  const active = activeTab === "pending" ? pending : approved;
+  const counts = useMemo(
+    () => ({
+      pending: pending.total,
+      approved: approved.total,
+    }),
+    [pending.total, approved.total],
+  );
 
   const onRefresh = async () => {
     try {
-      setRefreshing(true);
       Taro.showNavigationBarLoading();
-      // await fetchData();
-      Taro.hideNavigationBarLoading();
-      Taro.showToast({
-        title: "刷新成功",
-        icon: "success",
-      });
-    } catch (error) {
-      Taro.hideNavigationBarLoading();
-      Taro.showToast({
-        title: "刷新失败",
-        icon: "error",
-      });
+      await active.refresh();
+      Taro.showToast({ title: "刷新成功", icon: "success" });
+    } catch {
+      Taro.showToast({ title: "刷新失败", icon: "none" });
     } finally {
-      setRefreshing(false);
+      Taro.hideNavigationBarLoading();
     }
   };
+
   return (
-    <View>
-      <approveContext.Provider value={approveState}>
-        <TabHead onClick={(e: string) => tabHandle(e)} />
-        <ScrollView
-          scrollY
-          className="approva-container"
-          refresherEnabled
-          enableBackToTop
-          refresherTriggered={refreshing}
-          onRefresherRefresh={onRefresh}
-        ></ScrollView>
-      </approveContext.Provider>
+    <View className="approval-page">
+      <TabHead active={activeTab} counts={counts} onClick={setActiveTab} />
+      <ScrollView
+        scrollY
+        className="approval-container"
+        refresherEnabled
+        enableBackToTop
+        refresherTriggered={active.refreshing}
+        onRefresherRefresh={onRefresh}
+        onScrollToLower={active.loadMore}
+      >
+        {active.items.length === 0 && active.loading && (
+          <View className="approval-state">
+            <Text>加载中...</Text>
+          </View>
+        )}
+        {active.items.length === 0 && !active.loading && (
+          <View className="approval-state">
+            <Text>
+              {active.error ? "加载失败，下拉重试" : "这里还没有图片"}
+            </Text>
+          </View>
+        )}
+        {active.items.length > 0 && (
+          <View className="approval-grid">
+            {active.items.map((photo) => (
+              <View key={photo.id} className="approval-card">
+                <Image
+                  src={normalizeMediaUrl(photo.filename)}
+                  mode="aspectFill"
+                  lazyLoad
+                  className="approval-image"
+                  onClick={() =>
+                    Taro.previewImage({
+                      current: normalizeMediaUrl(photo.filename),
+                      urls: normalizeMediaUrls(
+                        active.items.map((item) => item.filename),
+                      ),
+                    })
+                  }
+                />
+                <View className="approval-meta">
+                  <Text className="approval-category">
+                    {photo.category?.name || "未分类"}
+                  </Text>
+                  <Text className="approval-status">
+                    {activeTab === "pending" ? "审核中" : "已通过"}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+        {active.items.length > 0 && (
+          <View className="approval-footer">
+            <Text>
+              {active.loading
+                ? "继续加载中..."
+                : active.hasMore
+                  ? "上拉加载更多"
+                  : "到底啦"}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }

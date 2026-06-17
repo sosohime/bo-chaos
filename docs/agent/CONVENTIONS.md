@@ -41,11 +41,17 @@ Follow existing code first. These conventions document current patterns and guar
 
 - Use the `http` helper from `apps/miniapp-taro/src/lib/request.ts`.
 - The request helper handles JWT storage and 401 re-login.
+- Use `uploadFile` from `src/lib/request.ts` for authenticated Taro uploads instead of hand-rolling `Taro.uploadFile` in API wrappers.
+- Keep reusable photo list behavior under `src/features/photos/`; pages should own page title/share/shell concerns and consume feature hooks/components for grouped lists or waterfall grids.
+- Image-heavy mini app pages must use paginated API calls, `onScrollToLower` loading, `Image lazyLoad`, and visible loading/empty/error/footer states.
 - Keep page config, TSX, and SCSS together under each page folder.
 - Do not switch the production `BASE_URL` casually.
 - Configure the API base URL through `BOFANS_API_BASE_URL`; do not hard-code production API targets in source.
 - Use shared DTOs from `@mono/types`; do not import `@mono/prisma-client` in miniapp code.
 - Use pagination and `lazyLoad` for image-heavy history grids instead of rendering every historical upload at once.
+- Preserve true image laziness in miniapp feeds: avoid `getImageInfo`-style eager image probes for every list item unless backend dimensions are unavailable and the UX explicitly depends on exact layout.
+- Keep upload interactions queue-based and recoverable: cap large image selections, limit concurrent uploads, leave failed items available for retry, and show a clear post-submit path to review history.
+- Keep mini app visual refreshes cohesive across page shells, navigation bar, tab bar, feed cards, upload controls, and review surfaces; avoid mixing new dark/tech page bodies with legacy blue-white chrome.
 
 ## Astro
 
@@ -57,6 +63,7 @@ Follow existing code first. These conventions document current patterns and guar
 - Place public assets relative to the deploy root, such as `apps/frontend-astro/public/codex-pets/example.png`, not under `apps/frontend-astro/public/retire/`.
 - Retirement countdown pages use `src/components/tuixiu/countdown.astro` with a small browser script instead of React hooks, avoiding stale Vite React chunks in Chrome.
 - Keep countdown constants in shared packages when they apply across apps.
+- Keep Bo retirement target, canonical retirement cycle, and derived progress baseline in `@mono/const`; apps should not hard-code local retirement dates, progress starts, or expose internal cycle math in UI copy.
 - For mockup-driven Astro pages, translate the reference into explicit desktop and mobile layout structures up front. Do not rely on shrinking a desktop composition after implementation.
 - Keep sensitive or specific personal role details out of public retirement page copy unless the user explicitly asks to publish them; use visual motifs and generic status language instead.
 

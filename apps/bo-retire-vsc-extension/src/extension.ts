@@ -1,35 +1,32 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { dayjs } from "@mono/utils";
-import { tuixiu } from "@mono/const";
 
 function completeToTargetDigits(number: number | string, digits = 2) {
   return String(number).padStart(digits, "0");
 }
 
-function getCountDown(tuixiu: dayjs.Dayjs): string {
-  const now: dayjs.Dayjs = dayjs();
-  const diff = tuixiu.diff(now);
-  const duration = dayjs.duration(diff);
+function getCountDown(targetMs: number): string {
+  const diff = Math.max(0, targetMs - Date.now());
+  const totalSeconds = Math.floor(diff / 1000);
 
-  // 修改计算逻辑
-  const totalHours = Math.floor(duration.asHours());
+  const totalHours = Math.floor(totalSeconds / 3600);
   const days = Math.floor(totalHours / 24);
   const hours = totalHours % 24;
-  const minutes = duration.minutes();
-  const seconds = duration.seconds();
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
 
   return `${days} 天 ${completeToTargetDigits(hours)}:${completeToTargetDigits(minutes)}:${completeToTargetDigits(seconds)}`;
 }
 
-const { boTuiXiuDay } = tuixiu;
-
 let myStatusBarItem: vscode.StatusBarItem;
 let timer: NodeJS.Timeout | null = null;
+let boTuiXiuTargetMs = 0;
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "bo-retire" is now active!');
+  const { tuixiu } = await import("@mono/const");
+  boTuiXiuTargetMs = tuixiu.boTuiXiuDay.valueOf();
 
   const duojiutuixiuCommand = vscode.commands.registerCommand(
     "bo-retire.duojiutuixiu",
@@ -37,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
       // The code you place here will be executed every time your command is executed
       // Display a message box to the user
       vscode.window.showInformationMessage(
-        `😁 倒计时: ${getCountDown(boTuiXiuDay)}`,
+        `😁 倒计时: ${getCountDown(boTuiXiuTargetMs)}`,
       );
     },
   );
@@ -104,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 function updateStatusBarItem() {
   myStatusBarItem.show();
-  myStatusBarItem.text = `😁 倒计时: ${getCountDown(boTuiXiuDay)}`;
+  myStatusBarItem.text = `😁 倒计时: ${getCountDown(boTuiXiuTargetMs)}`;
 }
 
 // This method is called when your extension is deactivated

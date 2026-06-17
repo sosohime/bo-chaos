@@ -1,5 +1,5 @@
 export default definePageConfig({
-  navigationBarTitleText: "博游",
+  navigationBarTitleText: "旅行",
   enableShareAppMessage: true,
   enableShareTimeline: true,
   // usingComponents: {},

@@ -1,5 +1,5 @@
 export default definePageConfig({
-  navigationBarTitleText: "博史",
+  navigationBarTitleText: "历史",
   enableShareAppMessage: true,
   enableShareTimeline: true,
   // usingComponents: {},

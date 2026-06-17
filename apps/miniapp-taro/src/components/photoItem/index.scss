@@ -1,64 +1,72 @@
 .photo-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  background: rgba(8, 14, 24, 0.92);
+  box-sizing: border-box;
+
+  .photo-box {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    aspect-ratio: 1;
-    padding: 4px;
-    
-    .photo-box {
-      flex: 1;
-      .photo {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .loading-container,
-      .error-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background: #f5f5f5;
-      }
-    
-      .error-container {
-        cursor: pointer;
-        
-        .retry-text {
-          margin-top: 8px;
-          font-size: 12px;
-          color: #1890ff;
-        }
-      }
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #111a2b, #080d17);
+
+    .photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
-    
-    
-    .photo-actions {
-      flex-shrink: 0;
-      height: 24px;
-      padding-right: 12px;
+
+    .loading-container,
+    .error-container {
+      position: absolute;
+      inset: 0;
       display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      justify-content: flex-end;
-      gap: 6px;
-      
-      .action-icon {
-        width: 12px;
-        height: 12px;
-        padding: 10px 4px;
-      }
-      
-      .vote-count {
-        margin-left: -4px;
-        color: #fff;
-        font-size: 12px;
-        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+      color: #8fa3bb;
+      font-size: 12px;
+      background: linear-gradient(135deg, #111a2b, #080d17);
+    }
+
+    .error-container {
+      .retry-text {
+        margin-top: 6px;
+        color: #67e8f9;
       }
     }
   }
+
+  .photo-actions {
+    flex-shrink: 0;
+    height: 28px;
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    color: #8fa3bb;
+    box-sizing: border-box;
+
+    .action-icon {
+      width: 14px;
+      height: 14px;
+      padding: 7px 4px;
+
+      &.disabled {
+        opacity: 0.45;
+      }
+    }
+
+    .vote-count {
+      min-width: 14px;
+      color: #7dd3fc;
+      font-size: 12px;
+      text-align: right;
+    }
+  }
+}

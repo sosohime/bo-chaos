@@ -1,0 +1,231 @@
+.retire-scroll {
+  min-height: 100vh;
+  background: #070b13;
+}
+
+.retire-page {
+  min-height: 100vh;
+  color: #e6edf7;
+  background:
+    radial-gradient(circle at 50% -8%, rgba(103, 232, 249, 0.22), transparent 34%),
+    radial-gradient(circle at 100% 18%, rgba(245, 158, 11, 0.12), transparent 30%),
+    linear-gradient(180deg, #0d1424, #070b13 76%);
+  box-sizing: border-box;
+}
+
+.retire-hero {
+  padding: 28px 20px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.retire-orbit {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin-bottom: 18px;
+}
+
+.retire-orbit-ring {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 30px rgba(103, 232, 249, 0.12),
+    0 0 34px rgba(103, 232, 249, 0.12);
+}
+
+.retire-orbit-ring::after {
+  content: "";
+  position: absolute;
+  top: 16px;
+  right: 9px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #facc15;
+  box-shadow: 0 0 18px rgba(250, 204, 21, 0.7);
+}
+
+.retire-orbit-core {
+  position: absolute;
+  inset: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #07111f;
+  background: linear-gradient(135deg, #67e8f9, #34d399);
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.retire-eyebrow {
+  color: #67e8f9;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.retire-title {
+  margin-top: 8px;
+  color: #f8fbff;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 34px;
+}
+
+.retire-subtitle {
+  width: 88%;
+  margin-top: 10px;
+  color: #9fb3c8;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.retire-panel,
+.retire-metric {
+  background: rgba(12, 20, 34, 0.84);
+  border: 1px solid rgba(126, 169, 215, 0.18);
+  border-radius: 8px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(12px);
+}
+
+.retire-panel {
+  margin: 10px 16px 14px;
+  padding: 16px;
+}
+
+.retire-panel-head,
+.retire-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #8fa3bb;
+  font-size: 12px;
+}
+
+.retire-days {
+  margin-top: 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+
+.retire-days-number {
+  color: #f8fbff;
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 64px;
+}
+
+.retire-days-unit {
+  color: #67e8f9;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.retire-clock {
+  margin-top: 4px;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  color: #c9d7e8;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.retire-progress {
+  height: 9px;
+  margin-top: 18px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.retire-progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #67e8f9, #34d399, #facc15);
+}
+
+.retire-progress-meta {
+  margin-top: 9px;
+}
+
+.retire-progress-scale,
+.retire-progress-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #657790;
+  font-size: 10px;
+}
+
+.retire-progress-scale {
+  margin-top: 7px;
+}
+
+.retire-progress-note {
+  margin-top: 5px;
+  color: #8fa3bb;
+}
+
+.retire-grid {
+  margin: 0 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.retire-metric {
+  min-width: 0;
+  padding: 13px 8px;
+  text-align: center;
+}
+
+.retire-metric-value {
+  display: block;
+  color: #f8fbff;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 28px;
+}
+
+.retire-metric-label {
+  display: block;
+  margin-top: 3px;
+  color: #8fa3bb;
+  font-size: 12px;
+}
+
+.retire-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 16px 16px 104px;
+}
+
+.retire-primary,
+.retire-secondary {
+  margin: 0;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.retire-primary {
+  color: #07111f;
+  background: linear-gradient(90deg, #67e8f9, #34d399);
+}
+
+.retire-secondary {
+  color: #dbeafe;
+  background: rgba(148, 163, 184, 0.14);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}

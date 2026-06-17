@@ -1,9 +1,11 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import Taro from "@tarojs/taro";
 import { CoverView, CoverImage } from "@tarojs/components";
 import { AppContext } from "../lib/context";
 
 import "./index.scss";
+import RetireIcon from "../images/tab-bar/retire.png";
+import RetireActiveIcon from "../images/tab-bar/retire-active.png";
 import KowtowIcon from "../images/tab-bar/kowtow.png";
 import KowtowActiveIcon from "../images/tab-bar/kowtow-active.png";
 import TravelIcon from "../images/tab-bar/travel.png";
@@ -12,10 +14,14 @@ import HistoryIcon from "../images/tab-bar/history.png";
 import HistoryActiveIcon from "../images/tab-bar/history-active.png";
 import MyIcon from "../images/tab-bar/my.png";
 import MyActiveIcon from "../images/tab-bar/my-active.png";
-import TeaseIcon from "../images/tab-bar/tease.png";
-import TeaseActiveIcon from "../images/tab-bar/tease-active.png";
 
 const list = [
+  {
+    pagePath: "/pages/retire/index",
+    iconPath: RetireIcon,
+    selectedIconPath: RetireActiveIcon,
+    text: "退",
+  },
   {
     pagePath: "/pages/kowtow/index",
     iconPath: KowtowIcon,
@@ -35,12 +41,6 @@ const list = [
     text: "游",
   },
   {
-    pagePath: "/pages/tease/index",
-    iconPath: TeaseIcon,
-    selectedIconPath: TeaseActiveIcon,
-    text: "逗",
-  },
-  {
     pagePath: "/pages/my/index",
     iconPath: MyIcon,
     selectedIconPath: MyActiveIcon,
@@ -50,8 +50,8 @@ const list = [
 
 export default function TabBar() {
   const { selectedTab, setSelectedTab } = useContext(AppContext);
-  const color = "#000000";
-  const selectedColor = "#0052d9";
+  const color = "#7f91aa";
+  const selectedColor = "#67e8f9";
 
   const switchTab = (index: number, url: string) => {
     setSelectedTab(index);
@@ -68,9 +68,11 @@ export default function TabBar() {
           onClick={() => switchTab(index, item.pagePath)}
         >
           <CoverImage
+            className="tab-bar-icon"
             src={selectedTab === index ? item.selectedIconPath : item.iconPath}
           />
           <CoverView
+            className="tab-bar-label"
             style={{ color: selectedTab === index ? selectedColor : color }}
           >
             {item.text}

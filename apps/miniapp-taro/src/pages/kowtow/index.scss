@@ -1,19 +1,31 @@
 .kowtow-container {
   display: flex;
-  padding: 20px;
+  min-height: 100vh;
+  padding: 20px 18px 100px;
   flex-direction: column;
   align-items: center;
-  // height: calc(100vh - 100px);
+  color: #e6edf7;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.2), transparent 34%),
+    radial-gradient(circle at 88% 18%, rgba(52, 211, 153, 0.12), transparent 28%),
+    linear-gradient(180deg, #0d1424, #070b13 74%);
+  box-sizing: border-box;
+
   .utc {
     font-size: 12px;
     transform: scale(0.8);
   }
-  text {
-    padding-bottom: 20px;
+
+  .kowtow-copy {
+    padding-bottom: 12px;
+    color: #c9d7e8;
+    font-size: 14px;
   }
+
   .god-bo {
     position: relative;
     width: 100%;
+    margin: 8px 0 4px;
 
     .canvas {
       position: absolute;
@@ -21,23 +33,29 @@
       z-index: 2;
     }
   }
+
   .love {
     padding-top: 12px;
+    color: #67e8f9;
     font-size: 20px;
-    animation: rainbow 5s linear infinite;
+    font-weight: 800;
   }
-  .submit-kowtow {
-    margin-top: 20px;
-    width: 80%;
-  }
-}
 
-@keyframes rainbow {
-  0% { color: #ff0000; }  // 红
-  17% { color: #ff8000; } // 橙
-  33% { color: #ffff00; } // 黄
-  50% { color: #00ff00; } // 绿
-  67% { color: #0000ff; } // 蓝
-  83% { color: #4b0082; } // 靛
-  100% { color: #9400d3; } // 紫
+  .submit-kowtow {
+    margin-top: 18px;
+    width: 80%;
+    color: #07111f;
+    background: linear-gradient(90deg, #67e8f9, #34d399);
+    border-radius: 8px;
+    font-weight: 800;
+
+    &.loading {
+      opacity: 0.72;
+    }
+  }
+
+  .sync-warning {
+    color: #facc15;
+    font-size: 13px;
+  }
 }

@@ -2,10 +2,12 @@
 .swiper-block {
   position: relative;
   width: 100%;
-  // $w80toHeight: calc(100vw * 0.75);
-  // 设置父盒子固定宽高比为 4 / 3
   height: calc(100vw * 0.75 - 44px);
   z-index: 1;
+  overflow: hidden;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 8px;
+  background: #08111f;
 }
 .swiper-item {
   width: 100%;

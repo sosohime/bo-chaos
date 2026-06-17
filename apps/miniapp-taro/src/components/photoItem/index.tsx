@@ -1,20 +1,17 @@
 import { View, Image, Text, ITouchEvent } from "@tarojs/components";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { votePhoto, cancelPhotoVote, getPhotoById } from "../../api/photo";
 import Taro from "@tarojs/taro";
 import { AppContext } from "@/lib/context";
+import type { PhotoDto } from "@mono/types";
 import "./index.scss";
 import VoteImage from "../../images/vote.png";
 import VoteActiveImage from "../../images/vote-active.png";
 import DownloadImage from "../../images/download.png";
+import { normalizeMediaUrl } from "@/lib/media-url";
 
 interface PhotoItemProps {
-  photoData: {
-    id: number;
-    filename: string;
-    hasVoted: boolean;
-    votesCount: number;
-  };
+  photoData: PhotoDto;
   onPreview: (url: string) => void;
   size: {
     height: string;
@@ -30,13 +27,23 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
   const [data, setData] = useState(photoData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [retryVersion, setRetryVersion] = useState(0);
+  const [actionLoading, setActionLoading] = useState(false);
   const { systemConfig } = useContext(AppContext);
+  const imageUrl = normalizeMediaUrl(data.filename);
+
+  useEffect(() => {
+    setData(photoData);
+    setLoading(true);
+    setError(false);
+    setRetryVersion(0);
+  }, [photoData.id, photoData.filename]);
 
   const handleDownload = (e: ITouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
     Taro.downloadFile({
-      url: data.filename,
+      url: imageUrl,
       success: (res) => {
         Taro.saveImageToPhotosAlbum({
           filePath: res.tempFilePath,
@@ -44,9 +51,16 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
             Taro.showToast({ title: "保存成功", icon: "success" });
           },
           fail: () => {
-            Taro.showToast({ title: "保存失败", icon: "error" });
+            Taro.showModal({
+              title: "保存失败",
+              content: "请确认已允许保存到相册后重试。",
+              showCancel: false,
+            });
           },
         });
+      },
+      fail: () => {
+        Taro.showToast({ title: "下载失败", icon: "error" });
       },
     });
   };
@@ -64,33 +78,40 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
   const handleRetry = () => {
     setLoading(true);
     setError(false);
+    setRetryVersion((current) => current + 1);
   };
 
   const reloadPhotoData = async () => {
     const res = await getPhotoById(data.id);
-    console.log("reload....", res);
     if (res) {
-      setData(res as any);
+      setData(res);
     }
   };
 
   const onVote = async (e: ITouchEvent) => {
     e.stopPropagation();
-    if (data.hasVoted) {
-      await cancelPhotoVote(data.id);
-      setData((perv) => ({
-        ...perv,
-        hasVoted: false,
-      }));
-    } else {
-      await votePhoto(data.id);
-      setData((perv) => ({
-        ...perv,
-        hasVoted: true,
-      }));
+    if (actionLoading) return;
+    setActionLoading(true);
+    const previous = data;
+    const nextHasVoted = !data.hasVoted;
+    setData((prev) => ({
+      ...prev,
+      hasVoted: nextHasVoted,
+      votesCount: Math.max(0, (prev.votesCount || 0) + (nextHasVoted ? 1 : -1)),
+    }));
+    try {
+      if (previous.hasVoted) {
+        await cancelPhotoVote(previous.id);
+      } else {
+        await votePhoto(previous.id);
+      }
+      await reloadPhotoData();
+    } catch (error) {
+      setData(previous);
+      Taro.showToast({ title: "操作失败", icon: "none" });
+    } finally {
+      setActionLoading(false);
     }
-
-    await reloadPhotoData();
   };
 
   return (
@@ -115,10 +136,12 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
           </View>
         ) : (
           <Image
-            src={data.filename}
+            key={`${data.id}-${retryVersion}`}
+            src={imageUrl}
             className="photo"
+            lazyLoad
             mode="aspectFit"
-            onClick={() => onPreview(data.filename)}
+            onClick={() => onPreview(imageUrl)}
             onLoad={handleImageLoad}
             onError={handleImageError}
           />
@@ -135,7 +158,7 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
           <>
             <Image
               src={data.hasVoted ? VoteActiveImage : VoteImage}
-              className="action-icon"
+              className={`action-icon ${actionLoading ? "disabled" : ""}`}
               onClick={onVote}
             />
             <Text className="vote-count">{data.votesCount}</Text>

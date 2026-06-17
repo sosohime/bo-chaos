@@ -1,4 +1,4 @@
-import { View, Button, Image, Text, Canvas } from "@tarojs/components";
+import { View, Button, Text, Canvas } from "@tarojs/components";
 import { useState, useEffect, useRef, useContext } from "react";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
@@ -9,13 +9,13 @@ import God from "@/images/kowtow/god.png";
 import God2 from "@/images/kowtow/god2.jpg";
 import God3 from "@/images/kowtow/god3.png";
 import { getKowtowStats, batchKowtow } from "../../api/kowtow";
+import type { KowtowStatsDto } from "@mono/types";
 import SwiperImg from "@/components/swiperImg";
 import "./index.scss";
-interface KowtowStats {
+type KowtowStats = Omit<KowtowStatsDto, "todayKowtowedUser" | "totalCount"> & {
   todayKowtowedUser: number | "-";
   totalCount: number | "-";
-  iKowtowedToday: boolean;
-}
+};
 interface Animation {
   id: number;
   x: number;
@@ -33,8 +33,8 @@ export default function Kowtow() {
       img: God,
       ratio: (351 / 476).toFixed(2),
       canvas: {
-        canvasX: "15%",
-        canvasY: "68%",
+        top: "15%",
+        left: "68%",
         width: 90,
         height: 120,
       },
@@ -43,8 +43,8 @@ export default function Kowtow() {
       img: God2,
       ratio: (256 / 388).toFixed(2),
       canvas: {
-        canvasX: "20%",
-        canvasY: "18%",
+        top: "20%",
+        left: "18%",
         width: 90,
         height: 120,
       },
@@ -53,8 +53,8 @@ export default function Kowtow() {
       img: God3,
       ratio: (184 / 210).toFixed(2),
       canvas: {
-        canvasX: "20%",
-        canvasY: "10%",
+        top: "20%",
+        left: "10%",
         width: 90,
         height: 120,
       },
@@ -63,8 +63,8 @@ export default function Kowtow() {
   const [canvasInfo, setCanvasInfo] = useState({
     swiperIndex: 0,
     canvas: {
-      canvasX: "15%",
-      canvasY: "68%",
+      top: "15%",
+      left: "68%",
       width: 90,
       height: 120,
     },
@@ -85,6 +85,8 @@ export default function Kowtow() {
     totalCount: "-",
     iKowtowedToday: false,
   });
+  const [syncFailed, setSyncFailed] = useState(false);
+  const [isKowtowing, setIsKowtowing] = useState(false);
 
   useEffect(() => {
     if (systemConfig) {
@@ -100,31 +102,41 @@ export default function Kowtow() {
     imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
   });
   const handleKowtow = async () => {
+    if (isKowtowing) return;
+    setIsKowtowing(true);
     try {
-      console.log("animationQueue", animationQueue.current);
       await createLikeAnimation();
       await setKowtowCount(kowtowCount + 1);
-    } catch (e: any) {
-      console.log("ERROR=>", e);
+    } catch (error) {
+      console.error("磕头动画失败:", error);
+    } finally {
+      setIsKowtowing(false);
+    }
+  };
+
+  const syncKowtowStats = async () => {
+    try {
+      let batchBlockData;
+      const paramsKowtow = kowtowCountRef.current;
+      if (paramsKowtow > 0) {
+        batchBlockData = await batchKowtow({ count: paramsKowtow });
+      }
+      const kowtowStatsData = await getKowtowStats();
+      if (kowtowStatsData) {
+        setKowtowStats(kowtowStatsData);
+        batchBlockData && setKowtowCount(0);
+      }
+      setSyncFailed(false);
+    } catch (error) {
+      console.error("同步磕头状态失败:", error);
+      setSyncFailed(true);
     }
   };
 
   // 每隔两秒调用一次，查询最新磕头状态
   useEffect(() => {
-    const timer = setInterval(async () => {
-      let batchBlockData;
-      // 存在待提交磕头数，提交至库中
-      const paramsKowtow = kowtowCountRef.current;
-      if (paramsKowtow > 0) {
-        batchBlockData = await batchKowtow({ count: paramsKowtow });
-      }
-      const kowtowStatsData: KowtowStats =
-        (await getKowtowStats()) as KowtowStats;
-      if (kowtowStatsData) {
-        setKowtowStats(kowtowStatsData);
-        batchBlockData && setKowtowCount(0);
-      }
-    }, 2000);
+    syncKowtowStats();
+    const timer = setInterval(syncKowtowStats, 2000);
     return () => clearInterval(timer);
   }, []);
 
@@ -179,8 +191,6 @@ export default function Kowtow() {
         const ctx = canvas.getContext("2d");
         const xSkew = Math.ceil((Math.random() * canvas.width) / 6);
         const startX = fontSize / 2 + xSkew;
-        console.log(canvas.width, startX, "startX");
-
         const startY = canvas.height - 20;
         const animationId = Date.now();
         animationQueue.current.push({
@@ -237,25 +247,31 @@ export default function Kowtow() {
     <View className="kowtow-container">
       {systemConfig?.inReview ? (
         <>
-          <Text>HI, 博Fans</Text>
-          <Text>欢迎使用BoFans图片压缩工具</Text>
-          <Text>请在个人中心（我）</Text>
-          <Text>系统预设了一些图片分类，帮助你进行图片整理</Text>
-          <Text>选择分类后点击上传图片</Text>
-          <Text>带管理员审核通过后，会自动执行压缩流程</Text>
-          <Text>压缩完成后可以在选择的分类中查看图片</Text>
+          <Text className="kowtow-copy">HI, 博Fans</Text>
+          <Text className="kowtow-copy">欢迎使用BoFans图片压缩工具</Text>
+          <Text className="kowtow-copy">请在个人中心（我）</Text>
+          <Text className="kowtow-copy">
+            系统预设了一些图片分类，帮助你进行图片整理
+          </Text>
+          <Text className="kowtow-copy">选择分类后点击上传图片</Text>
+          <Text className="kowtow-copy">
+            带管理员审核通过后，会自动执行压缩流程
+          </Text>
+          <Text className="kowtow-copy">
+            压缩完成后可以在选择的分类中查看图片
+          </Text>
         </>
       ) : (
         <>
           <BoSheng />
-          <Text>
+          <Text className="kowtow-copy">
             全球博粉累计磕头{" "}
             {kowtowCount && kowtowStats.totalCount !== "-"
               ? (kowtowStats.totalCount as number) + kowtowCount
               : kowtowStats.totalCount}{" "}
             次
           </Text>
-          <Text>
+          <Text className="kowtow-copy">
             今日签到博粉 {kowtowStats.todayKowtowedUser}{" "}
             <Text className="utc">(utc+8)</Text>
           </Text>
@@ -263,8 +279,8 @@ export default function Kowtow() {
             <Canvas
               type="2d"
               id="god-bo-canvas"
-              style={`top: ${canvasInfo.canvas.canvasX};
-                left: ${canvasInfo.canvas.canvasY};
+              style={`top: ${canvasInfo.canvas.top};
+                left: ${canvasInfo.canvas.left};
                 height: ${canvasInfo.canvas.height}px;
                 width: ${canvasInfo.canvas.width}px;`}
               className="canvas"
@@ -277,18 +293,23 @@ export default function Kowtow() {
           </View>
           <Text className="love">博爱世人</Text>
           {kowtowStats.totalCount !== "-" && (
-            <Text>
+            <Text className="kowtow-copy">
               {kowtowStats.iKowtowedToday
                 ? "今日已磕，博哥对你很满意👍"
                 : "今天你还没磕，抓紧"}
             </Text>
           )}
+          {syncFailed && (
+            <Text className="sync-warning" onClick={syncKowtowStats}>
+              同步有点慢，点我重试
+            </Text>
+          )}
           <Button
-            className="submit-kowtow"
+            className={`submit-kowtow ${isKowtowing ? "loading" : ""}`}
             type="primary"
             onClick={handleKowtow}
           >
-            磕
+            {isKowtowing ? "磕着..." : "磕"}
           </Button>
         </>
       )}

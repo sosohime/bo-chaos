@@ -1,6 +1,13 @@
 import { dayjs } from "@mono/utils";
 
+export const tencentRetireYears = 15;
+
 export const boTuiXiuDay = dayjs("2028-07-06", "yyyy-MM-DD");
+
+export const boTuiXiuStartDay = boTuiXiuDay.subtract(
+  tencentRetireYears,
+  "year",
+);
 
 export const reckfulTuiXiuDay = dayjs("2034-07-01", "yyyy-MM-DD");
 

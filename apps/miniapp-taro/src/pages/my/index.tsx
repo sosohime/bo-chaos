@@ -16,74 +16,66 @@ import { useShare } from "@/lib/share";
 import { groupBy } from "es-toolkit";
 import { getCategories } from "../../api/category";
 import { uploadAvatar, getUserInfo, updateNickname } from "../../api/user";
-import { uploadPhoto, getMyUploadedPhotos } from "../../api/photo";
+import { uploadPhoto } from "../../api/photo";
 import { getBoDailyCard, type BoDailyCard } from "../../api/bo";
-import type { CategorySystem, PhotoCategoryDto } from "@mono/types";
+import { useUploadHistory } from "@/features/upload/use-upload-history";
+import type {
+  CategorySystem,
+  PhotoCategoryDto,
+  PhotoDto,
+  UploadedPhotoStatusFilter,
+  UserProfileDto,
+} from "@mono/types";
 import Criminal from "../../images/criminal.png";
 import Edit from "../../images/edit.png";
+import { normalizeMediaUrl, normalizeMediaUrls } from "@/lib/media-url";
 
 import "./index.scss";
 
-interface UserInfo {
-  avatarUrl: string;
-  nickname: string;
-  kowtowCount: number;
-  lastKowtowTime: string;
-  joinTime: string;
-}
-
-interface UploadedPhoto {
-  id: number;
-  filename: string;
-  status: string;
-  published?: boolean;
-}
-
-interface UploadHistoryState {
-  items: UploadedPhoto[];
-  page: number;
-  hasMore: boolean;
-  loading: boolean;
-  total: number;
-}
-
-const HISTORY_PAGE_SIZE = 18;
-
-const emptyHistoryState: UploadHistoryState = {
-  items: [],
-  page: 0,
-  hasMore: true,
-  loading: false,
-  total: 0,
+type CategoryType = PhotoCategoryDto;
+type SystemOption = {
+  label: string;
+  value: CategorySystem;
 };
 
-type CategoryType = PhotoCategoryDto;
+const MAX_SELECTED_IMAGES = 30;
+const UPLOAD_CONCURRENCY = 3;
+
+type UploadSummary = {
+  successCount: number;
+  failedCount: number;
+} | null;
+
+const emptyUserInfo: UserProfileDto = {
+  id: 0,
+  openId: "",
+  avatarUrl: "",
+  nickname: "",
+  kowtowCount: 0,
+  joinTime: "",
+  photoReviewer: false,
+};
 
 export default function My() {
   const { systemConfig } = useContext(AppContext);
 
   const [refreshing, setRefreshing] = useState(false);
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    avatarUrl: "",
-    nickname: "",
-    kowtowCount: 0,
-    lastKowtowTime: "",
-    joinTime: "",
-  });
+  const [userInfo, setUserInfo] = useState<UserProfileDto>(emptyUserInfo);
   const [isEditingName, setIsEditingName] = useState(false);
   const [editingName, setEditingName] = useState("");
   const [selectedSystem, setSelectedSystem] = useState<{
     label: string;
-    value: string;
+    value: CategorySystem;
   } | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isNewCategory, setIsNewCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [pendingPhotos, setPendingPhotos] =
-    useState<UploadHistoryState>(emptyHistoryState);
-  const [approvedPhotos, setApprovedPhotos] =
-    useState<UploadHistoryState>(emptyHistoryState);
+  const [uploadSummary, setUploadSummary] = useState<UploadSummary>(null);
+  const [activeHistoryTab, setActiveHistoryTab] =
+    useState<UploadedPhotoStatusFilter>("pending");
+  const pendingPhotos = useUploadHistory("pending");
+  const approvedPhotos = useUploadHistory("approved");
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
   const [boDailyCard, setBoDailyCard] = useState<BoDailyCard | null>(null);
@@ -96,7 +88,7 @@ export default function My() {
 
   // 删除静态的 systems 和 categoryMap
   const systems = Object.values(
-    categories.reduce((p, c) => {
+    categories.reduce<Partial<Record<CategorySystem, SystemOption>>>((p, c) => {
       if (!p[c.system]) {
         p[c.system] = {
           label: c.systemName,
@@ -105,7 +97,7 @@ export default function My() {
       }
       return p;
     }, {}),
-  ) as { label: string; value: string }[];
+  ) as SystemOption[];
 
   const categoryMap = groupBy(
     categories.filter((item) => item.system === selectedSystem?.value),
@@ -115,7 +107,6 @@ export default function My() {
   useEffect(() => {
     fetchUserInfo();
     fetchCategories();
-    fetchPhotos(true);
     fetchBoDailyCard();
   }, []);
 
@@ -126,7 +117,8 @@ export default function My() {
       await Promise.all([
         fetchUserInfo(),
         fetchCategories(),
-        fetchPhotos(true),
+        pendingPhotos.refresh(),
+        approvedPhotos.refresh(),
         fetchBoDailyCard(),
       ]);
       Taro.hideNavigationBarLoading();
@@ -158,7 +150,7 @@ export default function My() {
   const fetchUserInfo = async () => {
     try {
       const info = await getUserInfo();
-      setUserInfo(info as any);
+      setUserInfo(info || emptyUserInfo);
     } catch (error) {
       console.error("获取用户信息失败:", error);
     }
@@ -173,51 +165,10 @@ export default function My() {
     }
   };
 
-  const fetchPhotoPage = async (
-    status: "pending" | "approved",
-    reset = false,
-  ) => {
-    const state = status === "pending" ? pendingPhotos : approvedPhotos;
-    if ((!reset && state.loading) || (!reset && !state.hasMore)) return;
-
-    const setState =
-      status === "pending" ? setPendingPhotos : setApprovedPhotos;
-    const nextPage = reset ? 1 : state.page + 1;
-
-    setState((prev) => ({ ...prev, loading: true }));
-    try {
-      const res = await getMyUploadedPhotos({
-        status,
-        page: nextPage,
-        pageSize: HISTORY_PAGE_SIZE,
-      });
-      setState((prev) => ({
-        items: reset ? res.data : [...prev.items, ...res.data],
-        page: res.meta.page,
-        total: res.meta.total,
-        hasMore: res.meta.hasMore,
-        loading: false,
-      }));
-    } catch (error) {
-      console.error("获取照片列表失败:", error);
-      setState((prev) => ({ ...prev, loading: false }));
-    }
-  };
-
-  const fetchPhotos = async (reset = false) => {
-    if (reset) {
-      setPendingPhotos(emptyHistoryState);
-      setApprovedPhotos(emptyHistoryState);
-    }
-    await Promise.all([
-      fetchPhotoPage("pending", reset),
-      fetchPhotoPage("approved", reset),
-    ]);
-  };
-
   const handleHistoryReachBottom = () => {
-    fetchPhotoPage("pending");
-    fetchPhotoPage("approved");
+    const history =
+      activeHistoryTab === "pending" ? pendingPhotos : approvedPhotos;
+    history.loadMore();
   };
 
   const handleCategorySelect = (secondCategory: string) => {
@@ -231,6 +182,13 @@ export default function My() {
     }
   };
 
+  const previewUploadedPhoto = (photo: PhotoDto, photos: PhotoDto[]) => {
+    Taro.previewImage({
+      current: normalizeMediaUrl(photo.filename),
+      urls: normalizeMediaUrls(photos.map((item) => item.filename)),
+    });
+  };
+
   const handleAvatarClick = async () => {
     try {
       const res = await Taro.chooseImage({
@@ -238,17 +196,16 @@ export default function My() {
         sizeType: ["compressed"],
         sourceType: ["album", "camera"],
       });
-      const uploadRes = (await uploadAvatar({
+      const uploadRes = await uploadAvatar({
         filePath: res.tempFilePaths[0],
-      })) as any;
+      });
       setUserInfo(uploadRes);
     } catch (error) {
       console.error("选择头像失败:", error);
     }
   };
 
-  const navToApprove = (approval: any): void => {
-    console.log("1323");
+  const navToApprove = (approval: UploadedPhotoStatusFilter): void => {
     Taro.navigateTo({
       url: `/pages/approve/index?approval=${approval}`, // 携带参数
     });
@@ -285,12 +242,21 @@ export default function My() {
 
   const handleAddImages = async () => {
     try {
+      const remaining = MAX_SELECTED_IMAGES - selectedImages.length;
+      if (remaining <= 0) {
+        Taro.showToast({
+          title: `最多选择 ${MAX_SELECTED_IMAGES} 张`,
+          icon: "none",
+        });
+        return;
+      }
       const res = await Taro.chooseMedia({
-        count: 20,
+        count: Math.min(9, remaining),
         mediaType: ["image"],
         sourceType: ["album", "camera"],
         sizeType: ["compressed"],
       });
+      setUploadSummary(null);
       setSelectedImages((prev) => [
         ...prev,
         ...res.tempFiles.map((f) => f.tempFilePath),
@@ -301,6 +267,7 @@ export default function My() {
   };
 
   const handleRemoveImage = (index: number) => {
+    setUploadSummary(null);
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -316,10 +283,36 @@ export default function My() {
     >
   >({});
 
+  const runUploadQueue = async <T,>(
+    items: T[],
+    worker: (item: T, index: number) => Promise<void>,
+  ) => {
+    const results = new Array(items.length) as PromiseSettledResult<number>[];
+    let cursor = 0;
+    const runners = Array.from(
+      { length: Math.min(UPLOAD_CONCURRENCY, items.length) },
+      async () => {
+        while (cursor < items.length) {
+          const index = cursor;
+          cursor += 1;
+          try {
+            await worker(items[index], index);
+            results[index] = { status: "fulfilled", value: index };
+          } catch (reason) {
+            results[index] = { status: "rejected", reason };
+          }
+        }
+      },
+    );
+    await Promise.all(runners);
+    return results;
+  };
+
   const handleSubmit = async () => {
+    const nextCategoryName = newCategoryName.trim();
     if (
       !selectedSystem ||
-      (!selectedCategoryId && !newCategoryName) ||
+      (!selectedCategoryId && !nextCategoryName) ||
       !selectedImages.length
     ) {
       Taro.showToast({ title: "请填写完整信息", icon: "none" });
@@ -327,53 +320,57 @@ export default function My() {
     }
 
     setIsSubmitting(true);
+    setUploadSummary(null);
     try {
       const tasks = selectedImages.map((img) => ({
         name: selectedSystem.label,
-        system: selectedSystem.value as CategorySystem,
+        system: selectedSystem.value,
         categoryId: +selectedCategoryId,
-        newCategory: newCategoryName,
+        newCategory: nextCategoryName,
         filePath: img,
       }));
 
-      const results = await Promise.allSettled(
-        tasks.map((data, index) => {
-          setUploadStatus((prev) => ({
-            ...prev,
-            [index]: {
-              process: 0,
-              status: "uploading",
-            },
-          }));
+      const results = await runUploadQueue(tasks, async (data, index) => {
+        setUploadStatus((prev) => ({
+          ...prev,
+          [index]: {
+            process: 0,
+            status: "uploading",
+          },
+        }));
 
-          return uploadPhoto(data, (process) => {
+        try {
+          await uploadPhoto(data, (process) => {
             setUploadStatus((prev) => ({
               ...prev,
               [index]: { ...prev[index], process },
             }));
-          }).then(() => {
-            setUploadStatus((prev) => ({
-              ...prev,
-              [index]: { ...prev[index], status: "finish" },
-            }));
-            return index;
           });
-        }),
-      );
+          setUploadStatus((prev) => ({
+            ...prev,
+            [index]: { ...prev[index], process: 100, status: "finish" },
+          }));
+        } catch (error) {
+          setUploadStatus((prev) => ({
+            ...prev,
+            [index]: { ...prev[index], status: "error" },
+          }));
+          throw error;
+        }
+      });
 
       const successCount = results.filter(
         (r) => r.status === "fulfilled",
       ).length;
       const failedCount = results.filter((r) => r.status === "rejected").length;
+      setUploadSummary({ successCount, failedCount });
 
       if (failedCount === 0) {
-        // 全部成功
         Taro.showToast({
           title: "上传成功",
           icon: "success",
           duration: 2000,
         });
-        // 清空表单
         setSelectedImages([]);
         setSelectedSystem(null);
         setSelectedCategory("");
@@ -382,13 +379,11 @@ export default function My() {
         setIsNewCategory(false);
         setUploadStatus({});
       } else if (successCount > 0) {
-        // 部分成功
         Taro.showModal({
           title: "提示",
           content: `${successCount}张图片上传成功，${failedCount}张上传失败，您可以重新上传失败的图片`,
           showCancel: false,
         });
-        // 移除成功的图片
         const successIndexes = results
           .map((r, i) => (r.status === "fulfilled" ? i : -1))
           .filter((i) => i !== -1);
@@ -397,7 +392,6 @@ export default function My() {
         );
         setUploadStatus({});
       } else {
-        // 全部失败
         Taro.showToast({
           title: "上传失败，请重试",
           icon: "error",
@@ -412,11 +406,21 @@ export default function My() {
         duration: 2000,
       });
     } finally {
-      fetchPhotos(true);
-      fetchBoDailyCard();
+      await Promise.all([
+        pendingPhotos.refresh().catch(() => null),
+        approvedPhotos.refresh().catch(() => null),
+        fetchBoDailyCard(),
+      ]);
       setIsSubmitting(false);
     }
   };
+
+  const activeHistory =
+    activeHistoryTab === "pending" ? pendingPhotos : approvedPhotos;
+  const activeHistoryTitle =
+    activeHistoryTab === "pending" ? "审核中" : "已通过";
+  const activeHistoryEmpty =
+    activeHistoryTab === "pending" ? "还没有待审核图片" : "还没有通过的图片";
 
   return (
     <ScrollView
@@ -428,250 +432,350 @@ export default function My() {
       onRefresherRefresh={onRefresh}
       onScrollToLower={handleHistoryReachBottom}
     >
-      <View className="user-info">
-        <Image
-          className="avatar"
-          mode="aspectFit"
-          src={userInfo.avatarUrl || Criminal}
-          onClick={handleAvatarClick}
-        />
-        <View className="user-name">
-          <Text className="hello">你好，</Text>
-          {isEditingName ? (
-            <View className="nickname-edit">
-              <Input
-                className="nickname-input"
-                value={editingName}
-                onInput={(e) => setEditingName(e.detail.value)}
-                placeholder={userInfo.nickname}
-              />
-              <View className="nickname-buttons">
-                <Text className="confirm" onClick={handleNameChange}>
-                  确定
-                </Text>
-                <Text className="cancel" onClick={handleNameCancel}>
-                  取消
-                </Text>
-              </View>
-            </View>
-          ) : (
-            <View
-              onClick={() => {
-                setIsEditingName(true);
-                setEditingName(userInfo.nickname);
-              }}
-            >
-              <Text className="nickname">
-                {userInfo.nickname || "点击设置昵称"}
-              </Text>
-              <Image
-                className="nickname-edit-icon"
-                mode="aspectFit"
-                src={Edit}
-              />
-            </View>
-          )}
-        </View>
-      </View>
-
-      <BoSheng boxStyle={{ padding: "14px 20px 0 20px" }} />
-
-      {boDailyCard && (
-        <View className="bo-daily-card">
-          <View className="bo-daily-topline">
-            <Text>{boDailyCard.date}</Text>
-            <Text>{boDailyCard.mood}</Text>
-          </View>
-          <View className="bo-daily-title">{boDailyCard.greeting}</View>
-          <View className="bo-daily-skill">{boDailyCard.title}</View>
-          <Text className="bo-daily-copy">{boDailyCard.insight}</Text>
-          <Text className="bo-daily-action">{boDailyCard.action}</Text>
-          <View className="bo-daily-stats">
-            <Text>香火 {boDailyCard.stats.kowtowCount}</Text>
-            <Text>资料 {boDailyCard.stats.uploadCount}</Text>
-            <Text>通过 {boDailyCard.stats.approvedCount}</Text>
-          </View>
-        </View>
-      )}
-
-      {!systemConfig?.inReview && (
-        <View className="record-section">
-          <View className="section-title">磕头记录</View>
-          <Text>
-            加入BoFans的{" "}
-            {userInfo.joinTime
-              ? Math.max(
-                  1,
-                  Math.ceil(
-                    dayjs().diff(dayjs(userInfo.joinTime), "day", true),
-                  ),
-                )
-              : 0}{" "}
-            天中， 累计磕头 {userInfo.kowtowCount} 次
-          </Text>
-        </View>
-      )}
-
-      <View className="upload-section">
-        <View className="section-title">
-          {systemConfig?.inReview ? "图片上传" : "珍贵资料上传"}
-        </View>
-        <Picker
-          mode="selector"
-          range={systems}
-          rangeKey="label"
-          onChange={handleSystemChange}
-        >
-          <View className="picker">{selectedSystem?.label || "选择板块"}</View>
-        </Picker>
-
-        {selectedSystem && (
-          <>
-            <View className="category-section">
-              {!isNewCategory ? (
-                <Picker
-                  mode="selector"
-                  range={Object.keys(categoryMap)}
-                  onChange={(e) =>
-                    handleCategorySelect(
-                      Object.keys(categoryMap)[e.detail.value],
-                    )
-                  }
-                >
-                  <View className="picker">
-                    {selectedCategory || "选择分类"}
-                  </View>
-                </Picker>
-              ) : (
+      <View className="my-content">
+        <View className="user-info">
+          <Image
+            className="avatar"
+            mode="aspectFit"
+            src={normalizeMediaUrl(userInfo.avatarUrl) || Criminal}
+            lazyLoad
+            onClick={handleAvatarClick}
+          />
+          <View className="user-name">
+            <Text className="hello">你好，</Text>
+            {isEditingName ? (
+              <View className="nickname-edit">
                 <Input
-                  className="category-input"
-                  value={newCategoryName}
-                  onInput={(e) => setNewCategoryName(e.detail.value)}
-                  placeholder="输入新分类名称"
+                  className="nickname-input"
+                  value={editingName}
+                  onInput={(e) => setEditingName(e.detail.value)}
+                  placeholder={userInfo.nickname}
                 />
-              )}
-              <View
-                className={`checkbox ${isSubmitting ? "disabled" : ""}`}
-                onClick={() =>
-                  !isSubmitting && setIsNewCategory(!isNewCategory)
-                }
-              >
-                <Text>{isNewCategory ? "✓" : ""}</Text>
-                <Text>创建新分类</Text>
+                <View className="nickname-buttons">
+                  <Text className="confirm" onClick={handleNameChange}>
+                    确定
+                  </Text>
+                  <Text className="cancel" onClick={handleNameCancel}>
+                    取消
+                  </Text>
+                </View>
               </View>
-
-              <Button
-                className="add-image"
-                disabled={isSubmitting}
-                onClick={handleAddImages}
+            ) : (
+              <View
+                onClick={() => {
+                  setIsEditingName(true);
+                  setEditingName(userInfo.nickname);
+                }}
               >
-                添加图片
-              </Button>
-
-              <Button
-                className={`submit-btn ${isSubmitting ? "loading" : ""}`}
-                disabled={isSubmitting}
-                onClick={handleSubmit}
-              >
-                {isSubmitting ? "上传中..." : "提交"}
-              </Button>
-            </View>
-
-            {selectedImages.length > 0 && (
-              <View className="image-list">
-                {selectedImages.map((img, index) => (
-                  <View key={index} className="image-item">
-                    <Image
-                      src={img}
-                      mode="aspectFit"
-                      className="preview-image"
-                    />
-                    {uploadStatus[index]?.status === "uploading" && (
-                      <View className="upload-process">
-                        <View className="circle-progress">
-                          <View
-                            className="progress-value"
-                            style={{
-                              background: `conic-gradient(#4CAF50 ${uploadStatus[index].process * 3.6}deg, rgba(255, 255, 255, 0.3) 0deg)`,
-                            }}
-                          />
-                          <View className="progress-text">
-                            {Math.round(uploadStatus[index].process)}%
-                          </View>
-                        </View>
-                      </View>
-                    )}
-                    {uploadStatus[index]?.status === "finish" && (
-                      <View className="upload-success">✓</View>
-                    )}
-                    {!isSubmitting && (
-                      <View
-                        className="remove-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveImage(index);
-                        }}
-                      >
-                        ✕
-                      </View>
-                    )}
-                  </View>
-                ))}
+                <Text className="nickname">
+                  {userInfo.nickname || "点击设置昵称"}
+                </Text>
+                <Image
+                  className="nickname-edit-icon"
+                  mode="aspectFit"
+                  src={Edit}
+                />
               </View>
             )}
-          </>
+          </View>
+        </View>
+
+        <BoSheng boxStyle={{ padding: "14px 20px 0 20px" }} />
+
+        {boDailyCard && (
+          <View className="bo-daily-card">
+            <View className="bo-daily-topline">
+              <Text>{boDailyCard.date}</Text>
+              <Text>{boDailyCard.mood}</Text>
+            </View>
+            <View className="bo-daily-title">{boDailyCard.greeting}</View>
+            <View className="bo-daily-skill">{boDailyCard.title}</View>
+            <Text className="bo-daily-copy">{boDailyCard.insight}</Text>
+            <Text className="bo-daily-action">{boDailyCard.action}</Text>
+            <View className="bo-daily-stats">
+              <Text>香火 {boDailyCard.stats.kowtowCount}</Text>
+              <Text>资料 {boDailyCard.stats.uploadCount}</Text>
+              <Text>通过 {boDailyCard.stats.approvedCount}</Text>
+            </View>
+          </View>
         )}
-      </View>
 
-      <View className="history-section">
-        <View className="section-title" onClick={() => navToApprove("peding")}>
-          审核中 {pendingPhotos.total ? `(${pendingPhotos.total})` : ""}
-        </View>
-        <View className="photo-grid">
-          {pendingPhotos.items.length > 0
-            ? pendingPhotos.items.map((photo) => (
-                <Image
-                  key={photo.id}
-                  src={photo.filename}
-                  mode="aspectFill"
-                  lazyLoad
-                  className="history-image"
-                />
-              ))
-            : !pendingPhotos.loading && <Text>妹有</Text>}
-          {pendingPhotos.loading && (
-            <Text className="history-loading">加载中...</Text>
+        {!systemConfig?.inReview && (
+          <View className="record-section">
+            <View className="section-title">磕头记录</View>
+            <Text>
+              加入BoFans的{" "}
+              {userInfo.joinTime
+                ? Math.max(
+                    1,
+                    Math.ceil(
+                      dayjs().diff(dayjs(userInfo.joinTime), "day", true),
+                    ),
+                  )
+                : 0}{" "}
+              天中， 累计磕头 {userInfo.kowtowCount} 次
+            </Text>
+          </View>
+        )}
+
+        <View className="upload-section">
+          <View className="section-title">
+            {systemConfig?.inReview ? "图片上传" : "珍贵资料上传"}
+          </View>
+          <View className="upload-steps">
+            <Text
+              className={`upload-step ${selectedSystem ? "done" : "active"}`}
+            >
+              1 选板块
+            </Text>
+            <Text
+              className={`upload-step ${
+                selectedCategoryId || isNewCategory ? "done" : ""
+              }`}
+            >
+              2 定分类
+            </Text>
+            <Text
+              className={`upload-step ${selectedImages.length ? "done" : ""}`}
+            >
+              3 选图片
+            </Text>
+            <Text
+              className={`upload-step ${
+                uploadSummary?.successCount ? "done" : ""
+              }`}
+            >
+              4 等审核
+            </Text>
+          </View>
+
+          {uploadSummary && (
+            <View
+              className={`upload-result ${
+                uploadSummary.failedCount ? "partial" : "success"
+              }`}
+            >
+              <Text className="upload-result-title">
+                {uploadSummary.failedCount
+                  ? "部分图片没有传上去"
+                  : "图片已提交审核"}
+              </Text>
+              <Text>
+                成功 {uploadSummary.successCount} 张
+                {uploadSummary.failedCount
+                  ? `，失败 ${uploadSummary.failedCount} 张`
+                  : "，可以在审核中查看进度"}
+              </Text>
+              <View className="upload-result-actions">
+                <Button
+                  className="upload-result-button"
+                  size="mini"
+                  onClick={() => {
+                    setActiveHistoryTab("pending");
+                    navToApprove("pending");
+                  }}
+                >
+                  查看审核中
+                </Button>
+                {uploadSummary.failedCount > 0 && (
+                  <Button
+                    className="upload-result-button"
+                    size="mini"
+                    onClick={handleSubmit}
+                  >
+                    重试失败项
+                  </Button>
+                )}
+              </View>
+            </View>
           )}
-        </View>
 
-        <View className="section-title">
-          已通过 {approvedPhotos.total ? `(${approvedPhotos.total})` : ""}
-        </View>
-        <View className="photo-grid">
-          {approvedPhotos.items.length
-            ? approvedPhotos.items.map((photo) => (
-                <Image
-                  key={photo.id}
-                  src={photo.filename}
-                  mode="aspectFill"
-                  lazyLoad
-                  className="history-image"
-                />
-              ))
-            : !approvedPhotos.loading && (
-                <Text>
-                  {pendingPhotos.items.length > 0 ? "妹有" : "也妹有，应该有"}
-                </Text>
+          <Picker
+            mode="selector"
+            range={systems}
+            rangeKey="label"
+            onChange={handleSystemChange}
+          >
+            <View className="picker">
+              {selectedSystem?.label || "选择板块"}
+            </View>
+          </Picker>
+
+          {selectedSystem && (
+            <>
+              <View className="category-section">
+                {!isNewCategory ? (
+                  <Picker
+                    mode="selector"
+                    range={Object.keys(categoryMap)}
+                    onChange={(e) =>
+                      handleCategorySelect(
+                        Object.keys(categoryMap)[e.detail.value],
+                      )
+                    }
+                  >
+                    <View className="picker">
+                      {selectedCategory || "选择分类"}
+                    </View>
+                  </Picker>
+                ) : (
+                  <Input
+                    className="category-input"
+                    value={newCategoryName}
+                    onInput={(e) => setNewCategoryName(e.detail.value)}
+                    placeholder="输入新分类名称"
+                  />
+                )}
+                <View
+                  className={`checkbox ${isSubmitting ? "disabled" : ""}`}
+                  onClick={() =>
+                    !isSubmitting &&
+                    setIsNewCategory((current) => {
+                      const next = !current;
+                      setSelectedCategory("");
+                      setSelectedCategoryId(0);
+                      setNewCategoryName("");
+                      return next;
+                    })
+                  }
+                >
+                  <Text>{isNewCategory ? "✓" : ""}</Text>
+                  <Text>创建新分类</Text>
+                </View>
+
+                <Button
+                  className="add-image"
+                  disabled={isSubmitting}
+                  onClick={handleAddImages}
+                >
+                  {selectedImages.length
+                    ? `继续添加（已选 ${selectedImages.length}/${MAX_SELECTED_IMAGES} 张）`
+                    : "添加图片"}
+                </Button>
+
+                <Button
+                  className={`submit-btn ${isSubmitting ? "loading" : ""}`}
+                  disabled={isSubmitting}
+                  onClick={handleSubmit}
+                >
+                  {isSubmitting ? "上传中..." : "提交"}
+                </Button>
+              </View>
+
+              {selectedImages.length > 0 && (
+                <View className="image-list">
+                  {selectedImages.map((img, index) => (
+                    <View key={index} className="image-item">
+                      <Image
+                        src={img}
+                        mode="aspectFit"
+                        lazyLoad
+                        className="preview-image"
+                        onClick={() =>
+                          Taro.previewImage({
+                            current: img,
+                            urls: selectedImages,
+                          })
+                        }
+                      />
+                      {uploadStatus[index]?.status === "uploading" && (
+                        <View className="upload-process">
+                          <View className="circle-progress">
+                            <View
+                              className="progress-value"
+                              style={{
+                                background: `conic-gradient(#4CAF50 ${uploadStatus[index].process * 3.6}deg, rgba(255, 255, 255, 0.3) 0deg)`,
+                              }}
+                            />
+                            <View className="progress-text">
+                              {Math.round(uploadStatus[index].process)}%
+                            </View>
+                          </View>
+                        </View>
+                      )}
+                      {uploadStatus[index]?.status === "finish" && (
+                        <View className="upload-success">✓</View>
+                      )}
+                      {uploadStatus[index]?.status === "error" && (
+                        <View className="upload-error">失败</View>
+                      )}
+                      {!isSubmitting && (
+                        <View
+                          className="remove-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveImage(index);
+                          }}
+                        >
+                          ✕
+                        </View>
+                      )}
+                    </View>
+                  ))}
+                </View>
               )}
-          {approvedPhotos.loading && (
-            <Text className="history-loading">加载中...</Text>
+            </>
           )}
         </View>
-        {(pendingPhotos.hasMore || approvedPhotos.hasMore) && (
-          <Button className="load-more" onClick={handleHistoryReachBottom}>
-            再加载一点
-          </Button>
-        )}
+
+        <View className="history-section">
+          <View className="history-header">
+            <View className="section-title">上传记录</View>
+            <Text
+              className="history-link"
+              onClick={() => navToApprove(activeHistoryTab)}
+            >
+              查看全部
+            </Text>
+          </View>
+          <View className="history-tabs">
+            <View
+              className={`history-tab ${
+                activeHistoryTab === "pending" ? "active" : ""
+              }`}
+              onClick={() => setActiveHistoryTab("pending")}
+            >
+              审核中 {pendingPhotos.total ? `(${pendingPhotos.total})` : ""}
+            </View>
+            <View
+              className={`history-tab ${
+                activeHistoryTab === "approved" ? "active" : ""
+              }`}
+              onClick={() => setActiveHistoryTab("approved")}
+            >
+              已通过 {approvedPhotos.total ? `(${approvedPhotos.total})` : ""}
+            </View>
+          </View>
+          <View className="history-note">
+            {activeHistoryTab === "pending"
+              ? "提交后的图片会先进入审核，通过后自动出现在对应板块。"
+              : "已通过图片可以在原分类页中被其他博粉看到。"}
+          </View>
+          <View className="photo-grid">
+            {activeHistory.items.length > 0
+              ? activeHistory.items.map((photo) => (
+                  <Image
+                    key={photo.id}
+                    src={normalizeMediaUrl(photo.filename)}
+                    mode="aspectFill"
+                    lazyLoad
+                    className="history-image"
+                    onClick={() =>
+                      previewUploadedPhoto(photo, activeHistory.items)
+                    }
+                  />
+                ))
+              : !activeHistory.loading && <Text>{activeHistoryEmpty}</Text>}
+            {activeHistory.loading && (
+              <Text className="history-loading">加载中...</Text>
+            )}
+          </View>
+          {activeHistory.hasMore && (
+            <Button className="load-more" onClick={handleHistoryReachBottom}>
+              再加载一点{activeHistoryTitle}
+            </Button>
+          )}
+        </View>
       </View>
     </ScrollView>
   );
