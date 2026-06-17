@@ -66,7 +66,7 @@ export default function WaterfallPhotoGrid({
       </View>
       <View className="list-footer">
         <Text>
-          {loading ? "继续加载中..." : hasMore ? "上拉加载更多" : "到底啦"}
+          {loading ? "继续加载..." : hasMore ? "上拉加载更多" : "已加载全部"}
         </Text>
       </View>
     </>

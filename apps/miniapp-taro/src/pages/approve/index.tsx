@@ -117,10 +117,10 @@ export default function ApprovalPage() {
             <View className="approval-footer">
               <Text>
                 {active.loading
-                  ? "继续加载中..."
+                  ? "继续加载..."
                   : active.hasMore
                     ? "上拉加载更多"
-                    : "到底啦"}
+                    : "已加载全部"}
               </Text>
             </View>
           )}

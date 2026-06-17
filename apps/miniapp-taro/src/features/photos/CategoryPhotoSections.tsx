@@ -86,11 +86,11 @@ export default function CategoryPhotoSections({
       <View className="list-footer">
         <Text>
           {loading
-            ? "继续加载中..."
+            ? "继续加载..."
             : activeCategory
               ? hasMore
                 ? "上拉加载更多"
-                : "到底啦"
+                : "已加载全部"
               : "展开分组查看图片"}
         </Text>
       </View>

@@ -34,7 +34,7 @@
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 82, 217, 0.14);
   border-radius: 8px;
-  box-shadow: 0 14px 32px rgba(0, 59, 145, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 59, 145, 0.08);
 }
 
 .retire-eyebrow {
@@ -48,7 +48,7 @@
   margin-top: 8px;
   color: #17233d;
   font-size: 26px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 32px;
 }
 
@@ -75,7 +75,7 @@
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 82, 217, 0.12);
   border-radius: 8px;
-  box-shadow: 0 16px 36px rgba(0, 59, 145, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 59, 145, 0.08);
   backdrop-filter: blur(14px);
 }
 
@@ -104,7 +104,7 @@
 .retire-days-number {
   color: #17233d;
   font-size: 56px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 64px;
 }
 
@@ -135,7 +135,7 @@
 .retire-progress-fill {
   height: 100%;
   border-radius: 5px;
-  background: linear-gradient(90deg, #0052d9, #00a4ff);
+  background: #0052d9;
 }
 
 .retire-progress-meta {
@@ -199,7 +199,7 @@
 
 .retire-primary {
   color: #ffffff;
-  background: linear-gradient(90deg, #0052d9, #00a4ff);
+  background: #0052d9;
 }
 
 .retire-secondary {
