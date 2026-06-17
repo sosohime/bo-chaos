@@ -5,9 +5,6 @@ import Taro from "@tarojs/taro";
 import { AppContext } from "@/lib/context";
 import type { PhotoDto } from "@mono/types";
 import "./index.scss";
-import VoteImage from "../../images/vote.png";
-import VoteActiveImage from "../../images/vote-active.png";
-import DownloadImage from "../../images/download.png";
 import { normalizeMediaUrl } from "@/lib/media-url";
 
 interface PhotoItemProps {
@@ -149,18 +146,19 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       </View>
 
       <View className="photo-actions">
-        <Image
-          src={DownloadImage}
-          className="action-icon"
-          onClick={handleDownload}
-        />
+        <View className="action-pill" onClick={handleDownload}>
+          <Text>存</Text>
+        </View>
         {systemConfig?.inReview && (
           <>
-            <Image
-              src={data.hasVoted ? VoteActiveImage : VoteImage}
-              className={`action-icon ${actionLoading ? "disabled" : ""}`}
+            <View
+              className={`action-pill vote-action ${
+                data.hasVoted ? "active" : ""
+              } ${actionLoading ? "disabled" : ""}`}
               onClick={onVote}
-            />
+            >
+              <Text>{data.hasVoted ? "已赞" : "赞"}</Text>
+            </View>
             <Text className="vote-count">{data.votesCount}</Text>
           </>
         )}

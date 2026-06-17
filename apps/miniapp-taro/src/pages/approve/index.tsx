@@ -31,6 +31,7 @@ export default function ApprovalPage() {
     }),
     [pending.total, approved.total],
   );
+  const activeTotal = counts[activeTab] || 0;
 
   const onRefresh = async () => {
     try {
@@ -59,6 +60,17 @@ export default function ApprovalPage() {
           onRefresherRefresh={onRefresh}
           onScrollToLower={active.loadMore}
         >
+          <View className="approval-console-head">
+            <View>
+              <Text className="approval-console-kicker">审核队列</Text>
+              <Text className="approval-console-title">
+                {activeTab === "pending" ? "待处理图片" : "已通过图片"}
+              </Text>
+            </View>
+            <Text className="approval-console-status">
+              {active.loading ? "同步中" : `${activeTotal} 项`}
+            </Text>
+          </View>
           {active.items.length === 0 && active.loading && (
             <View className="approval-state">
               <Text>加载中...</Text>

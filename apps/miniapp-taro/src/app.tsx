@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Taro, { useLaunch } from "@tarojs/taro";
 import { AppContext } from "./lib/context";
+import type { MiniappTabKey } from "./lib/context";
 import { getSystemConfig } from "@/api/system";
 import { BofansSystemConfigType } from "@mono/types";
 import {
@@ -12,7 +13,7 @@ import {
 import "./app.scss";
 
 function App(props) {
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState<MiniappTabKey>("retire");
   const [systemConfig, setSystemConfig] = useState<BofansSystemConfigType>(
     DEFAULT_SYSTEM_CONFIG,
   );

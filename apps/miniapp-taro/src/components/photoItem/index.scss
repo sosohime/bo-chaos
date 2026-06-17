@@ -52,10 +52,26 @@
     color: #5d6f8f;
     box-sizing: border-box;
 
-    .action-icon {
-      width: 14px;
-      height: 14px;
-      padding: 7px 4px;
+    .action-pill {
+      min-width: 26px;
+      height: 20px;
+      padding: 0 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0052d9;
+      background: rgba(0, 82, 217, 0.07);
+      border: 1px solid rgba(0, 82, 217, 0.12);
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 800;
+      box-sizing: border-box;
+
+      &.active {
+        color: #ffffff;
+        background: #0052d9;
+        border-color: #0052d9;
+      }
 
       &.disabled {
         opacity: 0.45;

@@ -1,8 +1,9 @@
 import { Button, ScrollView, Text, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { tuixiu } from "@mono/const";
 import { dayjs } from "@mono/utils";
+import { AppContext } from "@/lib/context";
 import { useShare } from "@/lib/share";
 
 import "./index.scss";
@@ -48,6 +49,7 @@ function getCountdownParts(): CountdownParts {
 }
 
 export default function Retire() {
+  const { setSelectedTab } = useContext(AppContext);
   const [countdown, setCountdown] =
     useState<CountdownParts>(getCountdownParts());
 
@@ -73,6 +75,7 @@ export default function Retire() {
   };
 
   const goKowtow = () => {
+    setSelectedTab("kowtow");
     Taro.switchTab({ url: "/pages/kowtow/index" });
   };
 

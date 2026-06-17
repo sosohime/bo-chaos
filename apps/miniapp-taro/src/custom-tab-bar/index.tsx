@@ -2,47 +2,56 @@ import { useContext } from "react";
 import Taro from "@tarojs/taro";
 import { CoverView } from "@tarojs/components";
 import { AppContext } from "../lib/context";
+import type { MiniappTabKey } from "../lib/context";
 import { getMiniappConfig, isUgcEnabled } from "@/lib/runtime-config";
 
 import "./index.scss";
 
 const list = [
   {
-    key: "retire",
+    key: "retire" as const,
     pagePath: "/pages/retire/index",
     text: "退",
-    glyph: "T",
+    icon: "retire",
   },
   {
-    key: "kowtow",
+    key: "kowtow" as const,
     pagePath: "/pages/kowtow/index",
     text: "磕",
-    glyph: "K",
+    icon: "kowtow",
   },
   {
-    key: "history",
+    key: "history" as const,
     pagePath: "/pages/history/index",
     text: "史",
-    glyph: "H",
+    icon: "history",
   },
   {
-    key: "travel",
+    key: "travel" as const,
     pagePath: "/pages/travel/index",
     text: "游",
-    glyph: "Y",
+    icon: "travel",
   },
   {
-    key: "my",
+    key: "my" as const,
     pagePath: "/pages/my/index",
     text: "我",
-    glyph: "M",
+    icon: "my",
   },
 ];
 
+function getCurrentTabKey(): MiniappTabKey | null {
+  const pages = Taro.getCurrentPages?.() || [];
+  const currentRoute = pages[pages.length - 1]?.route;
+  if (!currentRoute) return null;
+  const matched = list.find(
+    (item) => item.pagePath.replace(/^\//, "") === currentRoute,
+  );
+  return matched?.key || null;
+}
+
 export default function TabBar() {
   const { selectedTab, setSelectedTab, systemConfig } = useContext(AppContext);
-  const color = "#5d6f8f";
-  const selectedColor = "#0052d9";
   const miniapp = getMiniappConfig(systemConfig);
   const ugcEnabled = isUgcEnabled(systemConfig);
   const visibleTabs = list.filter((item) => {
@@ -51,32 +60,35 @@ export default function TabBar() {
     }
     return miniapp.tabs[item.key].visible !== false;
   });
+  const activeTab = getCurrentTabKey() || selectedTab;
 
-  const switchTab = (index: number, url: string) => {
-    setSelectedTab(index);
+  const switchTab = (key: MiniappTabKey, url: string) => {
+    setSelectedTab(key);
     Taro.switchTab({ url });
   };
 
   return (
     <CoverView className="tab-bar">
       <CoverView className="tab-bar-border"></CoverView>
-      {visibleTabs.map((item, index) => (
-        <CoverView
-          key={index}
-          className={`tab-bar-item ${selectedTab === index ? "active" : ""}`}
-          onClick={() => switchTab(index, item.pagePath)}
-        >
-          <CoverView className="tab-bar-icon">
-            <CoverView className="tab-bar-icon-core">{item.glyph}</CoverView>
-          </CoverView>
+      {visibleTabs.map((item) => {
+        const active = activeTab === item.key;
+        return (
           <CoverView
-            className="tab-bar-label"
-            style={{ color: selectedTab === index ? selectedColor : color }}
+            key={item.key}
+            className={`tab-bar-item ${active ? "active" : ""}`}
+            onClick={() => switchTab(item.key, item.pagePath)}
           >
-            {miniapp.tabs[item.key].text || item.text}
+            <CoverView className={`tab-bar-icon tab-bar-icon-${item.icon}`}>
+              <CoverView className="icon-part icon-a" />
+              <CoverView className="icon-part icon-b" />
+              <CoverView className="icon-part icon-c" />
+            </CoverView>
+            <CoverView className="tab-bar-label">
+              {miniapp.tabs[item.key].text || item.text}
+            </CoverView>
           </CoverView>
-        </CoverView>
-      ))}
+        );
+      })}
     </CoverView>
   );
 }

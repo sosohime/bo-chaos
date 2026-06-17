@@ -1,30 +1,23 @@
-import { View, Image, Text } from "@tarojs/components";
+import { View, Text } from "@tarojs/components";
 import type { UploadedPhotoStatusFilter } from "@mono/types";
 import "./index.scss";
-import pendingIcon from "@/images/approve/peding_icon.png";
-import pendingTodoIcon from "@/images/approve/peding_todo_icon.png";
-import approved from "@/images/approve/approved_icon.png";
-import approvedTodo from "@/images/approve/approved_todo_icon.png";
 
 export type ApprovalTab = {
   label: string;
   value: UploadedPhotoStatusFilter;
-  icon: string;
-  currentIcon: string;
+  glyph: string;
 };
 
 export const approveTabs: ApprovalTab[] = [
   {
     label: "审核中",
     value: "pending",
-    icon: pendingTodoIcon,
-    currentIcon: pendingIcon,
+    glyph: "审",
   },
   {
     label: "已通过",
     value: "approved",
-    icon: approvedTodo,
-    currentIcon: approved,
+    glyph: "通",
   },
 ];
 
@@ -45,10 +38,7 @@ export default function TabHead({ active, counts, onClick }: TabHeadProps) {
             className={`${current ? "current-tab" : "default-tab"} tab-block`}
             onClick={() => onClick(tab.value)}
           >
-            <Image
-              src={current ? tab.currentIcon : tab.icon}
-              className="head-icon"
-            />
+            <View className="head-icon">{tab.glyph}</View>
             <Text className="tab-title">{tab.label}</Text>
             <Text className="approve-num">{counts[tab.value] || 0}</Text>
           </View>

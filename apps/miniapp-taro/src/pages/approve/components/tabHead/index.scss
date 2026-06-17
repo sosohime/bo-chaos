@@ -26,8 +26,13 @@
 
 .current-tab {
   color: #ffffff;
-  background: #0052d9;
+  background: linear-gradient(135deg, #0052d9, #00a4ff);
   font-weight: 800;
+
+  .head-icon {
+    color: #0052d9;
+    background: #ffffff;
+  }
 }
 
 .default-tab {
@@ -37,8 +42,16 @@
 }
 
 .head-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5d6f8f;
+  background: rgba(0, 82, 217, 0.08);
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 900;
 }
 
 .tab-title {
