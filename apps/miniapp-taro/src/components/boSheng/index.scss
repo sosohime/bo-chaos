@@ -1,36 +1,44 @@
 .birthday-container {
   width: 100%;
-  height: 40px;
-  overflow: hidden;
+  min-height: 44px;
   background: #ffffff;
   display: flex;
   align-items: center;
-  position: relative;
-  border: 1px solid rgba(0, 82, 217, 0.14);
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border: 1px solid #dbe7f7;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(0, 59, 145, 0.06);
+  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
+  box-sizing: border-box;
 
-  .bosheng {
-    font-size: 16px;
-    padding: 0;
+  .bosheng-kicker,
+  .bosheng-title {
+    display: block;
+  }
+
+  .bosheng-kicker {
     color: #0052d9;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .bosheng-title {
+    margin-top: 4px;
+    color: #17233d;
+    font-size: 14px;
     font-weight: 700;
     white-space: nowrap;
-    position: absolute;
-    animation: marquee 12s linear infinite;
-    animation-delay: -5s;
   }
 
-  .bosheng + .bosheng {
-    animation-delay: 0s;
-  }
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
+  .bosheng-status {
+    flex: 0 0 auto;
+    padding: 4px 7px;
+    color: #0052d9;
+    background: #f3f8ff;
+    border: 1px solid #cfe2ff;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
   }
 }

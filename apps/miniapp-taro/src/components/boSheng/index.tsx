@@ -11,12 +11,11 @@ export default function BoSheng({
 
   const content = (
     <View className="birthday-container">
-      <Text className="bosheng">
-        博生日五群！博生日五群！！博生日五群！！！
-      </Text>
-      <Text className="bosheng">
-        博生日五群！博生日五群！！博生日五群！！！
-      </Text>
+      <View>
+        <Text className="bosheng-kicker">事件提醒</Text>
+        <Text className="bosheng-title">博生日</Text>
+      </View>
+      <Text className="bosheng-status">进行中</Text>
     </View>
   );
 
