@@ -1,30 +1,65 @@
 .retire-scroll {
   min-height: 100vh;
-  background: #f3f7fc;
+  background: #edf3fb;
 }
 
 .retire-page {
   min-height: 100vh;
   color: #17233d;
-  background: linear-gradient(180deg, #f3f7fc, #f7f9fc 72%);
+  background: linear-gradient(180deg, rgba(233, 241, 252, 0.96), #f7f9fc 62%),
+    linear-gradient(90deg, rgba(0, 82, 217, 0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(0, 82, 217, 0.06) 1px, transparent 1px);
+  background-size:
+    auto,
+    28px 28px,
+    28px 28px;
   box-sizing: border-box;
 }
 
 .retire-hero {
-  padding: 16px 14px 8px;
+  padding: 16px 14px 10px;
   box-sizing: border-box;
 }
 
+.retire-console {
+  position: relative;
+  overflow: hidden;
+  padding: 15px;
+  background: #ffffff;
+  border: 1px solid #d4e3f7;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.08);
+  box-sizing: border-box;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0052d9, #00a4ff 52%, #8ab7ff);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: -46px;
+    top: -42px;
+    width: 140px;
+    height: 140px;
+    border: 1px solid rgba(0, 82, 217, 0.12);
+    border-radius: 50%;
+  }
+}
+
 .retire-console-head {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px;
-  background: #ffffff;
-  border: 1px solid #dbe7f7;
-  border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
 }
 
 .retire-eyebrow {
@@ -37,95 +72,65 @@
 .retire-title {
   margin-top: 8px;
   color: #17233d;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
-  line-height: 28px;
+  line-height: 30px;
 }
 
 .retire-status {
   flex: 0 0 auto;
   padding: 5px 8px;
   color: #0052d9;
-  background: #f3f8ff;
-  border: 1px solid #cfe2ff;
+  background: #eef6ff;
+  border: 1px solid #c8dcfb;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
 }
 
-.retire-summary {
+.retire-live-card {
+  position: relative;
+  z-index: 1;
+  margin-top: 18px;
   display: grid;
-  grid-template-columns: 1fr 0.86fr 1.18fr;
-  gap: 8px;
-  margin-top: 10px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
+  gap: 10px;
 }
 
-.retire-summary-item {
+.retire-live-main,
+.retire-clock-card {
   min-width: 0;
-  padding: 10px 9px;
-  background: #ffffff;
-  border: 1px solid #dbe7f7;
+  padding: 12px;
+  background: #f8fbff;
+  border: 1px solid #d8e7f8;
   border-radius: 6px;
   box-sizing: border-box;
-
-  &.primary {
-    background: #f3f8ff;
-    border-color: #bed7ff;
-  }
 }
 
-.retire-summary-label,
-.retire-summary-value {
+.retire-live-main {
+  background: linear-gradient(180deg, #f6faff, #eef6ff);
+  border-color: #bed7ff;
+}
+
+.retire-live-label {
   display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.retire-summary-label {
-  color: #7b8da8;
-  font-size: 11px;
-}
-
-.retire-summary-value {
-  margin-top: 5px;
-  color: #13233a;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.retire-panel {
-  margin: 10px 14px 14px;
-  padding: 16px;
-  background: #ffffff;
-  border: 1px solid #dbe7f7;
-  border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
-}
-
-.retire-panel-head,
-.retire-progress-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
   color: #66758f;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .retire-days {
-  margin-top: 16px;
+  margin-top: 7px;
   display: flex;
   align-items: baseline;
-  justify-content: center;
   gap: 8px;
 }
 
 .retire-days-number {
   color: #17233d;
-  font-size: 54px;
+  font-size: 58px;
   font-weight: 800;
-  line-height: 64px;
+  line-height: 62px;
 }
 
 .retire-days-unit {
@@ -135,18 +140,50 @@
 }
 
 .retire-clock {
-  margin-top: 4px;
+  margin-top: 15px;
   display: flex;
-  justify-content: center;
-  gap: 7px;
-  color: #2b3f66;
-  font-size: 22px;
+  gap: 5px;
+  color: #17233d;
+  font-size: 20px;
   font-weight: 800;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.retire-progress-block {
+  position: relative;
+  z-index: 1;
+  margin-top: 14px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #dbe7f7;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.retire-panel {
+  margin: 2px 14px 14px;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid #dbe7f7;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
+}
+
+.retire-panel-head,
+.retire-progress-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  color: #66758f;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .retire-progress {
   height: 8px;
-  margin-top: 18px;
+  margin-top: 10px;
   overflow: hidden;
   border-radius: 999px;
   background: #edf3fb;
@@ -155,11 +192,11 @@
 .retire-progress-fill {
   height: 100%;
   border-radius: 999px;
-  background: #0052d9;
+  background: linear-gradient(90deg, #0052d9, #00a4ff);
 }
 
 .retire-progress-meta {
-  margin-top: 9px;
+  position: static;
 }
 
 .retire-progress-scale {
@@ -175,15 +212,17 @@
 }
 
 .retire-fact-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
   margin-top: 14px;
 }
 
 .retire-fact {
   min-width: 0;
-  padding: 10px;
+  padding: 9px 8px;
   background: #f8fbff;
   border: 1px solid #dbe7f7;
   border-radius: 6px;
@@ -199,20 +238,64 @@
   display: block;
   margin-top: 6px;
   color: #17233d;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 16px;
+  word-break: break-all;
+}
+
+.retire-panel-kicker,
+.retire-panel-title {
+  display: block;
+}
+
+.retire-panel-kicker {
+  color: #0052d9;
+  font-size: 10px;
   font-weight: 800;
 }
 
-.retire-live-row {
+.retire-panel-title {
+  margin-top: 5px;
+  color: #17233d;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.retire-panel-tag {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  color: #0052d9;
+  background: #f3f8ff;
+  border: 1px solid #cfe2ff;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.retire-detail-list {
   margin-top: 12px;
-  padding-top: 12px;
+  border-top: 1px solid #eef2f8;
+}
+
+.retire-detail-row {
+  min-height: 38px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
   color: #66758f;
-  border-top: 1px solid #eef2f8;
   font-size: 12px;
   font-weight: 700;
+  border-bottom: 1px solid #eef2f8;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.retire-detail-value {
+  color: #17233d;
 }
 
 .retire-actions {

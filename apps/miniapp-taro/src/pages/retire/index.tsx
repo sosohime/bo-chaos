@@ -83,84 +83,108 @@ export default function Retire() {
     <ScrollView scrollY className="retire-scroll" enableBackToTop>
       <View className="retire-page">
         <View className="retire-hero">
-          <View className="retire-console-head">
-            <View>
-              <Text className="retire-eyebrow">退休时间服务</Text>
-              <Text className="retire-title">博退休倒计时</Text>
-            </View>
-            <Text className="retire-status">运行中</Text>
-          </View>
-          <View className="retire-summary">
-            <View className="retire-summary-item primary">
-              <Text className="retire-summary-label">剩余天数</Text>
-              <Text className="retire-summary-value">{countdown.days}</Text>
-            </View>
-            <View className="retire-summary-item">
-              <Text className="retire-summary-label">进度</Text>
-              <Text className="retire-summary-value">
-                {countdown.percent.toFixed(2)}%
+          <View className="retire-console">
+            <View className="retire-console-head">
+              <View>
+                <Text className="retire-eyebrow">TIME SERVICE</Text>
+                <Text className="retire-title">博退休倒计时</Text>
+              </View>
+              <Text className="retire-status">
+                {countdown.totalMs === 0 ? "已抵达" : "运行中"}
               </Text>
             </View>
-            <View className="retire-summary-item">
-              <Text className="retire-summary-label">目标日</Text>
-              <Text className="retire-summary-value">
-                {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
-              </Text>
+
+            <View className="retire-live-card">
+              <View className="retire-live-main">
+                <Text className="retire-live-label">剩余天数</Text>
+                <View className="retire-days">
+                  <Text className="retire-days-number">{countdown.days}</Text>
+                  <Text className="retire-days-unit">天</Text>
+                </View>
+              </View>
+              <View className="retire-clock-card">
+                <Text className="retire-live-label">实时倒计时</Text>
+                <View className="retire-clock">
+                  <Text>{countdown.hours}</Text>
+                  <Text>:</Text>
+                  <Text>{countdown.minutes}</Text>
+                  <Text>:</Text>
+                  <Text>{countdown.seconds}</Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="retire-progress-block">
+              <View className="retire-progress-meta">
+                <Text>退休进度 {countdown.percent.toFixed(2)}%</Text>
+                <Text>
+                  {countdown.totalMs === 0
+                    ? "已抵达"
+                    : `剩余 ${countdown.remainingPercent.toFixed(2)}%`}
+                </Text>
+              </View>
+              <View className="retire-progress">
+                <View
+                  className="retire-progress-fill"
+                  style={{ width: `${countdown.percent}%` }}
+                />
+              </View>
+              <View className="retire-progress-scale">
+                <Text>{BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}</Text>
+                <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
+              </View>
+            </View>
+
+            <View className="retire-fact-grid">
+              <View className="retire-fact">
+                <Text className="retire-fact-label">起始日</Text>
+                <Text className="retire-fact-value">
+                  {BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}
+                </Text>
+              </View>
+              <View className="retire-fact">
+                <Text className="retire-fact-label">目标日</Text>
+                <Text className="retire-fact-value">
+                  {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
+                </Text>
+              </View>
+              <View className="retire-fact">
+                <Text className="retire-fact-label">服务状态</Text>
+                <Text className="retire-fact-value">
+                  {countdown.totalMs === 0 ? "已抵达" : "倒计时中"}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
 
         <View className="retire-panel">
           <View className="retire-panel-head">
-            <Text>时间资源</Text>
-            <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
-          </View>
-          <View className="retire-days">
-            <Text className="retire-days-number">{countdown.days}</Text>
-            <Text className="retire-days-unit">天</Text>
-          </View>
-          <View className="retire-clock">
-            <Text>{countdown.hours}</Text>
-            <Text>:</Text>
-            <Text>{countdown.minutes}</Text>
-            <Text>:</Text>
-            <Text>{countdown.seconds}</Text>
-          </View>
-          <View className="retire-progress">
-            <View
-              className="retire-progress-fill"
-              style={{ width: `${countdown.percent}%` }}
-            />
-          </View>
-          <View className="retire-progress-meta">
-            <Text>退休进度 {countdown.percent.toFixed(2)}%</Text>
-            <Text>
-              {countdown.totalMs === 0
-                ? "已抵达"
-                : `剩余 ${countdown.remainingPercent.toFixed(2)}%`}
-            </Text>
-          </View>
-          <View className="retire-progress-scale">
-            <Text>已完成</Text>
-            <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
-          </View>
-          <View className="retire-fact-grid">
-            <View className="retire-fact">
-              <Text className="retire-fact-label">起始日</Text>
-              <Text className="retire-fact-value">
-                {BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}
-              </Text>
+            <View>
+              <Text className="retire-panel-kicker">RESOURCE DETAIL</Text>
+              <Text className="retire-panel-title">时间资源</Text>
             </View>
-            <View className="retire-fact">
-              <Text className="retire-fact-label">目标日</Text>
-              <Text className="retire-fact-value">
+            <Text className="retire-panel-tag">UTC+8</Text>
+          </View>
+          <View className="retire-detail-list">
+            <View className="retire-detail-row">
+              <Text>目标日</Text>
+              <Text className="retire-detail-value">
                 {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
               </Text>
             </View>
-          </View>
-          <View className="retire-live-row">
-            <Text>状态</Text>
-            <Text>{countdown.totalMs === 0 ? "已抵达" : "倒计时中"}</Text>
+            <View className="retire-detail-row">
+              <Text>当前进度</Text>
+              <Text className="retire-detail-value">
+                {countdown.percent.toFixed(2)}%
+              </Text>
+            </View>
+            <View className="retire-detail-row">
+              <Text>剩余进度</Text>
+              <Text className="retire-detail-value">
+                {countdown.remainingPercent.toFixed(2)}%
+              </Text>
+            </View>
           </View>
         </View>
 
