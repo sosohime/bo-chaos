@@ -71,13 +71,12 @@ export default function Kowtow() {
     },
   });
   const kowtowCountRef = useRef(kowtowCount);
-  // 同步更新 ref
   useEffect(() => {
     kowtowCountRef.current = kowtowCount;
   }, [kowtowCount]);
 
+  const operationPulseLabel = "+1";
   const animationQueue = useRef<Animation[]>([]);
-  // 创捷一个动画状态 防止动画频繁添加导致速度错误
   const animationState = useRef(false);
 
   const { systemConfig } = useContext(AppContext);
@@ -154,8 +153,6 @@ export default function Kowtow() {
     });
   };
 
-  const pulseLabels = ["BO", "+1", "AI", "UP", "OK", "赞"];
-
   // useEffect(() => {
   //   // 初始化 canvas context
   //   const query = Taro.createSelectorQuery();
@@ -165,9 +162,7 @@ export default function Kowtow() {
   //     .exec((res) => {
   //     });
   // }, []);
-  // 创建点赞动画
   const createLikeAnimation = () => {
-    const currentNumber = Math.floor(Math.random() * pulseLabels.length);
     const query = Taro.createSelectorQuery();
     const fontSize = 20;
     query
@@ -187,7 +182,7 @@ export default function Kowtow() {
           id: animationId,
           x: startX,
           y: startY,
-          text: pulseLabels[currentNumber],
+          text: operationPulseLabel,
           opacity: 1,
         });
         // image = null;
@@ -217,8 +212,11 @@ export default function Kowtow() {
             // 绘制阶段
             ctx.save();
             ctx.font = `700 ${fontSize}px sans-serif`;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${animation.opacity})`;
+            ctx.lineWidth = 3;
             ctx.fillStyle = `rgba(0, 82, 217, ${animation.opacity})`;
             ctx.textAlign = "center";
+            ctx.strokeText(animation.text, animation.x, animation.y);
             ctx.fillText(animation.text, animation.x, animation.y);
             ctx.restore();
           });
@@ -318,7 +316,7 @@ export default function Kowtow() {
             )}
             {syncFailed && (
               <Text className="sync-warning" onClick={syncKowtowStats}>
-                同步有点慢，点我重试
+                同步异常，点击重试
               </Text>
             )}
             <Button
@@ -326,7 +324,7 @@ export default function Kowtow() {
               type="primary"
               onClick={handleKowtow}
             >
-              {isKowtowing ? "提交中..." : "今日磕头"}
+              {isKowtowing ? "提交中" : "今日磕头"}
             </Button>
           </View>
         </>
