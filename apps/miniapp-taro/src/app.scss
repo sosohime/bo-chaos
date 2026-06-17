@@ -9,13 +9,7 @@
 .tech-page {
   min-height: 100vh;
   color: #17233d;
-  background: linear-gradient(
-      180deg,
-      rgba(238, 247, 255, 0.96),
-      rgba(246, 250, 255, 0.98)
-    ),
-    radial-gradient(circle at 10% 0%, rgba(0, 82, 217, 0.12), transparent 30%),
-    radial-gradient(circle at 90% 16%, rgba(0, 168, 255, 0.1), transparent 28%);
+  background: linear-gradient(180deg, #f3f7fc, #f7f9fc);
 }
 
 .tech-card {

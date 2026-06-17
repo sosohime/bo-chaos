@@ -1,13 +1,7 @@
 .my-container {
   height: 100vh;
   color: #17233d;
-  background: radial-gradient(
-      circle at 12% -4%,
-      rgba(0, 82, 217, 0.12),
-      transparent 34%
-    ),
-    radial-gradient(circle at 86% 12%, rgba(0, 168, 255, 0.1), transparent 30%),
-    linear-gradient(180deg, #eef7ff, #f7fbff 76%);
+  background: linear-gradient(180deg, #f3f7fc, #f7f9fc 76%);
   box-sizing: border-box;
   position: relative;
   z-index: 1;
@@ -136,12 +130,8 @@
 .bo-daily-card {
   margin-top: 18px;
   color: #17233d;
-  background: linear-gradient(
-      135deg,
-      rgba(0, 82, 217, 0.1),
-      rgba(0, 168, 255, 0.08)
-    ),
-    rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.94);
+  border-left: 3px solid #0052d9;
 
   .bo-daily-topline,
   .bo-daily-stats {
