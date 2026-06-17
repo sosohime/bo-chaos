@@ -531,10 +531,20 @@ export default function My() {
 
         {ugcEnabled ? (
           <View className="upload-section">
-            <View className="section-title">
-              {systemConfig?.inReview
-                ? miniapp.pages.reviewUploadTitle
-                : miniapp.pages.uploadTitle}
+            <View className="upload-console-head">
+              <View>
+                <Text className="section-title">
+                  {systemConfig?.inReview
+                    ? miniapp.pages.reviewUploadTitle
+                    : miniapp.pages.uploadTitle}
+                </Text>
+                <Text className="upload-console-subtitle">
+                  已选 {selectedImages.length}/{MAX_SELECTED_IMAGES}
+                </Text>
+              </View>
+              <Text className="upload-console-status">
+                {isSubmitting ? "上传中" : "待提交"}
+              </Text>
             </View>
             <View className="upload-steps">
               <Text
@@ -698,7 +708,7 @@ export default function My() {
                               <View
                                 className="progress-value"
                                 style={{
-                                  background: `conic-gradient(#4CAF50 ${uploadStatus[index].process * 3.6}deg, rgba(255, 255, 255, 0.3) 0deg)`,
+                                  background: `conic-gradient(#0052d9 ${uploadStatus[index].process * 3.6}deg, rgba(255, 255, 255, 0.35) 0deg)`,
                                 }}
                               />
                               <View className="progress-text">

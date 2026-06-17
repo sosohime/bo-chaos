@@ -1,4 +1,4 @@
-import { ScrollView, View } from "@tarojs/components";
+import { ScrollView, Text, View } from "@tarojs/components";
 import { useContext, useEffect } from "react";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
@@ -50,6 +50,15 @@ export default function Travel() {
       onScrollToLower={loadMore}
     >
       <View className="photo-page-content">
+        <View className="photo-console-head">
+          <View>
+            <Text className="photo-console-kicker">图库服务</Text>
+            <Text className="photo-console-title">旅行图库</Text>
+          </View>
+          <Text className="photo-console-status">
+            {ugcEnabled ? "在线" : "已隐藏"}
+          </Text>
+        </View>
         <BoSheng boxStyle={{ padding: "20px 20px 4px" }} />
         {ugcEnabled ? (
           <CategoryPhotoSections

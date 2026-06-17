@@ -191,8 +191,30 @@
 }
 
 .upload-section {
-  .section-title {
+  .upload-console-head {
     margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .upload-console-subtitle {
+    display: block;
+    margin-top: 6px;
+    color: #5d6f8f;
+    font-size: 12px;
+  }
+
+  .upload-console-status {
+    flex: 0 0 auto;
+    padding: 5px 8px;
+    color: #0052d9;
+    background: rgba(0, 82, 217, 0.08);
+    border: 1px solid rgba(0, 82, 217, 0.16);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
   }
 
   .upload-steps {
@@ -242,7 +264,7 @@
     }
 
     &.partial {
-      color: #fde68a;
+      color: #8a4b00;
       background: rgba(245, 158, 11, 0.14);
       border: 1px solid rgba(245, 158, 11, 0.34);
     }
@@ -374,15 +396,16 @@
           height: 80%;
           top: 10%;
           left: 10%;
-          background-color: rgba(2, 6, 23, 0.82);
+          background-color: rgba(255, 255, 255, 0.9);
           border-radius: 50%;
         }
       }
 
       .progress-text {
         position: absolute;
-        color: #fff;
+        color: #0052d9;
         font-size: 14px;
+        font-weight: 800;
       }
     }
 
@@ -416,8 +439,9 @@
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      background: rgba(2, 6, 23, 0.74);
-      color: #fff;
+      background: rgba(255, 255, 255, 0.9);
+      color: #0052d9;
+      border: 1px solid rgba(0, 82, 217, 0.16);
       display: flex;
       align-items: center;
       justify-content: center;

@@ -154,6 +154,35 @@
   margin-top: 7px;
 }
 
+.retire-fact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.retire-fact {
+  min-width: 0;
+  padding: 10px;
+  background: rgba(0, 82, 217, 0.05);
+  border: 1px solid rgba(0, 82, 217, 0.12);
+  border-radius: 6px;
+}
+
+.retire-fact-label {
+  display: block;
+  color: #6b7f9f;
+  font-size: 11px;
+}
+
+.retire-fact-value {
+  display: block;
+  margin-top: 6px;
+  color: #17233d;
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .retire-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -126,6 +126,20 @@ export default function Retire() {
             <Text>已完成</Text>
             <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
           </View>
+          <View className="retire-fact-grid">
+            <View className="retire-fact">
+              <Text className="retire-fact-label">起始日</Text>
+              <Text className="retire-fact-value">
+                {BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}
+              </Text>
+            </View>
+            <View className="retire-fact">
+              <Text className="retire-fact-label">目标日</Text>
+              <Text className="retire-fact-value">
+                {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
+              </Text>
+            </View>
+          </View>
         </View>
 
         <View className="retire-actions">
