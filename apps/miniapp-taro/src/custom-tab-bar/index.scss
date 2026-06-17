@@ -4,12 +4,12 @@
   left: 0;
   right: 0;
   height: 66px;
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.985);
   display: flex;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom); // 适配 iPhone 底部
   border-top: 1px solid #d9e5f5;
-  box-shadow: 0 -8px 22px rgba(15, 54, 105, 0.08);
+  box-shadow: 0 -6px 18px rgba(15, 54, 105, 0.07);
   box-sizing: border-box;
 }
 
@@ -39,7 +39,7 @@
   position: relative;
   width: 54px;
   height: 54px;
-  padding: 5px 4px 4px;
+  padding: 6px 4px 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,14 +47,14 @@
   gap: 2px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 6px;
   box-sizing: border-box;
 }
 
 .tab-bar-indicator {
   position: relative;
-  top: -5px;
-  width: 20px;
+  top: -6px;
+  width: 18px;
   height: 2px;
   flex: 0 0 auto;
   background: transparent;
@@ -68,6 +68,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
   box-sizing: border-box;
 }
 
@@ -82,16 +85,21 @@
   .tab-bar-control {
     width: 54px;
     height: 54px;
-    padding: 5px 4px 4px;
+    padding: 6px 4px 4px;
     flex-direction: column;
     gap: 2px;
-    background: #f3f8ff;
-    border-color: #c8dcfb;
+    background: transparent;
+    border-color: transparent;
     border-radius: 6px;
   }
 
   .tab-bar-indicator {
     background: #0052d9;
+  }
+
+  .tab-bar-icon-shell {
+    background: #eef6ff;
+    border-color: #c8dcfb;
   }
 }
 
