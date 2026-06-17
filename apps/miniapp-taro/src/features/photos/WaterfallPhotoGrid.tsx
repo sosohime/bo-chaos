@@ -54,7 +54,7 @@ export default function WaterfallPhotoGrid({
     <>
       <View className="photo-browser-shell waterfall-shell">
         <View className="photo-browser-toolbar">
-          <View>
+          <View className="photo-browser-title-block">
             <Text className="photo-browser-label">图片资源</Text>
             <Text className="photo-browser-active">瀑布流</Text>
           </View>

@@ -56,7 +56,7 @@ export default function CategoryPhotoSections({
     <>
       <View className="photo-browser-shell">
         <View className="photo-browser-toolbar">
-          <View>
+          <View className="photo-browser-title-block">
             <Text className="photo-browser-label">资源分组</Text>
             <Text className="photo-browser-active">
               {activeCategory || "选择一个分组"}
@@ -68,13 +68,19 @@ export default function CategoryPhotoSections({
         </View>
       </View>
       {groups.map((group) => (
-        <View key={group.categoryName} className="category-section">
+        <View
+          key={group.categoryName}
+          className={`category-section ${
+            activeCategory === group.categoryName ? "active" : ""
+          }`}
+        >
           <View
             className={`category-header ${
               activeCategory === group.categoryName ? "active" : ""
             }`}
             onClick={() => onCategoryClick(group.categoryName)}
           >
+            <View className="category-rail"></View>
             <View className="category-title">
               <Text className="category-index">资源集</Text>
               <Text className="category-name">{group.categoryName}</Text>
