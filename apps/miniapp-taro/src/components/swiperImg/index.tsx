@@ -44,10 +44,10 @@ const SwiperImg = ({
             return (
               <SwiperItem key={index} className="swiper-item">
                 <Image
-                  style={`width`}
                   className="image"
                   src={img.img}
                   lazyLoad
+                  mode="aspectFit"
                 ></Image>
               </SwiperItem>
             );
