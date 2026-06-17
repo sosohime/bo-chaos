@@ -310,8 +310,8 @@ export default function Kowtow() {
             {kowtowStats.totalCount !== "-" && (
               <Text className="kowtow-copy">
                 {kowtowStats.iKowtowedToday
-                  ? "今日已磕，博哥对你很满意"
-                  : "今天你还没磕，抓紧"}
+                  ? "今日状态已记录，本地队列将自动同步"
+                  : "今日状态未记录，可提交一次本地操作"}
               </Text>
             )}
             {syncFailed && (
