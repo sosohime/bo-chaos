@@ -19,10 +19,9 @@
   display: flex;
   align-items: center;
   padding: 14px 20px;
-  background: rgba(255, 255, 255, 0.94);
-  border-bottom: 1px solid rgba(0, 82, 217, 0.1);
-  box-shadow: 0 6px 18px rgba(0, 59, 145, 0.06);
-  backdrop-filter: blur(14px);
+  background: #ffffff;
+  border-bottom: 1px solid #dbe7f7;
+  box-shadow: 0 4px 14px rgba(15, 54, 105, 0.05);
 
   .avatar {
     width: 48px;
@@ -94,11 +93,10 @@
 .bo-daily-card {
   margin: 16px;
   padding: 15px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 82, 217, 0.12);
+  background: #ffffff;
+  border: 1px solid #dbe7f7;
   border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 59, 145, 0.08);
-  backdrop-filter: blur(14px);
+  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.05);
 }
 
 .ugc-disabled-section {
@@ -130,7 +128,7 @@
 .bo-daily-card {
   margin-top: 18px;
   color: #17233d;
-  background: rgba(255, 255, 255, 0.94);
+  background: #ffffff;
   border-left: 3px solid #0052d9;
 
   .bo-daily-topline,
@@ -146,7 +144,7 @@
     margin-top: 12px;
     color: #17233d;
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 24px;
   }
 
@@ -154,11 +152,12 @@
     display: inline-flex;
     margin-top: 10px;
     padding: 6px 10px;
-    color: #ffffff;
-    background: #0052d9;
+    color: #0052d9;
+    background: #f3f8ff;
+    border: 1px solid #cfe2ff;
     border-radius: 4px;
     font-size: 13px;
-    font-weight: 800;
+    font-weight: 700;
   }
 
   .bo-daily-copy,
