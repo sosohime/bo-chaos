@@ -28,7 +28,7 @@ Default to maximum autonomy for normal engineering work:
    - Architecture: `docs/agent/ARCHITECTURE.md`
    - Commands: `docs/agent/COMMANDS.md`
    - Quality gates: `docs/agent/QUALITY.md`
-   - Conventions: `docs/agent/CONVENTIONS.md`
+   - Conventions: `docs/agent/CONVENTIONS.md` for code style, mini app UI guardrails, and runtime-config behavior.
    - Data model: `docs/agent/DATA_MODEL.md`
    - Frontend debug: `docs/agent/FRONTEND_DEBUG.md`
    - Workflow records: `docs/agent/WORKFLOW.md`

@@ -15,8 +15,6 @@ type CountdownParts = {
   seconds: string;
   percent: number;
   remainingPercent: number;
-  elapsedDays: number;
-  totalDays: number;
 };
 
 const BO_RETIRE_START = tuixiu.boTuiXiuStartDay;
@@ -38,8 +36,6 @@ function getCountdownParts(): CountdownParts {
   const elapsed = Math.max(0, now.diff(BO_RETIRE_START));
   const total = Math.max(1, BO_RETIRE_TARGET.diff(BO_RETIRE_START));
   const percent = Math.min(100, Math.max(0, (elapsed / total) * 100));
-  const totalDays = Math.ceil(total / 86400000);
-  const elapsedDays = Math.min(totalDays, Math.floor(elapsed / 86400000));
   return {
     totalMs,
     days,
@@ -48,8 +44,6 @@ function getCountdownParts(): CountdownParts {
     seconds,
     percent,
     remainingPercent: 100 - percent,
-    elapsedDays,
-    totalDays,
   };
 }
 
@@ -70,7 +64,7 @@ export default function Retire() {
 
   const shareCopy = useMemo(
     () =>
-      `博退休观测进度 ${countdown.percent.toFixed(2)}%，周期 ${BO_RETIRE_START.format(RETIRE_DATE_FORMAT)} 至 ${BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}，距离终点还有 ${countdown.days} 天 ${countdown.hours}:${countdown.minutes}:${countdown.seconds}`,
+      `距离博退休还有 ${countdown.days} 天 ${countdown.hours}:${countdown.minutes}:${countdown.seconds}，目标日 ${BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}`,
     [countdown],
   );
 
@@ -91,9 +85,9 @@ export default function Retire() {
             <View className="retire-orbit-core">BO</View>
           </View>
           <Text className="retire-eyebrow">RETIREMENT CONTROL</Text>
-          <Text className="retire-title">博退休进度站</Text>
+          <Text className="retire-title">博退休倒计时</Text>
           <Text className="retire-subtitle">
-            按官方退休周期校准，全体博粉共享的终点观测仪。
+            目标日与退休站保持一致，实时更新剩余时间。
           </Text>
         </View>
 
@@ -128,34 +122,8 @@ export default function Retire() {
             </Text>
           </View>
           <View className="retire-progress-scale">
-            <Text>{BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}</Text>
+            <Text>已完成</Text>
             <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
-          </View>
-          <View className="retire-progress-note">
-            <Text>
-              已观测 {countdown.elapsedDays} / {countdown.totalDays} 天
-            </Text>
-          </View>
-        </View>
-
-        <View className="retire-grid">
-          <View className="retire-metric">
-            <Text className="retire-metric-value">
-              {Math.ceil(countdown.days / 7)}
-            </Text>
-            <Text className="retire-metric-label">周报期</Text>
-          </View>
-          <View className="retire-metric">
-            <Text className="retire-metric-value">
-              {Math.ceil(countdown.days / 30)}
-            </Text>
-            <Text className="retire-metric-label">月度节点</Text>
-          </View>
-          <View className="retire-metric">
-            <Text className="retire-metric-value">
-              {Math.ceil(countdown.days / 365)}
-            </Text>
-            <Text className="retire-metric-label">年度阶段</Text>
           </View>
         </View>
 

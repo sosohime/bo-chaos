@@ -6,9 +6,16 @@
 .retire-page {
   min-height: 100vh;
   color: #e6edf7;
-  background:
-    radial-gradient(circle at 50% -8%, rgba(103, 232, 249, 0.22), transparent 34%),
-    radial-gradient(circle at 100% 18%, rgba(245, 158, 11, 0.12), transparent 30%),
+  background: radial-gradient(
+      circle at 50% -8%,
+      rgba(103, 232, 249, 0.22),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 100% 18%,
+      rgba(245, 158, 11, 0.12),
+      transparent 30%
+    ),
     linear-gradient(180deg, #0d1424, #070b13 76%);
   box-sizing: border-box;
 }
@@ -87,8 +94,7 @@
   line-height: 21px;
 }
 
-.retire-panel,
-.retire-metric {
+.retire-panel {
   background: rgba(12, 20, 34, 0.84);
   border: 1px solid rgba(126, 169, 215, 0.18);
   border-radius: 8px;
@@ -159,8 +165,7 @@
   margin-top: 9px;
 }
 
-.retire-progress-scale,
-.retire-progress-note {
+.retire-progress-scale {
   display: flex;
   justify-content: space-between;
   gap: 10px;
@@ -170,39 +175,6 @@
 
 .retire-progress-scale {
   margin-top: 7px;
-}
-
-.retire-progress-note {
-  margin-top: 5px;
-  color: #8fa3bb;
-}
-
-.retire-grid {
-  margin: 0 16px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.retire-metric {
-  min-width: 0;
-  padding: 13px 8px;
-  text-align: center;
-}
-
-.retire-metric-value {
-  display: block;
-  color: #f8fbff;
-  font-size: 22px;
-  font-weight: 900;
-  line-height: 28px;
-}
-
-.retire-metric-label {
-  display: block;
-  margin-top: 3px;
-  color: #8fa3bb;
-  font-size: 12px;
 }
 
 .retire-actions {

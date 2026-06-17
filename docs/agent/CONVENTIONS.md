@@ -54,6 +54,8 @@ Follow existing code first. These conventions document current patterns and guar
 - Keep mini app visual refreshes cohesive across page shells, navigation bar, tab bar, feed cards, upload controls, and review surfaces; avoid mixing new dark/tech page bodies with legacy blue-white chrome.
 - Keep mini app runtime behavior behind `/bofans/global/systemConfig` when it needs operational flexibility. `BOFANS_WEAPP_RUNTIME_CONFIG` accepts JSON overrides for tab labels/visibility, page copy, and the UGC kill switch; avoid app-local one-off feature flags.
 - Treat `miniapp.ugc.enabled=false` as the single UGC visibility switch. UGC pages, upload surfaces, upload history, and UGC tab entries should all honor it and avoid fetching UGC data while disabled.
+- Do not show category or tab item counts in lazy-loaded photo lists unless the backend returns category-level totals; never use the number of currently loaded items as a total.
+- Keep the mini app retirement page limited to canonical countdown/progress facts from shared retirement constants; avoid derived filler metrics or labels that do not map to a product rule.
 
 ## Astro
 

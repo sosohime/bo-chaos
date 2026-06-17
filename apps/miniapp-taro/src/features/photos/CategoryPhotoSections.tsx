@@ -59,7 +59,6 @@ export default function CategoryPhotoSections({
           >
             <View className="category-title">
               <Text className="category-name">{group.categoryName}</Text>
-              <Text className="photo-count">({group.photos.length})</Text>
             </View>
             <Text className="arrow">
               {activeCategory === group.categoryName ? "▼" : "▶"}
