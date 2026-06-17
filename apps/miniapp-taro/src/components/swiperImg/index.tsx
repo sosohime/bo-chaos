@@ -6,8 +6,8 @@ type SwiperImage = {
   img: string;
   ratio: string;
   canvas: {
-    canvasX: string;
-    canvasY: string;
+    top: string;
+    left: string;
     width: number;
     height: number;
   };

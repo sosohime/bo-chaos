@@ -234,36 +234,53 @@ export default function Kowtow() {
   return (
     <View className="kowtow-container">
       {systemConfig?.inReview ? (
-        <>
-          <Text className="kowtow-copy">HI, 博Fans</Text>
-          <Text className="kowtow-copy">欢迎使用BoFans图片压缩工具</Text>
-          <Text className="kowtow-copy">请在个人中心（我）</Text>
-          <Text className="kowtow-copy">
-            系统预设了一些图片分类，帮助你进行图片整理
-          </Text>
-          <Text className="kowtow-copy">选择分类后点击上传图片</Text>
-          <Text className="kowtow-copy">
-            带管理员审核通过后，会自动执行压缩流程
-          </Text>
-          <Text className="kowtow-copy">
-            压缩完成后可以在选择的分类中查看图片
-          </Text>
-        </>
+        <View className="kowtow-review-panel">
+          <Text className="kowtow-eyebrow">图片处理服务</Text>
+          <Text className="kowtow-title">BoFans 图片压缩工具</Text>
+          <View className="kowtow-review-steps">
+            <Text>1. 在个人中心选择图片分类</Text>
+            <Text>2. 上传图片并等待管理员审核</Text>
+            <Text>3. 审核通过后自动执行压缩流程</Text>
+            <Text>4. 压缩完成后可在对应分类查看</Text>
+          </View>
+        </View>
       ) : (
         <>
           <BoSheng />
-          <Text className="kowtow-copy">
-            全球博粉累计磕头{" "}
-            {kowtowCount && kowtowStats.totalCount !== "-"
-              ? (kowtowStats.totalCount as number) + kowtowCount
-              : kowtowStats.totalCount}{" "}
-            次
-          </Text>
-          <Text className="kowtow-copy">
-            今日签到博粉 {kowtowStats.todayKowtowedUser}{" "}
-            <Text className="utc">(utc+8)</Text>
-          </Text>
+          <View className="kowtow-console-head">
+            <View>
+              <Text className="kowtow-eyebrow">互动服务</Text>
+              <Text className="kowtow-title">磕头状态台</Text>
+            </View>
+            <Text className="kowtow-status">
+              {syncFailed ? "需同步" : "运行中"}
+            </Text>
+          </View>
+          <View className="kowtow-stats">
+            <View className="kowtow-stat">
+              <Text className="kowtow-stat-label">累计磕头</Text>
+              <Text className="kowtow-stat-value">
+                {kowtowCount && kowtowStats.totalCount !== "-"
+                  ? (kowtowStats.totalCount as number) + kowtowCount
+                  : kowtowStats.totalCount}
+              </Text>
+            </View>
+            <View className="kowtow-stat">
+              <Text className="kowtow-stat-label">
+                今日签到 <Text className="utc">UTC+8</Text>
+              </Text>
+              <Text className="kowtow-stat-value">
+                {kowtowStats.todayKowtowedUser}
+              </Text>
+            </View>
+          </View>
           <View className="god-bo">
+            <View className="god-bo-head">
+              <Text>博哥节点</Text>
+              <Text>
+                {canvasInfo.swiperIndex + 1}/{swiperImages.length}
+              </Text>
+            </View>
             <Canvas
               type="2d"
               id="god-bo-canvas"
@@ -297,7 +314,7 @@ export default function Kowtow() {
             type="primary"
             onClick={handleKowtow}
           >
-            {isKowtowing ? "磕着..." : "磕"}
+            {isKowtowing ? "提交中..." : "今日磕头"}
           </Button>
         </>
       )}
