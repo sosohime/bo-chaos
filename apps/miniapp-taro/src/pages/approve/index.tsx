@@ -32,6 +32,14 @@ export default function ApprovalPage() {
     [pending.total, approved.total],
   );
   const activeTotal = counts[activeTab] || 0;
+  const queueLabel = activeTab === "pending" ? "审核中" : "已通过";
+  const queueStage = active.loading
+    ? "同步中"
+    : active.error
+      ? "需重试"
+      : active.hasMore
+        ? "可继续加载"
+        : "已同步";
 
   const onRefresh = async () => {
     try {
@@ -66,10 +74,31 @@ export default function ApprovalPage() {
               <Text className="approval-console-title">
                 {activeTab === "pending" ? "待处理图片" : "已通过图片"}
               </Text>
+              <Text className="approval-console-subtitle">
+                当前队列：{queueLabel}
+              </Text>
             </View>
             <Text className="approval-console-status">
               {active.loading ? "同步中" : `${activeTotal} 项`}
             </Text>
+          </View>
+          <View className="approval-summary">
+            <View className="approval-summary-item primary">
+              <Text className="approval-summary-label">队列状态</Text>
+              <Text className="approval-summary-value">{queueStage}</Text>
+            </View>
+            <View className="approval-summary-item">
+              <Text className="approval-summary-label">审核中</Text>
+              <Text className="approval-summary-value">
+                {counts.pending || 0}
+              </Text>
+            </View>
+            <View className="approval-summary-item">
+              <Text className="approval-summary-label">已通过</Text>
+              <Text className="approval-summary-value">
+                {counts.approved || 0}
+              </Text>
+            </View>
           </View>
           {active.items.length === 0 && active.loading && (
             <View className="approval-state">
@@ -84,33 +113,48 @@ export default function ApprovalPage() {
             </View>
           )}
           {active.items.length > 0 && (
-            <View className="approval-grid">
-              {active.items.map((photo) => (
-                <View key={photo.id} className="approval-card">
-                  <Image
-                    src={normalizeMediaUrl(photo.filename)}
-                    mode="aspectFill"
-                    lazyLoad
-                    className="approval-image"
-                    onClick={() =>
-                      Taro.previewImage({
-                        current: normalizeMediaUrl(photo.filename),
-                        urls: normalizeMediaUrls(
-                          active.items.map((item) => item.filename),
-                        ),
-                      })
-                    }
-                  />
-                  <View className="approval-meta">
-                    <Text className="approval-category">
-                      {photo.category?.name || "未分类"}
-                    </Text>
-                    <Text className="approval-status">
-                      {activeTab === "pending" ? "审核中" : "已通过"}
-                    </Text>
+            <View className="approval-panel">
+              <View className="approval-panel-head">
+                <Text>图片资源</Text>
+                <Text>{queueStage}</Text>
+              </View>
+              <View className="approval-grid">
+                {active.items.map((photo) => (
+                  <View key={photo.id} className="approval-card">
+                    <View className="approval-image-wrap">
+                      <Text className="approval-image-tag">图片</Text>
+                      <Image
+                        src={normalizeMediaUrl(photo.filename)}
+                        mode="aspectFill"
+                        lazyLoad
+                        className="approval-image"
+                        onClick={() =>
+                          Taro.previewImage({
+                            current: normalizeMediaUrl(photo.filename),
+                            urls: normalizeMediaUrls(
+                              active.items.map((item) => item.filename),
+                            ),
+                          })
+                        }
+                      />
+                    </View>
+                    <View className="approval-meta">
+                      <Text className="approval-category">
+                        {photo.name || photo.category?.name || "图片资源"}
+                      </Text>
+                      <Text className="approval-subcategory">
+                        {photo.category?.name || "未分类"}
+                      </Text>
+                    </View>
+                    <View className="approval-card-foot">
+                      <Text className="approval-status">
+                        {activeTab === "pending" ? "审核中" : "已通过"}
+                      </Text>
+                      <Text className="approval-card-id">#{photo.id}</Text>
+                    </View>
                   </View>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
           )}
           {active.items.length > 0 && (
