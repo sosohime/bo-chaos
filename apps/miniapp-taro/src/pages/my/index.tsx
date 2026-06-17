@@ -432,6 +432,25 @@ export default function My() {
     activeHistoryTab === "pending" ? "审核中" : "已通过";
   const activeHistoryEmpty =
     activeHistoryTab === "pending" ? "还没有待审核图片" : "还没有通过的图片";
+  const selectedCategoryLabel = isNewCategory
+    ? newCategoryName.trim() || "新分类"
+    : selectedCategory || "未选择";
+  const uploadStage = isSubmitting
+    ? "上传中"
+    : uploadSummary?.successCount
+      ? "已提交"
+      : selectedImages.length
+        ? "待提交"
+        : selectedCategoryId || isNewCategory
+          ? "待选图片"
+          : selectedSystem
+            ? "待定分类"
+            : "待选板块";
+  const uploadReviewState = uploadSummary
+    ? uploadSummary.failedCount
+      ? "部分失败"
+      : "等待审核"
+    : "未提交";
 
   return (
     <ScrollView
@@ -546,31 +565,71 @@ export default function My() {
                 {isSubmitting ? "上传中" : "待提交"}
               </Text>
             </View>
+
+            <View className="upload-task-summary">
+              <View className="upload-summary-item primary">
+                <Text className="upload-summary-label">当前阶段</Text>
+                <Text className="upload-summary-value">{uploadStage}</Text>
+              </View>
+              <View className="upload-summary-item">
+                <Text className="upload-summary-label">板块</Text>
+                <Text className="upload-summary-value">
+                  {selectedSystem?.label || "未选择"}
+                </Text>
+              </View>
+              <View className="upload-summary-item">
+                <Text className="upload-summary-label">队列</Text>
+                <Text className="upload-summary-value">
+                  {selectedImages.length
+                    ? `${selectedImages.length}/${MAX_SELECTED_IMAGES}`
+                    : "空"}
+                </Text>
+              </View>
+            </View>
+
             <View className="upload-steps">
-              <Text
+              <View
                 className={`upload-step ${selectedSystem ? "done" : "active"}`}
               >
-                1 选板块
-              </Text>
-              <Text
+                <Text className="upload-step-index">01</Text>
+                <Text>板块</Text>
+              </View>
+              <View
                 className={`upload-step ${
-                  selectedCategoryId || isNewCategory ? "done" : ""
+                  selectedCategoryId || isNewCategory
+                    ? "done"
+                    : selectedSystem
+                      ? "active"
+                      : ""
                 }`}
               >
-                2 定分类
-              </Text>
-              <Text
-                className={`upload-step ${selectedImages.length ? "done" : ""}`}
-              >
-                3 选图片
-              </Text>
-              <Text
+                <Text className="upload-step-index">02</Text>
+                <Text>分类</Text>
+              </View>
+              <View
                 className={`upload-step ${
-                  uploadSummary?.successCount ? "done" : ""
+                  selectedImages.length
+                    ? "done"
+                    : selectedCategoryId || isNewCategory
+                      ? "active"
+                      : ""
                 }`}
               >
-                4 等审核
-              </Text>
+                <Text className="upload-step-index">03</Text>
+                <Text>图片</Text>
+              </View>
+              <View
+                className={`upload-step ${
+                  uploadSummary?.successCount
+                    ? "done"
+                    : selectedImages.length
+                      ? "active"
+                      : ""
+                }`}
+              >
+                <Text className="upload-step-index">04</Text>
+                <Text>审核</Text>
+              </View>
             </View>
 
             {uploadSummary && (
@@ -614,78 +673,95 @@ export default function My() {
               </View>
             )}
 
-            <Picker
-              mode="selector"
-              range={systems}
-              rangeKey="label"
-              onChange={handleSystemChange}
-            >
-              <View className="picker">
-                {selectedSystem?.label || "选择板块"}
+            <View className="upload-form-panel">
+              <View className="upload-field">
+                <Text className="upload-field-label">板块</Text>
+                <Picker
+                  mode="selector"
+                  range={systems}
+                  rangeKey="label"
+                  onChange={handleSystemChange}
+                >
+                  <View className="picker">
+                    {selectedSystem?.label || "选择板块"}
+                  </View>
+                </Picker>
               </View>
-            </Picker>
+
+              {selectedSystem && (
+                <>
+                  <View className="category-section">
+                    <View className="upload-field">
+                      <Text className="upload-field-label">分类</Text>
+                      {!isNewCategory ? (
+                        <Picker
+                          mode="selector"
+                          range={Object.keys(categoryMap)}
+                          onChange={(e) =>
+                            handleCategorySelect(
+                              Object.keys(categoryMap)[e.detail.value],
+                            )
+                          }
+                        >
+                          <View className="picker">
+                            {selectedCategory || "选择分类"}
+                          </View>
+                        </Picker>
+                      ) : (
+                        <Input
+                          className="category-input"
+                          value={newCategoryName}
+                          onInput={(e) => setNewCategoryName(e.detail.value)}
+                          placeholder="输入新分类名称"
+                        />
+                      )}
+                    </View>
+                    <View
+                      className={`checkbox ${isSubmitting ? "disabled" : ""}`}
+                      onClick={() =>
+                        !isSubmitting &&
+                        setIsNewCategory((current) => {
+                          const next = !current;
+                          setSelectedCategory("");
+                          setSelectedCategoryId(0);
+                          setNewCategoryName("");
+                          return next;
+                        })
+                      }
+                    >
+                      <Text>{isNewCategory ? "✓" : ""}</Text>
+                      <Text>创建新分类</Text>
+                    </View>
+
+                    <View className="upload-decision-line">
+                      <Text>分类：{selectedCategoryLabel}</Text>
+                      <Text>审核：{uploadReviewState}</Text>
+                    </View>
+
+                    <Button
+                      className="add-image"
+                      disabled={isSubmitting}
+                      onClick={handleAddImages}
+                    >
+                      {selectedImages.length
+                        ? `继续添加（已选 ${selectedImages.length}/${MAX_SELECTED_IMAGES} 张）`
+                        : "添加图片"}
+                    </Button>
+
+                    <Button
+                      className={`submit-btn ${isSubmitting ? "loading" : ""}`}
+                      disabled={isSubmitting}
+                      onClick={handleSubmit}
+                    >
+                      {isSubmitting ? "上传中..." : "提交"}
+                    </Button>
+                  </View>
+                </>
+              )}
+            </View>
 
             {selectedSystem && (
               <>
-                <View className="category-section">
-                  {!isNewCategory ? (
-                    <Picker
-                      mode="selector"
-                      range={Object.keys(categoryMap)}
-                      onChange={(e) =>
-                        handleCategorySelect(
-                          Object.keys(categoryMap)[e.detail.value],
-                        )
-                      }
-                    >
-                      <View className="picker">
-                        {selectedCategory || "选择分类"}
-                      </View>
-                    </Picker>
-                  ) : (
-                    <Input
-                      className="category-input"
-                      value={newCategoryName}
-                      onInput={(e) => setNewCategoryName(e.detail.value)}
-                      placeholder="输入新分类名称"
-                    />
-                  )}
-                  <View
-                    className={`checkbox ${isSubmitting ? "disabled" : ""}`}
-                    onClick={() =>
-                      !isSubmitting &&
-                      setIsNewCategory((current) => {
-                        const next = !current;
-                        setSelectedCategory("");
-                        setSelectedCategoryId(0);
-                        setNewCategoryName("");
-                        return next;
-                      })
-                    }
-                  >
-                    <Text>{isNewCategory ? "✓" : ""}</Text>
-                    <Text>创建新分类</Text>
-                  </View>
-
-                  <Button
-                    className="add-image"
-                    disabled={isSubmitting}
-                    onClick={handleAddImages}
-                  >
-                    {selectedImages.length
-                      ? `继续添加（已选 ${selectedImages.length}/${MAX_SELECTED_IMAGES} 张）`
-                      : "添加图片"}
-                  </Button>
-
-                  <Button
-                    className={`submit-btn ${isSubmitting ? "loading" : ""}`}
-                    disabled={isSubmitting}
-                    onClick={handleSubmit}
-                  >
-                    {isSubmitting ? "上传中..." : "提交"}
-                  </Button>
-                </View>
-
                 {selectedImages.length > 0 && (
                   <View className="image-list">
                     {selectedImages.map((img, index) => (
@@ -751,7 +827,13 @@ export default function My() {
         {ugcEnabled && (
           <View className="history-section">
             <View className="history-header">
-              <View className="section-title">上传记录</View>
+              <View>
+                <View className="section-title">上传记录</View>
+                <Text className="history-subtitle">
+                  当前 {activeHistoryTitle}{" "}
+                  {activeHistory.total ? `${activeHistory.total} 项` : "暂无"}
+                </Text>
+              </View>
               <Text
                 className="history-link"
                 onClick={() => navToApprove(activeHistoryTab)}
@@ -766,7 +848,10 @@ export default function My() {
                 }`}
                 onClick={() => setActiveHistoryTab("pending")}
               >
-                审核中 {pendingPhotos.total ? `(${pendingPhotos.total})` : ""}
+                <Text>审核中</Text>
+                <Text className="history-tab-count">
+                  {pendingPhotos.total || 0}
+                </Text>
               </View>
               <View
                 className={`history-tab ${
@@ -774,7 +859,10 @@ export default function My() {
                 }`}
                 onClick={() => setActiveHistoryTab("approved")}
               >
-                已通过 {approvedPhotos.total ? `(${approvedPhotos.total})` : ""}
+                <Text>已通过</Text>
+                <Text className="history-tab-count">
+                  {approvedPhotos.total || 0}
+                </Text>
               </View>
             </View>
             <View className="history-note">
@@ -803,7 +891,7 @@ export default function My() {
             </View>
             {activeHistory.hasMore && (
               <Button className="load-more" onClick={handleHistoryReachBottom}>
-                再加载一点{activeHistoryTitle}
+                加载更多{activeHistoryTitle}
               </Button>
             )}
           </View>
