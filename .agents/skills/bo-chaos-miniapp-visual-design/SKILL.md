@@ -13,6 +13,15 @@ Use this after `bo-chaos-miniapp` when the work touches mini app visual directio
 - Add AI/tech feeling through information architecture, status chips, subtle grid/rule accents, restrained blue highlights, and state labels.
 - Keep the app honest and usable. Do not create official-site, sales-page, fake SaaS dashboard, or generic AI-glow visuals.
 - Prefer real product states over decorative imagery. Use generated bitmap assets only when they clarify a concrete screen, resource, or branded scene.
+- Treat third-party UI taste skills as critique material, not as a visual theme. For BoChaos, adopt product-interface discipline from tools like Impeccable, anti-generic-AI checks from Taste Skill, and production UI quality gates from Addy Osmani-style frontend guidance.
+
+## Product Taste Rules
+
+- Design screens as a useful product surface first: resource hierarchy, current state, available action, and recovery path should be visible without marketing copy.
+- Keep brand energy in small details: section labels, icon rhythm, selected states, data density, and motion restraint. Avoid a brand-site composition inside the mini app.
+- Prefer fewer, stronger UI primitives: page shell, resource panel, list row, status chip, action button, and footer state. Do not multiply card styles for decoration.
+- Use AI/tech language only when it maps to actual runtime behavior or data state. Do not invent scans, diagnostics, intelligence scores, or system claims.
+- Make inactive states intentionally quiet and active states precise. Selection should not resize, jump, glow, or look like a campaign pill.
 
 ## Anti-Slop Checks
 

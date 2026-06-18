@@ -12,6 +12,8 @@ This repo uses third-party skills as source material, but the operating contract
 - Addy Osmani `security-and-hardening`: auth, upload, external API, user input, and secret handling guardrails.
 - Addy Osmani `debugging-and-error-recovery`: reproduce, localize, reduce, fix, and guard.
 - Addy Osmani `code-review-and-quality`: review before finishing non-trivial work.
+- Impeccable-style product/brand separation: product screens should prioritize operational clarity, state, density, and recovery paths over campaign-page polish.
+- Taste Skill-style anti-slop critique: use third-party taste packs to catch generic AI UI, fake metrics, theme drift, and overdecorated layouts, not to overwrite this repo's product direction.
 
 ## Tool Skills to Use Selectively
 

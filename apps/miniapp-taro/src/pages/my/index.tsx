@@ -525,18 +525,19 @@ export default function My() {
             <Text className="bo-daily-copy">{boDailyCard.insight}</Text>
             <Text className="bo-daily-action">{boDailyCard.action}</Text>
             <View className="bo-daily-stats">
-              <Text>香火 {boDailyCard.stats.kowtowCount}</Text>
-              <Text>资料 {boDailyCard.stats.uploadCount}</Text>
-              <Text>通过 {boDailyCard.stats.approvedCount}</Text>
+              <Text>交互 {boDailyCard.stats.kowtowCount}</Text>
+              <Text>上传 {boDailyCard.stats.uploadCount}</Text>
+              <Text>审核通过 {boDailyCard.stats.approvedCount}</Text>
             </View>
           </View>
         )}
 
         {!systemConfig?.inReview && (
           <View className="record-section">
-            <View className="section-title">磕头记录</View>
+            <Text className="record-kicker">INTERACTION LOG</Text>
+            <View className="section-title">活动记录</View>
             <Text>
-              加入BoFans的{" "}
+              账户已运行{" "}
               {userInfo.joinTime
                 ? Math.max(
                     1,
@@ -545,7 +546,7 @@ export default function My() {
                     ),
                   )
                 : 0}{" "}
-              天中， 累计磕头 {userInfo.kowtowCount} 次
+              天，累计交互 {userInfo.kowtowCount} 次
             </Text>
           </View>
         )}
