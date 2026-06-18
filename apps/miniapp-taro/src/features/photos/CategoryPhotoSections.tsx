@@ -27,10 +27,6 @@ export default function CategoryPhotoSections({
   const activeGroup = groups.find(
     (group) => group.categoryName === activeCategory,
   );
-  const loadedPhotoCount = groups.reduce(
-    (count, group) => count + group.photos.length,
-    0,
-  );
   const footerStatus = loading
     ? "正在加载图片"
     : activeCategory
@@ -87,12 +83,12 @@ export default function CategoryPhotoSections({
         </View>
         <View className="photo-browser-matrix">
           <View className="photo-browser-metric">
-            <Text className="metric-label">本次分组</Text>
-            <Text className="metric-value">{groups.length}</Text>
+            <Text className="metric-label">视图模式</Text>
+            <Text className="metric-value metric-text">分组浏览</Text>
           </View>
           <View className="photo-browser-metric">
-            <Text className="metric-label">本次图片</Text>
-            <Text className="metric-value">{loadedPhotoCount}</Text>
+            <Text className="metric-label">分页状态</Text>
+            <Text className="metric-value metric-text">{browserStatus}</Text>
           </View>
           <View className="photo-browser-metric">
             <Text className="metric-label">当前分组</Text>
@@ -132,9 +128,7 @@ export default function CategoryPhotoSections({
             <View className="category-body">
               <View className="category-body-head">
                 <Text>当前分组</Text>
-                <Text>
-                  {loading ? "同步中" : `本次 ${group.photos.length}`}
-                </Text>
+                <Text>{loading ? "同步中" : "按需加载"}</Text>
               </View>
               <View className="photo-grid">
                 {group.photos.map((photo) => (

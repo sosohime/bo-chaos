@@ -74,15 +74,15 @@ export default function WaterfallPhotoGrid({
         </View>
         <View className="photo-browser-matrix">
           <View className="photo-browser-metric">
-            <Text className="metric-label">本次图片</Text>
-            <Text className="metric-value">{photos.length}</Text>
+            <Text className="metric-label">视图模式</Text>
+            <Text className="metric-value metric-text">瀑布流</Text>
           </View>
           <View className="photo-browser-metric">
-            <Text className="metric-label">布局列数</Text>
-            <Text className="metric-value">{columns.length}</Text>
+            <Text className="metric-label">加载方式</Text>
+            <Text className="metric-value metric-text">按需加载</Text>
           </View>
           <View className="photo-browser-metric">
-            <Text className="metric-label">加载状态</Text>
+            <Text className="metric-label">分页状态</Text>
             <Text className="metric-value metric-text">{browserStatus}</Text>
           </View>
         </View>
