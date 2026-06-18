@@ -471,6 +471,47 @@ export default function My() {
       ? "部分失败"
       : "等待审核"
     : "未提交";
+  const uploadWorkflowSteps = [
+    {
+      key: "system",
+      index: "01",
+      label: "板块",
+      state: selectedSystem ? "done" : "active",
+    },
+    {
+      key: "category",
+      index: "02",
+      label: "分类",
+      state:
+        selectedCategoryId || isNewCategory
+          ? "done"
+          : selectedSystem
+            ? "active"
+            : "pending",
+    },
+    {
+      key: "images",
+      index: "03",
+      label: "图片",
+      state: selectedImages.length
+        ? "done"
+        : selectedCategoryId || isNewCategory
+          ? "active"
+          : "pending",
+    },
+    {
+      key: "review",
+      index: "04",
+      label: "审核",
+      state: uploadSummary?.successCount
+        ? "done"
+        : selectedImages.length
+          ? "active"
+          : "pending",
+    },
+  ];
+  const getUploadWorkflowStateLabel = (state: string) =>
+    state === "done" ? "已完成" : state === "active" ? "当前" : "待处理";
 
   return (
     <ScrollView
@@ -650,48 +691,15 @@ export default function My() {
             </View>
 
             <View className="upload-steps">
-              <View
-                className={`upload-step ${selectedSystem ? "done" : "active"}`}
-              >
-                <Text className="upload-step-index">01</Text>
-                <Text>板块</Text>
-              </View>
-              <View
-                className={`upload-step ${
-                  selectedCategoryId || isNewCategory
-                    ? "done"
-                    : selectedSystem
-                      ? "active"
-                      : ""
-                }`}
-              >
-                <Text className="upload-step-index">02</Text>
-                <Text>分类</Text>
-              </View>
-              <View
-                className={`upload-step ${
-                  selectedImages.length
-                    ? "done"
-                    : selectedCategoryId || isNewCategory
-                      ? "active"
-                      : ""
-                }`}
-              >
-                <Text className="upload-step-index">03</Text>
-                <Text>图片</Text>
-              </View>
-              <View
-                className={`upload-step ${
-                  uploadSummary?.successCount
-                    ? "done"
-                    : selectedImages.length
-                      ? "active"
-                      : ""
-                }`}
-              >
-                <Text className="upload-step-index">04</Text>
-                <Text>审核</Text>
-              </View>
+              {uploadWorkflowSteps.map((step) => (
+                <View key={step.key} className={`upload-step ${step.state}`}>
+                  <Text className="upload-step-index">{step.index}</Text>
+                  <Text className="upload-step-label">{step.label}</Text>
+                  <Text className="upload-step-state">
+                    {getUploadWorkflowStateLabel(step.state)}
+                  </Text>
+                </View>
+              ))}
             </View>
 
             {uploadSummary && (

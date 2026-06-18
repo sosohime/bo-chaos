@@ -453,16 +453,12 @@
   }
 
   .upload-steps {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1px;
     margin: 4px 0 14px;
-    padding: 0;
+    padding: 8px 12px;
     overflow: hidden;
-    background: #e6edf6;
-    border: 1px solid #e6edf6;
-    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid #d8e3f0;
+    border-radius: 8px;
     box-sizing: border-box;
 
     &::before {
@@ -473,67 +469,97 @@
       position: relative;
       min-width: 0;
       display: flex;
-      flex-direction: row;
       align-items: center;
-      justify-content: center;
-      gap: 5px;
-      min-height: 42px;
-      padding: 0 6px;
+      gap: 10px;
+      min-height: 38px;
+      padding: 7px 0;
       color: #7b8da8;
       background: #ffffff;
       font-size: 12px;
-      text-align: center;
+      border-bottom: 1px solid #eef2f8;
       box-sizing: border-box;
 
       &::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        bottom: 0;
-        width: 18px;
-        height: 2px;
-        background: transparent;
-        border-radius: 2px 2px 0 0;
-        transform: translateX(-50%);
+        display: none;
+      }
+
+      &:last-child {
+        border-bottom: 0;
       }
     }
 
     .upload-step-index {
-      width: auto;
-      height: auto;
+      width: 30px;
+      height: 20px;
+      flex: 0 0 30px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #7b8da8;
-      background: transparent;
-      border: 0;
-      border-radius: 0;
+      background: #f7fafd;
+      border: 1px solid #e1eaf5;
+      border-radius: 4px;
       font-size: 10px;
       font-weight: 700;
       box-sizing: border-box;
     }
 
-    .active {
-      background: #f3f8ff;
-      color: #0052d9;
+    .upload-step-label {
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+      color: #334765;
+      font-size: 13px;
       font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-      &::after {
-        background: #0052d9;
+    .upload-step-state {
+      width: 52px;
+      flex: 0 0 52px;
+      padding: 2px 0;
+      overflow: hidden;
+      color: #66758f;
+      background: #f7fafd;
+      border: 1px solid #e1eaf5;
+      border-radius: 4px;
+      font-size: 11px;
+      line-height: 16px;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+
+    .active {
+      color: #0052d9;
+
+      .upload-step-index,
+      .upload-step-state {
+        color: #0052d9;
+        background: #f3f8ff;
+        border-color: #d8e8ff;
       }
 
-      .upload-step-index {
+      .upload-step-label {
         color: #0052d9;
       }
     }
 
     .done {
-      background: #fbfdff;
       color: #0052d9;
-      font-weight: 700;
 
       .upload-step-index {
         color: #0052d9;
+        background: #f8fbff;
+        border-color: #d8e8ff;
+      }
+
+      .upload-step-state {
+        color: #256f42;
+        background: #f2fbf5;
+        border-color: #d7eadc;
       }
     }
   }
