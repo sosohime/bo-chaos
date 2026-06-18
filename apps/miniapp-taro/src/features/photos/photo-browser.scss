@@ -21,7 +21,6 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.035);
 
   &::before {
     content: "";
@@ -72,7 +71,6 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.035);
   box-sizing: border-box;
 }
 
@@ -140,11 +138,9 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(18, 50, 87, 0.03);
 
   &.active {
     border-color: #bed4f4;
-    box-shadow: 0 6px 16px rgba(18, 50, 87, 0.04);
   }
 }
 
@@ -271,7 +267,6 @@
   border: 1px solid #d8e3f0;
   border-radius: 8px;
   background: #ffffff;
-  box-shadow: 0 3px 10px rgba(18, 50, 87, 0.025);
 }
 
 .waterfall {
@@ -283,7 +278,6 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.035);
   box-sizing: border-box;
 
   .column {
@@ -310,7 +304,6 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 8px 18px rgba(18, 50, 87, 0.045);
   box-sizing: border-box;
 
   &::before {
