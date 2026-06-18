@@ -55,8 +55,8 @@
     flex: 0 0 auto;
     padding: 4px 7px;
     color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
@@ -77,8 +77,12 @@
   .bosheng-meta-item {
     min-width: 0;
     padding: 6px 7px;
-    background: #fbfdff;
+    background: #ffffff;
     box-sizing: border-box;
+
+    &:first-child {
+      background: #f7fbff;
+    }
   }
 
   .bosheng-meta-label {

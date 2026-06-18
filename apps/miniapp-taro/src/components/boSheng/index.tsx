@@ -14,18 +14,18 @@ export default function BoSheng({
       <View className="bosheng-rail"></View>
       <View className="bosheng-main">
         <View>
-          <Text className="bosheng-kicker">事件提醒</Text>
-          <Text className="bosheng-title">博生日</Text>
+          <Text className="bosheng-kicker">运行事件</Text>
+          <Text className="bosheng-title">生日节点</Text>
         </View>
-        <Text className="bosheng-status">进行中</Text>
+        <Text className="bosheng-status">今日</Text>
       </View>
       <View className="bosheng-meta">
         <View className="bosheng-meta-item">
-          <Text className="bosheng-meta-label">事件</Text>
+          <Text className="bosheng-meta-label">类型</Text>
           <Text className="bosheng-meta-value">生日</Text>
         </View>
         <View className="bosheng-meta-item">
-          <Text className="bosheng-meta-label">窗口</Text>
+          <Text className="bosheng-meta-label">周期</Text>
           <Text className="bosheng-meta-value">今日</Text>
         </View>
         <View className="bosheng-meta-item">
