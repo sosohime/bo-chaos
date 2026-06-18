@@ -68,6 +68,48 @@ Use this when implementing an Image2/Figma/reference design that includes separa
 - Do not mark the task complete if either target viewport has obvious overflow, clipped titles, missing primary actions, or modules that fall out of the intended order.
 - If Browser Use cannot resize to the needed viewport, state that limitation in the task record and use a user-adjusted browser width or an explicitly approved fallback.
 
+## Miniapp WeChat Visual Verification
+
+Use this before accepting broad Taro mini app UI changes, especially tab bar, photo feeds, upload/review flows, retirement, kowtow, or runtime-config visibility work.
+
+1. Build against the intended API target:
+
+   `BOFANS_API_BASE_URL=https://yuanbo.online/rpg/bofans pnpm -C apps/miniapp-taro build:weapp`
+
+2. Open the compiled mini app in WeChat DevTools.
+
+   If the local DevTools service port is already enabled, this command can open the project:
+
+   `/Applications/wechatwebdevtools.app/Contents/MacOS/cli open --project /Users/heyesheng/Documents/code/github/bo-chaos/apps/miniapp-taro --lang zh`
+
+   If DevTools prompts to enable its service port, stop and record that blocker instead of enabling the setting autonomously. It is a local tool security setting, not a normal repo command. Manual verification can still open `/Applications/wechatwebdevtools.app` and the project at `/Users/heyesheng/Documents/code/github/bo-chaos/apps/miniapp-taro`.
+
+3. Capture first-viewport and bottom-tab evidence for the changed pages. For broad mini app visual refactors, inspect at least:
+
+   - `/pages/retire/index`
+   - `/pages/kowtow/index`
+   - `/pages/history/index`
+   - `/pages/travel/index`
+   - `/pages/my/index`
+   - `/pages/approve/index`
+   - `/pages/tease/index` when visible or reachable
+
+4. Save screenshots or screen recordings under `.agents/artifacts/miniapp-visual/YYYY-MM-DD/` when the verification produces local files. Record the path in the task record.
+
+5. Check runtime-config visibility. When `miniapp.ugc.enabled=false`, UGC tabs, upload/review entry points, upload history, and UGC fetches should be hidden or skipped consistently.
+
+6. Judge the screenshots against the BoChaos mini app product-console direction:
+
+   - The screen should read closer to a Tencent Cloud product console than to a public marketing page or generated concept mockup.
+   - Active and inactive tab states should keep stable size, rhythm, and icon weight.
+   - Photo-heavy pages should use `Image lazyLoad`, paginated fetches, and designed loading, empty, error, retry, and footer states.
+   - Counts, progress text, badges, and tab labels must come from backend data, runtime config, shared constants, or visible local queue state.
+   - Retirement copy must use shared countdown constants and avoid exposing internal rule math or invented filler metrics.
+   - Image URLs should load from the current `yuanbo.online` service path where production media is expected.
+   - Decorative AI or image-slice assets must clarify a concrete state; remove glow, fake diagnostics, fake dashboards, or sales-style showpieces.
+
+Treat build success, source scans, and style scans as partial evidence. Real WeChat DevTools or device screenshots are the preferred acceptance evidence for broad mini app UI work.
+
 ## Visual Fast Lane Checklist
 
 Use this checklist for repeated visual micro-iterations on one page or component:
