@@ -528,18 +528,40 @@ export default function My() {
 
         {boDailyCard && (
           <View className="bo-daily-card">
-            <View className="bo-daily-topline">
-              <Text>{boDailyCard.date}</Text>
-              <Text>{boDailyCard.mood}</Text>
+            <View className="bo-daily-head">
+              <View>
+                <Text className="bo-daily-kicker">今日资源</Text>
+                <Text className="bo-daily-title">{boDailyCard.greeting}</Text>
+              </View>
+              <Text className="bo-daily-status">{boDailyCard.mood}</Text>
             </View>
-            <View className="bo-daily-title">{boDailyCard.greeting}</View>
-            <View className="bo-daily-skill">{boDailyCard.title}</View>
-            <Text className="bo-daily-copy">{boDailyCard.insight}</Text>
-            <Text className="bo-daily-action">{boDailyCard.action}</Text>
+            <View className="bo-daily-meta">
+              <Text>{boDailyCard.date}</Text>
+              <Text>{boDailyCard.title}</Text>
+            </View>
+            <View className="bo-daily-body">
+              <Text className="bo-daily-copy">{boDailyCard.insight}</Text>
+              <Text className="bo-daily-action">{boDailyCard.action}</Text>
+            </View>
             <View className="bo-daily-stats">
-              <Text>交互 {boDailyCard.stats.kowtowCount}</Text>
-              <Text>上传 {boDailyCard.stats.uploadCount}</Text>
-              <Text>审核通过 {boDailyCard.stats.approvedCount}</Text>
+              <View className="bo-daily-stat">
+                <Text className="bo-daily-stat-label">交互</Text>
+                <Text className="bo-daily-stat-value">
+                  {boDailyCard.stats.kowtowCount}
+                </Text>
+              </View>
+              <View className="bo-daily-stat">
+                <Text className="bo-daily-stat-label">上传</Text>
+                <Text className="bo-daily-stat-value">
+                  {boDailyCard.stats.uploadCount}
+                </Text>
+              </View>
+              <View className="bo-daily-stat">
+                <Text className="bo-daily-stat-label">审核通过</Text>
+                <Text className="bo-daily-stat-value">
+                  {boDailyCard.stats.approvedCount}
+                </Text>
+              </View>
             </View>
           </View>
         )}

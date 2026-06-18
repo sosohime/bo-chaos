@@ -207,33 +207,60 @@
     border-radius: 0 3px 3px 0;
   }
 
-  .bo-daily-topline,
-  .bo-daily-stats {
+  .bo-daily-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .bo-daily-kicker {
+    display: block;
+    color: #4b658a;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .bo-daily-status {
+    flex: 0 0 auto;
+    max-width: 96px;
+    overflow: hidden;
+    padding: 5px 8px;
+    color: #0052d9;
+    background: #ffffff;
+    border: 1px solid #c8dcfb;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bo-daily-meta {
+    margin-top: 12px;
+    padding: 9px 10px;
     display: flex;
     justify-content: space-between;
-    gap: 8px;
+    gap: 10px;
     color: #5d6f8f;
+    background: #f7fbff;
+    border: 1px solid #d8e3f0;
+    border-radius: 6px;
     font-size: 12px;
   }
 
   .bo-daily-title {
-    margin-top: 12px;
+    margin-top: 5px;
     color: #17233d;
     font-size: 18px;
     font-weight: 700;
     line-height: 24px;
   }
 
-  .bo-daily-skill {
-    display: inline-flex;
-    margin-top: 10px;
-    padding: 6px 10px;
-    color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #cfe2ff;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 700;
+  .bo-daily-body {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e3edf8;
   }
 
   .bo-daily-copy,
@@ -250,8 +277,41 @@
   }
 
   .bo-daily-stats {
-    margin-top: 14px;
-    justify-content: flex-start;
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    background: #d8e3f0;
+    border: 1px solid #d8e3f0;
+    border-radius: 8px;
+  }
+
+  .bo-daily-stat {
+    min-width: 0;
+    padding: 9px 8px;
+    background: #ffffff;
+    box-sizing: border-box;
+  }
+
+  .bo-daily-stat-label,
+  .bo-daily-stat-value {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bo-daily-stat-label {
+    color: #7b8da8;
+    font-size: 11px;
+  }
+
+  .bo-daily-stat-value {
+    margin-top: 5px;
+    color: #17233d;
+    font-size: 14px;
+    font-weight: 700;
   }
 }
 
@@ -402,20 +462,20 @@
   .upload-result {
     margin-bottom: 14px;
     padding: 12px;
+    color: #445b7f;
+    background: #ffffff;
+    border: 1px solid #d8e3f0;
     border-radius: 8px;
     font-size: 13px;
     line-height: 20px;
 
     &.success {
-      color: #006d75;
-      background: rgba(0, 168, 255, 0.08);
-      border: 1px solid rgba(0, 168, 255, 0.22);
+      border-left: 3px solid #0052d9;
     }
 
     &.partial {
       color: #8a4b00;
-      background: rgba(245, 158, 11, 0.14);
-      border: 1px solid rgba(245, 158, 11, 0.34);
+      border-left: 3px solid #d46b08;
     }
 
     .upload-result-title {
