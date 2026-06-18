@@ -24,9 +24,6 @@ export default function CategoryPhotoSections({
   onRetry,
 }: CategoryPhotoSectionsProps) {
   const browserStatus = loading ? "同步中" : hasMore ? "有更多" : "已完成";
-  const activeGroup = groups.find(
-    (group) => group.categoryName === activeCategory,
-  );
   const footerStatus = loading
     ? "正在加载图片"
     : activeCategory
@@ -80,22 +77,6 @@ export default function CategoryPhotoSections({
             </Text>
           </View>
           <Text className="photo-browser-sync">{browserStatus}</Text>
-        </View>
-        <View className="photo-browser-meta">
-          <View className="photo-browser-meta-row">
-            <Text className="meta-label">视图模式</Text>
-            <Text className="meta-value">分组浏览</Text>
-          </View>
-          <View className="photo-browser-meta-row">
-            <Text className="meta-label">分页状态</Text>
-            <Text className="meta-value">{browserStatus}</Text>
-          </View>
-          <View className="photo-browser-meta-row">
-            <Text className="meta-label">当前分组</Text>
-            <Text className="meta-value">
-              {activeGroup?.categoryName || "未选择"}
-            </Text>
-          </View>
         </View>
       </View>
       {groups.map((group) => (

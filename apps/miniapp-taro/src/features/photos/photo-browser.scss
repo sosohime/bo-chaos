@@ -120,51 +120,6 @@
   text-align: center;
 }
 
-.photo-browser-meta {
-  margin: 0;
-  padding: 2px 12px 4px;
-  background: #ffffff;
-  border-top: 1px solid #e6edf6;
-  box-sizing: border-box;
-}
-
-.photo-browser-meta-row {
-  min-height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border-bottom: 1px solid #eef2f8;
-  box-sizing: border-box;
-
-  &:last-child {
-    border-bottom: 0;
-  }
-}
-
-.meta-label,
-.meta-value {
-  display: block;
-  overflow: hidden;
-  font-size: 12px;
-  line-height: 18px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.meta-label {
-  flex: 0 0 auto;
-  color: #66758f;
-  font-weight: 600;
-}
-
-.meta-value {
-  min-width: 0;
-  color: #17233d;
-  font-weight: 700;
-  text-align: right;
-}
-
 .category-section {
   position: relative;
   margin: 10px 14px 0;
