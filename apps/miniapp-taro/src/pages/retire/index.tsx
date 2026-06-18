@@ -82,11 +82,11 @@ export default function Retire() {
   return (
     <ScrollView scrollY className="retire-scroll" enableBackToTop>
       <View className="retire-page">
-        <View className="retire-hero">
+        <View className="retire-overview">
           <View className="retire-console">
             <View className="retire-console-head">
               <View>
-                <Text className="retire-eyebrow">时间服务</Text>
+                <Text className="retire-eyebrow">时间基准</Text>
                 <Text className="retire-title">博退休倒计时</Text>
               </View>
               <Text className="retire-status">
@@ -137,21 +137,21 @@ export default function Retire() {
 
             <View className="retire-fact-grid">
               <View className="retire-fact">
-                <Text className="retire-fact-label">起始日</Text>
+                <Text className="retire-fact-label">开始</Text>
                 <Text className="retire-fact-value">
                   {BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}
                 </Text>
               </View>
               <View className="retire-fact">
-                <Text className="retire-fact-label">目标日</Text>
+                <Text className="retire-fact-label">目标</Text>
                 <Text className="retire-fact-value">
                   {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
                 </Text>
               </View>
               <View className="retire-fact">
-                <Text className="retire-fact-label">服务状态</Text>
+                <Text className="retire-fact-label">状态</Text>
                 <Text className="retire-fact-value">
-                  {countdown.totalMs === 0 ? "已抵达" : "倒计时中"}
+                  {countdown.totalMs === 0 ? "已抵达" : "进行中"}
                 </Text>
               </View>
             </View>
@@ -161,28 +161,28 @@ export default function Retire() {
         <View className="retire-panel">
           <View className="retire-panel-head">
             <View>
-              <Text className="retire-panel-kicker">基准配置</Text>
-              <Text className="retire-panel-title">进度参数</Text>
+              <Text className="retire-panel-kicker">节点信息</Text>
+              <Text className="retire-panel-title">时间节点</Text>
             </View>
             <Text className="retire-panel-tag">UTC+8</Text>
           </View>
           <View className="retire-detail-list">
             <View className="retire-detail-row">
-              <Text>目标日</Text>
+              <Text>起始节点</Text>
+              <Text className="retire-detail-value">
+                {BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}
+              </Text>
+            </View>
+            <View className="retire-detail-row">
+              <Text>目标节点</Text>
               <Text className="retire-detail-value">
                 {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
               </Text>
             </View>
             <View className="retire-detail-row">
-              <Text>当前进度</Text>
+              <Text>当前时间</Text>
               <Text className="retire-detail-value">
-                {countdown.percent.toFixed(2)}%
-              </Text>
-            </View>
-            <View className="retire-detail-row">
-              <Text>剩余进度</Text>
-              <Text className="retire-detail-value">
-                {countdown.remainingPercent.toFixed(2)}%
+                {dayjs().format("YYYY-MM-DD HH:mm:ss")}
               </Text>
             </View>
           </View>
