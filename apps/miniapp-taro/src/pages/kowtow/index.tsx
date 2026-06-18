@@ -292,28 +292,28 @@ export default function Kowtow() {
           <View className="god-bo">
             <View className="god-bo-head">
               <View>
-                <Text className="god-bo-kicker">互动对象</Text>
-                <Text className="god-bo-title">图片资源</Text>
+                <Text className="god-bo-kicker">资源对象</Text>
+                <Text className="god-bo-title">当前图片</Text>
               </View>
               <Text className="god-bo-index">
-                {canvasInfo.swiperIndex + 1}/{swiperImages.length}
+                资源 {canvasInfo.swiperIndex + 1}/{swiperImages.length}
               </Text>
             </View>
             <View className="god-bo-resource-grid">
               <View className="god-bo-resource-item primary">
-                <Text className="god-bo-resource-label">当前资源</Text>
+                <Text className="god-bo-resource-label">当前</Text>
                 <Text className="god-bo-resource-value">
                   #{canvasInfo.swiperIndex + 1}
                 </Text>
               </View>
               <View className="god-bo-resource-item">
-                <Text className="god-bo-resource-label">资源总量</Text>
+                <Text className="god-bo-resource-label">总量</Text>
                 <Text className="god-bo-resource-value">
                   {swiperImages.length}
                 </Text>
               </View>
               <View className="god-bo-resource-item">
-                <Text className="god-bo-resource-label">本地队列</Text>
+                <Text className="god-bo-resource-label">队列</Text>
                 <Text className="god-bo-resource-value metric">
                   {kowtowCount ? `待同步 ${kowtowCount}` : "已同步"}
                 </Text>
@@ -339,8 +339,8 @@ export default function Kowtow() {
           <View className="kowtow-action-panel">
             <View className="kowtow-action-head">
               <View>
-                <Text className="kowtow-action-kicker">交互操作</Text>
-                <Text className="love">记录一次</Text>
+                <Text className="kowtow-action-kicker">操作面板</Text>
+                <Text className="love">提交互动记录</Text>
               </View>
               <Text className="kowtow-action-state">
                 {kowtowCount ? "待同步" : "可提交"}
@@ -349,8 +349,8 @@ export default function Kowtow() {
             {kowtowStats.totalCount !== "-" && (
               <Text className="kowtow-copy">
                 {kowtowStats.iKowtowedToday
-                  ? "今日状态已记录，本地队列将自动同步"
-                  : "今日状态未记录，可提交一次本地操作"}
+                  ? "今日状态已记录，本地队列会自动同步"
+                  : "今日状态未记录，可写入一次本地队列"}
               </Text>
             )}
             {syncFailed && (
@@ -363,7 +363,7 @@ export default function Kowtow() {
               type="primary"
               onClick={handleKowtow}
             >
-              {isKowtowing ? "提交中" : "记录一次"}
+              {isKowtowing ? "写入中" : "写入本地队列"}
             </Button>
           </View>
         </>

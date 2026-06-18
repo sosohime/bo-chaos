@@ -134,7 +134,18 @@
     position: relative;
     width: 100%;
     margin: 12px 0 0;
-    padding: 12px;
+    padding: 13px 12px 12px 15px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 13px;
+      bottom: 13px;
+      width: 3px;
+      background: #0052d9;
+      border-radius: 0 3px 3px 0;
+    }
 
     .canvas {
       position: absolute;
@@ -144,11 +155,13 @@
   }
 
   .god-bo-head {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
-    padding-bottom: 11px;
+    padding-bottom: 12px;
     color: #5d6f8f;
     border-bottom: 1px solid #eef2f8;
     font-size: 12px;
@@ -158,7 +171,7 @@
     flex: 0 0 auto;
     padding: 5px 8px;
     color: #0052d9;
-    background: #ffffff;
+    background: #f3f8ff;
     border: 1px solid #c8dcfb;
     border-radius: 4px;
     font-size: 11px;
@@ -185,10 +198,12 @@
   }
 
   .god-bo-resource-grid {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1px;
-    margin-top: 10px;
+    margin-top: 12px;
     overflow: hidden;
     background: #e6edf6;
     border: 1px solid #e6edf6;
@@ -197,7 +212,7 @@
 
   .god-bo-resource-item {
     min-width: 0;
-    padding: 8px 9px;
+    padding: 9px 9px;
     background: #ffffff;
     box-sizing: border-box;
 
@@ -224,9 +239,9 @@
   .god-bo-resource-value {
     margin-top: 5px;
     color: #17233d;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
-    line-height: 17px;
+    line-height: 18px;
 
     &.metric {
       color: #0052d9;
@@ -235,9 +250,11 @@
   }
 
   .god-bo-stage {
-    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
     overflow: hidden;
-    background: #f7fbff;
+    background: #ffffff;
     border: 1px solid #d8e3f0;
     border-radius: 6px;
     box-sizing: border-box;
@@ -246,20 +263,23 @@
   .kowtow-action-panel {
     position: relative;
     margin-top: 12px;
-    padding: 14px 14px 14px 17px;
+    padding: 14px 14px 15px 17px;
 
     &::before {
       content: "";
       position: absolute;
       left: 0;
-      top: 0;
-      bottom: 0;
+      top: 14px;
+      bottom: 14px;
       width: 3px;
       background: #0052d9;
+      border-radius: 0 3px 3px 0;
     }
   }
 
   .kowtow-action-head {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -288,7 +308,7 @@
     flex: 0 0 auto;
     padding: 5px 8px;
     color: #0052d9;
-    background: #ffffff;
+    background: #f3f8ff;
     border: 1px solid #c8dcfb;
     border-radius: 4px;
     font-size: 12px;
@@ -296,12 +316,19 @@
   }
 
   .submit-kowtow {
+    position: relative;
+    z-index: 1;
     margin-top: 14px;
     width: 100%;
     color: #ffffff;
     background: #0052d9;
     border-radius: 6px;
     font-weight: 700;
+    line-height: 44px;
+
+    &::after {
+      border: 0;
+    }
 
     &.loading {
       opacity: 0.72;
