@@ -148,20 +148,20 @@
 
   .photo-actions {
     flex-shrink: 0;
-    min-height: 32px;
-    padding: 6px 3px 0;
+    min-height: 31px;
+    padding: 6px 2px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
     color: #5d6f8f;
     border-top: 1px solid #eef2f8;
     box-sizing: border-box;
 
     .photo-action-primary,
     .photo-action-secondary {
-      height: 24px;
-      padding: 0 6px;
+      height: 23px;
+      padding: 0 5px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -173,34 +173,34 @@
     }
 
     .photo-action-primary {
-      min-width: 50px;
+      min-width: 48px;
       gap: 4px;
       color: #0052d9;
-      border: 1px solid transparent;
-      background: #f3f8ff;
+      border: 1px solid #d8e8ff;
+      background: #fbfdff;
     }
 
     .photo-action-mark {
       position: relative;
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #ffffff;
-      border: 1px solid #c8dcfb;
-      border-radius: 3px;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
       box-sizing: border-box;
     }
 
     .photo-action-arrow {
       position: absolute;
-      top: 3px;
+      top: 2px;
       left: 5px;
-      width: 4px;
+      width: 3px;
       height: 5px;
-      border-right: 2px solid #0052d9;
-      border-bottom: 2px solid #0052d9;
+      border-right: 1px solid #0052d9;
+      border-bottom: 1px solid #0052d9;
       transform: rotate(45deg);
       box-sizing: border-box;
     }
@@ -208,11 +208,11 @@
     .photo-action-tray {
       position: absolute;
       width: 8px;
-      height: 2px;
-      left: 3px;
-      bottom: 3px;
+      height: 1px;
+      left: 2px;
+      bottom: 2px;
       background: #0052d9;
-      border-radius: 2px;
+      border-radius: 1px;
       box-sizing: border-box;
     }
 
@@ -220,18 +220,18 @@
       min-width: 0;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
     .photo-action-secondary {
-      min-width: 34px;
+      min-width: 32px;
       color: #5d6f8f;
-      border: 1px solid transparent;
-      background: #fbfdff;
+      border: 1px solid #e1eaf5;
+      background: #ffffff;
 
       &.active {
         color: #0052d9;
-        border-color: #bcd4f7;
+        border-color: #d8e8ff;
         background: #f3f8ff;
       }
 
