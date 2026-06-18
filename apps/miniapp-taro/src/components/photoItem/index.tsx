@@ -179,14 +179,14 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
         {systemConfig?.inReview && (
           <View className="photo-vote-group">
             <View
-              className={`photo-action-secondary ${
+              className={`photo-vote-action ${
                 data.hasVoted ? "active" : ""
               } ${actionLoading ? "disabled" : ""}`}
               onClick={onVote}
             >
               <Text>{data.hasVoted ? "已赞" : "赞"}</Text>
             </View>
-            <Text className="vote-count">{data.votesCount}</Text>
+            <Text className="photo-vote-value">{data.votesCount}</Text>
           </View>
         )}
       </View>
