@@ -2,10 +2,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 6px;
-  background: #ffffff;
+  padding: 5px;
+  background: #fbfdff;
   border: 1px solid #d8e3f0;
-  border-radius: 6px;
+  border-radius: 5px;
   box-sizing: border-box;
 
   .photo-box {
@@ -14,7 +14,7 @@
     min-height: 0;
     overflow: hidden;
     border: 0;
-    border-radius: 4px;
+    border-radius: 3px;
     background: #f3f7fc;
     box-sizing: border-box;
 
@@ -121,7 +121,7 @@
 
   .photo-info {
     flex-shrink: 0;
-    padding: 8px 3px 6px;
+    padding: 7px 3px 6px;
     box-sizing: border-box;
   }
 
@@ -149,35 +149,35 @@
 
   .photo-actions {
     flex-shrink: 0;
-    min-height: 35px;
-    padding: 7px 0 0;
+    min-height: 32px;
+    padding: 6px 0 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
     color: #5d6f8f;
     border-top: 1px solid #eef2f8;
     box-sizing: border-box;
 
     .photo-action-primary,
     .photo-vote-action {
-      height: 25px;
+      height: 24px;
       padding: 0 7px;
       display: flex;
       align-items: center;
       justify-content: center;
       background: #ffffff;
-      border-radius: 4px;
+      border-radius: 3px;
       font-size: 11px;
       font-weight: 700;
       box-sizing: border-box;
     }
 
     .photo-action-primary {
-      min-width: 66px;
+      min-width: 54px;
       color: #0052d9;
-      border: 1px solid #d8e3f0;
-      background: #ffffff;
+      border: 1px solid #d8e8ff;
+      background: #f7fbff;
     }
 
     .photo-vote-group {
@@ -188,12 +188,12 @@
       overflow: hidden;
       background: #ffffff;
       border: 1px solid #e1eaf5;
-      border-radius: 4px;
+      border-radius: 3px;
       box-sizing: border-box;
     }
 
     .photo-vote-action {
-      min-width: 38px;
+      min-width: 34px;
       color: #5d6f8f;
       background: #ffffff;
       border: 0;
@@ -212,7 +212,7 @@
     .photo-vote-value {
       min-width: 24px;
       max-width: 42px;
-      height: 23px;
+      height: 22px;
       padding: 0 5px;
       overflow: hidden;
       color: #5d6f8f;
@@ -220,7 +220,7 @@
       border-left: 1px solid #e1eaf5;
       font-size: 11px;
       font-weight: 700;
-      line-height: 23px;
+      line-height: 22px;
       text-align: center;
       text-overflow: ellipsis;
       white-space: nowrap;
