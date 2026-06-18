@@ -962,8 +962,10 @@ export default function My() {
                         activeHistory.error ? "error" : ""
                       }`}
                     >
-                      <View className="history-empty-mark">
-                        <View className="history-empty-mark-line"></View>
+                      <View className="history-empty-glyph">
+                        <View className="history-empty-glyph-head"></View>
+                        <View className="history-empty-glyph-row"></View>
+                        <View className="history-empty-glyph-row short"></View>
                       </View>
                       <View className="history-empty-body">
                         <Text className="history-empty-kicker">
@@ -984,8 +986,10 @@ export default function My() {
                   )}
               {activeHistory.loading && (
                 <View className="history-empty">
-                  <View className="history-empty-mark">
-                    <View className="history-empty-mark-line"></View>
+                  <View className="history-empty-glyph">
+                    <View className="history-empty-glyph-head"></View>
+                    <View className="history-empty-glyph-row"></View>
+                    <View className="history-empty-glyph-row short"></View>
                   </View>
                   <View className="history-empty-body">
                     <Text className="history-empty-kicker">队列加载</Text>

@@ -796,32 +796,61 @@
   .history-tabs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-    padding: 4px;
-    border: 1px solid #d4e3f7;
-    border-radius: 8px;
+    gap: 1px;
+    padding: 6px 10px 0;
+    border: 1px solid #d8e3f0;
+    border-bottom-color: #cfdbea;
+    border-radius: 6px 6px 0 0;
     margin-bottom: 10px;
     background: #ffffff;
 
     .history-tab {
+      position: relative;
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 9px 10px;
-      border-radius: 6px;
+      padding: 0 9px;
+      border-radius: 5px 5px 0 0;
       color: #66758f;
-      background: transparent;
+      background: #ffffff;
       border: 1px solid transparent;
+      border-bottom: 2px solid transparent;
       font-size: 13px;
       box-sizing: border-box;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: -1px;
+        top: 9px;
+        bottom: 9px;
+        width: 1px;
+        background: #eef3f8;
+      }
+
+      &:first-child::before {
+        display: none;
+      }
 
       &.active {
         color: #0052d9;
         background: #f7fbff;
-        border-color: #bed7ff;
+        border-color: #cfe0f6;
+        border-bottom-color: #0052d9;
         font-weight: 700;
-        box-shadow: none;
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 12px;
+          right: 12px;
+          top: -1px;
+          height: 2px;
+          background: #0052d9;
+          border-radius: 2px;
+        }
       }
     }
 
@@ -871,12 +900,12 @@
       grid-column: 1 / -1;
       position: relative;
       overflow: hidden;
-      min-height: 96px;
-      padding: 14px 14px 14px 18px;
+      min-height: 104px;
+      padding: 15px 14px 15px 18px;
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       background: #ffffff;
       border: 1px solid #d8e3f0;
       border-radius: 6px;
@@ -886,68 +915,72 @@
         content: "";
         position: absolute;
         left: 0;
-        top: 0;
-        bottom: 0;
+        top: 13px;
+        bottom: 13px;
         width: 3px;
         background: #0052d9;
+        border-radius: 0 3px 3px 0;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 0;
+        height: 1px;
+        background: #eef3f8;
       }
 
       &.error {
-        .history-empty-mark {
-          border-color: #d5dfec;
+        &::before {
+          background: #6b7f9f;
+        }
 
-          &::before,
-          &::after {
-            background: #6b7f9f;
-          }
+        .history-empty-glyph-head {
+          background: #6b7f9f;
+          border-color: #6b7f9f;
         }
       }
     }
 
-    .history-empty-mark {
+    .history-empty-glyph {
       position: relative;
       flex: 0 0 auto;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 8px 7px;
       background: #fbfdff;
       border: 1px solid #c8dcfb;
       border-radius: 6px;
       box-sizing: border-box;
-
-      &::before,
-      &::after {
-        content: "";
-        position: absolute;
-        background: #0052d9;
-        border-radius: 2px;
-      }
-
-      &::before {
-        width: 13px;
-        height: 2px;
-      }
-
-      &::after {
-        width: 2px;
-        height: 13px;
-      }
     }
 
-    .history-empty-mark-line {
-      position: absolute;
-      left: 9px;
-      right: 9px;
-      bottom: 8px;
+    .history-empty-glyph-head {
+      width: 14px;
+      height: 6px;
+      background: #0052d9;
+      border: 1px solid #0052d9;
+      border-radius: 2px;
+      box-sizing: border-box;
+    }
+
+    .history-empty-glyph-row {
+      width: 20px;
       height: 2px;
+      margin-top: 5px;
       background: #9ebff5;
       border-radius: 2px;
+
+      &.short {
+        width: 14px;
+        background: #c8d8ef;
+      }
     }
 
     .history-empty-body {
       min-width: 0;
+      flex: 1;
     }
 
     .history-empty-kicker {
