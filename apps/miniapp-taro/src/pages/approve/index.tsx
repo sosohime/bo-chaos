@@ -127,8 +127,15 @@ export default function ApprovalPage() {
               </View>
               <View className="approval-command-row" onClick={onRefresh}>
                 <View className="approval-command-copy">
-                  <Text className="approval-summary-label">队列操作</Text>
+                  <Text className="approval-summary-label">主任务</Text>
                   <Text className="approval-command-title">刷新当前队列</Text>
+                  <Text className="approval-command-meta">
+                    {active.error
+                      ? "当前队列需要重试"
+                      : active.hasMore
+                        ? `${queueLabel} 可继续加载`
+                        : `${queueLabel} 已同步`}
+                  </Text>
                 </View>
                 <Text className="approval-command-action">
                   {active.refreshing ? "刷新中" : "刷新"}
