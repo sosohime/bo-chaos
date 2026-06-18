@@ -148,46 +148,56 @@
   box-sizing: border-box;
 }
 
-.retire-runtime-grid {
+.retire-runtime-list {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
   margin-top: 12px;
   overflow: hidden;
-  background: #e6edf6;
-  border: 1px solid #e6edf6;
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
   border-radius: 6px;
   box-sizing: border-box;
 }
 
-.retire-runtime-item {
+.retire-runtime-row {
+  min-height: 34px;
   min-width: 0;
-  padding: 8px 9px;
-  background: #fbfdff;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #eef2f8;
   box-sizing: border-box;
+
+  &:last-child {
+    border-bottom: 0;
+  }
 }
 
 .retire-runtime-label,
 .retire-runtime-value {
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .retire-runtime-label {
+  flex: 0 0 auto;
   color: #6b7f9f;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
 }
 
 .retire-runtime-value {
-  margin-top: 5px;
+  min-width: 0;
   color: #17233d;
   font-size: 12px;
   font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
+  line-height: 18px;
+  text-align: right;
 }
 
 .retire-panel {

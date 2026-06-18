@@ -114,20 +114,20 @@ export default function Retire() {
               </View>
             </View>
 
-            <View className="retire-runtime-grid">
-              <View className="retire-runtime-item">
+            <View className="retire-runtime-list">
+              <View className="retire-runtime-row">
                 <Text className="retire-runtime-label">目标节点</Text>
                 <Text className="retire-runtime-value">
                   {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
                 </Text>
               </View>
-              <View className="retire-runtime-item">
+              <View className="retire-runtime-row">
                 <Text className="retire-runtime-label">已完成</Text>
                 <Text className="retire-runtime-value">
                   {countdown.percent.toFixed(2)}%
                 </Text>
               </View>
-              <View className="retire-runtime-item">
+              <View className="retire-runtime-row">
                 <Text className="retire-runtime-label">剩余</Text>
                 <Text className="retire-runtime-value">
                   {countdown.remainingPercent.toFixed(2)}%
