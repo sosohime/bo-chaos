@@ -105,11 +105,15 @@ export default function Retire() {
               <View className="retire-summary-side">
                 <Text className="retire-live-label">时分秒</Text>
                 <View className="retire-clock">
-                  <Text>{countdown.hours}</Text>
-                  <Text>:</Text>
-                  <Text>{countdown.minutes}</Text>
-                  <Text>:</Text>
-                  <Text>{countdown.seconds}</Text>
+                  <Text className="retire-clock-digit">{countdown.hours}</Text>
+                  <Text className="retire-clock-separator">:</Text>
+                  <Text className="retire-clock-digit">
+                    {countdown.minutes}
+                  </Text>
+                  <Text className="retire-clock-separator">:</Text>
+                  <Text className="retire-clock-digit">
+                    {countdown.seconds}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -137,7 +141,7 @@ export default function Retire() {
 
             <View className="retire-progress-block">
               <View className="retire-progress-meta">
-                <Text>进度基线</Text>
+                <Text>周期进度</Text>
                 <Text>{countdown.totalMs === 0 ? "已抵达" : "按秒刷新"}</Text>
               </View>
               <View className="retire-progress">
