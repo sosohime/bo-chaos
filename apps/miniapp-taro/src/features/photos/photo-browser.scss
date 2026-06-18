@@ -455,19 +455,29 @@
 
 .state-action {
   display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-top: 10px;
-  padding: 5px 9px;
+  padding: 5px 8px;
   color: #0052d9;
-  background: #ffffff;
-  border: 1px solid #c8dcfb;
+  background: #f3f8ff;
+  border: 1px solid #d8e8ff;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
   line-height: 18px;
+
+  &::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    background: #0052d9;
+    border-radius: 50%;
+  }
 }
 
 .list-footer {
-  padding: 12px 0 104px;
+  padding: 10px 14px 104px;
   text-align: center;
   color: #7b8da8;
   font-size: 12px;
@@ -475,11 +485,32 @@
 }
 
 .list-footer-label {
-  display: inline-flex;
-  padding: 5px 10px;
-  color: #5d6f8f;
-  background: #ffffff;
-  border: 1px solid #d8e3f0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 5px 12px;
+  color: #66758f;
+  background: #fbfdff;
+  border: 1px solid #e1eaf5;
   border-radius: 4px;
+  box-sizing: border-box;
   line-height: 18px;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e6edf6;
+  }
+
+  &::before {
+    margin-right: 10px;
+  }
+
+  &::after {
+    margin-left: 10px;
+  }
 }

@@ -1051,10 +1051,15 @@
   }
 
   .load-more {
+    min-height: 38px;
     margin-top: 10px;
+    padding: 0 12px;
     color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
-    font-size: 14px;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 38px;
   }
 }
