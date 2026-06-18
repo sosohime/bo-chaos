@@ -9,7 +9,7 @@ export const DEFAULT_MINIAPP_CONFIG: Required<BofansMiniappRuntimeConfig> = {
   ugc: {
     enabled: true,
     disabledTitle: "内容维护中",
-    disabledMessage: "资料区正在整理，先去看看退休进度和今日状态。",
+    disabledMessage: "相册和上传入口当前已隐藏，仍可查看退休进度和互动状态。",
   },
   tabs: {
     retire: { visible: true, text: "退休" },

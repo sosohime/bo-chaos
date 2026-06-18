@@ -15,6 +15,18 @@ Use this after `bo-chaos-miniapp` when the work touches mini app visual directio
 - Prefer real product states over decorative imagery. Use generated bitmap assets only when they clarify a concrete screen, resource, or branded scene.
 - Treat third-party UI taste skills as critique material, not as a visual theme. For BoChaos, adopt product-interface discipline from tools like Impeccable, anti-generic-AI checks from Taste Skill, and production UI quality gates from Addy Osmani-style frontend guidance.
 
+## External Taste References
+
+Use current public AI UI skill patterns as review input, then translate them into the BoChaos product-console language.
+
+- Anthropic-style frontend design: pick a concrete aesthetic direction before editing, then make typography, spacing, color, and hierarchy decisions that support that direction.
+- Taste Skill-style critique: actively reject generic AI output such as decorative glow, fake dashboards, over-carded layouts, and inflated copy.
+- UI Design Brain-style components: treat tabs, lists, empty states, upload controls, galleries, and error states as reusable product patterns with expected behavior.
+- DESIGN.md-style brand memory: keep BoChaos rules explicit enough that later agents preserve the Tencent Cloud console fit instead of reinventing the visual language.
+- Engineering-style frontend guidance: every visual flourish must survive accessibility, performance, responsive layout, data truthfulness, and maintainability checks.
+
+Do not copy third-party visual themes into the app. Borrow their questions and quality gates only.
+
 ## Product Taste Rules
 
 - Design screens as a useful product surface first: resource hierarchy, current state, available action, and recovery path should be visible without marketing copy.
@@ -22,6 +34,8 @@ Use this after `bo-chaos-miniapp` when the work touches mini app visual directio
 - Prefer fewer, stronger UI primitives: page shell, resource panel, list row, status chip, action button, and footer state. Do not multiply card styles for decoration.
 - Use AI/tech language only when it maps to actual runtime behavior or data state. Do not invent scans, diagnostics, intelligence scores, or system claims.
 - Make inactive states intentionally quiet and active states precise. Selection should not resize, jump, glow, or look like a campaign pill.
+- Use real mini app constraints as part of taste: thumb reach, scroll rhythm, tap targets, image load behavior, skeleton/empty/error recovery, and stable bottom navigation matter more than decorative novelty.
+- When a screen feels cheap, remove one visual idea before adding another. The preferred fix is often clearer spacing, stronger hierarchy, or quieter copy.
 
 ## Tencent Cloud Console Fit
 
@@ -33,6 +47,18 @@ Use Tencent Cloud as a product-console reference, not as a brand clone.
 - Icons: use restrained line-style icons with consistent visual weight. Active tab icons may be filled or accented, but inactive icons should remain legible and quiet.
 - Motion and effects: keep animation short and purposeful. Avoid glow, breathing halos, rotating grids, excessive blur, or decorative tech overlays.
 - Data honesty: show only backend-provided counts and canonical shared constants. If data is unknown, show an explicit unknown/loading/empty state rather than a guessed metric.
+
+## Screen Design Process
+
+Before changing a page, write or mentally establish:
+
+- Screen job: what the user is trying to decide or do.
+- Primary state: the one fact or action that should be understood above the fold.
+- Source of truth: which API response, runtime config, shared constant, or local queue state drives each number and label.
+- Primitive set: which existing panel, row, chip, button, tab, or image pattern should be reused.
+- Removal target: which stale, noisy, fake, or overly decorative element should disappear.
+
+After changing a page, compare it against a Tencent Cloud console mental screenshot: white surfaces, crisp dividers, restrained blue, quiet metadata, and stable operational controls. If it reads like a landing page or a generated concept mockup, revise again.
 
 ## Taste-Skill Review Loop
 

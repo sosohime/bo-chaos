@@ -841,6 +841,7 @@ export default function My() {
           </View>
         ) : (
           <View className="ugc-disabled-section">
+            <Text className="ugc-disabled-kicker">内容状态</Text>
             <View className="section-title">{miniapp.ugc.disabledTitle}</View>
             <Text>{miniapp.ugc.disabledMessage}</Text>
           </View>
