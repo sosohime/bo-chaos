@@ -283,8 +283,8 @@ export default function Kowtow() {
           <View className="god-bo">
             <View className="god-bo-head">
               <View>
-                <Text className="god-bo-kicker">互动图片</Text>
-                <Text className="god-bo-title">当前展示</Text>
+                <Text className="god-bo-kicker">互动对象</Text>
+                <Text className="god-bo-title">图片资源</Text>
               </View>
               <Text className="god-bo-index">
                 {canvasInfo.swiperIndex + 1}/{swiperImages.length}
@@ -299,16 +299,18 @@ export default function Kowtow() {
                 width: ${canvasInfo.canvas.width}px;`}
               className="canvas"
             />
-            <SwiperImg
-              changeSwiper={changeSwiper}
-              images={swiperImages}
-              accountIndex={canvasInfo.swiperIndex}
-            />
+            <View className="god-bo-stage">
+              <SwiperImg
+                changeSwiper={changeSwiper}
+                images={swiperImages}
+                accountIndex={canvasInfo.swiperIndex}
+              />
+            </View>
           </View>
           <View className="kowtow-action-panel">
             <View className="kowtow-action-head">
               <View>
-                <Text className="kowtow-action-kicker">操作队列</Text>
+                <Text className="kowtow-action-kicker">交互操作</Text>
                 <Text className="love">记录一次</Text>
               </View>
               <Text className="kowtow-action-state">

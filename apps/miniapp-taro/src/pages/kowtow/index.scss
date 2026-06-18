@@ -157,7 +157,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
-    padding-bottom: 11px;
+    padding-bottom: 10px;
     color: #5d6f8f;
     border-bottom: 1px solid #eef2f8;
     font-size: 12px;
@@ -191,6 +191,15 @@
     color: #17233d;
     font-size: 16px;
     font-weight: 700;
+  }
+
+  .god-bo-stage {
+    margin-top: 12px;
+    overflow: hidden;
+    background: #f7fbff;
+    border: 1px solid #d8e3f0;
+    border-radius: 6px;
+    box-sizing: border-box;
   }
 
   .kowtow-action-panel {

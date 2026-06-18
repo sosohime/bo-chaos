@@ -1,10 +1,7 @@
 .swiper-console {
   position: relative;
   overflow: hidden;
-  margin-top: 10px;
-  background: #f3f7fc;
-  border: 1px solid #d8e3f0;
-  border-radius: 6px;
+  background: #f7fbff;
   box-sizing: border-box;
 }
 
@@ -14,8 +11,7 @@
   height: calc(100vw * 0.75 - 62px);
   z-index: 1;
   overflow: hidden;
-  border-radius: 5px;
-  background: #f3f7fc;
+  background: #f7fbff;
 }
 
 .swiper-item {
