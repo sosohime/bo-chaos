@@ -75,12 +75,12 @@
 
 .approval-summary {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
   margin: 0 12px 8px;
   overflow: hidden;
-  background: #d8e3f0;
-  border: 1px solid #d8e3f0;
+  background: #e6edf6;
+  border: 1px solid #e6edf6;
   border-radius: 8px;
 }
 

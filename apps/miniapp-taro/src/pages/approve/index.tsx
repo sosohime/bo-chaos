@@ -102,6 +102,16 @@ export default function ApprovalPage() {
               <Text className="approval-summary-value">{queueStage}</Text>
             </View>
             <View className="approval-summary-item">
+              <Text className="approval-summary-label">当前队列</Text>
+              <Text className="approval-summary-value">{queueLabel}</Text>
+            </View>
+            <View className="approval-summary-item">
+              <Text className="approval-summary-label">已加载</Text>
+              <Text className="approval-summary-value">
+                {active.items.length}
+              </Text>
+            </View>
+            <View className="approval-summary-item">
               <Text className="approval-summary-label">审核中</Text>
               <Text className="approval-summary-value">
                 {getSummaryValue(pending)}
