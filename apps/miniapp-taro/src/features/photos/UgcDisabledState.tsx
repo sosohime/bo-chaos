@@ -12,9 +12,28 @@ export default function UgcDisabledState({
   const { ugc } = getMiniappConfig(systemConfig);
   return (
     <View className="ugc-disabled-state">
-      <Text className="ugc-disabled-kicker">内容状态</Text>
-      <Text className="ugc-disabled-title">{ugc.disabledTitle}</Text>
+      <View className="ugc-disabled-head">
+        <View>
+          <Text className="ugc-disabled-kicker">运行配置</Text>
+          <Text className="ugc-disabled-title">{ugc.disabledTitle}</Text>
+        </View>
+        <Text className="ugc-disabled-status">已关闭</Text>
+      </View>
       <Text className="ugc-disabled-copy">{ugc.disabledMessage}</Text>
+      <View className="ugc-disabled-grid">
+        <View className="ugc-disabled-item primary">
+          <Text className="ugc-disabled-label">内容入口</Text>
+          <Text className="ugc-disabled-value">隐藏</Text>
+        </View>
+        <View className="ugc-disabled-item">
+          <Text className="ugc-disabled-label">数据请求</Text>
+          <Text className="ugc-disabled-value">暂停</Text>
+        </View>
+        <View className="ugc-disabled-item">
+          <Text className="ugc-disabled-label">恢复方式</Text>
+          <Text className="ugc-disabled-value">配置</Text>
+        </View>
+      </View>
     </View>
   );
 }

@@ -3,12 +3,10 @@
   overflow: hidden;
   min-height: 152px;
   margin: 14px;
-  padding: 18px 18px 18px 22px;
+  padding: 15px 14px 14px 17px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 8px;
+  gap: 12px;
   color: #66758f;
   background: #ffffff;
   border: 1px solid #d8e3f0;
@@ -19,27 +17,33 @@
     content: "";
     position: absolute;
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: 14px;
+    bottom: 14px;
     width: 3px;
     background: #0052d9;
+    border-radius: 0 3px 3px 0;
   }
 
   &::after {
-    content: "";
-    position: absolute;
-    right: 16px;
-    top: 16px;
-    width: 36px;
-    height: 10px;
-    border-top: 1px solid #d8e3f0;
-    border-bottom: 1px solid #d8e3f0;
+    display: none;
   }
+}
+
+.ugc-disabled-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .ugc-disabled-kicker,
 .ugc-disabled-title,
-.ugc-disabled-copy {
+.ugc-disabled-copy,
+.ugc-disabled-status,
+.ugc-disabled-label,
+.ugc-disabled-value {
   position: relative;
   z-index: 1;
   display: block;
@@ -52,6 +56,7 @@
 }
 
 .ugc-disabled-title {
+  margin-top: 5px;
   color: #17233d;
   font-size: 17px;
   font-weight: 700;
@@ -63,4 +68,60 @@
   color: #66758f;
   font-size: 13px;
   line-height: 20px;
+}
+
+.ugc-disabled-status {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  color: #0052d9;
+  background: #f3f8ff;
+  border: 1px solid #c8dcfb;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ugc-disabled-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  background: #e6edf6;
+  border: 1px solid #e6edf6;
+  border-radius: 6px;
+}
+
+.ugc-disabled-item {
+  min-width: 0;
+  padding: 8px 9px;
+  background: #ffffff;
+  box-sizing: border-box;
+
+  &.primary {
+    background: #f7fbff;
+  }
+}
+
+.ugc-disabled-label,
+.ugc-disabled-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ugc-disabled-label {
+  color: #6b7f9f;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
+}
+
+.ugc-disabled-value {
+  margin-top: 5px;
+  color: #17233d;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
 }
