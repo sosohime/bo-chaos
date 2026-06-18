@@ -155,6 +155,17 @@
   font-weight: 700;
 }
 
+.upload-result-button,
+.add-image,
+.submit-btn,
+.load-more {
+  box-sizing: border-box;
+
+  &::after {
+    border: 0;
+  }
+}
+
 .record-section {
   color: #445b7f;
   font-size: 14px;
