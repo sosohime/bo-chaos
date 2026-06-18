@@ -594,16 +594,6 @@ export default function My() {
           </View>
         )}
 
-        {!systemConfig?.inReview && (
-          <View className="record-section">
-            <Text className="record-kicker">活动日志</Text>
-            <View className="section-title">活动记录</View>
-            <Text>
-              账户已运行 {accountRunDays} 天，累计交互 {userInfo.kowtowCount} 次
-            </Text>
-          </View>
-        )}
-
         {ugcEnabled ? (
           <View className="upload-section">
             <View className="upload-console-head">

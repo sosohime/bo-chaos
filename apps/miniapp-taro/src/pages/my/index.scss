@@ -110,8 +110,8 @@
     flex: 0 0 auto;
     padding: 5px 8px;
     color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
@@ -164,7 +164,6 @@
   }
 }
 
-.record-section,
 .upload-section,
 .history-section,
 .bo-daily-card {
@@ -208,24 +207,6 @@
   }
 }
 
-.record-section {
-  color: #445b7f;
-  font-size: 14px;
-  line-height: 22px;
-
-  .record-kicker {
-    display: block;
-    margin-bottom: 5px;
-    color: #4b658a;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .section-title {
-    margin-bottom: 10px;
-  }
-}
-
 .bo-daily-card {
   margin-top: 18px;
   color: #17233d;
@@ -263,8 +244,8 @@
     overflow: hidden;
     padding: 5px 8px;
     color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
