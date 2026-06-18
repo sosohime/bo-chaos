@@ -169,9 +169,9 @@ export default function ApprovalPage() {
                 </View>
                 <Text className="approval-panel-state">{queueStage}</Text>
               </View>
-              <View className="approval-grid">
+              <View className="approval-list">
                 {active.items.map((photo) => (
-                  <View key={photo.id} className="approval-card">
+                  <View key={photo.id} className="approval-row">
                     <View className="approval-image-wrap">
                       <Image
                         src={normalizeMediaUrl(photo.filename)}
@@ -188,19 +188,23 @@ export default function ApprovalPage() {
                         }
                       />
                     </View>
-                    <View className="approval-meta">
-                      <Text className="approval-category">
-                        {photo.name || photo.category?.name || "图片"}
-                      </Text>
-                      <Text className="approval-subcategory">
-                        {photo.category?.name || "未分类"}
-                      </Text>
-                    </View>
-                    <View className="approval-card-foot">
-                      <Text className={`approval-status ${activeTab}`}>
-                        {activeTab === "pending" ? "审核中" : "已通过"}
-                      </Text>
-                      <Text className="approval-card-id">#{photo.id}</Text>
+                    <View className="approval-row-body">
+                      <View className="approval-row-main">
+                        <Text className="approval-category">
+                          {photo.name || photo.category?.name || "图片"}
+                        </Text>
+                        <Text className="approval-subcategory">
+                          {photo.category?.name || "未分类"}
+                        </Text>
+                      </View>
+                      <View className="approval-row-foot">
+                        <Text className={`approval-status ${activeTab}`}>
+                          {activeTab === "pending" ? "审核中" : "已通过"}
+                        </Text>
+                        <Text className="approval-resource-id">
+                          #{photo.id}
+                        </Text>
+                      </View>
                     </View>
                   </View>
                 ))}
