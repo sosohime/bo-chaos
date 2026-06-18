@@ -770,13 +770,17 @@
 
     .history-tab-count {
       min-width: 24px;
+      max-width: 46px;
       padding: 2px 6px;
+      overflow: hidden;
       color: #0052d9;
       background: #ffffff;
       border: 1px solid #c8dcfb;
       border-radius: 4px;
       font-size: 11px;
       text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       box-sizing: border-box;
     }
   }
@@ -843,9 +847,16 @@
       font-size: 14px;
       font-weight: 700;
     }
+
+    .history-empty-copy {
+      color: #66758f;
+      font-size: 12px;
+      line-height: 18px;
+    }
   }
 
   .load-more {
+    margin-top: 10px;
     color: #0052d9;
     background: #ffffff;
     border: 1px solid #c8dcfb;

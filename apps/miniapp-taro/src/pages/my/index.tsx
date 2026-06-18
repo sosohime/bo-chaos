@@ -432,6 +432,18 @@ export default function My() {
     activeHistoryTab === "pending" ? "审核中" : "已通过";
   const activeHistoryEmpty =
     activeHistoryTab === "pending" ? "还没有待审核图片" : "还没有通过的图片";
+  const activeHistorySubtitle = activeHistory.error
+    ? "加载异常，可重试当前队列"
+    : activeHistory.loading && activeHistory.items.length === 0
+      ? "当前队列加载中"
+      : activeHistory.total
+        ? `当前 ${activeHistoryTitle} ${activeHistory.total} 项`
+        : `当前 ${activeHistoryTitle} 无记录`;
+  const getHistoryTabCount = (history: typeof pendingPhotos, label: string) => {
+    if (history.error) return "重试";
+    if (history.loading && history.items.length === 0) return "加载";
+    return history.total ? String(history.total) : label;
+  };
   const selectedCategoryLabel = isNewCategory
     ? newCategoryName.trim() || "新分类"
     : selectedCategory || "未选择";
@@ -853,8 +865,7 @@ export default function My() {
               <View>
                 <View className="section-title">上传记录</View>
                 <Text className="history-subtitle">
-                  当前 {activeHistoryTitle}{" "}
-                  {activeHistory.total ? `${activeHistory.total} 项` : "暂无"}
+                  {activeHistorySubtitle}
                 </Text>
               </View>
               <Text
@@ -873,7 +884,7 @@ export default function My() {
               >
                 <Text>审核中</Text>
                 <Text className="history-tab-count">
-                  {pendingPhotos.total || 0}
+                  {getHistoryTabCount(pendingPhotos, "无")}
                 </Text>
               </View>
               <View
@@ -884,7 +895,7 @@ export default function My() {
               >
                 <Text>已通过</Text>
                 <Text className="history-tab-count">
-                  {approvedPhotos.total || 0}
+                  {getHistoryTabCount(approvedPhotos, "无")}
                 </Text>
               </View>
             </View>
@@ -909,9 +920,16 @@ export default function My() {
                   ))
                 : !activeHistory.loading && (
                     <View className="history-empty">
-                      <Text className="history-empty-kicker">队列状态</Text>
+                      <Text className="history-empty-kicker">
+                        {activeHistory.error ? "加载异常" : "队列状态"}
+                      </Text>
                       <Text className="history-empty-title">
-                        {activeHistoryEmpty}
+                        {activeHistory.error ? "加载失败" : activeHistoryEmpty}
+                      </Text>
+                      <Text className="history-empty-copy">
+                        {activeHistory.error
+                          ? "点击下方按钮重试当前队列"
+                          : "当前队列没有图片记录"}
                       </Text>
                     </View>
                   )}
@@ -922,9 +940,14 @@ export default function My() {
                 </View>
               )}
             </View>
-            {activeHistory.hasMore && (
+            {activeHistory.error && (
+              <Button className="load-more" onClick={activeHistory.refresh}>
+                重试{activeHistoryTitle}
+              </Button>
+            )}
+            {activeHistory.hasMore && !activeHistory.error && (
               <Button className="load-more" onClick={handleHistoryReachBottom}>
-                加载更多{activeHistoryTitle}
+                加载更多 {activeHistoryTitle}
               </Button>
             )}
           </View>
