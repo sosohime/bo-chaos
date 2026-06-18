@@ -107,52 +107,85 @@
 
   .photo-actions {
     flex-shrink: 0;
-    min-height: 28px;
-    padding: 5px 2px 0;
+    min-height: 31px;
+    padding: 6px 2px 0;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 6px;
+    justify-content: space-between;
+    gap: 8px;
     color: #5d6f8f;
     border-top: 1px solid #eef2f8;
     box-sizing: border-box;
 
-    .action-pill {
-      min-width: 38px;
+    .photo-action-primary,
+    .photo-action-secondary {
       height: 24px;
       padding: 0 7px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #0052d9;
       background: #ffffff;
-      border: 1px solid #c8dcfb;
       border-radius: 4px;
       font-size: 11px;
       font-weight: 700;
       box-sizing: border-box;
+    }
+
+    .photo-action-primary {
+      min-width: 54px;
+      gap: 4px;
+      color: #0052d9;
+      border: 1px solid #c8dcfb;
+    }
+
+    .photo-action-mark {
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0052d9;
+      background: #f3f8ff;
+      border: 1px solid #d8e8ff;
+      border-radius: 3px;
+      font-size: 10px;
+      line-height: 12px;
+      box-sizing: border-box;
+    }
+
+    .photo-vote-group {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .photo-action-secondary {
+      min-width: 34px;
+      color: #5d6f8f;
+      border: 1px solid #d8e3f0;
 
       &.active {
-        color: #ffffff;
-        background: #0052d9;
-        border-color: #0052d9;
+        color: #0052d9;
+        border-color: #c8dcfb;
+        background: #f7fbff;
       }
 
       &.disabled {
         opacity: 0.45;
       }
-
-      &:first-child {
-        margin-right: auto;
-      }
     }
 
     .vote-count {
       min-width: 14px;
-      color: #4b658a;
+      max-width: 36px;
+      overflow: hidden;
+      color: #5d6f8f;
       font-size: 11px;
       font-weight: 700;
       text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }

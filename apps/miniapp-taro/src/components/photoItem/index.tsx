@@ -155,13 +155,14 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       </View>
 
       <View className="photo-actions">
-        <View className="action-pill" onClick={handleDownload}>
+        <View className="photo-action-primary" onClick={handleDownload}>
+          <Text className="photo-action-mark">↓</Text>
           <Text>保存</Text>
         </View>
         {systemConfig?.inReview && (
-          <>
+          <View className="photo-vote-group">
             <View
-              className={`action-pill vote-action ${
+              className={`photo-action-secondary ${
                 data.hasVoted ? "active" : ""
               } ${actionLoading ? "disabled" : ""}`}
               onClick={onVote}
@@ -169,7 +170,7 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
               <Text>{data.hasVoted ? "已赞" : "赞"}</Text>
             </View>
             <Text className="vote-count">{data.votesCount}</Text>
-          </>
+          </View>
         )}
       </View>
     </View>
