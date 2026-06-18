@@ -23,6 +23,13 @@ export default function CategoryPhotoSections({
   onRetry,
 }: CategoryPhotoSectionsProps) {
   const browserStatus = loading ? "同步中" : hasMore ? "有更多" : "已完成";
+  const activeGroup = groups.find(
+    (group) => group.categoryName === activeCategory,
+  );
+  const loadedPhotoCount = groups.reduce(
+    (count, group) => count + group.photos.length,
+    0,
+  );
   const footerStatus = loading
     ? "正在加载图片"
     : activeCategory
@@ -73,6 +80,22 @@ export default function CategoryPhotoSections({
           </View>
           <Text className="photo-browser-sync">{browserStatus}</Text>
         </View>
+        <View className="photo-browser-matrix">
+          <View className="photo-browser-metric">
+            <Text className="metric-label">已加载分组</Text>
+            <Text className="metric-value">{groups.length}</Text>
+          </View>
+          <View className="photo-browser-metric">
+            <Text className="metric-label">已加载图片</Text>
+            <Text className="metric-value">{loadedPhotoCount}</Text>
+          </View>
+          <View className="photo-browser-metric">
+            <Text className="metric-label">当前分组</Text>
+            <Text className="metric-value metric-text">
+              {activeGroup?.categoryName || "未选择"}
+            </Text>
+          </View>
+        </View>
       </View>
       {groups.map((group) => (
         <View
@@ -103,8 +126,10 @@ export default function CategoryPhotoSections({
           {activeCategory === group.categoryName && (
             <View className="category-body">
               <View className="category-body-head">
-                <Text>图片内容</Text>
-                <Text>{loading ? "同步中" : "可浏览"}</Text>
+                <Text>当前分组</Text>
+                <Text>
+                  {loading ? "同步中" : `已加载 ${group.photos.length}`}
+                </Text>
               </View>
               <View className="photo-grid">
                 {group.photos.map((photo) => (

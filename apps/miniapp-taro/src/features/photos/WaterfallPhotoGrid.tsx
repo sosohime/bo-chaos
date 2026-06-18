@@ -67,6 +67,20 @@ export default function WaterfallPhotoGrid({
           </View>
           <Text className="photo-browser-sync">{browserStatus}</Text>
         </View>
+        <View className="photo-browser-matrix">
+          <View className="photo-browser-metric">
+            <Text className="metric-label">已加载图片</Text>
+            <Text className="metric-value">{photos.length}</Text>
+          </View>
+          <View className="photo-browser-metric">
+            <Text className="metric-label">布局列数</Text>
+            <Text className="metric-value">{columns.length}</Text>
+          </View>
+          <View className="photo-browser-metric">
+            <Text className="metric-label">加载状态</Text>
+            <Text className="metric-value metric-text">{browserStatus}</Text>
+          </View>
+        </View>
       </View>
       <View className="waterfall">
         {columns.map((column, columnIndex) => (
