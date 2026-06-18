@@ -335,14 +335,14 @@
 .list-state {
   position: relative;
   overflow: hidden;
-  min-height: 122px;
+  min-height: 104px;
   margin: 14px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  gap: 13px;
-  padding: 16px 16px 16px 19px;
+  gap: 12px;
+  padding: 14px;
   color: #66758f;
   font-size: 13px;
   background: #ffffff;
@@ -350,32 +350,17 @@
   border-radius: 8px;
   box-sizing: border-box;
 
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 14px;
-    bottom: 14px;
-    width: 3px;
-    background: #0052d9;
-    border-radius: 0 3px 3px 0;
-  }
-
   &::after {
     content: "";
     position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 0;
+    left: 14px;
+    right: 14px;
+    top: 52px;
     height: 1px;
     background: #eef3f8;
   }
 
   &.error {
-    &::before {
-      background: #6b7f9f;
-    }
-
     .state-glyph-head {
       background: #6b7f9f;
       border-color: #6b7f9f;
@@ -386,12 +371,12 @@
 .state-glyph {
   position: relative;
   flex: 0 0 auto;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   margin-top: 2px;
-  padding: 8px 7px;
+  padding: 7px 6px;
   background: #fbfdff;
-  border: 1px solid #d8e8ff;
+  border: 1px solid #d8e3f0;
   border-radius: 6px;
   box-sizing: border-box;
 }
@@ -432,17 +417,17 @@
 
 .state-title {
   display: block;
-  margin-top: 5px;
+  margin-top: 4px;
   color: #17233d;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 23px;
+  line-height: 20px;
 }
 
 .state-copy {
   display: block;
   max-width: 260px;
-  margin-top: 7px;
+  margin-top: 13px;
   color: #66758f;
   font-size: 13px;
   line-height: 20px;
@@ -452,11 +437,11 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 10px;
-  padding: 5px 8px;
+  margin-top: 12px;
+  padding: 4px 8px;
   color: #0052d9;
-  background: #f3f8ff;
-  border: 1px solid #d8e8ff;
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
