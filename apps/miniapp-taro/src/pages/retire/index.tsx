@@ -141,8 +141,13 @@ export default function Retire() {
 
             <View className="retire-progress-block">
               <View className="retire-progress-meta">
-                <Text>周期进度</Text>
-                <Text>{countdown.totalMs === 0 ? "已抵达" : "按秒刷新"}</Text>
+                <View>
+                  <Text className="retire-progress-kicker">周期进度</Text>
+                  <Text className="retire-progress-title">时间资源监控</Text>
+                </View>
+                <Text className="retire-progress-state">
+                  {countdown.totalMs === 0 ? "已抵达" : "按秒刷新"}
+                </Text>
               </View>
               <View className="retire-progress">
                 <View
@@ -151,8 +156,28 @@ export default function Retire() {
                 />
               </View>
               <View className="retire-progress-scale">
-                <Text>{BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}</Text>
-                <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
+                <View className="retire-progress-scale-cell">
+                  <Text className="retire-progress-scale-label">起始</Text>
+                  <Text>{BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}</Text>
+                </View>
+                <View className="retire-progress-scale-cell right">
+                  <Text className="retire-progress-scale-label">目标</Text>
+                  <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
+                </View>
+              </View>
+              <View className="retire-progress-metrics">
+                <View className="retire-progress-metric">
+                  <Text className="retire-progress-metric-label">已完成</Text>
+                  <Text className="retire-progress-metric-value">
+                    {countdown.percent.toFixed(2)}%
+                  </Text>
+                </View>
+                <View className="retire-progress-metric">
+                  <Text className="retire-progress-metric-label">剩余</Text>
+                  <Text className="retire-progress-metric-value">
+                    {countdown.remainingPercent.toFixed(2)}%
+                  </Text>
+                </View>
               </View>
             </View>
 

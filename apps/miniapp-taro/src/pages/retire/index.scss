@@ -150,7 +150,7 @@
   position: relative;
   z-index: 1;
   margin-top: 0;
-  padding: 10px 12px 11px;
+  padding: 0;
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-top: 0;
@@ -237,7 +237,7 @@
 
 .retire-progress {
   height: 4px;
-  margin-top: 10px;
+  margin: 11px 12px 0;
   overflow: hidden;
   border-radius: 3px;
   background: #edf3fb;
@@ -250,7 +250,11 @@
 }
 
 .retire-progress-meta {
-  position: static;
+  min-height: 46px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #eef2f8;
+  box-sizing: border-box;
 }
 
 .retire-progress-scale {
@@ -258,11 +262,109 @@
   justify-content: space-between;
   gap: 10px;
   color: #6b7f9f;
+  margin: 8px 12px 0;
   font-size: 10px;
+  font-weight: 700;
 }
 
-.retire-progress-scale {
-  margin-top: 7px;
+.retire-progress-kicker,
+.retire-progress-title,
+.retire-progress-state,
+.retire-progress-scale-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retire-progress-kicker {
+  color: #4b658a;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 15px;
+}
+
+.retire-progress-title {
+  margin-top: 4px;
+  color: #17233d;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.retire-progress-state {
+  flex: 0 0 auto;
+  max-width: 72px;
+  padding: 4px 8px;
+  color: #0052d9;
+  background: #f3f8ff;
+  border: 1px solid #d8e8ff;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.retire-progress-scale-cell {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.right {
+    text-align: right;
+  }
+}
+
+.retire-progress-scale-label {
+  margin-bottom: 2px;
+  color: #7b8da8;
+  font-size: 10px;
+  line-height: 12px;
+}
+
+.retire-progress-metrics {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid #eef2f8;
+  background: #fbfdff;
+}
+
+.retire-progress-metric {
+  min-width: 0;
+  min-height: 34px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #6b7f9f;
+  border-right: 1px solid #eef2f8;
+  font-size: 12px;
+  font-weight: 700;
+  box-sizing: border-box;
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.retire-progress-metric-label,
+.retire-progress-metric-value {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retire-progress-metric-value {
+  min-width: 0;
+  color: #17233d;
+  text-align: right;
 }
 
 .retire-panel-kicker,
