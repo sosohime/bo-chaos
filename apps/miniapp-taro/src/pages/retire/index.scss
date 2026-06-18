@@ -298,6 +298,10 @@
   margin: 0;
   border-radius: 6px;
   font-weight: 700;
+
+  &::after {
+    border: 0;
+  }
 }
 
 .retire-primary {

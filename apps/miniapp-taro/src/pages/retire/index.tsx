@@ -161,8 +161,8 @@ export default function Retire() {
         <View className="retire-panel">
           <View className="retire-panel-head">
             <View>
-              <Text className="retire-panel-kicker">资源详情</Text>
-              <Text className="retire-panel-title">时间资源</Text>
+              <Text className="retire-panel-kicker">基准配置</Text>
+              <Text className="retire-panel-title">进度参数</Text>
             </View>
             <Text className="retire-panel-tag">UTC+8</Text>
           </View>
@@ -190,10 +190,10 @@ export default function Retire() {
 
         <View className="retire-actions">
           <Button className="retire-primary" onClick={copyCountdown}>
-            复制进度
+            复制状态
           </Button>
           <Button className="retire-secondary" onClick={goKowtow}>
-            去磕一发
+            记录互动
           </Button>
         </View>
       </View>
