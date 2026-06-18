@@ -9,9 +9,9 @@
   justify-content: space-between;
   gap: 12px;
   padding: 9px 11px;
-  border: 1px solid #d4e3f7;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.06);
+  box-shadow: 0 8px 18px rgba(18, 50, 87, 0.045);
   box-sizing: border-box;
 
   .bosheng-rail {
@@ -20,7 +20,7 @@
     top: 10px;
     bottom: 10px;
     width: 3px;
-    background: linear-gradient(180deg, #0052d9, #00a4ff);
+    background: #0052d9;
     border-radius: 0 3px 3px 0;
   }
 
@@ -30,9 +30,9 @@
   }
 
   .bosheng-kicker {
-    color: #0052d9;
-    font-size: 10px;
-    font-weight: 800;
+    color: #4b658a;
+    font-size: 12px;
+    font-weight: 700;
   }
 
   .bosheng-title {

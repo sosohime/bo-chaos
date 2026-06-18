@@ -3,33 +3,31 @@
   overflow: hidden;
   padding: 10px;
   background: #ffffff;
-  border: 1px solid #d4e3f7;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.065);
+  box-shadow: 0 8px 18px rgba(18, 50, 87, 0.045);
   box-sizing: border-box;
 }
 
 .swiper-frame-mark {
   position: absolute;
   z-index: 2;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 2px;
   pointer-events: none;
 
   &.top-left {
     left: 10px;
     top: 10px;
-    border-top: 2px solid #0052d9;
-    border-left: 2px solid #0052d9;
-    border-radius: 6px 0 0 0;
+    background: #0052d9;
+    border-radius: 2px;
   }
 
   &.top-right {
     right: 10px;
     top: 10px;
-    border-top: 2px solid #00a4ff;
-    border-right: 2px solid #00a4ff;
-    border-radius: 0 6px 0 0;
+    background: #d8e3f0;
+    border-radius: 2px;
   }
 }
 
@@ -39,9 +37,9 @@
   height: calc(100vw * 0.75 - 62px);
   z-index: 1;
   overflow: hidden;
-  border: 1px solid #dbe7f7;
+  border: 1px solid #d8e3f0;
   border-radius: 6px;
-  background: #f6faff;
+  background: #f3f7fc;
 }
 
 .swiper-item {
@@ -59,7 +57,7 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  color: #66758f;
-  font-size: 11px;
-  font-weight: 800;
+  color: #4b658a;
+  font-size: 12px;
+  font-weight: 700;
 }
