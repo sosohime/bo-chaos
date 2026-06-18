@@ -155,7 +155,7 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
             src={imageUrl}
             className="photo"
             lazyLoad
-            mode="aspectFit"
+            mode="aspectFill"
             onClick={() => onPreview(imageUrl)}
             onLoad={handleImageLoad}
             onError={handleImageError}
