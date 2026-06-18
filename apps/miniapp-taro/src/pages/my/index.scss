@@ -202,16 +202,7 @@
 
 .upload-section,
 .history-section {
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 14px;
-    bottom: 14px;
-    width: 3px;
-    background: #0052d9;
-    border-radius: 0 3px 3px 0;
-  }
+  padding: 14px;
 }
 
 .section-title {
@@ -678,22 +669,10 @@
   }
 
   .upload-form-panel {
-    position: relative;
-    overflow: hidden;
     padding: 12px;
     background: #ffffff;
     border: 1px solid #d8e3f0;
     border-radius: 8px;
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: #0052d9;
-    }
   }
 
   .upload-form-head {
@@ -923,11 +902,11 @@
 
     .upload-progress-rail {
       position: absolute;
-      left: 4px;
-      right: 4px;
-      bottom: 4px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
       z-index: 2;
-      height: 3px;
+      height: 2px;
       overflow: hidden;
       display: flex;
       background: #d8e3f0;
@@ -938,9 +917,9 @@
 
     .upload-progress-bar {
       height: 100%;
-      min-width: 3px;
+      min-width: 2px;
       background: #0052d9;
-      border-radius: 3px;
+      border-radius: 2px;
     }
 
     .remove-btn {
@@ -1097,8 +1076,8 @@
       grid-column: 1 / -1;
       position: relative;
       overflow: hidden;
-      min-height: 104px;
-      padding: 15px 14px 15px 18px;
+      min-height: 96px;
+      padding: 13px 14px;
       display: flex;
       align-items: flex-start;
       justify-content: center;
@@ -1108,32 +1087,17 @@
       border-radius: 6px;
       box-sizing: border-box;
 
-      &::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 13px;
-        bottom: 13px;
-        width: 3px;
-        background: #0052d9;
-        border-radius: 0 3px 3px 0;
-      }
-
       &::after {
         content: "";
         position: absolute;
         left: 14px;
         right: 14px;
-        bottom: 0;
+        top: 50px;
         height: 1px;
         background: #eef3f8;
       }
 
       &.error {
-        &::before {
-          background: #6b7f9f;
-        }
-
         .history-empty-glyph-head {
           background: #6b7f9f;
           border-color: #6b7f9f;
@@ -1144,11 +1108,11 @@
     .history-empty-glyph {
       position: relative;
       flex: 0 0 auto;
-      width: 36px;
-      height: 36px;
-      padding: 8px 7px;
+      width: 34px;
+      height: 34px;
+      padding: 7px 6px;
       background: #fbfdff;
-      border: 1px solid #d8e8ff;
+      border: 1px solid #d8e3f0;
       border-radius: 6px;
       box-sizing: border-box;
     }

@@ -1,9 +1,9 @@
 .ugc-disabled-state {
   position: relative;
   overflow: hidden;
-  min-height: 152px;
+  min-height: 136px;
   margin: 14px;
-  padding: 15px 14px 14px 17px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -13,19 +13,14 @@
   border-radius: 8px;
   box-sizing: border-box;
 
-  &::before {
+  &::after {
     content: "";
     position: absolute;
-    left: 0;
-    top: 14px;
-    bottom: 14px;
-    width: 3px;
-    background: #0052d9;
-    border-radius: 0 3px 3px 0;
-  }
-
-  &::after {
-    display: none;
+    left: 14px;
+    right: 14px;
+    top: 56px;
+    height: 1px;
+    background: #eef3f8;
   }
 }
 
@@ -61,15 +56,16 @@
 }
 
 .ugc-disabled-title {
-  margin-top: 5px;
+  margin-top: 4px;
   color: #17233d;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 23px;
+  line-height: 21px;
 }
 
 .ugc-disabled-copy {
   max-width: 260px;
+  margin-top: 2px;
   color: #66758f;
   font-size: 13px;
   line-height: 20px;
