@@ -882,7 +882,8 @@ export default function My() {
                               handleRemoveImage(index);
                             }}
                           >
-                            ✕
+                            <View className="remove-btn-line"></View>
+                            <View className="remove-btn-line rotate"></View>
                           </View>
                         )}
                       </View>
