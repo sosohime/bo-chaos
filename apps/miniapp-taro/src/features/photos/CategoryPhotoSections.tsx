@@ -79,28 +79,35 @@ export default function CategoryPhotoSections({
           <Text className="photo-browser-sync">{browserStatus}</Text>
         </View>
       </View>
-      {groups.map((group) => {
+      {groups.map((group, index) => {
         const isActive = activeCategory === group.categoryName;
         const loadedCount = group.photos.length;
+        const boundaryClass = `${index === 0 ? "first" : ""} ${
+          index === groups.length - 1 ? "last" : ""
+        }`;
 
         return (
           <View
             key={group.categoryName}
-            className={`category-section ${isActive ? "active" : ""}`}
+            className={`category-section ${boundaryClass} ${
+              isActive ? "active" : ""
+            }`}
           >
             <View
               className={`category-header ${isActive ? "active" : ""}`}
               onClick={() => onCategoryClick(group.categoryName)}
             >
+              <View className="category-rail">
+                <Text className="category-node"></Text>
+              </View>
               <View className="category-title">
-                <Text className="category-index">资源分组</Text>
                 <Text className="category-name">{group.categoryName}</Text>
-                <Text className="category-count">
-                  当前载入 {loadedCount} 项
-                </Text>
+                <Text className="category-count">可见 {loadedCount} 项</Text>
               </View>
               <View className="category-state">
-                <Text>{isActive ? "收起" : "展开"}</Text>
+                <Text className="category-state-label">
+                  {isActive ? "收起" : "展开"}
+                </Text>
                 <Text className="arrow"></Text>
               </View>
             </View>
@@ -108,7 +115,7 @@ export default function CategoryPhotoSections({
             {isActive && (
               <View className="category-body">
                 <View className="category-body-head">
-                  <Text>当前分组</Text>
+                  <Text>当前可见</Text>
                   <Text>{loadedCount} 项</Text>
                 </View>
                 <View className="photo-grid">
