@@ -777,22 +777,34 @@
 
     .history-empty {
       grid-column: 1 / -1;
+      position: relative;
+      overflow: hidden;
       min-height: 96px;
-      padding: 14px;
+      padding: 14px 14px 14px 18px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       gap: 6px;
       background: #ffffff;
-      border: 1px solid #dbe7f7;
+      border: 1px solid #d8e3f0;
       border-radius: 6px;
       box-sizing: border-box;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: #0052d9;
+      }
     }
 
     .history-empty-kicker {
-      color: #0052d9;
-      font-size: 11px;
-      font-weight: 800;
+      color: #4b658a;
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .history-empty-title {

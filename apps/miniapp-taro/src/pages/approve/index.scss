@@ -255,20 +255,20 @@
 .approval-state {
   position: relative;
   overflow: hidden;
-  min-height: 180px;
-  margin: 16px;
+  min-height: 152px;
+  margin: 14px 12px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: 7px;
-  padding: 22px;
+  gap: 8px;
+  padding: 18px 18px 18px 22px;
   color: #66758f;
   font-size: 13px;
   background: #ffffff;
-  border: 1px solid #d4e3f7;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.06);
+  box-shadow: 0 8px 18px rgba(18, 50, 87, 0.045);
   box-sizing: border-box;
 
   &::before {
@@ -278,32 +278,45 @@
     top: 0;
     bottom: 0;
     width: 3px;
-    background: linear-gradient(180deg, #0052d9, #00a4ff);
+    background: #0052d9;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    width: 36px;
+    height: 10px;
+    border-top: 1px solid #d8e3f0;
+    border-bottom: 1px solid #d8e3f0;
   }
 }
 
 .approval-state-kicker {
-  color: #0052d9;
-  font-size: 11px;
+  color: #4b658a;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .approval-state-title {
   color: #17233d;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
-  line-height: 24px;
+  line-height: 23px;
 }
 
 .approval-state-copy {
+  max-width: 260px;
   color: #66758f;
   font-size: 13px;
   line-height: 20px;
 }
 
 .approval-footer {
-  padding: 6px 0 104px;
+  padding: 12px 0 104px;
   text-align: center;
-  color: #6b7f9f;
+  color: #7b8da8;
   font-size: 12px;
+  font-weight: 600;
 }
