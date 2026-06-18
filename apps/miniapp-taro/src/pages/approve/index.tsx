@@ -51,6 +51,7 @@ export default function ApprovalPage() {
     : active.hasMore
       ? `继续上滑加载 ${queueLabel}`
       : `当前队列已完成`;
+  const pageStateLabel = active.hasMore ? "可继续加载" : "当前页完成";
   const getSummaryValue = (queue: typeof pending) => {
     if (queue.error) return "需重试";
     if (queue.loading && queue.items.length === 0) return "加载中";
@@ -109,10 +110,8 @@ export default function ApprovalPage() {
                 <Text className="approval-summary-meta">{queueLabel}</Text>
               </View>
               <View className="approval-summary-row">
-                <Text className="approval-summary-label">可见项</Text>
-                <Text className="approval-summary-meta">
-                  {active.items.length}
-                </Text>
+                <Text className="approval-summary-label">分页状态</Text>
+                <Text className="approval-summary-meta">{pageStateLabel}</Text>
               </View>
               <View className="approval-summary-row">
                 <Text className="approval-summary-label">审核中</Text>
@@ -124,6 +123,15 @@ export default function ApprovalPage() {
                 <Text className="approval-summary-label">已通过</Text>
                 <Text className="approval-summary-meta">
                   {getSummaryValue(approved)}
+                </Text>
+              </View>
+              <View className="approval-command-row" onClick={onRefresh}>
+                <View className="approval-command-copy">
+                  <Text className="approval-summary-label">队列操作</Text>
+                  <Text className="approval-command-title">刷新当前队列</Text>
+                </View>
+                <Text className="approval-command-action">
+                  {active.refreshing ? "刷新中" : "刷新"}
                 </Text>
               </View>
             </View>
@@ -145,7 +153,10 @@ export default function ApprovalPage() {
             </View>
           )}
           {active.items.length === 0 && !active.loading && (
-            <View className={`approval-state ${active.error ? "error" : ""}`}>
+            <View
+              className={`approval-state ${active.error ? "error" : ""}`}
+              onClick={active.error ? onRefresh : undefined}
+            >
               <View className="approval-state-glyph">
                 <View className="approval-state-glyph-head"></View>
                 <View className="approval-state-glyph-row"></View>
@@ -161,6 +172,9 @@ export default function ApprovalPage() {
                 <Text className="approval-state-copy">
                   {active.error ? "下拉重试当前队列" : "当前队列没有图片"}
                 </Text>
+                {active.error && (
+                  <Text className="approval-state-action">点击重试</Text>
+                )}
               </View>
             </View>
           )}
