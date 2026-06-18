@@ -827,9 +827,7 @@ export default function My() {
                         disabled={isSubmitting}
                         onClick={handleAddImages}
                       >
-                        {selectedImages.length
-                          ? `继续添加（已选 ${selectedImages.length}/${MAX_SELECTED_IMAGES} 张）`
-                          : "添加图片"}
+                        {selectedImages.length ? "继续添加" : "添加图片"}
                       </Button>
 
                       <Button
@@ -837,7 +835,7 @@ export default function My() {
                         disabled={isSubmitting}
                         onClick={handleSubmit}
                       >
-                        {isSubmitting ? "上传中..." : "提交"}
+                        {isSubmitting ? "上传中" : "提交审核"}
                       </Button>
                     </View>
                   </View>

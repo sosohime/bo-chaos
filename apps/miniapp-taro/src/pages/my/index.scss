@@ -371,8 +371,8 @@
     flex: 0 0 auto;
     padding: 5px 8px;
     color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
@@ -452,6 +452,18 @@
       font-size: 12px;
       text-align: center;
       box-sizing: border-box;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 18px;
+        height: 2px;
+        background: transparent;
+        border-radius: 2px 2px 0 0;
+        transform: translateX(-50%);
+      }
     }
 
     .upload-step-index {
@@ -471,9 +483,12 @@
 
     .active {
       background: #f3f8ff;
-      border-top: 3px solid #0052d9;
       color: #0052d9;
       font-weight: 700;
+
+      &::after {
+        background: #0052d9;
+      }
 
       .upload-step-index {
         color: #0052d9;
@@ -611,8 +626,8 @@
     overflow: hidden;
     padding: 5px 8px;
     color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 11px;
     font-weight: 700;
@@ -745,8 +760,8 @@
     flex: 0 0 auto;
     padding: 5px 8px;
     color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 11px;
     font-weight: 700;
