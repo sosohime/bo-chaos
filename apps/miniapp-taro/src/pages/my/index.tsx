@@ -613,41 +613,39 @@ export default function My() {
             </View>
 
             <View className="upload-task-summary">
-              <View className="upload-summary-item primary">
+              <View className="upload-summary-primary">
                 <Text className="upload-summary-label">当前阶段</Text>
                 <Text className="upload-summary-value">{uploadStage}</Text>
               </View>
-              <View className="upload-summary-item">
+              <View className="upload-summary-row">
                 <Text className="upload-summary-label">板块</Text>
-                <Text className="upload-summary-value">
+                <Text className="upload-summary-meta">
                   {selectedSystem?.label || "未选择"}
                 </Text>
               </View>
-              <View className="upload-summary-item">
+              <View className="upload-summary-row">
                 <Text className="upload-summary-label">分类</Text>
-                <Text className="upload-summary-value">
+                <Text className="upload-summary-meta">
                   {selectedCategoryLabel}
                 </Text>
               </View>
-              <View className="upload-summary-item">
+              <View className="upload-summary-row">
                 <Text className="upload-summary-label">队列</Text>
-                <Text className="upload-summary-value">
+                <Text className="upload-summary-meta">
                   {selectedImages.length
                     ? `${selectedImages.length}/${MAX_SELECTED_IMAGES}`
                     : "空"}
                 </Text>
               </View>
-              <View className="upload-summary-item">
+              <View className="upload-summary-row">
                 <Text className="upload-summary-label">并发</Text>
-                <Text className="upload-summary-value">
+                <Text className="upload-summary-meta">
                   {UPLOAD_CONCURRENCY}
                 </Text>
               </View>
-              <View className="upload-summary-item">
+              <View className="upload-summary-row">
                 <Text className="upload-summary-label">审核</Text>
-                <Text className="upload-summary-value">
-                  {uploadReviewState}
-                </Text>
+                <Text className="upload-summary-meta">{uploadReviewState}</Text>
               </View>
             </View>
 
