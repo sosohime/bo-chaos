@@ -28,7 +28,7 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
   const [actionLoading, setActionLoading] = useState(false);
   const { systemConfig } = useContext(AppContext);
   const imageUrl = normalizeMediaUrl(data.filename);
-  const title = data.name || data.category?.name || "图片资源";
+  const title = data.name || data.category?.name || "图片";
   const categoryName = data.category?.name || "未分类";
 
   useEffect(() => {
@@ -124,14 +124,14 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       <View className="photo-box">
         {loading && (
           <View className="loading-container">
-            <Text className="media-state-kicker">图片资源</Text>
+            <Text className="media-state-kicker">图片加载</Text>
             <Text className="media-state-title">加载中</Text>
           </View>
         )}
 
         {error ? (
           <View className="error-container" onClick={handleRetry}>
-            <Text className="media-state-kicker">同步异常</Text>
+            <Text className="media-state-kicker">加载异常</Text>
             <Text className="media-state-title">加载失败</Text>
             <Text className="retry-text">点击重试</Text>
           </View>
