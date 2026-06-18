@@ -16,10 +16,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px 14px 10px;
+  padding: 10px 12px;
   background: #ffffff;
   border-bottom: 1px solid #d8e3f0;
   box-sizing: border-box;
@@ -27,33 +24,69 @@
   .account-head {
     width: 100%;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    align-items: stretch;
+    gap: 10px;
+    box-sizing: border-box;
+  }
+
+  .account-avatar-shell {
+    width: 58px;
+    flex: 0 0 58px;
+    overflow: hidden;
+    background: #fbfdff;
+    border: 1px solid #d8e3f0;
+    border-radius: 5px;
     box-sizing: border-box;
   }
 
   .avatar {
-    width: 50px;
-    height: 50px;
-    border: 1px solid #d8e8ff;
-    border-radius: 6px;
+    display: block;
+    width: 56px;
+    height: 56px;
     background: #f3f7fc;
   }
 
-  .user-name {
+  .account-avatar-action {
+    display: block;
+    height: 22px;
+    color: #0052d9;
+    background: #f3f8ff;
+    border-top: 1px solid #d8e8ff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 22px;
+    text-align: center;
+  }
+
+  .account-main {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
+    gap: 8px;
+  }
 
-    .account-kicker {
-      color: #4b658a;
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 14px;
-    }
+  .account-title-row {
+    min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .account-title-copy {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .account-kicker {
+    color: #4b658a;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 14px;
   }
 
   .nickname-view {
@@ -63,10 +96,10 @@
   }
 
   .nickname {
-    max-width: 184px;
+    max-width: 156px;
     overflow: hidden;
     color: #17233d;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     line-height: 20px;
     text-overflow: ellipsis;
@@ -82,22 +115,23 @@
 
   .nickname-edit {
     position: relative;
+    min-height: 26px;
 
     .nickname-input {
       color: #17233d;
-      font-size: 16px;
+      font-size: 15px;
       border-bottom: 1px solid #9ebff5;
       padding: 4px 0;
     }
 
     .nickname-buttons {
-      position: absolute;
-      right: 0;
-      text-align: right;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
       .confirm {
         color: #0052d9;
-        margin-right: 8px;
       }
 
       .cancel {
@@ -106,55 +140,70 @@
     }
   }
 
+  .account-resource-id {
+    display: block;
+    overflow: hidden;
+    color: #7b8da8;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .account-status {
     flex: 0 0 auto;
-    padding: 5px 8px;
+    max-width: 64px;
+    overflow: hidden;
+    padding: 4px 7px;
     color: #0052d9;
     background: #f3f8ff;
     border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
+    line-height: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .account-resource-summary {
     width: 100%;
     overflow: hidden;
-    padding: 10px;
-    background: #ffffff;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    background: #fbfdff;
     border: 1px solid #d8e3f0;
-    border-radius: 6px;
-    box-sizing: border-box;
-  }
-
-  .account-resource-primary {
-    min-width: 0;
-    padding: 10px;
-    background: #f7fbff;
-    border: 1px solid #d8e8ff;
     border-radius: 5px;
     box-sizing: border-box;
   }
 
   .account-resource-row {
-    min-height: 32px;
+    min-height: 34px;
     min-width: 0;
-    padding: 7px 0;
+    padding: 7px 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px;
     border-bottom: 1px solid #eef2f8;
+    border-right: 1px solid #eef2f8;
     box-sizing: border-box;
 
-    &:last-child {
+    &:nth-child(2n) {
+      border-right: 0;
+    }
+
+    &:nth-last-child(-n + 2) {
       border-bottom: 0;
-      padding-bottom: 0;
+    }
+
+    &.primary {
+      background: #f7fbff;
     }
   }
 
   .account-resource-label,
-  .account-resource-value,
   .account-resource-meta {
     display: block;
     overflow: hidden;
@@ -165,16 +214,8 @@
   .account-resource-label {
     flex: 0 0 auto;
     color: #6b7f9f;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    line-height: 18px;
-  }
-
-  .account-resource-value {
-    margin-top: 4px;
-    color: #17233d;
-    font-size: 12px;
-    font-weight: 700;
     line-height: 16px;
   }
 

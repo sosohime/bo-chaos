@@ -455,6 +455,7 @@ export default function My() {
       )
     : 0;
   const accountRoleLabel = userInfo.photoReviewer ? "审核员" : "成员";
+  const accountResourceId = userInfo.id ? `UID-${userInfo.id}` : "未同步";
   const uploadStage = isSubmitting
     ? "上传中"
     : uploadSummary?.successCount
@@ -543,69 +544,86 @@ export default function My() {
       <View className="my-content">
         <View className="user-info">
           <View className="account-head">
-            <Image
-              className="avatar"
-              mode="aspectFit"
-              src={normalizeMediaUrl(userInfo.avatarUrl) || Criminal}
-              lazyLoad
-              onClick={handleAvatarClick}
-            />
-            <View className="user-name">
-              <Text className="account-kicker">账户资源</Text>
-              {isEditingName ? (
-                <View className="nickname-edit">
-                  <Input
-                    className="nickname-input"
-                    value={editingName}
-                    onInput={(e) => setEditingName(e.detail.value)}
-                    placeholder={userInfo.nickname}
-                  />
-                  <View className="nickname-buttons">
-                    <Text className="confirm" onClick={handleNameChange}>
-                      确定
-                    </Text>
-                    <Text className="cancel" onClick={handleNameCancel}>
-                      取消
-                    </Text>
-                  </View>
-                </View>
-              ) : (
-                <View
-                  className="nickname-view"
-                  onClick={() => {
-                    setIsEditingName(true);
-                    setEditingName(userInfo.nickname);
-                  }}
-                >
-                  <Text className="nickname">
-                    {userInfo.nickname || "设置昵称"}
+            <View className="account-avatar-shell" onClick={handleAvatarClick}>
+              <Image
+                className="avatar"
+                mode="aspectFit"
+                src={normalizeMediaUrl(userInfo.avatarUrl) || Criminal}
+                lazyLoad
+              />
+              <Text className="account-avatar-action">更换</Text>
+            </View>
+            <View className="account-main">
+              <View className="account-title-row">
+                <View className="account-title-copy">
+                  <Text className="account-kicker">账户资源</Text>
+                  {isEditingName ? (
+                    <View className="nickname-edit">
+                      <Input
+                        className="nickname-input"
+                        value={editingName}
+                        onInput={(e) => setEditingName(e.detail.value)}
+                        placeholder={userInfo.nickname}
+                      />
+                      <View className="nickname-buttons">
+                        <Text className="confirm" onClick={handleNameChange}>
+                          确定
+                        </Text>
+                        <Text className="cancel" onClick={handleNameCancel}>
+                          取消
+                        </Text>
+                      </View>
+                    </View>
+                  ) : (
+                    <View
+                      className="nickname-view"
+                      onClick={() => {
+                        setIsEditingName(true);
+                        setEditingName(userInfo.nickname);
+                      }}
+                    >
+                      <Text className="nickname">
+                        {userInfo.nickname || "设置昵称"}
+                      </Text>
+                      <Image
+                        className="nickname-edit-icon"
+                        mode="aspectFit"
+                        src={Edit}
+                      />
+                    </View>
+                  )}
+                  <Text className="account-resource-id">
+                    {accountResourceId}
                   </Text>
-                  <Image
-                    className="nickname-edit-icon"
-                    mode="aspectFit"
-                    src={Edit}
-                  />
                 </View>
-              )}
-            </View>
-            <Text className="account-status">{accountRoleLabel}</Text>
-          </View>
-          <View className="account-resource-summary">
-            <View className="account-resource-primary">
-              <Text className="account-resource-label">运行</Text>
-              <Text className="account-resource-value">
-                {accountRunDays} 天
-              </Text>
-            </View>
-            <View className="account-resource-row">
-              <Text className="account-resource-label">交互</Text>
-              <Text className="account-resource-meta">
-                {userInfo.kowtowCount}
-              </Text>
-            </View>
-            <View className="account-resource-row">
-              <Text className="account-resource-label">权限</Text>
-              <Text className="account-resource-meta">{accountRoleLabel}</Text>
+                <Text className="account-status">{accountRoleLabel}</Text>
+              </View>
+              <View className="account-resource-summary">
+                <View className="account-resource-row primary">
+                  <Text className="account-resource-label">运行</Text>
+                  <Text className="account-resource-meta">
+                    {accountRunDays ? `${accountRunDays} 天` : "未同步"}
+                  </Text>
+                </View>
+                <View className="account-resource-row">
+                  <Text className="account-resource-label">互动</Text>
+                  <Text className="account-resource-meta">
+                    {userInfo.kowtowCount}
+                  </Text>
+                </View>
+                <View className="account-resource-row">
+                  <Text className="account-resource-label">权限</Text>
+                  <Text className="account-resource-meta">
+                    {accountRoleLabel}
+                  </Text>
+                </View>
+                <View className="account-resource-row">
+                  <Text className="account-resource-label">上传</Text>
+                  <Text className="account-resource-meta">
+                    {ugcEnabled ? "可用" : "隐藏"}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
         </View>
