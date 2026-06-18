@@ -115,6 +115,38 @@
     }
   }
 
+  .kowtow-command-row {
+    min-height: 44px;
+    min-width: 0;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #ffffff;
+    border-top: 1px solid #eef2f8;
+    border-bottom: 1px solid #e6edf6;
+    box-sizing: border-box;
+  }
+
+  .kowtow-command-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .kowtow-command-title {
+    display: block;
+    overflow: hidden;
+    color: #17233d;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .kowtow-stat-label,
   .kowtow-stat-meta {
     display: block;
@@ -274,8 +306,8 @@
   .kowtow-action-footer {
     position: relative;
     padding: 10px 12px 12px;
-    background: #fbfdff;
-    border-top: 1px solid #e6edf6;
+    background: #ffffff;
+    border-top: 0;
     box-sizing: border-box;
   }
 
@@ -326,7 +358,7 @@
     background: #0052d9;
     border-radius: 3px;
     font-weight: 700;
-    line-height: 44px;
+    line-height: 42px;
 
     &::after {
       border: 0;
