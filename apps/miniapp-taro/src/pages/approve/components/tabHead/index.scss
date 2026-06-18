@@ -4,10 +4,10 @@
   z-index: 10;
   width: 100%;
   min-height: 52px;
-  padding: 0 12px;
+  padding: 6px 12px 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
+  gap: 1px;
   background: #ffffff;
   box-sizing: border-box;
   border-bottom: 1px solid #d8e3f0;
@@ -16,20 +16,50 @@
 .tab-block {
   position: relative;
   z-index: 1;
-  height: 52px;
-  padding: 0 6px;
+  height: 46px;
+  padding: 0 9px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 6px;
+  background: #ffffff;
+  border: 1px solid transparent;
   border-bottom: 2px solid transparent;
+  border-radius: 5px 5px 0 0;
   box-sizing: border-box;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: 9px;
+    bottom: 9px;
+    width: 1px;
+    background: #eef3f8;
+  }
+
+  &:first-child::before {
+    display: none;
+  }
 }
 
 .current-tab {
   color: #0052d9;
+  background: #f7fbff;
+  border-color: #cfe0f6;
   border-bottom-color: #0052d9;
   font-weight: 700;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: -1px;
+    height: 2px;
+    background: #0052d9;
+    border-radius: 2px;
+  }
 
   .tab-state-dot {
     background: #0052d9;
@@ -44,7 +74,7 @@
 
 .default-tab {
   color: #66758f;
-  background: transparent;
+  background: #ffffff;
   border-color: transparent;
 }
 
