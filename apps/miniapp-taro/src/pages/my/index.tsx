@@ -596,17 +596,23 @@ export default function My() {
         <BoSheng boxStyle={{ padding: "14px 20px 0 20px" }} />
 
         {boDailyCard && (
-          <View className="bo-daily-card">
+          <View className="bo-daily-panel">
             <View className="bo-daily-head">
-              <View>
+              <View className="bo-daily-title-block">
                 <Text className="bo-daily-kicker">今日资源</Text>
                 <Text className="bo-daily-title">{boDailyCard.greeting}</Text>
               </View>
               <Text className="bo-daily-status">{boDailyCard.mood}</Text>
             </View>
-            <View className="bo-daily-meta">
-              <Text>{boDailyCard.date}</Text>
-              <Text>{boDailyCard.title}</Text>
+            <View className="bo-daily-meta-list">
+              <View className="bo-daily-meta-row">
+                <Text className="bo-daily-meta-label">日期</Text>
+                <Text className="bo-daily-meta-value">{boDailyCard.date}</Text>
+              </View>
+              <View className="bo-daily-meta-row">
+                <Text className="bo-daily-meta-label">主题</Text>
+                <Text className="bo-daily-meta-value">{boDailyCard.title}</Text>
+              </View>
             </View>
             <View className="bo-daily-body">
               <Text className="bo-daily-copy">{boDailyCard.insight}</Text>
