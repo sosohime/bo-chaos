@@ -367,7 +367,7 @@
 }
 
 .approval-footer {
-  padding: 12px 0 104px;
+  padding: 10px 12px 104px;
   text-align: center;
   color: #7b8da8;
   font-size: 12px;
@@ -375,11 +375,31 @@
 }
 
 .approval-footer-label {
-  display: inline-flex;
-  padding: 5px 10px;
-  color: #5d6f8f;
-  background: #ffffff;
-  border: 1px solid #d8e3f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 5px 12px;
+  color: #66758f;
+  background: #fbfdff;
+  border: 1px solid #e1eaf5;
   border-radius: 4px;
+  box-sizing: border-box;
   line-height: 18px;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e6edf6;
+  }
+
+  &::before {
+    margin-right: 10px;
+  }
+
+  &::after {
+    margin-left: 10px;
+  }
 }
