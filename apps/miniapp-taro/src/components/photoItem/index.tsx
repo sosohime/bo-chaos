@@ -165,11 +165,14 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
 
       <View className="photo-info">
         <Text className="photo-title">{title}</Text>
-        <Text className="photo-subtitle">{categoryName}</Text>
+        <View className="photo-meta-row">
+          <Text className="photo-category">{categoryName}</Text>
+          <Text className="photo-resource-id">ID {data.id}</Text>
+        </View>
       </View>
 
       <View className="photo-actions">
-        <Text className="photo-command-kicker">命令</Text>
+        <Text className="photo-action-kicker">动作</Text>
         <View className="photo-command-group">
           <View className="photo-action-primary" onClick={handleDownload}>
             <Text>保存</Text>

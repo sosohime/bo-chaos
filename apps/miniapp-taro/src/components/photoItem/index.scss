@@ -126,7 +126,8 @@
   }
 
   .photo-title,
-  .photo-subtitle {
+  .photo-category,
+  .photo-resource-id {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -140,17 +141,42 @@
     line-height: 17px;
   }
 
-  .photo-subtitle {
-    margin-top: 3px;
-    color: #7b8da8;
+  .photo-meta-row {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .photo-category {
+    min-width: 0;
+    flex: 1;
+    color: #4b658a;
     font-size: 11px;
+    font-weight: 700;
     line-height: 15px;
+  }
+
+  .photo-resource-id {
+    flex: 0 0 auto;
+    max-width: 62px;
+    padding: 1px 5px;
+    color: #7b8da8;
+    background: #ffffff;
+    border: 1px solid #e1eaf5;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 14px;
+    box-sizing: border-box;
   }
 
   .photo-actions {
     flex-shrink: 0;
-    min-height: 30px;
-    padding: 5px 0 0;
+    min-height: 32px;
+    padding: 6px 0 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -159,9 +185,9 @@
     border-top: 1px solid #eef2f8;
     box-sizing: border-box;
 
-    .photo-command-kicker {
+    .photo-action-kicker {
       flex: 0 0 auto;
-      color: #7b8da8;
+      color: #6b7f9f;
       font-size: 11px;
       font-weight: 700;
       line-height: 24px;
@@ -176,7 +202,7 @@
       justify-content: flex-end;
       overflow: hidden;
       background: #ffffff;
-      border: 1px solid #e1eaf5;
+      border: 1px solid #d8e3f0;
       border-radius: 3px;
       box-sizing: border-box;
     }
@@ -199,7 +225,7 @@
       min-width: 42px;
       color: #0052d9;
       border: 0;
-      background: #f7fbff;
+      background: #f3f8ff;
     }
 
     .photo-vote-group {
