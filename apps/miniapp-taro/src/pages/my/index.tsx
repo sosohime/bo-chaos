@@ -874,7 +874,7 @@ export default function My() {
                           )}
                         <Image
                           src={img}
-                          mode="aspectFit"
+                          mode="aspectFill"
                           lazyLoad
                           className="preview-image"
                           onClick={() =>
