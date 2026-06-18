@@ -148,6 +148,48 @@
   box-sizing: border-box;
 }
 
+.retire-runtime-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 12px;
+  overflow: hidden;
+  background: #e6edf6;
+  border: 1px solid #e6edf6;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.retire-runtime-item {
+  min-width: 0;
+  padding: 8px 9px;
+  background: #fbfdff;
+  box-sizing: border-box;
+}
+
+.retire-runtime-label,
+.retire-runtime-value {
+  display: block;
+}
+
+.retire-runtime-label {
+  color: #6b7f9f;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.retire-runtime-value {
+  margin-top: 5px;
+  color: #17233d;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
 .retire-panel {
   margin: 2px 14px 14px;
   padding: 14px;
