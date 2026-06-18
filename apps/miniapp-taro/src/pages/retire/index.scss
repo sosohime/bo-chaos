@@ -306,12 +306,12 @@
 .retire-console-actions {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-direction: column;
   margin-top: 12px;
   overflow: hidden;
-  background: #e1eaf5;
-  border: 1px solid #e1eaf5;
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
   border-radius: 6px;
   box-sizing: border-box;
 }
@@ -320,7 +320,7 @@
 .retire-secondary {
   position: relative;
   margin: 0;
-  min-height: 42px;
+  min-height: 43px;
   padding: 7px 28px 7px 11px;
   display: flex;
   flex-direction: row;
@@ -328,6 +328,7 @@
   justify-content: flex-start;
   gap: 8px;
   border-radius: 0;
+  border-bottom: 1px solid #eef2f8;
   font-weight: 700;
   line-height: 1.2;
   box-sizing: border-box;
@@ -350,15 +351,18 @@
   }
 }
 
+.retire-console-actions .retire-secondary {
+  border-bottom: 0;
+}
+
 .retire-primary {
   color: #0052d9;
-  background: #fbfdff;
-  border-right: 1px solid #e1eaf5;
+  background: #f7fbff;
 }
 
 .retire-secondary {
   color: #0052d9;
-  background: #fbfdff;
+  background: #ffffff;
 }
 
 .retire-action-title,
