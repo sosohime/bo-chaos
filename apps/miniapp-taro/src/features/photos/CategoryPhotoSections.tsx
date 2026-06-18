@@ -127,21 +127,20 @@ export default function CategoryPhotoSections({
           {activeCategory === group.categoryName && (
             <View className="category-body">
               <View className="category-body-head">
-                <Text>当前分组</Text>
-                <Text>{loading ? "同步中" : "按需加载"}</Text>
+                <Text>图片资源</Text>
+                <Text>{browserStatus}</Text>
               </View>
               <View className="photo-grid">
                 {group.photos.map((photo) => (
-                  <View key={photo.id} className="photo-item-wrapper">
-                    <PhotoItem
-                      photoData={photo}
-                      onPreview={(url) => previewPhotos(url, group.photos)}
-                      size={{
-                        height: "216px",
-                        width: "100%",
-                      }}
-                    />
-                  </View>
+                  <PhotoItem
+                    key={photo.id}
+                    photoData={photo}
+                    onPreview={(url) => previewPhotos(url, group.photos)}
+                    size={{
+                      height: "216px",
+                      width: "100%",
+                    }}
+                  />
                 ))}
               </View>
             </View>
