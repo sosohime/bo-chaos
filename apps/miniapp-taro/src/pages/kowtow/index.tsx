@@ -329,22 +329,22 @@ export default function Kowtow() {
                 资源 {canvasInfo.swiperIndex + 1}/{swiperImages.length}
               </Text>
             </View>
-            <View className="god-bo-resource-grid">
-              <View className="god-bo-resource-item primary">
+            <View className="god-bo-resource-list">
+              <View className="god-bo-resource-row">
                 <Text className="god-bo-resource-label">当前</Text>
                 <Text className="god-bo-resource-value">
                   #{canvasInfo.swiperIndex + 1}
                 </Text>
               </View>
-              <View className="god-bo-resource-item">
+              <View className="god-bo-resource-row">
                 <Text className="god-bo-resource-label">总量</Text>
                 <Text className="god-bo-resource-value">
                   {swiperImages.length}
                 </Text>
               </View>
-              <View className="god-bo-resource-item">
+              <View className="god-bo-resource-row">
                 <Text className="god-bo-resource-label">队列</Text>
-                <Text className="god-bo-resource-value metric">
+                <Text className="god-bo-resource-value">
                   {kowtowCount ? `待同步 ${kowtowCount}` : "已同步"}
                 </Text>
               </View>

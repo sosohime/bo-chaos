@@ -196,27 +196,30 @@
     font-weight: 700;
   }
 
-  .god-bo-resource-grid {
+  .god-bo-resource-list {
     position: relative;
     z-index: 1;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
     margin-top: 12px;
     overflow: hidden;
-    background: #e6edf6;
-    border: 1px solid #e6edf6;
+    background: #ffffff;
+    border: 1px solid #d8e3f0;
     border-radius: 6px;
+    box-sizing: border-box;
   }
 
-  .god-bo-resource-item {
+  .god-bo-resource-row {
+    min-height: 34px;
     min-width: 0;
-    padding: 9px 9px;
-    background: #ffffff;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #eef2f8;
     box-sizing: border-box;
 
-    &.primary {
-      background: #f7fbff;
+    &:last-child {
+      border-bottom: 0;
     }
   }
 
@@ -229,23 +232,20 @@
   }
 
   .god-bo-resource-label {
+    flex: 0 0 auto;
     color: #6b7f9f;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
   }
 
   .god-bo-resource-value {
-    margin-top: 5px;
+    min-width: 0;
     color: #17233d;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
     line-height: 18px;
-
-    &.metric {
-      color: #0052d9;
-      font-size: 12px;
-    }
+    text-align: right;
   }
 
   .god-bo-stage {
