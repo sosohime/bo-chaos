@@ -97,29 +97,29 @@ export default function ApprovalPage() {
             <Text className="approval-console-status">{activeCountLabel}</Text>
           </View>
           <View className="approval-summary">
-            <View className="approval-summary-item primary">
+            <View className="approval-summary-primary">
               <Text className="approval-summary-label">队列状态</Text>
               <Text className="approval-summary-value">{queueStage}</Text>
             </View>
-            <View className="approval-summary-item">
+            <View className="approval-summary-row">
               <Text className="approval-summary-label">当前队列</Text>
-              <Text className="approval-summary-value">{queueLabel}</Text>
+              <Text className="approval-summary-meta">{queueLabel}</Text>
             </View>
-            <View className="approval-summary-item">
+            <View className="approval-summary-row">
               <Text className="approval-summary-label">可见项</Text>
-              <Text className="approval-summary-value">
+              <Text className="approval-summary-meta">
                 {active.items.length}
               </Text>
             </View>
-            <View className="approval-summary-item">
+            <View className="approval-summary-row">
               <Text className="approval-summary-label">审核中</Text>
-              <Text className="approval-summary-value">
+              <Text className="approval-summary-meta">
                 {getSummaryValue(pending)}
               </Text>
             </View>
-            <View className="approval-summary-item">
+            <View className="approval-summary-row">
               <Text className="approval-summary-label">已通过</Text>
-              <Text className="approval-summary-value">
+              <Text className="approval-summary-meta">
                 {getSummaryValue(approved)}
               </Text>
             </View>
