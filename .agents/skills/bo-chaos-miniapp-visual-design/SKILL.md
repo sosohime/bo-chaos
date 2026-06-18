@@ -27,6 +27,17 @@ Use current public AI UI skill patterns as review input, then translate them int
 
 Do not copy third-party visual themes into the app. Borrow their questions and quality gates only.
 
+## Taste Gate
+
+Run this gate before accepting any mini app visual change:
+
+- Reference fit: the screen should feel closer to Tencent Cloud's compact product console than to a startup landing page, template gallery, or AI concept shot.
+- Truthfulness: every number, progress label, badge, and tab count must come from API data, runtime config, shared constants, or visible local queue state.
+- Density discipline: use compact rows, thin dividers, and quiet labels before adding a new card, illustration, texture, or badge.
+- Interaction clarity: each first-screen action should answer "what happens if I tap this" without explanatory marketing copy.
+- Mobile credibility: active/inactive tab states, tap targets, sticky controls, upload controls, list footer states, and lazy images must stay stable while scrolling and loading.
+- Visual restraint: if a choice reads as "AI generated", remove it unless it directly helps a user identify state, take action, or recover from an error.
+
 ## Product Taste Rules
 
 - Design screens as a useful product surface first: resource hierarchy, current state, available action, and recovery path should be visible without marketing copy.
@@ -36,6 +47,7 @@ Do not copy third-party visual themes into the app. Borrow their questions and q
 - Make inactive states intentionally quiet and active states precise. Selection should not resize, jump, glow, or look like a campaign pill.
 - Use real mini app constraints as part of taste: thumb reach, scroll rhythm, tap targets, image load behavior, skeleton/empty/error recovery, and stable bottom navigation matter more than decorative novelty.
 - When a screen feels cheap, remove one visual idea before adding another. The preferred fix is often clearer spacing, stronger hierarchy, or quieter copy.
+- Prefer solid console surfaces and borders over translucent overlays. Transparency is allowed only for canvas animation or true media overlay needs, not as a default way to make controls look "tech".
 
 ## Tencent Cloud Console Fit
 

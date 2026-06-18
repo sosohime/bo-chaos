@@ -26,7 +26,7 @@
   .avatar {
     width: 48px;
     height: 48px;
-    border: 1px solid rgba(0, 82, 217, 0.18);
+    border: 1px solid #c8dcfb;
     border-radius: 8px;
     background: #f3f7fc;
   }
@@ -77,7 +77,7 @@
     .nickname-input {
       color: #17233d;
       font-size: 16px;
-      border-bottom: 1px solid rgba(0, 82, 217, 0.28);
+      border-bottom: 1px solid #9ebff5;
       padding: 4px 0;
     }
 
@@ -713,8 +713,8 @@
       align-items: center;
       justify-content: center;
       color: #0052d9;
-      background: rgba(255, 255, 255, 0.94);
-      border: 1px solid rgba(0, 82, 217, 0.18);
+      background: #ffffff;
+      border: 1px solid #c8dcfb;
       border-radius: 4px;
       font-size: 10px;
       font-weight: 700;
@@ -723,12 +723,12 @@
 
       &.finish {
         color: #006d75;
-        border-color: rgba(0, 109, 117, 0.22);
+        border-color: #b8dde0;
       }
 
       &.error {
         color: #b42318;
-        border-color: rgba(180, 35, 24, 0.22);
+        border-color: #e8b7b0;
       }
     }
 
@@ -741,8 +741,8 @@
       height: 4px;
       overflow: hidden;
       display: flex;
-      background: rgba(255, 255, 255, 0.86);
-      border: 1px solid rgba(0, 82, 217, 0.16);
+      background: #ffffff;
+      border: 1px solid #c8dcfb;
       border-radius: 3px;
       box-sizing: border-box;
     }
@@ -762,9 +762,9 @@
       width: 24px;
       height: 24px;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.9);
+      background: #ffffff;
       color: #0052d9;
-      border: 1px solid rgba(0, 82, 217, 0.16);
+      border: 1px solid #c8dcfb;
       display: flex;
       align-items: center;
       justify-content: center;
