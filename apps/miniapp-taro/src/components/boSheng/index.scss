@@ -1,109 +1,84 @@
 .birthday-container {
-  position: relative;
-  overflow: hidden;
   width: 100%;
-  min-height: 82px;
-  background: #ffffff;
+  min-height: 42px;
+  padding: 8px 10px;
   display: flex;
-  flex-direction: column;
-  padding: 0;
+  align-items: center;
+  gap: 10px;
+  color: #17233d;
+  background: #ffffff;
   border: 1px solid #d8e3f0;
-  border-radius: 6px;
+  border-radius: 5px;
   box-sizing: border-box;
+}
 
-  .bosheng-main {
-    min-height: 46px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    width: 100%;
-    background: #ffffff;
-    border-bottom: 1px solid #e6edf6;
-    box-sizing: border-box;
-  }
+.bosheng-marker {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f8ff;
+  border: 1px solid #d8e8ff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
 
-  .bosheng-title-block {
-    min-width: 0;
-  }
+.bosheng-marker-dot {
+  width: 6px;
+  height: 6px;
+  background: #0052d9;
+  border-radius: 50%;
+}
 
-  .bosheng-kicker,
-  .bosheng-title,
-  .bosheng-meta-label,
-  .bosheng-meta-value {
-    display: block;
-  }
+.bosheng-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
 
-  .bosheng-kicker {
-    color: #4b658a;
-    font-size: 12px;
-    font-weight: 700;
-  }
+.bosheng-kicker,
+.bosheng-title,
+.bosheng-state-label,
+.bosheng-status {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  .bosheng-title {
-    overflow: hidden;
-    margin-top: 4px;
-    color: #17233d;
-    font-size: 14px;
-    font-weight: 700;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.bosheng-kicker {
+  color: #6b7f9f;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+}
 
-  .bosheng-status {
-    flex: 0 0 auto;
-    padding: 4px 7px;
-    color: #0052d9;
-    background: #f3f8ff;
-    border: 1px solid #d8e8ff;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 700;
-  }
+.bosheng-title {
+  margin-top: 2px;
+  color: #17233d;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 17px;
+}
 
-  .bosheng-meta {
-    margin: 0;
-    overflow: hidden;
-    background: #fbfdff;
-    border: 0;
-    border-radius: 0;
-    box-sizing: border-box;
-  }
+.bosheng-state {
+  min-width: 62px;
+  flex: 0 0 auto;
+  text-align: right;
+}
 
-  .bosheng-meta-row {
-    min-height: 32px;
-    min-width: 0;
-    padding: 7px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    border-bottom: 1px solid #eef2f8;
-    box-sizing: border-box;
+.bosheng-state-label {
+  color: #7b8da8;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 13px;
+}
 
-    &:last-child {
-      border-bottom: 0;
-    }
-  }
-
-  .bosheng-meta-label {
-    flex: 0 0 auto;
-    color: #6b7f9f;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 18px;
-  }
-
-  .bosheng-meta-value {
-    min-width: 0;
-    overflow: hidden;
-    color: #17233d;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 18px;
-    text-align: right;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.bosheng-status {
+  margin-top: 2px;
+  color: #0052d9;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
 }

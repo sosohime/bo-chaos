@@ -628,7 +628,7 @@ export default function My() {
           </View>
         </View>
 
-        <BoSheng boxStyle={{ padding: "14px 20px 0 20px" }} />
+        <BoSheng boxStyle={{ padding: "12px 16px 0" }} />
 
         {boDailyCard && (
           <View className="bo-daily-panel">
