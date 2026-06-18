@@ -343,10 +343,10 @@
   min-height: 152px;
   margin: 14px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  gap: 8px;
+  gap: 12px;
   padding: 18px 18px 18px 22px;
   color: #66758f;
   font-size: 13px;
@@ -375,15 +375,76 @@
     border-top: 1px solid #d8e3f0;
     border-bottom: 1px solid #d8e3f0;
   }
+
+  &.error {
+    .state-mark {
+      border-color: #d5dfec;
+
+      &::before,
+      &::after {
+        background: #6b7f9f;
+      }
+    }
+  }
+}
+
+.state-mark {
+  position: relative;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fbfdff;
+  border: 1px solid #c8dcfb;
+  border-radius: 6px;
+  box-sizing: border-box;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    background: #0052d9;
+    border-radius: 2px;
+  }
+
+  &::before {
+    width: 14px;
+    height: 2px;
+  }
+
+  &::after {
+    width: 2px;
+    height: 14px;
+  }
+}
+
+.state-mark-line {
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  bottom: 8px;
+  height: 2px;
+  background: #9ebff5;
+  border-radius: 2px;
+}
+
+.state-body {
+  min-width: 0;
 }
 
 .state-kicker {
+  display: block;
   color: #4b658a;
   font-size: 12px;
   font-weight: 700;
 }
 
 .state-title {
+  display: block;
+  margin-top: 5px;
   color: #17233d;
   font-size: 17px;
   font-weight: 700;
@@ -391,7 +452,9 @@
 }
 
 .state-copy {
+  display: block;
   max-width: 260px;
+  margin-top: 7px;
   color: #66758f;
   font-size: 13px;
   line-height: 20px;
@@ -399,6 +462,7 @@
 
 .state-action {
   display: inline-flex;
+  margin-top: 10px;
   padding: 5px 9px;
   color: #0052d9;
   background: #ffffff;

@@ -1,5 +1,6 @@
 import { View, Text } from "@tarojs/components";
 import PhotoItem from "@/components/photoItem";
+import PhotoListState from "./PhotoListState";
 import { previewPhotos, type PhotoCard } from "./photo-list";
 import "./photo-browser.scss";
 
@@ -29,31 +30,35 @@ export default function WaterfallPhotoGrid({
 
   if (photos.length === 0 && loading) {
     return (
-      <View className="list-state">
-        <Text className="state-kicker">图库状态</Text>
-        <Text className="state-title">正在加载图片</Text>
-        <Text className="state-copy">正在获取当前图库内容</Text>
-      </View>
+      <PhotoListState
+        tone="loading"
+        kicker="图库状态"
+        title="正在加载图片"
+        copy="正在获取当前图库内容"
+      />
     );
   }
 
   if (photos.length === 0 && error) {
     return (
-      <View className="list-state" onClick={onRetry}>
-        <Text className="state-kicker">加载异常</Text>
-        <Text className="state-title">图片加载失败</Text>
-        <Text className="state-action">点击重试</Text>
-      </View>
+      <PhotoListState
+        tone="error"
+        kicker="加载异常"
+        title="图片加载失败"
+        actionText="点击重试"
+        onClick={onRetry}
+      />
     );
   }
 
   if (photos.length === 0) {
     return (
-      <View className="list-state">
-        <Text className="state-kicker">图库内容</Text>
-        <Text className="state-title">没有图片</Text>
-        <Text className="state-copy">当前列表还没有可展示图片</Text>
-      </View>
+      <PhotoListState
+        tone="empty"
+        kicker="图库内容"
+        title="没有图片"
+        copy="当前列表还没有可展示图片"
+      />
     );
   }
 
