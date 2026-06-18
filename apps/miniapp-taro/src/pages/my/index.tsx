@@ -448,6 +448,13 @@ export default function My() {
   const selectedCategoryLabel = isNewCategory
     ? newCategoryName.trim() || "新分类"
     : selectedCategory || "未选择";
+  const accountRunDays = userInfo.joinTime
+    ? Math.max(
+        1,
+        Math.ceil(dayjs().diff(dayjs(userInfo.joinTime), "day", true)),
+      )
+    : 0;
+  const accountRoleLabel = userInfo.photoReviewer ? "审核员" : "成员";
   const uploadStage = isSubmitting
     ? "上传中"
     : uploadSummary?.successCount
@@ -477,52 +484,72 @@ export default function My() {
     >
       <View className="my-content">
         <View className="user-info">
-          <Image
-            className="avatar"
-            mode="aspectFit"
-            src={normalizeMediaUrl(userInfo.avatarUrl) || Criminal}
-            lazyLoad
-            onClick={handleAvatarClick}
-          />
-          <View className="user-name">
-            <Text className="account-kicker">账户资料</Text>
-            {isEditingName ? (
-              <View className="nickname-edit">
-                <Input
-                  className="nickname-input"
-                  value={editingName}
-                  onInput={(e) => setEditingName(e.detail.value)}
-                  placeholder={userInfo.nickname}
-                />
-                <View className="nickname-buttons">
-                  <Text className="confirm" onClick={handleNameChange}>
-                    确定
-                  </Text>
-                  <Text className="cancel" onClick={handleNameCancel}>
-                    取消
-                  </Text>
+          <View className="account-head">
+            <Image
+              className="avatar"
+              mode="aspectFit"
+              src={normalizeMediaUrl(userInfo.avatarUrl) || Criminal}
+              lazyLoad
+              onClick={handleAvatarClick}
+            />
+            <View className="user-name">
+              <Text className="account-kicker">账户资源</Text>
+              {isEditingName ? (
+                <View className="nickname-edit">
+                  <Input
+                    className="nickname-input"
+                    value={editingName}
+                    onInput={(e) => setEditingName(e.detail.value)}
+                    placeholder={userInfo.nickname}
+                  />
+                  <View className="nickname-buttons">
+                    <Text className="confirm" onClick={handleNameChange}>
+                      确定
+                    </Text>
+                    <Text className="cancel" onClick={handleNameCancel}>
+                      取消
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            ) : (
-              <View
-                className="nickname-view"
-                onClick={() => {
-                  setIsEditingName(true);
-                  setEditingName(userInfo.nickname);
-                }}
-              >
-                <Text className="nickname">
-                  {userInfo.nickname || "设置昵称"}
-                </Text>
-                <Image
-                  className="nickname-edit-icon"
-                  mode="aspectFit"
-                  src={Edit}
-                />
-              </View>
-            )}
+              ) : (
+                <View
+                  className="nickname-view"
+                  onClick={() => {
+                    setIsEditingName(true);
+                    setEditingName(userInfo.nickname);
+                  }}
+                >
+                  <Text className="nickname">
+                    {userInfo.nickname || "设置昵称"}
+                  </Text>
+                  <Image
+                    className="nickname-edit-icon"
+                    mode="aspectFit"
+                    src={Edit}
+                  />
+                </View>
+              )}
+            </View>
+            <Text className="account-status">{accountRoleLabel}</Text>
           </View>
-          <Text className="account-status">资料</Text>
+          <View className="account-resource-grid">
+            <View className="account-resource-item primary">
+              <Text className="account-resource-label">运行</Text>
+              <Text className="account-resource-value">
+                {accountRunDays} 天
+              </Text>
+            </View>
+            <View className="account-resource-item">
+              <Text className="account-resource-label">交互</Text>
+              <Text className="account-resource-value">
+                {userInfo.kowtowCount}
+              </Text>
+            </View>
+            <View className="account-resource-item">
+              <Text className="account-resource-label">权限</Text>
+              <Text className="account-resource-value">{accountRoleLabel}</Text>
+            </View>
+          </View>
         </View>
 
         <BoSheng boxStyle={{ padding: "14px 20px 0 20px" }} />
@@ -572,16 +599,7 @@ export default function My() {
             <Text className="record-kicker">活动日志</Text>
             <View className="section-title">活动记录</View>
             <Text>
-              账户已运行{" "}
-              {userInfo.joinTime
-                ? Math.max(
-                    1,
-                    Math.ceil(
-                      dayjs().diff(dayjs(userInfo.joinTime), "day", true),
-                    ),
-                  )
-                : 0}{" "}
-              天，累计交互 {userInfo.kowtowCount} 次
+              账户已运行 {accountRunDays} 天，累计交互 {userInfo.kowtowCount} 次
             </Text>
           </View>
         )}
