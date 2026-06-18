@@ -304,37 +304,55 @@ export default function Kowtow() {
                     {KOWTOW_SYNC_INTERVAL_MS / 1000}s
                   </Text>
                 </View>
-                <View className="kowtow-command-row">
-                  <View className="kowtow-command-copy">
-                    <Text className="kowtow-stat-label">命令</Text>
-                    <Text className="kowtow-command-title">写入互动记录</Text>
-                  </View>
-                  <Text className="kowtow-action-state">
-                    {kowtowCount ? "待同步" : "可写入"}
-                  </Text>
-                </View>
                 <View className="kowtow-action-footer">
                   <View className="kowtow-action-head">
                     <View>
-                      <Text className="kowtow-action-kicker">队列写入</Text>
-                      <Text className="love">
-                        {kowtowCount ? "本地队列等待同步" : "本地队列为空"}
-                      </Text>
+                      <Text className="kowtow-action-kicker">操作面板</Text>
+                      <Text className="kowtow-action-title">写入互动记录</Text>
                     </View>
                     <Text className="kowtow-action-state">
-                      {syncFailed ? "同步异常" : "自动同步"}
+                      {syncFailed
+                        ? "同步异常"
+                        : kowtowCount
+                          ? "待同步"
+                          : "就绪"}
                     </Text>
                   </View>
-                  {kowtowStats.totalCount !== "-" && (
-                    <Text className="kowtow-copy">
-                      {kowtowStats.iKowtowedToday
-                        ? "今日状态已记录，本地队列会自动同步"
-                        : "今日状态未记录，可写入一次本地队列"}
-                    </Text>
-                  )}
-                  {syncFailed && (
+
+                  <View className="kowtow-operation-grid">
+                    <View className="kowtow-operation-cell">
+                      <Text className="kowtow-operation-label">本地队列</Text>
+                      <Text className="kowtow-operation-value">
+                        {kowtowCount ? `${kowtowCount} 条待同步` : "空"}
+                      </Text>
+                    </View>
+                    <View className="kowtow-operation-cell">
+                      <Text className="kowtow-operation-label">同步方式</Text>
+                      <Text className="kowtow-operation-value">
+                        {syncFailed
+                          ? "需重试"
+                          : `${KOWTOW_SYNC_INTERVAL_MS / 1000}s 自动`}
+                      </Text>
+                    </View>
+                    <View className="kowtow-operation-cell wide">
+                      <Text className="kowtow-operation-label">今日状态</Text>
+                      <Text className="kowtow-operation-value">
+                        {kowtowStats.totalCount === "-"
+                          ? "读取中"
+                          : kowtowStats.iKowtowedToday
+                            ? "已记录"
+                            : "未记录"}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {syncFailed ? (
                     <Text className="sync-warning" onClick={syncKowtowStats}>
-                      加载异常，点击重试
+                      同步异常，点击重试
+                    </Text>
+                  ) : (
+                    <Text className="kowtow-copy">
+                      写入后先进入本地队列，随后自动同步到今日状态。
                     </Text>
                   )}
                   <Button

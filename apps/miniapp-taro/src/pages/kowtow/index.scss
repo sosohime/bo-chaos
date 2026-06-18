@@ -115,38 +115,6 @@
     }
   }
 
-  .kowtow-command-row {
-    min-height: 44px;
-    min-width: 0;
-    padding: 9px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    background: #ffffff;
-    border-top: 1px solid #eef2f8;
-    border-bottom: 1px solid #e6edf6;
-    box-sizing: border-box;
-  }
-
-  .kowtow-command-copy {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .kowtow-command-title {
-    display: block;
-    overflow: hidden;
-    color: #17233d;
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 20px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .kowtow-stat-label,
   .kowtow-stat-meta {
     display: block;
@@ -305,9 +273,9 @@
 
   .kowtow-action-footer {
     position: relative;
-    padding: 10px 12px 12px;
+    padding: 12px;
     background: #ffffff;
-    border-top: 0;
+    border-top: 1px solid #e6edf6;
     box-sizing: border-box;
   }
 
@@ -321,7 +289,7 @@
   }
 
   .kowtow-action-kicker,
-  .love {
+  .kowtow-action-title {
     display: block;
   }
 
@@ -331,15 +299,18 @@
     font-weight: 700;
   }
 
-  .love {
+  .kowtow-action-title {
     margin-top: 5px;
     color: #17233d;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
+    line-height: 20px;
   }
 
   .kowtow-action-state {
     flex: 0 0 auto;
+    max-width: 76px;
+    overflow: hidden;
     padding: 5px 8px;
     color: #0052d9;
     background: #f3f8ff;
@@ -347,6 +318,68 @@
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
+    line-height: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .kowtow-operation-grid {
+    margin-top: 11px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: hidden;
+    background: #d8e3f0;
+    border: 1px solid #d8e3f0;
+    border-radius: 5px;
+    gap: 1px;
+    box-sizing: border-box;
+  }
+
+  .kowtow-operation-cell {
+    min-width: 0;
+    min-height: 50px;
+    padding: 8px 10px;
+    background: #fbfdff;
+    box-sizing: border-box;
+
+    &.wide {
+      grid-column: span 2;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #ffffff;
+    }
+  }
+
+  .kowtow-operation-label,
+  .kowtow-operation-value {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .kowtow-operation-label {
+    color: #6b7f9f;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+  }
+
+  .kowtow-operation-value {
+    margin-top: 4px;
+    color: #17233d;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 18px;
+  }
+
+  .kowtow-operation-cell.wide .kowtow-operation-value {
+    margin-top: 0;
+    color: #0052d9;
+    text-align: right;
   }
 
   .submit-kowtow {
@@ -371,13 +404,14 @@
 
   .sync-warning {
     display: block;
-    margin-top: 9px;
+    margin-top: 10px;
     padding: 8px 10px;
     color: #b42318;
-    background: #ffffff;
+    background: #fff7f6;
     border: 1px solid #e8b7b0;
     border-radius: 4px;
     font-size: 13px;
+    font-weight: 600;
   }
 
   .kowtow-review-panel {
