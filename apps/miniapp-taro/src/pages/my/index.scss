@@ -722,11 +722,11 @@
     position: relative;
     width: 100%;
     aspect-ratio: 1;
-    padding: 3px;
+    padding: 2px;
     border: 1px solid #d8e3f0;
-    border-radius: 6px;
+    border-radius: 5px;
     overflow: hidden;
-    background: #ffffff;
+    background: #f7fbff;
     box-sizing: border-box;
 
     .preview-image {
@@ -735,23 +735,23 @@
       overflow: hidden;
       object-fit: cover;
       background: #f3f7fc;
-      border-radius: 4px;
+      border-radius: 3px;
     }
 
     .upload-state-chip {
       position: absolute;
-      top: 5px;
-      left: 5px;
+      top: 4px;
+      left: 4px;
       z-index: 2;
       min-width: 38px;
-      padding: 3px 6px;
+      padding: 2px 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #0052d9;
       background: #ffffff;
       border: 1px solid #c8dcfb;
-      border-radius: 4px;
+      border-radius: 3px;
       font-size: 10px;
       font-weight: 700;
       line-height: 14px;
@@ -770,15 +770,15 @@
 
     .upload-progress-rail {
       position: absolute;
-      left: 6px;
-      right: 6px;
-      bottom: 6px;
+      left: 4px;
+      right: 4px;
+      bottom: 4px;
       z-index: 2;
-      height: 4px;
+      height: 3px;
       overflow: hidden;
       display: flex;
-      background: #ffffff;
-      border: 1px solid #c8dcfb;
+      background: #d8e3f0;
+      border: 0;
       border-radius: 3px;
       box-sizing: border-box;
     }
@@ -792,14 +792,14 @@
 
     .remove-btn {
       position: absolute;
-      top: 4px;
-      right: 4px;
+      top: 3px;
+      right: 3px;
       z-index: 3;
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 3px;
       background: #ffffff;
-      border: 1px solid #d7e2f0;
+      border: 1px solid #cfdbea;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -808,7 +808,7 @@
 
     .remove-btn-line {
       position: absolute;
-      width: 10px;
+      width: 9px;
       height: 2px;
       background: #5d6f8f;
       border-radius: 2px;
