@@ -22,6 +22,8 @@
 - Reworked the shared disabled-state shell into a connected runtime-configuration panel.
 - Removed nested summary-card chrome while preserving title/message/status rows and runtime copy.
 - Preserved all consuming pages and UGC kill switch behavior.
+- Reworked the shared disabled state into the current status-rail resource panel pattern.
+- Preserved runtime `ugc.disabledTitle` and `ugc.disabledMessage` while moving entry/request/recovery rows into compact system-state rows.
 
 ## Iteration Log
 
@@ -42,6 +44,7 @@
 ## Files Touched
 
 - `.agents/tasks/active/2026-06-19-miniapp-ugc-disabled-console.md`
+- `apps/miniapp-taro/src/features/photos/UgcDisabledState.tsx`
 - `apps/miniapp-taro/src/features/photos/ugc-disabled-state.scss`
 
 ## Verification Evidence
@@ -50,6 +53,9 @@
 - `git diff --check` passed.
 - Focused anti-slop scan found only unrelated backend `@MaxLength(48)` validation.
 - `pnpm agent:lint` passed with expected `miniapp-doc-sync` warning; `apps/miniapp-taro/DESIGN.md` already covers hidden UGC states and compact console surfaces, so no conventions doc change was needed.
+- Latest rerun: `BOFANS_API_BASE_URL=https://yuanbo.online/rpg/bofans pnpm -C apps/miniapp-taro build:weapp` passed with existing Browserslist stale-data and punycode warnings.
+- Latest rerun: `git diff --check` passed.
+- Latest rerun: focused anti-slop scan passed; the only match was the unrelated backend validator `apps/backend-nest/src/bofans/users/users.controller.ts:36: @MaxLength(48)`.
 
 ## Handoff / Archive Notes
 
