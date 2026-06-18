@@ -752,8 +752,8 @@ export default function My() {
             <View className="upload-form-panel">
               <View className="upload-form-head">
                 <View>
-                  <Text className="upload-form-kicker">任务配置</Text>
-                  <Text className="upload-form-title">上传任务配置</Text>
+                  <Text className="upload-form-kicker">提交设置</Text>
+                  <Text className="upload-form-title">上传配置</Text>
                 </View>
                 <Text className="upload-form-state">
                   {selectedCategoryLabel}

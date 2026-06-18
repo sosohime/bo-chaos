@@ -22,7 +22,7 @@ const defaultMiniappConfig: BofansMiniappRuntimeConfig = {
   pages: {
     kowtowTitle: '磕袁',
     reviewKowtowTitle: 'BoFans资料区状态',
-    uploadTitle: '珍贵资料上传',
+    uploadTitle: '资料上传',
     reviewUploadTitle: '图片上传',
     photoTitles: {
       history: '历史类图片',
