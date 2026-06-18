@@ -79,54 +79,56 @@ export default function CategoryPhotoSections({
           <Text className="photo-browser-sync">{browserStatus}</Text>
         </View>
       </View>
-      {groups.map((group) => (
-        <View
-          key={group.categoryName}
-          className={`category-section ${
-            activeCategory === group.categoryName ? "active" : ""
-          }`}
-        >
-          <View
-            className={`category-header ${
-              activeCategory === group.categoryName ? "active" : ""
-            }`}
-            onClick={() => onCategoryClick(group.categoryName)}
-          >
-            <View className="category-title">
-              <Text className="category-index">分组</Text>
-              <Text className="category-name">{group.categoryName}</Text>
-            </View>
-            <View className="category-state">
-              <Text>
-                {activeCategory === group.categoryName ? "收起" : "展开"}
-              </Text>
-              <Text className="arrow"></Text>
-            </View>
-          </View>
+      {groups.map((group) => {
+        const isActive = activeCategory === group.categoryName;
+        const loadedCount = group.photos.length;
 
-          {activeCategory === group.categoryName && (
-            <View className="category-body">
-              <View className="category-body-head">
-                <Text>图片资源</Text>
-                <Text>{browserStatus}</Text>
+        return (
+          <View
+            key={group.categoryName}
+            className={`category-section ${isActive ? "active" : ""}`}
+          >
+            <View
+              className={`category-header ${isActive ? "active" : ""}`}
+              onClick={() => onCategoryClick(group.categoryName)}
+            >
+              <View className="category-title">
+                <Text className="category-index">资源分组</Text>
+                <Text className="category-name">{group.categoryName}</Text>
+                <Text className="category-count">
+                  当前载入 {loadedCount} 项
+                </Text>
               </View>
-              <View className="photo-grid">
-                {group.photos.map((photo) => (
-                  <PhotoItem
-                    key={photo.id}
-                    photoData={photo}
-                    onPreview={(url) => previewPhotos(url, group.photos)}
-                    size={{
-                      height: "216px",
-                      width: "100%",
-                    }}
-                  />
-                ))}
+              <View className="category-state">
+                <Text>{isActive ? "收起" : "展开"}</Text>
+                <Text className="arrow"></Text>
               </View>
             </View>
-          )}
-        </View>
-      ))}
+
+            {isActive && (
+              <View className="category-body">
+                <View className="category-body-head">
+                  <Text>当前分组</Text>
+                  <Text>{loadedCount} 项</Text>
+                </View>
+                <View className="photo-grid">
+                  {group.photos.map((photo) => (
+                    <PhotoItem
+                      key={photo.id}
+                      photoData={photo}
+                      onPreview={(url) => previewPhotos(url, group.photos)}
+                      size={{
+                        height: "216px",
+                        width: "100%",
+                      }}
+                    />
+                  ))}
+                </View>
+              </View>
+            )}
+          </View>
+        );
+      })}
       <View className="list-footer">
         <Text className="list-footer-label">{footerStatus}</Text>
       </View>
