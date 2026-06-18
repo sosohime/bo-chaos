@@ -169,22 +169,25 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       </View>
 
       <View className="photo-actions">
-        <View className="photo-action-primary" onClick={handleDownload}>
-          <Text>保存图片</Text>
-        </View>
-        {systemConfig?.inReview && (
-          <View className="photo-vote-group">
-            <View
-              className={`photo-vote-action ${
-                data.hasVoted ? "active" : ""
-              } ${actionLoading ? "disabled" : ""}`}
-              onClick={onVote}
-            >
-              <Text>{data.hasVoted ? "已赞" : "赞"}</Text>
-            </View>
-            <Text className="photo-vote-value">{data.votesCount}</Text>
+        <Text className="photo-command-kicker">命令</Text>
+        <View className="photo-command-group">
+          <View className="photo-action-primary" onClick={handleDownload}>
+            <Text>保存</Text>
           </View>
-        )}
+          {systemConfig?.inReview && (
+            <View className="photo-vote-group">
+              <View
+                className={`photo-vote-action ${
+                  data.hasVoted ? "active" : ""
+                } ${actionLoading ? "disabled" : ""}`}
+                onClick={onVote}
+              >
+                <Text>{data.hasVoted ? "已赞" : "赞"}</Text>
+              </View>
+              <Text className="photo-vote-value">{data.votesCount}</Text>
+            </View>
+          )}
+        </View>
       </View>
     </View>
   );
