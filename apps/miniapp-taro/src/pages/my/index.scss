@@ -826,14 +826,14 @@
 
     .remove-btn {
       position: absolute;
-      top: 3px;
-      right: 3px;
+      top: 4px;
+      right: 4px;
       z-index: 3;
-      width: 22px;
-      height: 22px;
+      width: 19px;
+      height: 19px;
       border-radius: 3px;
-      background: #ffffff;
-      border: 1px solid #cfdbea;
+      background: #fbfdff;
+      border: 1px solid #d8e3f0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -842,10 +842,10 @@
 
     .remove-btn-line {
       position: absolute;
-      width: 9px;
-      height: 2px;
-      background: #5d6f8f;
-      border-radius: 2px;
+      width: 8px;
+      height: 1px;
+      background: #6b7f9f;
+      border-radius: 1px;
       transform: rotate(45deg);
 
       &.rotate {
