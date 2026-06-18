@@ -170,8 +170,7 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
 
       <View className="photo-actions">
         <View className="photo-action-primary" onClick={handleDownload}>
-          <Text className="photo-action-label">操作</Text>
-          <Text>保存</Text>
+          <Text>保存图片</Text>
         </View>
         {systemConfig?.inReview && (
           <View className="photo-vote-group">
