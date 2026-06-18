@@ -131,19 +131,19 @@ export default function Kowtow() {
       }
       setSyncFailed(false);
     } catch (error) {
-      console.error("同步磕头状态失败:", error);
+      console.error("同步互动状态失败:", error);
       setSyncFailed(true);
     }
   };
 
-  // 每隔两秒调用一次，查询最新磕头状态
+  // 每隔两秒查询一次最新互动状态。
   useEffect(() => {
     syncKowtowStats();
     const timer = setInterval(syncKowtowStats, 2000);
     return () => clearInterval(timer);
   }, []);
 
-  // 轮播图变化 修改点赞canvas位置
+  // 轮播图变化时同步 Canvas 反馈位置。
   const changeSwiper = (e: number) => {
     const info = swiperImages[e];
     const { canvas } = info;
@@ -247,11 +247,11 @@ export default function Kowtow() {
           <BoSheng />
           <View className="kowtow-console-head">
             <View>
-              <Text className="kowtow-eyebrow">交互服务</Text>
-              <Text className="kowtow-title">互动状态</Text>
+              <Text className="kowtow-eyebrow">互动概览</Text>
+              <Text className="kowtow-title">今日状态</Text>
             </View>
             <Text className="kowtow-status">
-              {syncFailed ? "需同步" : "运行中"}
+              {syncFailed ? "待重试" : "正常"}
             </Text>
           </View>
           <View className="kowtow-console-body">
@@ -283,8 +283,8 @@ export default function Kowtow() {
           <View className="god-bo">
             <View className="god-bo-head">
               <View>
-                <Text className="god-bo-kicker">节点预览</Text>
-                <Text className="god-bo-title">博哥资源</Text>
+                <Text className="god-bo-kicker">图片预览</Text>
+                <Text className="god-bo-title">当前图片</Text>
               </View>
               <Text className="god-bo-index">
                 {canvasInfo.swiperIndex + 1}/{swiperImages.length}
@@ -308,8 +308,8 @@ export default function Kowtow() {
           <View className="kowtow-action-panel">
             <View className="kowtow-action-head">
               <View>
-                <Text className="kowtow-action-kicker">本地操作</Text>
-                <Text className="love">本地提交</Text>
+                <Text className="kowtow-action-kicker">记录操作</Text>
+                <Text className="love">提交记录</Text>
               </View>
               <Text className="kowtow-action-state">
                 {kowtowCount ? "待同步" : "可提交"}
