@@ -3,13 +3,13 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 68px;
-  background: rgba(255, 255, 255, 0.99);
+  height: calc(64px + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.98);
   display: flex;
   z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom); // 适配 iPhone 底部
-  border-top: 1px solid #d8e3f0;
-  box-shadow: 0 -6px 14px rgba(18, 50, 87, 0.045);
+  padding: 5px 8px calc(5px + env(safe-area-inset-bottom));
+  border-top: 1px solid #dce5f1;
+  box-shadow: 0 -8px 18px rgba(18, 50, 87, 0.055);
   box-sizing: border-box;
 }
 
@@ -31,21 +31,22 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  color: #66758f;
+  color: #6c7b92;
   box-sizing: border-box;
 }
 
 .tab-bar-control {
   position: relative;
-  width: 92%;
-  height: 56px;
-  padding: 7px 0 5px;
+  width: 100%;
+  height: 54px;
+  padding: 4px 0 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   background: transparent;
+  border-radius: 6px;
   box-sizing: border-box;
 }
 
@@ -53,7 +54,7 @@
   position: absolute;
   top: 0;
   left: 50%;
-  width: 22px;
+  width: 18px;
   height: 2px;
   background: transparent;
   border-radius: 2px;
@@ -63,12 +64,13 @@
 
 .tab-bar-icon-shell {
   width: 30px;
-  height: 28px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  border-bottom: 1px solid transparent;
+  background: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 6px;
   box-sizing: border-box;
 }
 
@@ -76,10 +78,7 @@
   color: #0052d9;
 
   .tab-bar-control {
-    width: 92%;
-    height: 56px;
-    padding: 7px 0 5px;
-    background: transparent;
+    background: #f5f9ff;
   }
 
   .tab-bar-indicator {
@@ -87,8 +86,8 @@
   }
 
   .tab-bar-icon-shell {
-    background: transparent;
-    border-color: #0052d9;
+    background: #ffffff;
+    border-color: #bad3f8;
   }
 
   .tab-bar-glyph-main,
@@ -102,16 +101,17 @@
   .tab-bar-glyph-kowtow .tab-bar-glyph-sub,
   .tab-bar-glyph-kowtow .tab-bar-glyph-dot,
   .tab-bar-glyph-travel .tab-bar-glyph-sub,
-  .tab-bar-glyph-travel .tab-bar-glyph-dot {
+  .tab-bar-glyph-travel .tab-bar-glyph-dot,
+  .tab-bar-glyph-history .tab-bar-glyph-dot {
     background: #0052d9;
   }
 }
 
 .tab-bar-label {
-  font-size: 10px;
-  line-height: 13px;
+  font-size: 11px;
+  line-height: 14px;
   font-weight: 600;
-  color: #6b7f9f;
+  color: #687891;
   white-space: nowrap;
 }
 
@@ -122,9 +122,9 @@
 
 .tab-bar-glyph {
   position: relative;
-  width: 24px;
-  height: 24px;
-  color: #6b7f9f;
+  width: 22px;
+  height: 22px;
+  color: #687891;
   box-sizing: border-box;
 }
 
@@ -132,35 +132,35 @@
 .tab-bar-glyph-sub,
 .tab-bar-glyph-dot {
   position: absolute;
-  border-color: #6b7f9f;
-  background: #6b7f9f;
+  border-color: #687891;
+  background: #687891;
   box-sizing: border-box;
 }
 
 .tab-bar-glyph-retire {
   .tab-bar-glyph-main {
-    left: 4px;
+    left: 3px;
     top: 3px;
     width: 16px;
     height: 16px;
     background: transparent;
-    border: 2px solid #6b7f9f;
+    border: 1px solid #687891;
     border-radius: 50%;
   }
 
   .tab-bar-glyph-sub {
-    left: 11px;
+    left: 10px;
     top: 7px;
     width: 2px;
-    height: 7px;
+    height: 6px;
     border: 0;
     border-radius: 2px;
   }
 
   .tab-bar-glyph-dot {
-    left: 12px;
+    left: 11px;
     top: 12px;
-    width: 6px;
+    width: 5px;
     height: 2px;
     border: 0;
     border-radius: 2px;
@@ -169,18 +169,18 @@
 
 .tab-bar-glyph-kowtow {
   .tab-bar-glyph-main {
-    left: 4px;
+    left: 3px;
     top: 5px;
     width: 16px;
-    height: 12px;
+    height: 11px;
     background: transparent;
-    border: 2px solid #6b7f9f;
-    border-radius: 4px;
+    border: 1px solid #687891;
+    border-radius: 3px;
   }
 
   .tab-bar-glyph-sub {
-    left: 8px;
-    top: 9px;
+    left: 7px;
+    top: 8px;
     width: 8px;
     height: 2px;
     border: 0;
@@ -188,8 +188,8 @@
   }
 
   .tab-bar-glyph-dot {
-    left: 10px;
-    top: 18px;
+    left: 9px;
+    top: 17px;
     width: 4px;
     height: 2px;
     border: 0;
@@ -199,61 +199,59 @@
 
 .tab-bar-glyph-history {
   .tab-bar-glyph-main {
-    left: 5px;
-    top: 5px;
+    left: 4px;
+    top: 4px;
     width: 14px;
-    height: 4px;
+    height: 12px;
     background: transparent;
-    border: 2px solid #6b7f9f;
-    border-radius: 3px;
+    border: 1px solid #687891;
+    border-radius: 2px;
   }
 
   .tab-bar-glyph-sub {
-    left: 5px;
-    top: 11px;
-    width: 14px;
-    height: 4px;
-    background: transparent;
-    border: 2px solid #6b7f9f;
-    border-radius: 3px;
+    left: 7px;
+    top: 8px;
+    width: 8px;
+    height: 1px;
+    border: 0;
+    border-radius: 1px;
   }
 
   .tab-bar-glyph-dot {
-    left: 5px;
-    top: 17px;
-    width: 14px;
-    height: 4px;
-    background: transparent;
-    border: 2px solid #6b7f9f;
-    border-radius: 3px;
+    left: 7px;
+    top: 12px;
+    width: 6px;
+    height: 1px;
+    border: 0;
+    border-radius: 1px;
   }
 }
 
 .tab-bar-glyph-travel {
   .tab-bar-glyph-main {
-    left: 4px;
+    left: 3px;
     top: 6px;
     width: 16px;
-    height: 10px;
+    height: 9px;
     background: transparent;
-    border: 2px solid #6b7f9f;
-    border-radius: 8px;
+    border: 1px solid #687891;
+    border-radius: 7px;
   }
 
   .tab-bar-glyph-sub {
-    left: 11px;
-    top: 3px;
+    left: 10px;
+    top: 4px;
     width: 2px;
-    height: 18px;
+    height: 14px;
     border: 0;
     border-radius: 2px;
   }
 
   .tab-bar-glyph-dot {
-    left: 4px;
-    top: 11px;
+    left: 3px;
+    top: 10px;
     width: 16px;
-    height: 2px;
+    height: 1px;
     border: 0;
     border-radius: 2px;
   }
@@ -261,23 +259,23 @@
 
 .tab-bar-glyph-my {
   .tab-bar-glyph-main {
-    left: 8px;
+    left: 7px;
     top: 4px;
     width: 8px;
     height: 8px;
     background: transparent;
-    border: 2px solid #6b7f9f;
+    border: 1px solid #687891;
     border-radius: 50%;
   }
 
   .tab-bar-glyph-sub {
     left: 4px;
     top: 15px;
-    width: 16px;
-    height: 6px;
+    width: 14px;
+    height: 5px;
     background: transparent;
-    border: 2px solid #6b7f9f;
-    border-radius: 8px 8px 3px 3px;
+    border: 1px solid #687891;
+    border-radius: 7px 7px 2px 2px;
   }
 
   .tab-bar-glyph-dot {
