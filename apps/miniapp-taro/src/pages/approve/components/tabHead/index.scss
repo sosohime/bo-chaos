@@ -49,6 +49,7 @@
   .head-icon {
     color: #ffffff;
     background: #0052d9;
+    border-color: #0052d9;
   }
 }
 
@@ -59,6 +60,7 @@
 }
 
 .head-icon {
+  position: relative;
   width: 20px;
   height: 20px;
   display: flex;
@@ -68,8 +70,45 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 4px;
-  font-size: 10px;
-  font-weight: 700;
+  box-sizing: border-box;
+}
+
+.head-icon-mark {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  box-sizing: border-box;
+}
+
+.head-icon-pending .head-icon-mark {
+  border: 1px solid currentColor;
+  border-radius: 2px;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    height: 1px;
+    background: currentColor;
+  }
+
+  &::before {
+    top: 3px;
+  }
+
+  &::after {
+    top: 6px;
+  }
+}
+
+.head-icon-approved .head-icon-mark {
+  width: 11px;
+  height: 7px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg) translate(1px, -1px);
 }
 
 .tab-title {

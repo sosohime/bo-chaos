@@ -133,7 +133,6 @@ export default function ApprovalPage() {
                 {active.items.map((photo) => (
                   <View key={photo.id} className="approval-card">
                     <View className="approval-image-wrap">
-                      <Text className="approval-image-tag">图片</Text>
                       <Image
                         src={normalizeMediaUrl(photo.filename)}
                         mode="aspectFill"
@@ -158,7 +157,7 @@ export default function ApprovalPage() {
                       </Text>
                     </View>
                     <View className="approval-card-foot">
-                      <Text className="approval-status">
+                      <Text className={`approval-status ${activeTab}`}>
                         {activeTab === "pending" ? "审核中" : "已通过"}
                       </Text>
                       <Text className="approval-card-id">#{photo.id}</Text>
