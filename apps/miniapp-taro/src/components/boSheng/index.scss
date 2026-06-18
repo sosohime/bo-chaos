@@ -2,13 +2,12 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  min-height: 44px;
+  min-height: 86px;
   background: #ffffff;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 9px 11px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 11px 11px 10px 14px;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
   box-sizing: border-box;
@@ -23,8 +22,18 @@
     border-radius: 0 3px 3px 0;
   }
 
+  .bosheng-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+  }
+
   .bosheng-kicker,
-  .bosheng-title {
+  .bosheng-title,
+  .bosheng-meta-label,
+  .bosheng-meta-value {
     display: block;
   }
 
@@ -51,5 +60,38 @@
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
+  }
+
+  .bosheng-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    width: 100%;
+    background: #e6edf6;
+    border: 1px solid #e6edf6;
+    border-radius: 6px;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .bosheng-meta-item {
+    min-width: 0;
+    padding: 6px 7px;
+    background: #fbfdff;
+    box-sizing: border-box;
+  }
+
+  .bosheng-meta-label {
+    color: #6b7f9f;
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .bosheng-meta-value {
+    margin-top: 3px;
+    color: #17233d;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
   }
 }
