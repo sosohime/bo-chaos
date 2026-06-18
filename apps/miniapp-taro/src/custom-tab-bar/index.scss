@@ -3,13 +3,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(64px + env(safe-area-inset-bottom));
+  height: calc(62px + env(safe-area-inset-bottom));
   background: rgba(255, 255, 255, 0.98);
   display: flex;
   z-index: 100;
-  padding: 5px 8px calc(5px + env(safe-area-inset-bottom));
+  padding: 4px 8px calc(5px + env(safe-area-inset-bottom));
   border-top: 1px solid #dce5f1;
-  box-shadow: 0 -8px 18px rgba(18, 50, 87, 0.055);
   box-sizing: border-box;
 }
 
@@ -38,15 +37,15 @@
 .tab-bar-control {
   position: relative;
   width: 100%;
-  height: 54px;
-  padding: 4px 0 3px;
+  height: 53px;
+  padding: 5px 0 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   background: transparent;
-  border-radius: 6px;
+  border-radius: 5px;
   box-sizing: border-box;
 }
 
@@ -63,46 +62,27 @@
 }
 
 .tab-bar-icon-shell {
-  width: 30px;
-  height: 30px;
+  width: 29px;
+  height: 29px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 6px;
   box-sizing: border-box;
+}
+
+.tab-bar-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .tab-bar-item.active {
   color: #0052d9;
 
   .tab-bar-control {
-    background: #f5f9ff;
+    background: #f7faff;
   }
 
   .tab-bar-indicator {
-    background: #0052d9;
-  }
-
-  .tab-bar-icon-shell {
-    background: #ffffff;
-    border-color: #bad3f8;
-  }
-
-  .tab-bar-glyph-main,
-  .tab-bar-glyph-sub,
-  .tab-bar-glyph-dot {
-    border-color: #0052d9;
-  }
-
-  .tab-bar-glyph-retire .tab-bar-glyph-sub,
-  .tab-bar-glyph-retire .tab-bar-glyph-dot,
-  .tab-bar-glyph-kowtow .tab-bar-glyph-sub,
-  .tab-bar-glyph-kowtow .tab-bar-glyph-dot,
-  .tab-bar-glyph-travel .tab-bar-glyph-sub,
-  .tab-bar-glyph-travel .tab-bar-glyph-dot,
-  .tab-bar-glyph-history .tab-bar-glyph-dot {
     background: #0052d9;
   }
 }
@@ -118,167 +98,4 @@
 .tab-bar-item.active .tab-bar-label {
   color: #0052d9;
   font-weight: 700;
-}
-
-.tab-bar-glyph {
-  position: relative;
-  width: 22px;
-  height: 22px;
-  color: #687891;
-  box-sizing: border-box;
-}
-
-.tab-bar-glyph-main,
-.tab-bar-glyph-sub,
-.tab-bar-glyph-dot {
-  position: absolute;
-  border-color: #687891;
-  background: #687891;
-  box-sizing: border-box;
-}
-
-.tab-bar-glyph-retire {
-  .tab-bar-glyph-main {
-    left: 3px;
-    top: 3px;
-    width: 16px;
-    height: 16px;
-    background: transparent;
-    border: 1px solid #687891;
-    border-radius: 50%;
-  }
-
-  .tab-bar-glyph-sub {
-    left: 10px;
-    top: 7px;
-    width: 2px;
-    height: 6px;
-    border: 0;
-    border-radius: 2px;
-  }
-
-  .tab-bar-glyph-dot {
-    left: 11px;
-    top: 12px;
-    width: 5px;
-    height: 2px;
-    border: 0;
-    border-radius: 2px;
-  }
-}
-
-.tab-bar-glyph-kowtow {
-  .tab-bar-glyph-main {
-    left: 3px;
-    top: 5px;
-    width: 16px;
-    height: 11px;
-    background: transparent;
-    border: 1px solid #687891;
-    border-radius: 3px;
-  }
-
-  .tab-bar-glyph-sub {
-    left: 7px;
-    top: 8px;
-    width: 8px;
-    height: 2px;
-    border: 0;
-    border-radius: 2px;
-  }
-
-  .tab-bar-glyph-dot {
-    left: 9px;
-    top: 17px;
-    width: 4px;
-    height: 2px;
-    border: 0;
-    border-radius: 2px;
-  }
-}
-
-.tab-bar-glyph-history {
-  .tab-bar-glyph-main {
-    left: 4px;
-    top: 4px;
-    width: 14px;
-    height: 12px;
-    background: transparent;
-    border: 1px solid #687891;
-    border-radius: 2px;
-  }
-
-  .tab-bar-glyph-sub {
-    left: 7px;
-    top: 8px;
-    width: 8px;
-    height: 1px;
-    border: 0;
-    border-radius: 1px;
-  }
-
-  .tab-bar-glyph-dot {
-    left: 7px;
-    top: 12px;
-    width: 6px;
-    height: 1px;
-    border: 0;
-    border-radius: 1px;
-  }
-}
-
-.tab-bar-glyph-travel {
-  .tab-bar-glyph-main {
-    left: 3px;
-    top: 6px;
-    width: 16px;
-    height: 9px;
-    background: transparent;
-    border: 1px solid #687891;
-    border-radius: 7px;
-  }
-
-  .tab-bar-glyph-sub {
-    left: 10px;
-    top: 4px;
-    width: 2px;
-    height: 14px;
-    border: 0;
-    border-radius: 2px;
-  }
-
-  .tab-bar-glyph-dot {
-    left: 3px;
-    top: 10px;
-    width: 16px;
-    height: 1px;
-    border: 0;
-    border-radius: 2px;
-  }
-}
-
-.tab-bar-glyph-my {
-  .tab-bar-glyph-main {
-    left: 7px;
-    top: 4px;
-    width: 8px;
-    height: 8px;
-    background: transparent;
-    border: 1px solid #687891;
-    border-radius: 50%;
-  }
-
-  .tab-bar-glyph-sub {
-    left: 4px;
-    top: 15px;
-    width: 14px;
-    height: 5px;
-    background: transparent;
-    border: 1px solid #687891;
-    border-radius: 7px 7px 2px 2px;
-  }
-
-  .tab-bar-glyph-dot {
-    display: none;
-  }
 }

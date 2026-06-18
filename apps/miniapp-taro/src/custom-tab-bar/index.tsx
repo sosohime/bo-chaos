@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import Taro from "@tarojs/taro";
-import { CoverView } from "@tarojs/components";
+import { CoverImage, CoverView } from "@tarojs/components";
 import { AppContext } from "../lib/context";
 import type { MiniappTabKey } from "../lib/context";
 import { getMiniappConfig, isUgcEnabled } from "@/lib/runtime-config";
@@ -12,26 +12,36 @@ const list = [
     key: "retire" as const,
     pagePath: "/pages/retire/index",
     text: "退休",
+    iconPath: "/images/tab-bar/retire.png",
+    activeIconPath: "/images/tab-bar/retire-active.png",
   },
   {
     key: "kowtow" as const,
     pagePath: "/pages/kowtow/index",
     text: "磕袁",
+    iconPath: "/images/tab-bar/kowtow.png",
+    activeIconPath: "/images/tab-bar/kowtow-active.png",
   },
   {
     key: "history" as const,
     pagePath: "/pages/history/index",
     text: "博史",
+    iconPath: "/images/tab-bar/history.png",
+    activeIconPath: "/images/tab-bar/history-active.png",
   },
   {
     key: "travel" as const,
     pagePath: "/pages/travel/index",
     text: "旅行",
+    iconPath: "/images/tab-bar/travel.png",
+    activeIconPath: "/images/tab-bar/travel-active.png",
   },
   {
     key: "my" as const,
     pagePath: "/pages/my/index",
     text: "我的",
+    iconPath: "/images/tab-bar/my.png",
+    activeIconPath: "/images/tab-bar/my-active.png",
   },
 ];
 
@@ -76,13 +86,10 @@ export default function TabBar() {
             <CoverView className="tab-bar-control">
               <CoverView className="tab-bar-indicator"></CoverView>
               <CoverView className="tab-bar-icon-shell">
-                <CoverView
-                  className={`tab-bar-glyph tab-bar-glyph-${item.key}`}
-                >
-                  <CoverView className="tab-bar-glyph-main"></CoverView>
-                  <CoverView className="tab-bar-glyph-sub"></CoverView>
-                  <CoverView className="tab-bar-glyph-dot"></CoverView>
-                </CoverView>
+                <CoverImage
+                  className="tab-bar-icon"
+                  src={active ? item.activeIconPath : item.iconPath}
+                />
               </CoverView>
               <CoverView className="tab-bar-label">
                 {miniapp.tabs[item.key].text || item.text}
