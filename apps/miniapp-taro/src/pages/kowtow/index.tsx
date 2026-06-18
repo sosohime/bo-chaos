@@ -307,7 +307,7 @@ export default function Kowtow() {
             <View className="kowtow-action-footer">
               <View className="kowtow-action-head">
                 <View>
-                  <Text className="kowtow-action-kicker">操作</Text>
+                  <Text className="kowtow-action-kicker">写入队列</Text>
                   <Text className="love">写入互动记录</Text>
                 </View>
                 <Text className="kowtow-action-state">
