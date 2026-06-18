@@ -24,22 +24,38 @@ export default function ApprovalPage() {
   const pending = useUploadHistory("pending", ugcEnabled);
   const approved = useUploadHistory("approved", ugcEnabled);
   const active = activeTab === "pending" ? pending : approved;
-  const counts = useMemo(
+  const queues = useMemo(
     () => ({
-      pending: pending.total,
-      approved: approved.total,
+      pending,
+      approved,
     }),
-    [pending.total, approved.total],
+    [pending, approved],
   );
-  const activeTotal = counts[activeTab] || 0;
   const queueLabel = activeTab === "pending" ? "审核中" : "已通过";
   const queueStage = active.loading
     ? "加载中"
     : active.error
       ? "需重试"
       : active.hasMore
-        ? "可继续加载"
-        : "已加载完";
+        ? "上拉继续"
+        : "已全部显示";
+  const activeCountLabel = active.error
+    ? "需重试"
+    : active.loading && active.items.length === 0
+      ? "加载中"
+      : active.total
+        ? `${active.total} 项`
+        : "无记录";
+  const footerStatus = active.loading
+    ? "正在加载更多"
+    : active.hasMore
+      ? `上拉加载更多 ${queueLabel}`
+      : `当前队列已全部显示`;
+  const getSummaryValue = (queue: typeof pending) => {
+    if (queue.error) return "需重试";
+    if (queue.loading && queue.items.length === 0) return "加载中";
+    return queue.total ? String(queue.total) : "无";
+  };
 
   const onRefresh = async () => {
     try {
@@ -55,7 +71,7 @@ export default function ApprovalPage() {
 
   return (
     <View className="approval-page">
-      <TabHead active={activeTab} counts={counts} onClick={setActiveTab} />
+      <TabHead active={activeTab} queues={queues} onClick={setActiveTab} />
       {!ugcEnabled ? (
         <UgcDisabledState systemConfig={systemConfig} />
       ) : (
@@ -78,9 +94,7 @@ export default function ApprovalPage() {
                 当前队列：{queueLabel}
               </Text>
             </View>
-            <Text className="approval-console-status">
-              {active.loading ? "加载中" : `${activeTotal} 项`}
-            </Text>
+            <Text className="approval-console-status">{activeCountLabel}</Text>
           </View>
           <View className="approval-summary">
             <View className="approval-summary-item primary">
@@ -90,13 +104,13 @@ export default function ApprovalPage() {
             <View className="approval-summary-item">
               <Text className="approval-summary-label">审核中</Text>
               <Text className="approval-summary-value">
-                {counts.pending || 0}
+                {getSummaryValue(pending)}
               </Text>
             </View>
             <View className="approval-summary-item">
               <Text className="approval-summary-label">已通过</Text>
               <Text className="approval-summary-value">
-                {counts.approved || 0}
+                {getSummaryValue(approved)}
               </Text>
             </View>
           </View>
@@ -116,7 +130,7 @@ export default function ApprovalPage() {
                 {active.error ? "加载失败" : "这里还没有图片"}
               </Text>
               <Text className="approval-state-copy">
-                {active.error ? "下拉重试当前队列" : "当前队列暂无图片"}
+                {active.error ? "下拉重试当前队列" : "当前队列没有图片"}
               </Text>
             </View>
           )}
@@ -169,13 +183,7 @@ export default function ApprovalPage() {
           )}
           {active.items.length > 0 && (
             <View className="approval-footer">
-              <Text>
-                {active.loading
-                  ? "继续加载..."
-                  : active.hasMore
-                    ? "上拉加载更多"
-                    : "已加载全部"}
-              </Text>
+              <Text className="approval-footer-label">{footerStatus}</Text>
             </View>
           )}
         </ScrollView>

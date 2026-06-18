@@ -1,5 +1,6 @@
 import { View, Text } from "@tarojs/components";
 import type { UploadedPhotoStatusFilter } from "@mono/types";
+import type { UploadHistoryState } from "@/features/upload/use-upload-history";
 import "./index.scss";
 
 export type ApprovalTab = {
@@ -20,15 +21,22 @@ export const approveTabs: ApprovalTab[] = [
 
 type TabHeadProps = {
   active: UploadedPhotoStatusFilter;
-  counts: Record<UploadedPhotoStatusFilter, number>;
+  queues: Record<UploadedPhotoStatusFilter, UploadHistoryState>;
   onClick: (value: UploadedPhotoStatusFilter) => void;
 };
 
-export default function TabHead({ active, counts, onClick }: TabHeadProps) {
+function getQueueBadge(queue: UploadHistoryState) {
+  if (queue.error) return "重试";
+  if (queue.loading && queue.items.length === 0) return "加载";
+  return queue.total ? String(queue.total) : "无";
+}
+
+export default function TabHead({ active, queues, onClick }: TabHeadProps) {
   return (
     <View className="tab-head">
       {approveTabs.map((tab) => {
         const current = active === tab.value;
+        const queue = queues[tab.value];
         return (
           <View
             key={tab.value}
@@ -39,7 +47,7 @@ export default function TabHead({ active, counts, onClick }: TabHeadProps) {
               <View className="head-icon-mark"></View>
             </View>
             <Text className="tab-title">{tab.label}</Text>
-            <Text className="approve-num">{counts[tab.value] || 0}</Text>
+            <Text className="approve-num">{getQueueBadge(queue)}</Text>
           </View>
         );
       })}

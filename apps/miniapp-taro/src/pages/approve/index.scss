@@ -59,7 +59,9 @@
 .approval-console-status {
   flex: 0 0 auto;
   min-width: 48px;
+  max-width: 72px;
   padding: 5px 8px;
+  overflow: hidden;
   color: #0052d9;
   text-align: center;
   background: #f3f8ff;
@@ -67,6 +69,8 @@
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .approval-summary {
@@ -313,4 +317,14 @@
   color: #7b8da8;
   font-size: 12px;
   font-weight: 600;
+}
+
+.approval-footer-label {
+  display: inline-flex;
+  padding: 5px 10px;
+  color: #5d6f8f;
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
+  border-radius: 4px;
+  line-height: 18px;
 }

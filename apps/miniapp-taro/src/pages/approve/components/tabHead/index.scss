@@ -118,8 +118,10 @@
 
 .approve-num {
   min-width: 20px;
+  max-width: 42px;
   height: 20px;
   padding: 0 5px;
+  overflow: hidden;
   line-height: 20px;
   text-align: center;
   font-size: 11px;
@@ -127,5 +129,7 @@
   color: #0052d9;
   background: #ffffff;
   border: 1px solid #c8dcfb;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   box-sizing: border-box;
 }
