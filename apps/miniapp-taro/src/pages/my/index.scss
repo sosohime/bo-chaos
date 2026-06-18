@@ -852,26 +852,25 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1px;
-    padding: 6px 10px 0;
+    padding: 0 10px;
     border: 1px solid #d8e3f0;
-    border-bottom-color: #cfdbea;
-    border-radius: 6px 6px 0 0;
+    border-radius: 6px;
     margin-bottom: 10px;
-    background: #ffffff;
+    background: #edf2f8;
 
     .history-tab {
       position: relative;
-      min-height: 42px;
+      min-height: 44px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 0 9px;
-      border-radius: 5px 5px 0 0;
+      padding: 0 10px;
+      border-radius: 0;
       color: #66758f;
       background: #ffffff;
-      border: 1px solid transparent;
-      border-bottom: 2px solid transparent;
+      border: 0;
+      border-top: 3px solid transparent;
       font-size: 13px;
       box-sizing: border-box;
 
@@ -891,20 +890,13 @@
 
       &.active {
         color: #0052d9;
-        background: #f7fbff;
-        border-color: #cfe0f6;
-        border-bottom-color: #0052d9;
+        background: #f3f8ff;
+        border-top-color: #0052d9;
         font-weight: 700;
 
-        &::after {
-          content: "";
-          position: absolute;
-          left: 12px;
-          right: 12px;
-          top: -1px;
-          height: 2px;
-          background: #0052d9;
-          border-radius: 2px;
+        .history-tab-count {
+          background: #ffffff;
+          border-color: #bcd4f7;
         }
       }
     }
