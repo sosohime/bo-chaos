@@ -126,8 +126,10 @@ export default function ApprovalPage() {
           </View>
           {active.items.length === 0 && active.loading && (
             <View className="approval-state">
-              <View className="approval-state-mark">
-                <View className="approval-state-mark-line"></View>
+              <View className="approval-state-glyph">
+                <View className="approval-state-glyph-head"></View>
+                <View className="approval-state-glyph-row"></View>
+                <View className="approval-state-glyph-row short"></View>
               </View>
               <View className="approval-state-body">
                 <Text className="approval-state-kicker">队列加载</Text>
@@ -140,8 +142,10 @@ export default function ApprovalPage() {
           )}
           {active.items.length === 0 && !active.loading && (
             <View className={`approval-state ${active.error ? "error" : ""}`}>
-              <View className="approval-state-mark">
-                <View className="approval-state-mark-line"></View>
+              <View className="approval-state-glyph">
+                <View className="approval-state-glyph-head"></View>
+                <View className="approval-state-glyph-row"></View>
+                <View className="approval-state-glyph-row short"></View>
               </View>
               <View className="approval-state-body">
                 <Text className="approval-state-kicker">
