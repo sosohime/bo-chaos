@@ -889,8 +889,8 @@ export default function My() {
             </View>
             <View className="history-note">
               {activeHistoryTab === "pending"
-                ? "提交后的图片会进入审核队列，通过后自动同步到对应板块。"
-                : "已通过图片会作为可见资源展示在对应分类页。"}
+                ? "提交后的图片会进入审核队列，通过后展示在对应板块。"
+                : "已通过图片会展示在对应分类页。"}
             </View>
             <View className="photo-grid">
               {activeHistory.items.length > 0
@@ -916,7 +916,7 @@ export default function My() {
                   )}
               {activeHistory.loading && (
                 <View className="history-empty">
-                  <Text className="history-empty-kicker">队列同步</Text>
+                  <Text className="history-empty-kicker">队列加载</Text>
                   <Text className="history-empty-title">加载中</Text>
                 </View>
               )}
