@@ -363,16 +363,109 @@
   }
 
   .kowtow-review-panel {
-    padding: 16px;
+    padding: 15px 14px 14px 17px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 14px;
+      bottom: 14px;
+      width: 3px;
+      background: #0052d9;
+      border-radius: 0 3px 3px 0;
+    }
   }
 
-  .kowtow-review-steps {
-    margin-top: 14px;
+  .kowtow-review-head {
+    position: relative;
+    z-index: 1;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    color: #445b7f;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .kowtow-review-status {
+    flex: 0 0 auto;
+    padding: 5px 8px;
+    color: #0052d9;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .kowtow-review-summary {
+    position: relative;
+    z-index: 1;
+    margin-top: 13px;
+    overflow: hidden;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #d8e3f0;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  .kowtow-review-primary {
+    min-width: 0;
+    padding: 12px;
+    background: #f7fbff;
+    border: 1px solid #d8e8ff;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  .kowtow-review-row {
+    min-height: 34px;
+    min-width: 0;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #eef2f8;
+    box-sizing: border-box;
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+  }
+
+  .kowtow-review-label,
+  .kowtow-review-value,
+  .kowtow-review-meta {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .kowtow-review-label {
+    flex: 0 0 auto;
+    color: #6b7f9f;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+
+  .kowtow-review-value {
+    margin-top: 5px;
+    color: #17233d;
     font-size: 14px;
-    line-height: 21px;
+    font-weight: 700;
+    line-height: 20px;
+  }
+
+  .kowtow-review-meta {
+    min-width: 0;
+    color: #17233d;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: right;
   }
 }

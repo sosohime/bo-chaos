@@ -236,13 +236,30 @@ export default function Kowtow() {
     <View className="kowtow-container">
       {systemConfig?.inReview ? (
         <View className="kowtow-review-panel">
-          <Text className="kowtow-eyebrow">图片处理服务</Text>
-          <Text className="kowtow-title">BoFans 图片压缩工具</Text>
-          <View className="kowtow-review-steps">
-            <Text>1. 在个人中心选择图片分类</Text>
-            <Text>2. 上传图片并等待管理员审核</Text>
-            <Text>3. 审核通过后自动执行压缩流程</Text>
-            <Text>4. 压缩完成后可在对应分类查看</Text>
+          <View className="kowtow-review-head">
+            <View>
+              <Text className="kowtow-eyebrow">图片处理服务</Text>
+              <Text className="kowtow-title">BoFans 图片压缩工具</Text>
+            </View>
+            <Text className="kowtow-review-status">可用</Text>
+          </View>
+          <View className="kowtow-review-summary">
+            <View className="kowtow-review-primary">
+              <Text className="kowtow-review-label">当前流程</Text>
+              <Text className="kowtow-review-value">上传审核</Text>
+            </View>
+            <View className="kowtow-review-row">
+              <Text className="kowtow-review-label">分类</Text>
+              <Text className="kowtow-review-meta">个人中心选择</Text>
+            </View>
+            <View className="kowtow-review-row">
+              <Text className="kowtow-review-label">处理</Text>
+              <Text className="kowtow-review-meta">审核后压缩</Text>
+            </View>
+            <View className="kowtow-review-row">
+              <Text className="kowtow-review-label">查看</Text>
+              <Text className="kowtow-review-meta">对应分类页</Text>
+            </View>
           </View>
         </View>
       ) : (
