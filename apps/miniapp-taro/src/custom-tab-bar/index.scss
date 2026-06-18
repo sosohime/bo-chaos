@@ -3,11 +3,11 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(60px + env(safe-area-inset-bottom));
-  background: #fbfdff;
+  height: calc(62px + env(safe-area-inset-bottom));
+  background: #ffffff;
   display: flex;
   z-index: 100;
-  padding: 0 10px calc(5px + env(safe-area-inset-bottom));
+  padding: 0 10px calc(6px + env(safe-area-inset-bottom));
   border-top: 1px solid #dce7f4;
   box-sizing: border-box;
 }
@@ -38,8 +38,8 @@
 .tab-bar-control {
   position: relative;
   width: 100%;
-  height: 55px;
-  padding: 8px 0 5px;
+  height: 56px;
+  padding: 7px 0 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,7 +55,7 @@
   position: absolute;
   top: 0;
   left: 50%;
-  width: 28px;
+  width: 24px;
   height: 2px;
   background: transparent;
   border-radius: 0;
@@ -65,7 +65,7 @@
 
 .tab-bar-icon-shell {
   width: 30px;
-  height: 26px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,10 +75,158 @@
   box-sizing: border-box;
 }
 
-.tab-bar-icon {
+.tab-bar-symbol {
+  position: relative;
   width: 22px;
   height: 22px;
-  opacity: 0.82;
+  color: #6b7d95;
+  opacity: 0.92;
+  box-sizing: border-box;
+}
+
+.symbol-main,
+.symbol-aux,
+.symbol-dot {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.tab-bar-symbol-retire {
+  .symbol-main {
+    left: 3px;
+    right: 3px;
+    top: 4px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-radius: 2px;
+  }
+
+  .symbol-aux {
+    left: 7px;
+    right: 7px;
+    top: 8px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .symbol-dot {
+    left: 9px;
+    right: 9px;
+    bottom: 3px;
+    height: 2px;
+    background: currentColor;
+  }
+}
+
+.tab-bar-symbol-kowtow {
+  .symbol-main {
+    left: 4px;
+    top: 3px;
+    width: 14px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-radius: 2px;
+  }
+
+  .symbol-aux {
+    left: 8px;
+    top: 7px;
+    width: 6px;
+    height: 6px;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+  }
+
+  .symbol-dot {
+    right: 3px;
+    bottom: 2px;
+    width: 6px;
+    height: 2px;
+    background: currentColor;
+  }
+}
+
+.tab-bar-symbol-history {
+  .symbol-main {
+    left: 3px;
+    top: 5px;
+    width: 16px;
+    height: 13px;
+    border: 2px solid currentColor;
+    border-radius: 2px;
+  }
+
+  .symbol-aux {
+    left: 6px;
+    top: 2px;
+    width: 10px;
+    height: 5px;
+    border: 2px solid currentColor;
+    border-bottom: 0;
+    border-radius: 2px 2px 0 0;
+  }
+
+  .symbol-dot {
+    left: 7px;
+    right: 7px;
+    bottom: 6px;
+    height: 2px;
+    background: currentColor;
+  }
+}
+
+.tab-bar-symbol-travel {
+  .symbol-main {
+    left: 3px;
+    top: 4px;
+    width: 16px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-radius: 2px;
+  }
+
+  .symbol-aux {
+    left: 7px;
+    top: 7px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    transform: rotate(45deg);
+  }
+
+  .symbol-dot {
+    left: 4px;
+    bottom: 4px;
+    width: 14px;
+    height: 2px;
+    background: currentColor;
+  }
+}
+
+.tab-bar-symbol-my {
+  .symbol-main {
+    left: 7px;
+    top: 3px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+  }
+
+  .symbol-aux {
+    left: 4px;
+    bottom: 3px;
+    width: 14px;
+    height: 8px;
+    border: 2px solid currentColor;
+    border-radius: 7px 7px 2px 2px;
+  }
+
+  .symbol-dot {
+    display: none;
+  }
 }
 
 .tab-bar-item.active {
@@ -97,8 +245,16 @@
     border-color: transparent;
   }
 
-  .tab-bar-icon {
+  .tab-bar-symbol {
+    color: #0052d9;
     opacity: 1;
+  }
+
+  .tab-bar-symbol-retire .symbol-main,
+  .tab-bar-symbol-history .symbol-main,
+  .tab-bar-symbol-travel .symbol-main,
+  .tab-bar-symbol-kowtow .symbol-main {
+    background: #f3f8ff;
   }
 }
 
