@@ -59,7 +59,7 @@ export default function CategoryPhotoSections({
     return (
       <View className="list-state">
         <Text className="state-kicker">图库分组</Text>
-        <Text className="state-title">暂无图片</Text>
+        <Text className="state-title">没有图片</Text>
         <Text className="state-copy">当前板块还没有可展示图片</Text>
       </View>
     );

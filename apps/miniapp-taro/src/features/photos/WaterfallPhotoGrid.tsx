@@ -55,7 +55,7 @@ export default function WaterfallPhotoGrid({
     return (
       <View className="list-state">
         <Text className="state-kicker">图库内容</Text>
-        <Text className="state-title">暂无图片</Text>
+        <Text className="state-title">没有图片</Text>
         <Text className="state-copy">当前列表还没有可展示图片</Text>
       </View>
     );
