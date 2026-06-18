@@ -615,11 +615,29 @@ export default function My() {
                 </Text>
               </View>
               <View className="upload-summary-item">
+                <Text className="upload-summary-label">分类</Text>
+                <Text className="upload-summary-value">
+                  {selectedCategoryLabel}
+                </Text>
+              </View>
+              <View className="upload-summary-item">
                 <Text className="upload-summary-label">队列</Text>
                 <Text className="upload-summary-value">
                   {selectedImages.length
                     ? `${selectedImages.length}/${MAX_SELECTED_IMAGES}`
                     : "空"}
+                </Text>
+              </View>
+              <View className="upload-summary-item">
+                <Text className="upload-summary-label">并发</Text>
+                <Text className="upload-summary-value">
+                  {UPLOAD_CONCURRENCY}
+                </Text>
+              </View>
+              <View className="upload-summary-item">
+                <Text className="upload-summary-label">审核</Text>
+                <Text className="upload-summary-value">
+                  {uploadReviewState}
                 </Text>
               </View>
             </View>
