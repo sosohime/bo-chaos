@@ -1,7 +1,7 @@
 .ugc-disabled-state {
   position: relative;
   overflow: hidden;
-  min-height: 136px;
+  min-height: 128px;
   margin: 14px;
   padding: 0;
   display: flex;
@@ -21,8 +21,8 @@
 .ugc-disabled-head {
   position: relative;
   z-index: 1;
-  min-height: 56px;
-  padding: 12px;
+  min-height: 52px;
+  padding: 10px 12px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -57,18 +57,18 @@
 .ugc-disabled-title {
   margin-top: 4px;
   color: #17233d;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 21px;
+  line-height: 20px;
 }
 
 .ugc-disabled-copy {
-  max-width: 260px;
+  max-width: none;
   margin: 0;
-  padding: 10px 12px;
+  padding: 9px 12px;
   color: #66758f;
   font-size: 13px;
-  line-height: 20px;
+  line-height: 19px;
   background: #fbfdff;
   border-bottom: 1px solid #eef2f8;
   box-sizing: border-box;
@@ -98,7 +98,7 @@
 
 .ugc-disabled-primary {
   min-width: 0;
-  padding: 10px 12px;
+  padding: 9px 12px;
   background: #f3f8ff;
   border: 0;
   border-bottom: 1px solid #d8e8ff;
@@ -139,11 +139,11 @@
 }
 
 .ugc-disabled-value {
-  margin-top: 5px;
+  margin-top: 4px;
   color: #17233d;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  line-height: 20px;
+  line-height: 18px;
 }
 
 .ugc-disabled-meta {
