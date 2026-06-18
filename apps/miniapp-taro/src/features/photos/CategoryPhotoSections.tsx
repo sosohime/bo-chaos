@@ -22,16 +22,12 @@ export default function CategoryPhotoSections({
   onCategoryClick,
   onRetry,
 }: CategoryPhotoSectionsProps) {
-  const browserStatus = loading
-    ? "正在加载"
-    : hasMore
-      ? "上拉继续"
-      : "已全部显示";
+  const browserStatus = loading ? "同步中" : hasMore ? "有更多" : "已完成";
   const footerStatus = loading
-    ? "正在加载更多"
+    ? "正在加载图片"
     : activeCategory
       ? hasMore
-        ? "上拉加载更多图片"
+        ? "继续上滑加载"
         : "当前分组已全部显示"
       : "展开一个分组查看图片";
 
@@ -40,7 +36,7 @@ export default function CategoryPhotoSections({
       <View className="list-state">
         <Text className="state-kicker">图库状态</Text>
         <Text className="state-title">正在加载图片</Text>
-        <Text className="state-copy">正在获取当前图库分组</Text>
+        <Text className="state-copy">正在获取当前资源分组</Text>
       </View>
     );
   }
@@ -70,7 +66,7 @@ export default function CategoryPhotoSections({
       <View className="photo-browser-shell">
         <View className="photo-browser-toolbar">
           <View className="photo-browser-title-block">
-            <Text className="photo-browser-label">图库分组</Text>
+            <Text className="photo-browser-label">资源分组</Text>
             <Text className="photo-browser-active">
               {activeCategory || "选择一个分组"}
             </Text>
@@ -93,7 +89,7 @@ export default function CategoryPhotoSections({
           >
             <View className="category-rail"></View>
             <View className="category-title">
-              <Text className="category-index">图库分组</Text>
+              <Text className="category-index">分组</Text>
               <Text className="category-name">{group.categoryName}</Text>
             </View>
             <View className="category-state">
@@ -107,8 +103,8 @@ export default function CategoryPhotoSections({
           {activeCategory === group.categoryName && (
             <View className="category-body">
               <View className="category-body-head">
-                <Text>当前分组</Text>
-                <Text>{loading ? "加载中" : "图片内容"}</Text>
+                <Text>图片内容</Text>
+                <Text>{loading ? "同步中" : "可浏览"}</Text>
               </View>
               <View className="photo-grid">
                 {group.photos.map((photo) => (

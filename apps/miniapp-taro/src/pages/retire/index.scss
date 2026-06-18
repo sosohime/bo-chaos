@@ -18,7 +18,7 @@
 .retire-console {
   position: relative;
   overflow: hidden;
-  padding: 15px 15px 15px 18px;
+  padding: 14px 14px 14px 17px;
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
@@ -53,11 +53,11 @@
 }
 
 .retire-title {
-  margin-top: 8px;
+  margin-top: 6px;
   color: #17233d;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
-  line-height: 30px;
+  line-height: 27px;
 }
 
 .retire-status {
@@ -73,12 +73,12 @@
   font-weight: 700;
 }
 
-.retire-live-card {
+.retire-summary {
   position: relative;
   z-index: 1;
-  margin-top: 16px;
+  margin-top: 14px;
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0, 1fr) minmax(118px, 0.72fr);
   gap: 1px;
   overflow: hidden;
   background: #d8e3f0;
@@ -87,15 +87,15 @@
   box-sizing: border-box;
 }
 
-.retire-live-main,
-.retire-clock-card {
+.retire-summary-main,
+.retire-summary-side {
   min-width: 0;
   padding: 12px;
   background: #ffffff;
   box-sizing: border-box;
 }
 
-.retire-live-main {
+.retire-summary-main {
   background: #f7fbff;
 }
 
@@ -107,7 +107,7 @@
 }
 
 .retire-days {
-  margin-top: 7px;
+  margin-top: 6px;
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -115,25 +115,25 @@
 
 .retire-days-number {
   color: #17233d;
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
-  line-height: 56px;
+  line-height: 46px;
 }
 
 .retire-days-unit {
   color: #0052d9;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
 }
 
 .retire-clock {
-  margin-top: 13px;
+  margin-top: 11px;
   display: flex;
   gap: 5px;
   color: #17233d;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 24px;
+  line-height: 22px;
   white-space: nowrap;
 }
 
@@ -195,39 +195,6 @@
 
 .retire-progress-scale {
   margin-top: 7px;
-}
-
-.retire-fact-grid {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.retire-fact {
-  min-width: 0;
-  padding: 9px 8px;
-  background: #ffffff;
-  border: 1px solid #d8e3f0;
-  border-radius: 6px;
-}
-
-.retire-fact-label {
-  display: block;
-  color: #6b7f9f;
-  font-size: 11px;
-}
-
-.retire-fact-value {
-  display: block;
-  margin-top: 6px;
-  color: #17233d;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 16px;
-  word-break: break-all;
 }
 
 .retire-panel-kicker,

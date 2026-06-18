@@ -33,12 +33,12 @@ export default function ApprovalPage() {
   );
   const queueLabel = activeTab === "pending" ? "审核中" : "已通过";
   const queueStage = active.loading
-    ? "加载中"
+    ? "同步中"
     : active.error
       ? "需重试"
       : active.hasMore
-        ? "上拉继续"
-        : "已全部显示";
+        ? "有更多"
+        : "已完成";
   const activeCountLabel = active.error
     ? "需重试"
     : active.loading && active.items.length === 0
@@ -47,9 +47,9 @@ export default function ApprovalPage() {
         ? `${active.total} 项`
         : "无记录";
   const footerStatus = active.loading
-    ? "正在加载更多"
+    ? "正在加载图片"
     : active.hasMore
-      ? `上拉加载更多 ${queueLabel}`
+      ? `继续上滑加载 ${queueLabel}`
       : `当前队列已全部显示`;
   const getSummaryValue = (queue: typeof pending) => {
     if (queue.error) return "需重试";

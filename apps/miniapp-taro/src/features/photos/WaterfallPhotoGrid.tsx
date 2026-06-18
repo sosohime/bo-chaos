@@ -20,15 +20,11 @@ export default function WaterfallPhotoGrid({
   hasMore,
   onRetry,
 }: WaterfallPhotoGridProps) {
-  const browserStatus = loading
-    ? "正在加载"
-    : hasMore
-      ? "上拉继续"
-      : "已全部显示";
+  const browserStatus = loading ? "同步中" : hasMore ? "有更多" : "已完成";
   const footerStatus = loading
-    ? "正在加载更多"
+    ? "正在加载图片"
     : hasMore
-      ? "上拉加载更多图片"
+      ? "继续上滑加载"
       : "当前图库已全部显示";
 
   if (photos.length === 0 && loading) {
@@ -66,7 +62,7 @@ export default function WaterfallPhotoGrid({
       <View className="photo-browser-shell waterfall-shell">
         <View className="photo-browser-toolbar">
           <View className="photo-browser-title-block">
-            <Text className="photo-browser-label">图库视图</Text>
+            <Text className="photo-browser-label">资源视图</Text>
             <Text className="photo-browser-active">全部图片</Text>
           </View>
           <Text className="photo-browser-sync">{browserStatus}</Text>
