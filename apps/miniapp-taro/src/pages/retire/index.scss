@@ -312,26 +312,27 @@
 }
 
 .retire-actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
+  display: flex;
+  flex-direction: column;
   margin-top: 12px;
   overflow: hidden;
-  background: #e6edf6;
-  border: 1px solid #e6edf6;
+  background: #ffffff;
+  border: 1px solid #e1eaf5;
   border-radius: 6px;
   box-sizing: border-box;
 }
 
 .retire-primary,
 .retire-secondary {
+  position: relative;
   margin: 0;
-  min-height: 58px;
-  padding: 9px 10px;
+  min-height: 48px;
+  padding: 8px 34px 8px 14px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
+  gap: 10px;
   border-radius: 0;
   font-weight: 700;
   line-height: 1.2;
@@ -340,11 +341,25 @@
   &::after {
     border: 0;
   }
+
+  &::before {
+    content: "";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid #6b7f9f;
+    border-right: 1px solid #6b7f9f;
+    transform: translateY(-50%) rotate(45deg);
+    box-sizing: border-box;
+  }
 }
 
 .retire-primary {
   color: #0052d9;
-  background: #f7fbff;
+  background: #fbfdff;
+  border-bottom: 1px solid #e6edf6;
 }
 
 .retire-secondary {
@@ -355,7 +370,6 @@
 .retire-action-title,
 .retire-action-copy {
   display: block;
-  width: 100%;
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
@@ -363,13 +377,15 @@
 }
 
 .retire-action-title {
+  flex: 1;
+  min-width: 0;
   color: #17233d;
   font-size: 14px;
   font-weight: 700;
 }
 
 .retire-action-copy {
-  margin-top: 5px;
+  flex: 0 0 auto;
   color: #66758f;
   font-size: 11px;
   font-weight: 700;
