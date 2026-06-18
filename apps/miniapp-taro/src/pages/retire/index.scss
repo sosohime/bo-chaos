@@ -1,12 +1,12 @@
 .retire-scroll {
   min-height: 100vh;
-  background: #edf3fb;
+  background: #f4f7fb;
 }
 
 .retire-page {
   min-height: 100vh;
   color: #17233d;
-  background: linear-gradient(180deg, #eaf2fb 0%, #f7f9fc 44%, #f7f9fc 100%);
+  background: #f4f7fb;
   box-sizing: border-box;
 }
 
@@ -18,21 +18,22 @@
 .retire-console {
   position: relative;
   overflow: hidden;
-  padding: 15px;
+  padding: 15px 15px 15px 18px;
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(18, 50, 87, 0.06);
+  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.035);
   box-sizing: border-box;
 
   &::before {
     content: "";
     position: absolute;
-    top: 0;
     left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #0052d9, #00a4ff 52%, #8ab7ff);
+    top: 14px;
+    bottom: 14px;
+    width: 3px;
+    background: #0052d9;
+    border-radius: 0 3px 3px 0;
   }
 }
 
@@ -47,24 +48,26 @@
 
 .retire-eyebrow {
   display: block;
-  color: #0052d9;
-  font-size: 11px;
-  font-weight: 800;
+  color: #4b658a;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .retire-title {
   margin-top: 8px;
   color: #17233d;
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 700;
   line-height: 30px;
 }
 
 .retire-status {
   flex: 0 0 auto;
+  min-width: 48px;
   padding: 5px 8px;
   color: #0052d9;
-  background: #eef6ff;
+  text-align: center;
+  background: #ffffff;
   border: 1px solid #c8dcfb;
   border-radius: 4px;
   font-size: 12px;
@@ -77,9 +80,9 @@
   margin-top: 16px;
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
-  gap: 8px;
-  padding: 8px;
-  background: #f8fbff;
+  gap: 1px;
+  overflow: hidden;
+  background: #d8e3f0;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
   box-sizing: border-box;
@@ -88,22 +91,19 @@
 .retire-live-main,
 .retire-clock-card {
   min-width: 0;
-  padding: 11px;
+  padding: 12px;
   background: #ffffff;
-  border: 1px solid #e1eaf5;
-  border-radius: 6px;
   box-sizing: border-box;
 }
 
 .retire-live-main {
-  background: #f3f8ff;
-  border-color: #bed7ff;
+  background: #f7fbff;
 }
 
 .retire-live-label {
   display: block;
   color: #66758f;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -116,15 +116,15 @@
 
 .retire-days-number {
   color: #17233d;
-  font-size: 52px;
-  font-weight: 800;
+  font-size: 48px;
+  font-weight: 700;
   line-height: 56px;
 }
 
 .retire-days-unit {
   color: #0052d9;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .retire-clock {
@@ -133,7 +133,7 @@
   gap: 5px;
   color: #17233d;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 24px;
   white-space: nowrap;
 }
@@ -155,7 +155,7 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.04);
+  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.035);
 }
 
 .retire-panel-head,
@@ -227,7 +227,7 @@
   margin-top: 6px;
   color: #17233d;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 16px;
   word-break: break-all;
 }
@@ -247,14 +247,14 @@
   margin-top: 5px;
   color: #17233d;
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .retire-panel-tag {
   flex: 0 0 auto;
   padding: 5px 8px;
   color: #0052d9;
-  background: #f3f8ff;
+  background: #ffffff;
   border: 1px solid #cfe2ff;
   border-radius: 4px;
   font-size: 11px;
