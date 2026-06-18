@@ -293,18 +293,49 @@
   color: #17233d;
 }
 
+.retire-command-panel {
+  margin: 0 14px 104px;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.retire-command-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eef2f8;
+}
+
 .retire-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  padding: 2px 14px 104px;
+  gap: 1px;
+  margin-top: 12px;
+  overflow: hidden;
+  background: #e6edf6;
+  border: 1px solid #e6edf6;
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 
 .retire-primary,
 .retire-secondary {
   margin: 0;
-  border-radius: 6px;
+  min-height: 58px;
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  border-radius: 0;
   font-weight: 700;
+  line-height: 1.2;
+  box-sizing: border-box;
 
   &::after {
     border: 0;
@@ -312,12 +343,34 @@
 }
 
 .retire-primary {
-  color: #ffffff;
-  background: #0052d9;
+  color: #0052d9;
+  background: #f7fbff;
 }
 
 .retire-secondary {
   color: #0052d9;
   background: #ffffff;
-  border: 1px solid #cfe2ff;
+}
+
+.retire-action-title,
+.retire-action-copy {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retire-action-title {
+  color: #17233d;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.retire-action-copy {
+  margin-top: 5px;
+  color: #66758f;
+  font-size: 11px;
+  font-weight: 700;
 }

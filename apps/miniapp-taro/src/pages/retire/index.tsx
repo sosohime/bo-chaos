@@ -184,13 +184,24 @@ export default function Retire() {
           </View>
         </View>
 
-        <View className="retire-actions">
-          <Button className="retire-primary" onClick={copyCountdown}>
-            复制状态
-          </Button>
-          <Button className="retire-secondary" onClick={goKowtow}>
-            记录互动
-          </Button>
+        <View className="retire-command-panel">
+          <View className="retire-command-head">
+            <View>
+              <Text className="retire-panel-kicker">快捷操作</Text>
+              <Text className="retire-panel-title">状态命令</Text>
+            </View>
+            <Text className="retire-panel-tag">可执行</Text>
+          </View>
+          <View className="retire-actions">
+            <Button className="retire-primary" onClick={copyCountdown}>
+              <Text className="retire-action-title">复制状态</Text>
+              <Text className="retire-action-copy">写入剪贴板</Text>
+            </Button>
+            <Button className="retire-secondary" onClick={goKowtow}>
+              <Text className="retire-action-title">记录互动</Text>
+              <Text className="retire-action-copy">进入互动页</Text>
+            </Button>
+          </View>
         </View>
       </View>
     </ScrollView>
