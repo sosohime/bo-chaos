@@ -264,75 +264,77 @@ export default function Kowtow() {
         </View>
       ) : (
         <>
-          <View className="kowtow-console-head">
-            <View>
-              <Text className="kowtow-eyebrow">互动状态</Text>
-              <Text className="kowtow-title">今日状态</Text>
+          <View className="kowtow-console-panel">
+            <View className="kowtow-console-head">
+              <View>
+                <Text className="kowtow-eyebrow">互动状态</Text>
+                <Text className="kowtow-title">今日状态</Text>
+              </View>
+              <Text className="kowtow-status">
+                {syncFailed ? "待重试" : "正常"}
+              </Text>
             </View>
-            <Text className="kowtow-status">
-              {syncFailed ? "待重试" : "正常"}
-            </Text>
-          </View>
-          <View className="kowtow-console-body">
-            <View className="kowtow-stats">
-              <View className="kowtow-stat-primary">
-                <Text className="kowtow-stat-label">累计记录</Text>
-                <Text className="kowtow-stat-value">
-                  {kowtowCount && kowtowStats.totalCount !== "-"
-                    ? (kowtowStats.totalCount as number) + kowtowCount
-                    : kowtowStats.totalCount}
-                </Text>
-              </View>
-              <View className="kowtow-stat-row">
-                <Text className="kowtow-stat-label">
-                  今日参与 <Text className="utc">UTC+8</Text>
-                </Text>
-                <Text className="kowtow-stat-meta">
-                  {kowtowStats.todayKowtowedUser}
-                </Text>
-              </View>
-              <View className="kowtow-stat-row">
-                <Text className="kowtow-stat-label">本地队列</Text>
-                <Text className="kowtow-stat-meta">
-                  {kowtowCount ? `待同步 ${kowtowCount}` : "已同步"}
-                </Text>
-              </View>
-              <View className="kowtow-stat-row">
-                <Text className="kowtow-stat-label">同步周期</Text>
-                <Text className="kowtow-stat-meta">
-                  {KOWTOW_SYNC_INTERVAL_MS / 1000}s
-                </Text>
-              </View>
-            </View>
-            <View className="kowtow-action-footer">
-              <View className="kowtow-action-head">
-                <View>
-                  <Text className="kowtow-action-kicker">写入队列</Text>
-                  <Text className="love">写入互动记录</Text>
+            <View className="kowtow-console-body">
+              <View className="kowtow-stats">
+                <View className="kowtow-stat-primary">
+                  <Text className="kowtow-stat-label">累计记录</Text>
+                  <Text className="kowtow-stat-value">
+                    {kowtowCount && kowtowStats.totalCount !== "-"
+                      ? (kowtowStats.totalCount as number) + kowtowCount
+                      : kowtowStats.totalCount}
+                  </Text>
                 </View>
-                <Text className="kowtow-action-state">
-                  {kowtowCount ? "待同步" : "可写入"}
-                </Text>
+                <View className="kowtow-stat-row">
+                  <Text className="kowtow-stat-label">
+                    今日参与 <Text className="utc">UTC+8</Text>
+                  </Text>
+                  <Text className="kowtow-stat-meta">
+                    {kowtowStats.todayKowtowedUser}
+                  </Text>
+                </View>
+                <View className="kowtow-stat-row">
+                  <Text className="kowtow-stat-label">本地队列</Text>
+                  <Text className="kowtow-stat-meta">
+                    {kowtowCount ? `待同步 ${kowtowCount}` : "已同步"}
+                  </Text>
+                </View>
+                <View className="kowtow-stat-row">
+                  <Text className="kowtow-stat-label">同步周期</Text>
+                  <Text className="kowtow-stat-meta">
+                    {KOWTOW_SYNC_INTERVAL_MS / 1000}s
+                  </Text>
+                </View>
               </View>
-              {kowtowStats.totalCount !== "-" && (
-                <Text className="kowtow-copy">
-                  {kowtowStats.iKowtowedToday
-                    ? "今日状态已记录，本地队列会自动同步"
-                    : "今日状态未记录，可写入一次本地队列"}
-                </Text>
-              )}
-              {syncFailed && (
-                <Text className="sync-warning" onClick={syncKowtowStats}>
-                  加载异常，点击重试
-                </Text>
-              )}
-              <Button
-                className={`submit-kowtow ${isKowtowing ? "loading" : ""}`}
-                type="primary"
-                onClick={handleKowtow}
-              >
-                {isKowtowing ? "写入中" : "写入本地队列"}
-              </Button>
+              <View className="kowtow-action-footer">
+                <View className="kowtow-action-head">
+                  <View>
+                    <Text className="kowtow-action-kicker">写入队列</Text>
+                    <Text className="love">写入互动记录</Text>
+                  </View>
+                  <Text className="kowtow-action-state">
+                    {kowtowCount ? "待同步" : "可写入"}
+                  </Text>
+                </View>
+                {kowtowStats.totalCount !== "-" && (
+                  <Text className="kowtow-copy">
+                    {kowtowStats.iKowtowedToday
+                      ? "今日状态已记录，本地队列会自动同步"
+                      : "今日状态未记录，可写入一次本地队列"}
+                  </Text>
+                )}
+                {syncFailed && (
+                  <Text className="sync-warning" onClick={syncKowtowStats}>
+                    加载异常，点击重试
+                  </Text>
+                )}
+                <Button
+                  className={`submit-kowtow ${isKowtowing ? "loading" : ""}`}
+                  type="primary"
+                  onClick={handleKowtow}
+                >
+                  {isKowtowing ? "写入中" : "写入本地队列"}
+                </Button>
+              </View>
             </View>
           </View>
           <BoSheng boxStyle={{ marginTop: "12px" }} />

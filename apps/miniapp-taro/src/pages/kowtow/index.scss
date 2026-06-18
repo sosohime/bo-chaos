@@ -22,23 +22,30 @@
 
   .kowtow-console-head,
   .kowtow-console-body,
+  .kowtow-console-panel,
   .kowtow-review-panel,
   .god-bo {
     position: relative;
     overflow: hidden;
     background: #ffffff;
     border: 1px solid #d8e3f0;
-    border-radius: 8px;
+    border-radius: 6px;
     box-sizing: border-box;
   }
 
-  .kowtow-console-head {
+  .kowtow-console-panel {
     margin-top: 14px;
-    padding: 14px;
+  }
+
+  .kowtow-console-head {
+    padding: 12px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
+    border: 0;
+    border-bottom: 1px solid #e6edf6;
+    border-radius: 0;
   }
 
   .kowtow-eyebrow {
@@ -71,29 +78,31 @@
   }
 
   .kowtow-console-body {
-    margin-top: 12px;
     padding: 0;
+    border: 0;
+    border-radius: 0;
   }
 
   .kowtow-stats {
-    padding: 12px;
-    background: #ffffff;
+    padding: 0;
+    background: #fbfdff;
     box-sizing: border-box;
   }
 
   .kowtow-stat-primary {
     min-width: 0;
-    padding: 12px;
-    background: #f7fbff;
-    border: 1px solid #d8e8ff;
-    border-radius: 6px;
+    padding: 10px 12px;
+    background: #f3f8ff;
+    border: 0;
+    border-bottom: 1px solid #d8e8ff;
+    border-radius: 0;
     box-sizing: border-box;
   }
 
   .kowtow-stat-row {
-    min-height: 36px;
+    min-height: 32px;
     min-width: 0;
-    padding: 8px 0;
+    padding: 7px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -103,7 +112,6 @@
 
     &:last-child {
       border-bottom: 0;
-      padding-bottom: 0;
     }
   }
 
@@ -265,7 +273,7 @@
 
   .kowtow-action-footer {
     position: relative;
-    padding: 12px;
+    padding: 10px 12px 12px;
     background: #fbfdff;
     border-top: 1px solid #e6edf6;
     box-sizing: border-box;
@@ -312,11 +320,11 @@
   .submit-kowtow {
     position: relative;
     z-index: 1;
-    margin-top: 12px;
+    margin-top: 10px;
     width: 100%;
     color: #ffffff;
     background: #0052d9;
-    border-radius: 4px;
+    border-radius: 3px;
     font-weight: 700;
     line-height: 44px;
 
@@ -341,16 +349,18 @@
   }
 
   .kowtow-review-panel {
-    padding: 14px;
+    padding: 0;
   }
 
   .kowtow-review-head {
     position: relative;
     z-index: 1;
+    padding: 12px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
+    border-bottom: 1px solid #e6edf6;
   }
 
   .kowtow-review-status {
@@ -367,28 +377,29 @@
   .kowtow-review-summary {
     position: relative;
     z-index: 1;
-    margin-top: 13px;
+    margin-top: 0;
     overflow: hidden;
-    padding: 12px;
-    background: #ffffff;
-    border: 1px solid #d8e3f0;
-    border-radius: 8px;
+    padding: 0;
+    background: #fbfdff;
+    border: 0;
+    border-radius: 0;
     box-sizing: border-box;
   }
 
   .kowtow-review-primary {
     min-width: 0;
-    padding: 12px;
-    background: #f7fbff;
-    border: 1px solid #d8e8ff;
-    border-radius: 6px;
+    padding: 10px 12px;
+    background: #f3f8ff;
+    border: 0;
+    border-bottom: 1px solid #d8e8ff;
+    border-radius: 0;
     box-sizing: border-box;
   }
 
   .kowtow-review-row {
-    min-height: 34px;
+    min-height: 32px;
     min-width: 0;
-    padding: 8px 0;
+    padding: 7px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -397,7 +408,6 @@
     box-sizing: border-box;
 
     &:last-child {
-      padding-bottom: 0;
       border-bottom: 0;
     }
   }
