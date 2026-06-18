@@ -258,7 +258,7 @@ export default function Kowtow() {
           </View>
           <View className="kowtow-console-body">
             <View className="kowtow-stats">
-              <View className="kowtow-stat primary">
+              <View className="kowtow-stat-primary">
                 <Text className="kowtow-stat-label">累计记录</Text>
                 <Text className="kowtow-stat-value">
                   {kowtowCount && kowtowStats.totalCount !== "-"
@@ -266,23 +266,23 @@ export default function Kowtow() {
                     : kowtowStats.totalCount}
                 </Text>
               </View>
-              <View className="kowtow-stat">
+              <View className="kowtow-stat-row">
                 <Text className="kowtow-stat-label">
                   今日参与 <Text className="utc">UTC+8</Text>
                 </Text>
-                <Text className="kowtow-stat-value">
+                <Text className="kowtow-stat-meta">
                   {kowtowStats.todayKowtowedUser}
                 </Text>
               </View>
-              <View className="kowtow-stat">
+              <View className="kowtow-stat-row">
                 <Text className="kowtow-stat-label">本地队列</Text>
-                <Text className="kowtow-stat-value metric-text">
+                <Text className="kowtow-stat-meta">
                   {kowtowCount ? `待同步 ${kowtowCount}` : "已同步"}
                 </Text>
               </View>
-              <View className="kowtow-stat">
+              <View className="kowtow-stat-row">
                 <Text className="kowtow-stat-label">同步周期</Text>
-                <Text className="kowtow-stat-value metric-text">
+                <Text className="kowtow-stat-meta">
                   {KOWTOW_SYNC_INTERVAL_MS / 1000}s
                 </Text>
               </View>
