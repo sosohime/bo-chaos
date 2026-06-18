@@ -13,7 +13,7 @@
   position: relative;
   overflow: hidden;
   margin: 16px 14px 8px;
-  padding: 15px 14px 14px 17px;
+  padding: 14px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -21,17 +21,6 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 12px;
-    bottom: 12px;
-    width: 3px;
-    background: #0052d9;
-    border-radius: 0 3px 3px 0;
-  }
 }
 
 .photo-console-kicker {
@@ -44,11 +33,11 @@
 
 .photo-console-title {
   display: block;
-  margin-top: 6px;
+  margin-top: 5px;
   color: #17233d;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 27px;
+  line-height: 24px;
 }
 
 .photo-console-status {
@@ -92,8 +81,6 @@
 
 .photo-browser-title-block {
   min-width: 0;
-  padding-left: 10px;
-  border-left: 3px solid #0052d9;
   box-sizing: border-box;
 }
 
@@ -194,7 +181,7 @@
 .category-header {
   position: relative;
   min-height: 56px;
-  padding: 12px 13px 12px 18px;
+  padding: 12px 13px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -204,16 +191,6 @@
   &.active {
     background: #fbfdff;
     border-bottom: 1px solid #e6edf6;
-  }
-
-  .category-rail {
-    position: absolute;
-    left: 0;
-    top: 12px;
-    bottom: 12px;
-    width: 3px;
-    background: #d8e3f0;
-    border-radius: 0 3px 3px 0;
   }
 
   .category-title {
@@ -243,13 +220,19 @@
   .category-state {
     flex: 0 0 auto;
     min-width: 62px;
+    min-height: 26px;
+    padding: 0 8px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 8px;
     color: #66758f;
+    background: #ffffff;
+    border: 1px solid #e1eaf5;
+    border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
+    box-sizing: border-box;
   }
 
   .arrow {
@@ -277,12 +260,10 @@
   }
 }
 
-.category-header.active .category-rail {
-  background: #0052d9;
-}
-
 .category-header.active .category-state {
   color: #0052d9;
+  background: #f7fbff;
+  border-color: #d8e8ff;
 }
 
 .category-header.active .arrow::before {

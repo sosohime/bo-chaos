@@ -111,7 +111,6 @@ export default function CategoryPhotoSections({
             }`}
             onClick={() => onCategoryClick(group.categoryName)}
           >
-            <View className="category-rail"></View>
             <View className="category-title">
               <Text className="category-index">分组</Text>
               <Text className="category-name">{group.categoryName}</Text>
