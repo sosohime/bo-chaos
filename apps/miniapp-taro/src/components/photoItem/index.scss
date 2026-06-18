@@ -149,20 +149,20 @@
 
   .photo-actions {
     flex-shrink: 0;
-    min-height: 34px;
-    padding: 7px 2px 0;
+    min-height: 35px;
+    padding: 7px 0 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 8px;
     color: #5d6f8f;
     border-top: 1px solid #eef2f8;
     box-sizing: border-box;
 
     .photo-action-primary,
     .photo-vote-action {
-      height: 24px;
-      padding: 0 6px;
+      height: 25px;
+      padding: 0 7px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -174,52 +174,22 @@
     }
 
     .photo-action-primary {
-      min-width: 52px;
-      gap: 4px;
+      min-width: 62px;
+      gap: 6px;
       color: #0052d9;
-      border: 1px solid #d8e8ff;
-      background: #f3f8ff;
+      border: 1px solid #d8e3f0;
+      background: #ffffff;
     }
 
-    .photo-action-mark {
-      position: relative;
-      width: 13px;
-      height: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      border: 0;
-      border-radius: 0;
-      box-sizing: border-box;
-    }
-
-    .photo-action-arrow {
-      position: absolute;
-      top: 2px;
-      left: 5px;
-      width: 3px;
-      height: 5px;
-      border-right: 1px solid #0052d9;
-      border-bottom: 1px solid #0052d9;
-      transform: rotate(45deg);
-      box-sizing: border-box;
-    }
-
-    .photo-action-tray {
-      position: absolute;
-      width: 8px;
-      height: 1px;
-      left: 2px;
-      bottom: 2px;
-      background: #0052d9;
-      border-radius: 1px;
-      box-sizing: border-box;
+    .photo-action-label {
+      color: #7b8da8;
+      font-size: 10px;
+      font-weight: 600;
     }
 
     .photo-vote-group {
       min-width: 0;
-      height: 24px;
+      height: 25px;
       display: flex;
       align-items: center;
       overflow: hidden;
@@ -230,7 +200,7 @@
     }
 
     .photo-vote-action {
-      min-width: 36px;
+      min-width: 38px;
       color: #5d6f8f;
       background: #ffffff;
       border: 0;
@@ -238,7 +208,7 @@
 
       &.active {
         color: #0052d9;
-        background: #f3f8ff;
+        background: #f7fbff;
       }
 
       &.disabled {
@@ -249,7 +219,7 @@
     .photo-vote-value {
       min-width: 24px;
       max-width: 42px;
-      height: 22px;
+      height: 23px;
       padding: 0 5px;
       overflow: hidden;
       color: #5d6f8f;
@@ -257,7 +227,7 @@
       border-left: 1px solid #e1eaf5;
       font-size: 11px;
       font-weight: 700;
-      line-height: 22px;
+      line-height: 23px;
       text-align: center;
       text-overflow: ellipsis;
       white-space: nowrap;

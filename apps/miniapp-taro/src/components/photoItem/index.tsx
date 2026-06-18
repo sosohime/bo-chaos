@@ -170,10 +170,7 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
 
       <View className="photo-actions">
         <View className="photo-action-primary" onClick={handleDownload}>
-          <View className="photo-action-mark">
-            <View className="photo-action-arrow"></View>
-            <View className="photo-action-tray"></View>
-          </View>
+          <Text className="photo-action-label">操作</Text>
           <Text>保存</Text>
         </View>
         {systemConfig?.inReview && (
