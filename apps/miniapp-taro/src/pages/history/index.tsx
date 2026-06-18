@@ -54,7 +54,7 @@ export default function History() {
       <View className="photo-page-content">
         <View className="photo-console-head">
           <View>
-            <Text className="photo-console-kicker">MEDIA SERVICE</Text>
+            <Text className="photo-console-kicker">媒体资源</Text>
             <Text className="photo-console-title">博史图库</Text>
           </View>
           <Text className="photo-console-status">

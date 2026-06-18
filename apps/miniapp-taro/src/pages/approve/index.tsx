@@ -70,7 +70,7 @@ export default function ApprovalPage() {
         >
           <View className="approval-console-head">
             <View>
-              <Text className="approval-console-kicker">REVIEW QUEUE</Text>
+              <Text className="approval-console-kicker">审核队列</Text>
               <Text className="approval-console-title">
                 {activeTab === "pending" ? "待处理图片" : "已通过图片"}
               </Text>
@@ -124,7 +124,7 @@ export default function ApprovalPage() {
             <View className="approval-panel">
               <View className="approval-panel-head">
                 <View>
-                  <Text className="approval-panel-kicker">IMAGE RESOURCE</Text>
+                  <Text className="approval-panel-kicker">图片资源</Text>
                   <Text className="approval-panel-title">图片资源</Text>
                 </View>
                 <Text>{queueStage}</Text>

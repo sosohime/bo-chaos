@@ -25,7 +25,7 @@ export default function CategoryPhotoSections({
   if (groups.length === 0 && loading) {
     return (
       <View className="list-state">
-        <Text className="state-kicker">RESOURCE SYNC</Text>
+        <Text className="state-kicker">资源同步</Text>
         <Text className="state-title">图片加载中</Text>
         <Text className="state-copy">正在同步当前图库资源</Text>
       </View>
@@ -35,7 +35,7 @@ export default function CategoryPhotoSections({
   if (groups.length === 0 && error) {
     return (
       <View className="list-state" onClick={onRetry}>
-        <Text className="state-kicker">SYNC FAILED</Text>
+        <Text className="state-kicker">同步异常</Text>
         <Text className="state-title">加载失败</Text>
         <Text className="state-action">点击重试</Text>
       </View>
@@ -45,7 +45,7 @@ export default function CategoryPhotoSections({
   if (groups.length === 0) {
     return (
       <View className="list-state">
-        <Text className="state-kicker">RESOURCE GROUP</Text>
+        <Text className="state-kicker">资源分组</Text>
         <Text className="state-title">暂无数据</Text>
         <Text className="state-copy">当前板块还没有可展示图片</Text>
       </View>
@@ -57,7 +57,7 @@ export default function CategoryPhotoSections({
       <View className="photo-browser-shell">
         <View className="photo-browser-toolbar">
           <View className="photo-browser-title-block">
-            <Text className="photo-browser-label">RESOURCE GROUP</Text>
+            <Text className="photo-browser-label">资源分组</Text>
             <Text className="photo-browser-active">
               {activeCategory || "选择一个分组"}
             </Text>
@@ -82,7 +82,7 @@ export default function CategoryPhotoSections({
           >
             <View className="category-rail"></View>
             <View className="category-title">
-              <Text className="category-index">PHOTO SET</Text>
+              <Text className="category-index">图片分组</Text>
               <Text className="category-name">{group.categoryName}</Text>
             </View>
             <View className="category-state">
@@ -98,8 +98,8 @@ export default function CategoryPhotoSections({
           {activeCategory === group.categoryName && (
             <View className="category-body">
               <View className="category-body-head">
-                <Text>ACTIVE GROUP</Text>
-                <Text>{loading ? "加载中" : "MEDIA RESOURCE"}</Text>
+                <Text>当前分组</Text>
+                <Text>{loading ? "加载中" : "媒体资源"}</Text>
               </View>
               <View className="photo-grid">
                 {group.photos.map((photo) => (

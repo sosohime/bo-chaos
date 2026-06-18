@@ -247,7 +247,7 @@ export default function Kowtow() {
           <BoSheng />
           <View className="kowtow-console-head">
             <View>
-              <Text className="kowtow-eyebrow">INTERACTION SERVICE</Text>
+              <Text className="kowtow-eyebrow">交互服务</Text>
               <Text className="kowtow-title">磕头状态台</Text>
             </View>
             <Text className="kowtow-status">
@@ -283,7 +283,7 @@ export default function Kowtow() {
           <View className="god-bo">
             <View className="god-bo-head">
               <View>
-                <Text className="god-bo-kicker">NODE PREVIEW</Text>
+                <Text className="god-bo-kicker">节点预览</Text>
                 <Text className="god-bo-title">博哥节点</Text>
               </View>
               <Text>
@@ -308,7 +308,7 @@ export default function Kowtow() {
           <View className="kowtow-action-panel">
             <View className="kowtow-action-head">
               <View>
-                <Text className="kowtow-action-kicker">LOCAL OPERATION</Text>
+                <Text className="kowtow-action-kicker">本地操作</Text>
                 <Text className="love">今日操作</Text>
               </View>
               <Text className="kowtow-action-state">

@@ -54,7 +54,7 @@ const SwiperImg = ({
           })}
       </Swiper>
       <View className="swiper-console-footer">
-        <Text>MEDIA PREVIEW</Text>
+        <Text>媒体预览</Text>
         <Text>
           {accountIndex + 1}/{images.length}
         </Text>

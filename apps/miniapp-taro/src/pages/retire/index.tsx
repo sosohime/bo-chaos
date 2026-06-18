@@ -86,7 +86,7 @@ export default function Retire() {
           <View className="retire-console">
             <View className="retire-console-head">
               <View>
-                <Text className="retire-eyebrow">TIME SERVICE</Text>
+                <Text className="retire-eyebrow">时间服务</Text>
                 <Text className="retire-title">博退休倒计时</Text>
               </View>
               <Text className="retire-status">
@@ -161,7 +161,7 @@ export default function Retire() {
         <View className="retire-panel">
           <View className="retire-panel-head">
             <View>
-              <Text className="retire-panel-kicker">RESOURCE DETAIL</Text>
+              <Text className="retire-panel-kicker">资源详情</Text>
               <Text className="retire-panel-title">时间资源</Text>
             </View>
             <Text className="retire-panel-tag">UTC+8</Text>

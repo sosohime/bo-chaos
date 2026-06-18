@@ -23,7 +23,7 @@ export default function WaterfallPhotoGrid({
   if (photos.length === 0 && loading) {
     return (
       <View className="list-state">
-        <Text className="state-kicker">RESOURCE SYNC</Text>
+        <Text className="state-kicker">资源同步</Text>
         <Text className="state-title">图片加载中</Text>
         <Text className="state-copy">正在同步当前图库资源</Text>
       </View>
@@ -33,7 +33,7 @@ export default function WaterfallPhotoGrid({
   if (photos.length === 0 && error) {
     return (
       <View className="list-state" onClick={onRetry}>
-        <Text className="state-kicker">SYNC FAILED</Text>
+        <Text className="state-kicker">同步异常</Text>
         <Text className="state-title">加载失败</Text>
         <Text className="state-action">点击重试</Text>
       </View>
@@ -43,7 +43,7 @@ export default function WaterfallPhotoGrid({
   if (photos.length === 0) {
     return (
       <View className="list-state">
-        <Text className="state-kicker">MEDIA RESOURCE</Text>
+        <Text className="state-kicker">媒体资源</Text>
         <Text className="state-title">暂无数据</Text>
         <Text className="state-copy">当前列表还没有可展示图片</Text>
       </View>
@@ -55,7 +55,7 @@ export default function WaterfallPhotoGrid({
       <View className="photo-browser-shell waterfall-shell">
         <View className="photo-browser-toolbar">
           <View className="photo-browser-title-block">
-            <Text className="photo-browser-label">MEDIA RESOURCE</Text>
+            <Text className="photo-browser-label">媒体资源</Text>
             <Text className="photo-browser-active">瀑布流</Text>
           </View>
           <Text className="photo-browser-sync">

@@ -472,7 +472,7 @@ export default function My() {
             onClick={handleAvatarClick}
           />
           <View className="user-name">
-            <Text className="account-kicker">ACCOUNT NODE</Text>
+            <Text className="account-kicker">账户资料</Text>
             {isEditingName ? (
               <View className="nickname-edit">
                 <Input
@@ -534,7 +534,7 @@ export default function My() {
 
         {!systemConfig?.inReview && (
           <View className="record-section">
-            <Text className="record-kicker">INTERACTION LOG</Text>
+            <Text className="record-kicker">活动日志</Text>
             <View className="section-title">活动记录</View>
             <Text>
               账户已运行{" "}
@@ -679,7 +679,7 @@ export default function My() {
             <View className="upload-form-panel">
               <View className="upload-form-head">
                 <View>
-                  <Text className="upload-form-kicker">TASK CONFIG</Text>
+                  <Text className="upload-form-kicker">任务配置</Text>
                   <Text className="upload-form-title">上传任务配置</Text>
                 </View>
                 <Text className="upload-form-state">
@@ -778,7 +778,7 @@ export default function My() {
                   <View className="image-list">
                     <View className="image-list-head">
                       <View>
-                        <Text className="image-list-kicker">UPLOAD QUEUE</Text>
+                        <Text className="image-list-kicker">上传队列</Text>
                         <Text className="image-list-title">图片队列</Text>
                       </View>
                       <Text className="image-list-state">
@@ -907,7 +907,7 @@ export default function My() {
                   ))
                 : !activeHistory.loading && (
                     <View className="history-empty">
-                      <Text className="history-empty-kicker">QUEUE STATE</Text>
+                      <Text className="history-empty-kicker">队列状态</Text>
                       <Text className="history-empty-title">
                         {activeHistoryEmpty}
                       </Text>
@@ -915,7 +915,7 @@ export default function My() {
                   )}
               {activeHistory.loading && (
                 <View className="history-empty">
-                  <Text className="history-empty-kicker">QUEUE SYNC</Text>
+                  <Text className="history-empty-kicker">队列同步</Text>
                   <Text className="history-empty-title">加载中</Text>
                 </View>
               )}

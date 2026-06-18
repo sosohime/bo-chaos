@@ -13,7 +13,7 @@ export default function BoSheng({
     <View className="birthday-container">
       <View className="bosheng-rail"></View>
       <View>
-        <Text className="bosheng-kicker">EVENT SIGNAL</Text>
+        <Text className="bosheng-kicker">事件提醒</Text>
         <Text className="bosheng-title">博生日</Text>
       </View>
       <Text className="bosheng-status">进行中</Text>
