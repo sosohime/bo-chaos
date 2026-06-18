@@ -33,9 +33,9 @@
   }
 
   .avatar {
-    width: 48px;
-    height: 48px;
-    border: 1px solid #c8dcfb;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #d8e8ff;
     border-radius: 8px;
     background: #f3f7fc;
   }
@@ -779,8 +779,8 @@
       align-items: center;
       justify-content: center;
       color: #0052d9;
-      background: #ffffff;
-      border: 1px solid #c8dcfb;
+      background: #f3f8ff;
+      border: 1px solid #d8e8ff;
       border-radius: 3px;
       font-size: 10px;
       font-weight: 700;
@@ -789,7 +789,8 @@
 
       &.finish {
         color: #006d75;
-        border-color: #b8dde0;
+        background: #f2fbfb;
+        border-color: #c7e6e8;
       }
 
       &.error {
@@ -1025,7 +1026,7 @@
       height: 36px;
       padding: 8px 7px;
       background: #fbfdff;
-      border: 1px solid #c8dcfb;
+      border: 1px solid #d8e8ff;
       border-radius: 6px;
       box-sizing: border-box;
     }

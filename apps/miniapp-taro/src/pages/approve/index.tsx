@@ -106,7 +106,7 @@ export default function ApprovalPage() {
               <Text className="approval-summary-value">{queueLabel}</Text>
             </View>
             <View className="approval-summary-item">
-              <Text className="approval-summary-label">本次图片</Text>
+              <Text className="approval-summary-label">可见项</Text>
               <Text className="approval-summary-value">
                 {active.items.length}
               </Text>
