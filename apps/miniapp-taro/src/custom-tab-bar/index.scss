@@ -3,11 +3,11 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(57px + env(safe-area-inset-bottom));
+  height: calc(59px + env(safe-area-inset-bottom));
   background: #ffffff;
   display: flex;
   z-index: 100;
-  padding: 0 10px calc(2px + env(safe-area-inset-bottom));
+  padding: 0 10px calc(3px + env(safe-area-inset-bottom));
   border-top: 1px solid #d8e3f0;
   box-sizing: border-box;
 }
@@ -48,8 +48,8 @@
 .tab-bar-control {
   position: relative;
   width: 100%;
-  height: 55px;
-  padding: 7px 0 5px;
+  height: 56px;
+  padding: 6px 0 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,7 +65,7 @@
   position: absolute;
   top: 0;
   left: 50%;
-  width: 24px;
+  width: 28px;
   height: 2px;
   background: transparent;
   border-radius: 0 0 2px 2px;
@@ -74,12 +74,14 @@
 }
 
 .tab-bar-icon-shell {
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 27px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
+  background: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 6px;
   box-sizing: border-box;
 }
 
@@ -103,6 +105,11 @@
   .tab-bar-icon {
     opacity: 1;
   }
+
+  .tab-bar-icon-shell {
+    background: #f3f8ff;
+    border-color: #d8e8ff;
+  }
 }
 
 .tab-bar-label {
@@ -115,5 +122,5 @@
 
 .tab-bar-item.active .tab-bar-label {
   color: #0052d9;
-  font-weight: 700;
+  font-weight: 600;
 }
