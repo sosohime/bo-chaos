@@ -661,22 +661,38 @@
     font-size: 12px;
   }
 
+  .upload-action-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(96px, 0.85fr);
+    gap: 1px;
+    margin-top: 14px;
+    overflow: hidden;
+    background: #d8e8ff;
+    border: 1px solid #d8e8ff;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
   .add-image,
   .submit-btn {
-    border-radius: 6px;
+    margin: 0;
+    min-height: 40px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 0;
     font-weight: 700;
+    font-size: 13px;
+    line-height: 40px;
+    box-sizing: border-box;
   }
 
   .add-image {
-    margin: 14px 0 0;
     color: #0052d9;
     background: #ffffff;
-    border: 1px solid #c8dcfb;
   }
 }
 
 .submit-btn {
-  margin-top: 10px;
   color: #ffffff;
   background: #0052d9;
 

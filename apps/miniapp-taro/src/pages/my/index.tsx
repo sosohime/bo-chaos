@@ -821,23 +821,25 @@ export default function My() {
                       <Text>审核：{uploadReviewState}</Text>
                     </View>
 
-                    <Button
-                      className="add-image"
-                      disabled={isSubmitting}
-                      onClick={handleAddImages}
-                    >
-                      {selectedImages.length
-                        ? `继续添加（已选 ${selectedImages.length}/${MAX_SELECTED_IMAGES} 张）`
-                        : "添加图片"}
-                    </Button>
+                    <View className="upload-action-group">
+                      <Button
+                        className="add-image"
+                        disabled={isSubmitting}
+                        onClick={handleAddImages}
+                      >
+                        {selectedImages.length
+                          ? `继续添加（已选 ${selectedImages.length}/${MAX_SELECTED_IMAGES} 张）`
+                          : "添加图片"}
+                      </Button>
 
-                    <Button
-                      className={`submit-btn ${isSubmitting ? "loading" : ""}`}
-                      disabled={isSubmitting}
-                      onClick={handleSubmit}
-                    >
-                      {isSubmitting ? "上传中..." : "提交"}
-                    </Button>
+                      <Button
+                        className={`submit-btn ${isSubmitting ? "loading" : ""}`}
+                        disabled={isSubmitting}
+                        onClick={handleSubmit}
+                      >
+                        {isSubmitting ? "上传中..." : "提交"}
+                      </Button>
+                    </View>
                   </View>
                 </>
               )}
