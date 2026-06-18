@@ -2,10 +2,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 7px;
+  padding: 6px;
   background: #ffffff;
   border: 1px solid #d8e3f0;
-  border-radius: 8px;
+  border-radius: 6px;
   box-sizing: border-box;
 
   .photo-box {
@@ -13,8 +13,8 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    border: 1px solid #d8e3f0;
-    border-radius: 6px;
+    border: 0;
+    border-radius: 4px;
     background: #f3f7fc;
     box-sizing: border-box;
 
@@ -120,7 +120,7 @@
 
   .photo-info {
     flex-shrink: 0;
-    padding: 8px 2px 5px;
+    padding: 8px 3px 6px;
     box-sizing: border-box;
   }
 
@@ -148,8 +148,8 @@
 
   .photo-actions {
     flex-shrink: 0;
-    min-height: 31px;
-    padding: 6px 2px 0;
+    min-height: 32px;
+    padding: 6px 3px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -161,7 +161,7 @@
     .photo-action-primary,
     .photo-action-secondary {
       height: 24px;
-      padding: 0 7px;
+      padding: 0 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -173,10 +173,11 @@
     }
 
     .photo-action-primary {
-      min-width: 54px;
+      min-width: 50px;
       gap: 4px;
       color: #0052d9;
-      border: 1px solid #c8dcfb;
+      border: 1px solid transparent;
+      background: #f3f8ff;
     }
 
     .photo-action-mark {
@@ -186,8 +187,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f3f8ff;
-      border: 1px solid #d8e8ff;
+      background: #ffffff;
+      border: 1px solid #c8dcfb;
       border-radius: 3px;
       box-sizing: border-box;
     }
@@ -225,12 +226,13 @@
     .photo-action-secondary {
       min-width: 34px;
       color: #5d6f8f;
-      border: 1px solid #d8e3f0;
+      border: 1px solid transparent;
+      background: #fbfdff;
 
       &.active {
         color: #0052d9;
-        border-color: #c8dcfb;
-        background: #f7fbff;
+        border-color: #bcd4f7;
+        background: #f3f8ff;
       }
 
       &.disabled {
