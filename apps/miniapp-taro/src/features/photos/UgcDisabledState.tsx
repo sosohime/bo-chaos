@@ -20,18 +20,18 @@ export default function UgcDisabledState({
         <Text className="ugc-disabled-status">已关闭</Text>
       </View>
       <Text className="ugc-disabled-copy">{ugc.disabledMessage}</Text>
-      <View className="ugc-disabled-grid">
-        <View className="ugc-disabled-item primary">
+      <View className="ugc-disabled-summary">
+        <View className="ugc-disabled-primary">
           <Text className="ugc-disabled-label">内容入口</Text>
           <Text className="ugc-disabled-value">隐藏</Text>
         </View>
-        <View className="ugc-disabled-item">
+        <View className="ugc-disabled-row">
           <Text className="ugc-disabled-label">数据请求</Text>
-          <Text className="ugc-disabled-value">暂停</Text>
+          <Text className="ugc-disabled-meta">暂停</Text>
         </View>
-        <View className="ugc-disabled-item">
+        <View className="ugc-disabled-row">
           <Text className="ugc-disabled-label">恢复方式</Text>
-          <Text className="ugc-disabled-value">配置</Text>
+          <Text className="ugc-disabled-meta">配置</Text>
         </View>
       </View>
     </View>

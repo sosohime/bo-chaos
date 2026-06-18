@@ -49,6 +49,11 @@
   display: block;
 }
 
+.ugc-disabled-meta {
+  position: relative;
+  z-index: 1;
+}
+
 .ugc-disabled-kicker {
   color: #4b658a;
   font-size: 12px;
@@ -81,47 +86,72 @@
   font-weight: 700;
 }
 
-.ugc-disabled-grid {
+.ugc-disabled-summary {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
   overflow: hidden;
-  background: #e6edf6;
-  border: 1px solid #e6edf6;
-  border-radius: 6px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
-.ugc-disabled-item {
+.ugc-disabled-primary {
   min-width: 0;
-  padding: 8px 9px;
-  background: #ffffff;
+  padding: 10px;
+  background: #f7fbff;
+  border: 1px solid #d8e8ff;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.ugc-disabled-row {
+  min-height: 34px;
+  min-width: 0;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #eef2f8;
   box-sizing: border-box;
 
-  &.primary {
-    background: #f7fbff;
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 }
 
 .ugc-disabled-label,
-.ugc-disabled-value {
+.ugc-disabled-value,
+.ugc-disabled-meta {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .ugc-disabled-label {
+  flex: 0 0 auto;
   color: #6b7f9f;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 14px;
+  line-height: 18px;
 }
 
 .ugc-disabled-value {
   margin-top: 5px;
   color: #17233d;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.ugc-disabled-meta {
+  min-width: 0;
+  color: #17233d;
   font-size: 12px;
   font-weight: 700;
-  line-height: 16px;
+  line-height: 18px;
+  text-align: right;
 }
