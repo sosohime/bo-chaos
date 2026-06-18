@@ -24,6 +24,9 @@ interface Animation {
   text: string;
   opacity: number;
 }
+
+const KOWTOW_SYNC_INTERVAL_MS = 2000;
+
 export default function Kowtow() {
   const [kowtowCount, setKowtowCount] = useLocalStorage<number>(
     "nowKowtowCount",
@@ -139,7 +142,7 @@ export default function Kowtow() {
   // 每隔两秒查询一次最新互动状态。
   useEffect(() => {
     syncKowtowStats();
-    const timer = setInterval(syncKowtowStats, 2000);
+    const timer = setInterval(syncKowtowStats, KOWTOW_SYNC_INTERVAL_MS);
     return () => clearInterval(timer);
   }, []);
 
@@ -271,12 +274,18 @@ export default function Kowtow() {
                   {kowtowStats.todayKowtowedUser}
                 </Text>
               </View>
-            </View>
-            <View className="kowtow-node-status">
-              <Text>本地队列</Text>
-              <Text className="kowtow-node-status-value">
-                {kowtowCount ? `待同步 ${kowtowCount}` : "已同步"}
-              </Text>
+              <View className="kowtow-stat">
+                <Text className="kowtow-stat-label">本地队列</Text>
+                <Text className="kowtow-stat-value metric-text">
+                  {kowtowCount ? `待同步 ${kowtowCount}` : "已同步"}
+                </Text>
+              </View>
+              <View className="kowtow-stat">
+                <Text className="kowtow-stat-label">同步周期</Text>
+                <Text className="kowtow-stat-value metric-text">
+                  {KOWTOW_SYNC_INTERVAL_MS / 1000}s
+                </Text>
+              </View>
             </View>
           </View>
           <BoSheng boxStyle={{ marginTop: "12px" }} />

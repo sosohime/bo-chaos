@@ -84,7 +84,7 @@
 
   .kowtow-console-body {
     margin-top: 12px;
-    padding: 12px;
+    padding: 0;
   }
 
   .kowtow-stats {
@@ -92,9 +92,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1px;
     overflow: hidden;
-    background: #d8e3f0;
-    border: 1px solid #d8e3f0;
-    border-radius: 8px;
+    background: #e6edf6;
   }
 
   .kowtow-stat {
@@ -117,26 +115,19 @@
   .kowtow-stat-value {
     display: block;
     margin-top: 7px;
+    overflow: hidden;
     color: #17233d;
     font-size: 22px;
     font-weight: 700;
     line-height: 29px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .kowtow-node-status {
-    margin-top: 12px;
-    padding: 10px 0 0;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    color: #66758f;
-    border-top: 1px solid #e3edf8;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .kowtow-node-status-value {
-    color: #17233d;
+  .metric-text {
+    color: #0052d9;
+    font-size: 14px;
+    line-height: 23px;
   }
 
   .god-bo {
