@@ -3,33 +3,48 @@
   top: 0;
   z-index: 10;
   width: 100%;
-  min-height: 48px;
-  padding: 8px 12px 7px;
+  min-height: 50px;
+  padding: 8px 12px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  gap: 0;
   background: rgba(255, 255, 255, 0.98);
   box-sizing: border-box;
-  border-bottom: 1px solid #d4e3f7;
-  box-shadow: 0 4px 14px rgba(15, 54, 105, 0.045);
+  border-bottom: 1px solid #d8e3f0;
+  box-shadow: 0 4px 14px rgba(18, 50, 87, 0.04);
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 8px;
+    bottom: 8px;
+    background: #f6faff;
+    border: 1px solid #d8e3f0;
+    border-radius: 6px;
+  }
 }
 
 .tab-block {
-  height: 38px;
+  position: relative;
+  z-index: 1;
+  height: 34px;
   padding: 0 10px;
   display: flex;
   align-items: center;
   gap: 6px;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: 5px;
   box-sizing: border-box;
 }
 
 .current-tab {
   color: #0052d9;
-  background: #eef6ff;
+  background: #ffffff;
   border-color: #c8dcfb;
   font-weight: 700;
+  box-shadow: 0 3px 10px rgba(18, 50, 87, 0.05);
 
   .head-icon {
     color: #ffffff;
@@ -39,8 +54,8 @@
 
 .default-tab {
   color: #66758f;
-  background: #f6faff;
-  border-color: #d4e3f7;
+  background: transparent;
+  border-color: transparent;
 }
 
 .head-icon {
@@ -72,5 +87,6 @@
   border-radius: 999px;
   color: #0052d9;
   background: #edf5ff;
+  border: 1px solid #c8dcfb;
   box-sizing: border-box;
 }
