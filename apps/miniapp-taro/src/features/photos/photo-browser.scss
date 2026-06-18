@@ -13,14 +13,16 @@
   position: relative;
   overflow: hidden;
   margin: 16px 14px 8px;
-  padding: 14px;
+  min-height: 54px;
+  padding: 12px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
   background: #ffffff;
   border: 1px solid #d8e3f0;
-  border-radius: 8px;
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 
 .photo-console-kicker {
@@ -33,11 +35,11 @@
 
 .photo-console-title {
   display: block;
-  margin-top: 5px;
+  margin-top: 4px;
   color: #17233d;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 24px;
+  line-height: 22px;
 }
 
 .photo-console-status {
@@ -274,29 +276,23 @@
 .list-state {
   position: relative;
   overflow: hidden;
-  min-height: 104px;
+  min-height: 94px;
   margin: 14px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
   gap: 12px;
-  padding: 14px;
+  padding: 12px;
   color: #66758f;
   font-size: 13px;
-  background: #ffffff;
+  background: #fbfdff;
   border: 1px solid #d8e3f0;
-  border-radius: 8px;
+  border-radius: 6px;
   box-sizing: border-box;
 
   &::after {
-    content: "";
-    position: absolute;
-    left: 14px;
-    right: 14px;
-    top: 52px;
-    height: 1px;
-    background: #eef3f8;
+    display: none;
   }
 
   &.error {
@@ -314,9 +310,9 @@
   height: 34px;
   margin-top: 2px;
   padding: 7px 6px;
-  background: #fbfdff;
+  background: #ffffff;
   border: 1px solid #d8e3f0;
-  border-radius: 6px;
+  border-radius: 4px;
   box-sizing: border-box;
 }
 
@@ -366,7 +362,7 @@
 .state-copy {
   display: block;
   max-width: 260px;
-  margin-top: 13px;
+  margin-top: 6px;
   color: #66758f;
   font-size: 13px;
   line-height: 20px;
