@@ -1,34 +1,11 @@
 .swiper-console {
   position: relative;
   overflow: hidden;
-  padding: 10px;
-  background: #ffffff;
+  margin-top: 10px;
+  background: #f3f7fc;
   border: 1px solid #d8e3f0;
-  border-radius: 8px;
-  box-shadow: 0 8px 18px rgba(18, 50, 87, 0.045);
+  border-radius: 6px;
   box-sizing: border-box;
-}
-
-.swiper-frame-mark {
-  position: absolute;
-  z-index: 2;
-  width: 22px;
-  height: 2px;
-  pointer-events: none;
-
-  &.top-left {
-    left: 10px;
-    top: 10px;
-    background: #0052d9;
-    border-radius: 2px;
-  }
-
-  &.top-right {
-    right: 10px;
-    top: 10px;
-    background: #d8e3f0;
-    border-radius: 2px;
-  }
 }
 
 .swiper-block {
@@ -37,8 +14,7 @@
   height: calc(100vw * 0.75 - 62px);
   z-index: 1;
   overflow: hidden;
-  border: 1px solid #d8e3f0;
-  border-radius: 6px;
+  border-radius: 5px;
   background: #f3f7fc;
 }
 
@@ -50,14 +26,4 @@
 .image {
   width: 100%;
   height: 100%;
-}
-
-.swiper-console-footer {
-  padding-top: 9px;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  color: #4b658a;
-  font-size: 12px;
-  font-weight: 700;
 }
