@@ -1,13 +1,7 @@
 .my-container {
   height: 100vh;
   color: #17233d;
-  background: linear-gradient(180deg, rgba(239, 245, 253, 0.96), #f7f9fc 76%),
-    linear-gradient(90deg, rgba(0, 82, 217, 0.055) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(0, 82, 217, 0.045) 1px, transparent 1px);
-  background-size:
-    auto,
-    28px 28px,
-    28px 28px;
+  background: linear-gradient(180deg, #eef4fb 0%, #f7f9fc 44%, #f7f9fc 100%);
   box-sizing: border-box;
   position: relative;
   z-index: 1;
@@ -27,8 +21,8 @@
   gap: 12px;
   padding: 12px 16px;
   background: #ffffff;
-  border-bottom: 1px solid #dbe7f7;
-  box-shadow: 0 4px 14px rgba(15, 54, 105, 0.05);
+  border-bottom: 1px solid #d8e3f0;
+  box-shadow: 0 4px 14px rgba(18, 50, 87, 0.04);
 
   .avatar {
     width: 48px;
@@ -126,9 +120,9 @@
   margin: 16px;
   padding: 15px;
   background: #ffffff;
-  border: 1px solid #d4e3f7;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.065);
+  box-shadow: 0 10px 24px rgba(18, 50, 87, 0.055);
 }
 
 .upload-section,

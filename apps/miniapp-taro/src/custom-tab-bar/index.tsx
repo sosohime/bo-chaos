@@ -1,19 +1,9 @@
 import { useContext } from "react";
 import Taro from "@tarojs/taro";
-import { CoverImage, CoverView } from "@tarojs/components";
+import { CoverView } from "@tarojs/components";
 import { AppContext } from "../lib/context";
 import type { MiniappTabKey } from "../lib/context";
 import { getMiniappConfig, isUgcEnabled } from "@/lib/runtime-config";
-import historyIcon from "@/images/tab-bar/history.png";
-import historyIconActive from "@/images/tab-bar/history-active.png";
-import kowtowIcon from "@/images/tab-bar/kowtow.png";
-import kowtowIconActive from "@/images/tab-bar/kowtow-active.png";
-import myIcon from "@/images/tab-bar/my.png";
-import myIconActive from "@/images/tab-bar/my-active.png";
-import retireIcon from "@/images/tab-bar/retire.png";
-import retireIconActive from "@/images/tab-bar/retire-active.png";
-import travelIcon from "@/images/tab-bar/travel.png";
-import travelIconActive from "@/images/tab-bar/travel-active.png";
 
 import "./index.scss";
 
@@ -22,36 +12,26 @@ const list = [
     key: "retire" as const,
     pagePath: "/pages/retire/index",
     text: "退休",
-    icon: retireIcon,
-    activeIcon: retireIconActive,
   },
   {
     key: "kowtow" as const,
     pagePath: "/pages/kowtow/index",
     text: "磕袁",
-    icon: kowtowIcon,
-    activeIcon: kowtowIconActive,
   },
   {
     key: "history" as const,
     pagePath: "/pages/history/index",
     text: "博史",
-    icon: historyIcon,
-    activeIcon: historyIconActive,
   },
   {
     key: "travel" as const,
     pagePath: "/pages/travel/index",
     text: "旅行",
-    icon: travelIcon,
-    activeIcon: travelIconActive,
   },
   {
     key: "my" as const,
     pagePath: "/pages/my/index",
     text: "我的",
-    icon: myIcon,
-    activeIcon: myIconActive,
   },
 ];
 
@@ -96,10 +76,13 @@ export default function TabBar() {
             <CoverView className="tab-bar-control">
               <CoverView className="tab-bar-indicator"></CoverView>
               <CoverView className="tab-bar-icon-shell">
-                <CoverImage
-                  className="tab-bar-icon"
-                  src={active ? item.activeIcon : item.icon}
-                />
+                <CoverView
+                  className={`tab-bar-glyph tab-bar-glyph-${item.key}`}
+                >
+                  <CoverView className="tab-bar-glyph-main"></CoverView>
+                  <CoverView className="tab-bar-glyph-sub"></CoverView>
+                  <CoverView className="tab-bar-glyph-dot"></CoverView>
+                </CoverView>
               </CoverView>
               <CoverView className="tab-bar-label">
                 {miniapp.tabs[item.key].text || item.text}

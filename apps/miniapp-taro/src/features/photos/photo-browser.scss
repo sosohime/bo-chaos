@@ -1,12 +1,6 @@
 .photo-page {
   height: 100vh;
-  background: linear-gradient(180deg, rgba(239, 245, 253, 0.96), #f7f9fc 72%),
-    linear-gradient(90deg, rgba(0, 82, 217, 0.055) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(0, 82, 217, 0.045) 1px, transparent 1px);
-  background-size:
-    auto,
-    28px 28px,
-    28px 28px;
+  background: linear-gradient(180deg, #eef4fb 0%, #f7f9fc 42%, #f7f9fc 100%);
   box-sizing: border-box;
 }
 
@@ -25,9 +19,9 @@
   justify-content: space-between;
   gap: 12px;
   background: #ffffff;
-  border: 1px solid #d4e3f7;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.07);
+  box-shadow: 0 10px 24px rgba(18, 50, 87, 0.055);
 
   &::before {
     content: "";
@@ -72,9 +66,9 @@
   margin: 12px 14px 0;
   padding: 12px 12px 11px;
   background: #ffffff;
-  border: 1px solid #d4e3f7;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(15, 54, 105, 0.045);
+  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.04);
   box-sizing: border-box;
 }
 
@@ -135,13 +129,13 @@
   margin: 10px 14px 0;
   overflow: hidden;
   background: #ffffff;
-  border: 1px solid #d4e3f7;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(15, 54, 105, 0.045);
+  box-shadow: 0 4px 14px rgba(18, 50, 87, 0.04);
 
   &.active {
     border-color: #c8dcfb;
-    box-shadow: 0 9px 22px rgba(15, 54, 105, 0.075);
+    box-shadow: 0 9px 22px rgba(18, 50, 87, 0.06);
   }
 }
 

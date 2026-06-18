@@ -6,13 +6,7 @@
 .retire-page {
   min-height: 100vh;
   color: #17233d;
-  background: linear-gradient(180deg, rgba(233, 241, 252, 0.96), #f7f9fc 62%),
-    linear-gradient(90deg, rgba(0, 82, 217, 0.08) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(0, 82, 217, 0.06) 1px, transparent 1px);
-  background-size:
-    auto,
-    28px 28px,
-    28px 28px;
+  background: linear-gradient(180deg, #eaf2fb 0%, #f7f9fc 44%, #f7f9fc 100%);
   box-sizing: border-box;
 }
 
@@ -26,9 +20,9 @@
   overflow: hidden;
   padding: 15px;
   background: #ffffff;
-  border: 1px solid #d4e3f7;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(15, 54, 105, 0.08);
+  box-shadow: 0 10px 24px rgba(18, 50, 87, 0.06);
   box-sizing: border-box;
 
   &::before {
@@ -39,17 +33,6 @@
     right: 0;
     height: 3px;
     background: linear-gradient(90deg, #0052d9, #00a4ff 52%, #8ab7ff);
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    right: -46px;
-    top: -42px;
-    width: 140px;
-    height: 140px;
-    border: 1px solid rgba(0, 82, 217, 0.12);
-    border-radius: 50%;
   }
 }
 

@@ -3,18 +3,18 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 66px;
-  background: rgba(255, 255, 255, 0.985);
+  height: 68px;
+  background: rgba(255, 255, 255, 0.99);
   display: flex;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom); // 适配 iPhone 底部
-  border-top: 1px solid #d9e5f5;
-  box-shadow: 0 -6px 18px rgba(15, 54, 105, 0.07);
+  border-top: 1px solid #d8e3f0;
+  box-shadow: 0 -8px 20px rgba(18, 50, 87, 0.06);
   box-sizing: border-box;
 }
 
 .tab-bar-border {
-  background: #d9e5f5;
+  background: #d8e3f0;
   position: absolute;
   left: 0;
   top: 0;
@@ -37,60 +37,49 @@
 
 .tab-bar-control {
   position: relative;
-  width: 54px;
-  height: 54px;
-  padding: 6px 4px 4px;
+  width: 100%;
+  height: 56px;
+  padding: 7px 0 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 6px;
   box-sizing: border-box;
 }
 
 .tab-bar-indicator {
-  position: relative;
-  top: -6px;
-  width: 18px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 22px;
   height: 2px;
-  flex: 0 0 auto;
   background: transparent;
   border-radius: 2px;
+  transform: translateX(-50%);
   box-sizing: border-box;
 }
 
 .tab-bar-icon-shell {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 5px;
+  border-bottom: 1px solid transparent;
   box-sizing: border-box;
-}
-
-.tab-bar-icon {
-  width: 25px;
-  height: 25px;
 }
 
 .tab-bar-item.active {
   color: #0052d9;
 
   .tab-bar-control {
-    width: 54px;
-    height: 54px;
-    padding: 6px 4px 4px;
-    flex-direction: column;
-    gap: 2px;
+    width: 100%;
+    height: 56px;
+    padding: 7px 0 5px;
     background: transparent;
-    border-color: transparent;
-    border-radius: 6px;
   }
 
   .tab-bar-indicator {
@@ -98,20 +87,200 @@
   }
 
   .tab-bar-icon-shell {
-    background: #eef6ff;
-    border-color: #c8dcfb;
+    background: transparent;
+    border-color: #0052d9;
+  }
+
+  .tab-bar-glyph-main,
+  .tab-bar-glyph-sub,
+  .tab-bar-glyph-dot {
+    border-color: #0052d9;
+  }
+
+  .tab-bar-glyph-retire .tab-bar-glyph-sub,
+  .tab-bar-glyph-retire .tab-bar-glyph-dot,
+  .tab-bar-glyph-kowtow .tab-bar-glyph-sub,
+  .tab-bar-glyph-kowtow .tab-bar-glyph-dot,
+  .tab-bar-glyph-travel .tab-bar-glyph-sub,
+  .tab-bar-glyph-travel .tab-bar-glyph-dot {
+    background: #0052d9;
   }
 }
 
 .tab-bar-label {
   font-size: 10px;
   line-height: 13px;
-  font-weight: 600;
-  color: #5d6f8f;
+  font-weight: 500;
+  color: #6b7f9f;
   white-space: nowrap;
 }
 
 .tab-bar-item.active .tab-bar-label {
   color: #0052d9;
   font-weight: 700;
+}
+
+.tab-bar-glyph {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  color: #6b7f9f;
+  box-sizing: border-box;
+}
+
+.tab-bar-glyph-main,
+.tab-bar-glyph-sub,
+.tab-bar-glyph-dot {
+  position: absolute;
+  border-color: #6b7f9f;
+  background: #6b7f9f;
+  box-sizing: border-box;
+}
+
+.tab-bar-glyph-retire {
+  .tab-bar-glyph-main {
+    left: 4px;
+    top: 3px;
+    width: 16px;
+    height: 16px;
+    background: transparent;
+    border: 2px solid #6b7f9f;
+    border-radius: 50%;
+  }
+
+  .tab-bar-glyph-sub {
+    left: 11px;
+    top: 7px;
+    width: 2px;
+    height: 7px;
+    border: 0;
+    border-radius: 2px;
+  }
+
+  .tab-bar-glyph-dot {
+    left: 12px;
+    top: 12px;
+    width: 6px;
+    height: 2px;
+    border: 0;
+    border-radius: 2px;
+  }
+}
+
+.tab-bar-glyph-kowtow {
+  .tab-bar-glyph-main {
+    left: 4px;
+    top: 5px;
+    width: 16px;
+    height: 12px;
+    background: transparent;
+    border: 2px solid #6b7f9f;
+    border-radius: 4px;
+  }
+
+  .tab-bar-glyph-sub {
+    left: 8px;
+    top: 9px;
+    width: 8px;
+    height: 2px;
+    border: 0;
+    border-radius: 2px;
+  }
+
+  .tab-bar-glyph-dot {
+    left: 10px;
+    top: 18px;
+    width: 4px;
+    height: 2px;
+    border: 0;
+    border-radius: 2px;
+  }
+}
+
+.tab-bar-glyph-history {
+  .tab-bar-glyph-main {
+    left: 5px;
+    top: 5px;
+    width: 14px;
+    height: 4px;
+    background: transparent;
+    border: 2px solid #6b7f9f;
+    border-radius: 3px;
+  }
+
+  .tab-bar-glyph-sub {
+    left: 5px;
+    top: 11px;
+    width: 14px;
+    height: 4px;
+    background: transparent;
+    border: 2px solid #6b7f9f;
+    border-radius: 3px;
+  }
+
+  .tab-bar-glyph-dot {
+    left: 5px;
+    top: 17px;
+    width: 14px;
+    height: 4px;
+    background: transparent;
+    border: 2px solid #6b7f9f;
+    border-radius: 3px;
+  }
+}
+
+.tab-bar-glyph-travel {
+  .tab-bar-glyph-main {
+    left: 4px;
+    top: 6px;
+    width: 16px;
+    height: 10px;
+    background: transparent;
+    border: 2px solid #6b7f9f;
+    border-radius: 8px;
+  }
+
+  .tab-bar-glyph-sub {
+    left: 11px;
+    top: 3px;
+    width: 2px;
+    height: 18px;
+    border: 0;
+    border-radius: 2px;
+  }
+
+  .tab-bar-glyph-dot {
+    left: 4px;
+    top: 11px;
+    width: 16px;
+    height: 2px;
+    border: 0;
+    border-radius: 2px;
+  }
+}
+
+.tab-bar-glyph-my {
+  .tab-bar-glyph-main {
+    left: 8px;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    background: transparent;
+    border: 2px solid #6b7f9f;
+    border-radius: 50%;
+  }
+
+  .tab-bar-glyph-sub {
+    left: 4px;
+    top: 15px;
+    width: 16px;
+    height: 6px;
+    background: transparent;
+    border: 2px solid #6b7f9f;
+    border-radius: 8px 8px 3px 3px;
+  }
+
+  .tab-bar-glyph-dot {
+    display: none;
+  }
 }
