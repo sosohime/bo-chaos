@@ -124,8 +124,10 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       <View className="photo-box">
         {loading && (
           <View className="loading-container">
-            <View className="media-state-mark">
-              <View className="media-state-mark-line"></View>
+            <View className="media-state-glyph">
+              <View className="media-state-glyph-head"></View>
+              <View className="media-state-glyph-row"></View>
+              <View className="media-state-glyph-row short"></View>
             </View>
             <View className="media-state-body">
               <Text className="media-state-kicker">图片加载</Text>
@@ -136,8 +138,10 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
 
         {error ? (
           <View className="error-container" onClick={handleRetry}>
-            <View className="media-state-mark error">
-              <View className="media-state-mark-line"></View>
+            <View className="media-state-glyph error">
+              <View className="media-state-glyph-head"></View>
+              <View className="media-state-glyph-row"></View>
+              <View className="media-state-glyph-row short"></View>
             </View>
             <View className="media-state-body">
               <Text className="media-state-kicker">加载异常</Text>
@@ -167,7 +171,8 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       <View className="photo-actions">
         <View className="photo-action-primary" onClick={handleDownload}>
           <View className="photo-action-mark">
-            <View className="photo-action-mark-line"></View>
+            <View className="photo-action-arrow"></View>
+            <View className="photo-action-tray"></View>
           </View>
           <Text>保存</Text>
         </View>
