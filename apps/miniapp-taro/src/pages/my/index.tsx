@@ -11,6 +11,7 @@ import { useState, useEffect, useContext } from "react";
 import { dayjs } from "@mono/utils";
 import Taro from "@tarojs/taro";
 import BoSheng from "@/components/boSheng";
+import UgcDisabledState from "@/features/photos/UgcDisabledState";
 import { AppContext } from "@/lib/context";
 import { useShare } from "@/lib/share";
 import { groupBy } from "es-toolkit";
@@ -892,11 +893,7 @@ export default function My() {
             )}
           </View>
         ) : (
-          <View className="ugc-disabled-section">
-            <Text className="ugc-disabled-kicker">内容状态</Text>
-            <View className="section-title">{miniapp.ugc.disabledTitle}</View>
-            <Text>{miniapp.ugc.disabledMessage}</Text>
-          </View>
+          <UgcDisabledState systemConfig={systemConfig} />
         )}
 
         {ugcEnabled && (

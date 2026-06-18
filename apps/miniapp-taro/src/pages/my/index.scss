@@ -112,7 +112,6 @@
 .record-section,
 .upload-section,
 .history-section,
-.ugc-disabled-section,
 .bo-daily-card {
   position: relative;
   overflow: hidden;
@@ -134,24 +133,6 @@
     width: 3px;
     background: #0052d9;
     border-radius: 0 3px 3px 0;
-  }
-}
-
-.ugc-disabled-section {
-  color: #5d6f8f;
-  font-size: 14px;
-  line-height: 22px;
-
-  .ugc-disabled-kicker {
-    display: block;
-    margin-bottom: 5px;
-    color: #4b658a;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .section-title {
-    margin-bottom: 8px;
   }
 }
 
