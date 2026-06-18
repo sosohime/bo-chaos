@@ -126,22 +126,34 @@ export default function ApprovalPage() {
           </View>
           {active.items.length === 0 && active.loading && (
             <View className="approval-state">
-              <Text className="approval-state-kicker">队列加载</Text>
-              <Text className="approval-state-title">加载中</Text>
-              <Text className="approval-state-copy">正在获取当前审核队列</Text>
+              <View className="approval-state-mark">
+                <View className="approval-state-mark-line"></View>
+              </View>
+              <View className="approval-state-body">
+                <Text className="approval-state-kicker">队列加载</Text>
+                <Text className="approval-state-title">加载中</Text>
+                <Text className="approval-state-copy">
+                  正在获取当前审核队列
+                </Text>
+              </View>
             </View>
           )}
           {active.items.length === 0 && !active.loading && (
-            <View className="approval-state">
-              <Text className="approval-state-kicker">
-                {active.error ? "加载异常" : "队列状态"}
-              </Text>
-              <Text className="approval-state-title">
-                {active.error ? "加载失败" : "这里还没有图片"}
-              </Text>
-              <Text className="approval-state-copy">
-                {active.error ? "下拉重试当前队列" : "当前队列没有图片"}
-              </Text>
+            <View className={`approval-state ${active.error ? "error" : ""}`}>
+              <View className="approval-state-mark">
+                <View className="approval-state-mark-line"></View>
+              </View>
+              <View className="approval-state-body">
+                <Text className="approval-state-kicker">
+                  {active.error ? "加载异常" : "队列状态"}
+                </Text>
+                <Text className="approval-state-title">
+                  {active.error ? "加载失败" : "这里还没有图片"}
+                </Text>
+                <Text className="approval-state-copy">
+                  {active.error ? "下拉重试当前队列" : "当前队列没有图片"}
+                </Text>
+              </View>
             </View>
           )}
           {active.items.length > 0 && (
