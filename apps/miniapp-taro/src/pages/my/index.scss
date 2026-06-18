@@ -920,13 +920,14 @@
 
       &.active {
         color: #0052d9;
-        background: #f3f8ff;
+        background: #fbfdff;
         border-top-color: #0052d9;
         font-weight: 700;
 
         .history-tab-count {
-          background: #ffffff;
-          border-color: #bcd4f7;
+          color: #0052d9;
+          background: #f3f8ff;
+          border-color: #d8e8ff;
         }
       }
     }
@@ -936,9 +937,9 @@
       max-width: 46px;
       padding: 2px 6px;
       overflow: hidden;
-      color: #0052d9;
+      color: #5d6f8f;
       background: #ffffff;
-      border: 1px solid #c8dcfb;
+      border: 1px solid #e1eaf5;
       border-radius: 4px;
       font-size: 11px;
       text-align: center;
