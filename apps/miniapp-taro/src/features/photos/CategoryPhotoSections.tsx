@@ -81,18 +81,18 @@ export default function CategoryPhotoSections({
           </View>
           <Text className="photo-browser-sync">{browserStatus}</Text>
         </View>
-        <View className="photo-browser-matrix">
-          <View className="photo-browser-metric">
-            <Text className="metric-label">视图模式</Text>
-            <Text className="metric-value metric-text">分组浏览</Text>
+        <View className="photo-browser-meta">
+          <View className="photo-browser-meta-row">
+            <Text className="meta-label">视图模式</Text>
+            <Text className="meta-value">分组浏览</Text>
           </View>
-          <View className="photo-browser-metric">
-            <Text className="metric-label">分页状态</Text>
-            <Text className="metric-value metric-text">{browserStatus}</Text>
+          <View className="photo-browser-meta-row">
+            <Text className="meta-label">分页状态</Text>
+            <Text className="meta-value">{browserStatus}</Text>
           </View>
-          <View className="photo-browser-metric">
-            <Text className="metric-label">当前分组</Text>
-            <Text className="metric-value metric-text">
+          <View className="photo-browser-meta-row">
+            <Text className="meta-label">当前分组</Text>
+            <Text className="meta-value">
               {activeGroup?.categoryName || "未选择"}
             </Text>
           </View>
