@@ -874,9 +874,9 @@
       min-height: 96px;
       padding: 14px 14px 14px 18px;
       display: flex;
-      flex-direction: column;
+      align-items: flex-start;
       justify-content: center;
-      gap: 6px;
+      gap: 10px;
       background: #ffffff;
       border: 1px solid #d8e3f0;
       border-radius: 6px;
@@ -891,21 +891,83 @@
         width: 3px;
         background: #0052d9;
       }
+
+      &.error {
+        .history-empty-mark {
+          border-color: #d5dfec;
+
+          &::before,
+          &::after {
+            background: #6b7f9f;
+          }
+        }
+      }
+    }
+
+    .history-empty-mark {
+      position: relative;
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fbfdff;
+      border: 1px solid #c8dcfb;
+      border-radius: 6px;
+      box-sizing: border-box;
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        background: #0052d9;
+        border-radius: 2px;
+      }
+
+      &::before {
+        width: 13px;
+        height: 2px;
+      }
+
+      &::after {
+        width: 2px;
+        height: 13px;
+      }
+    }
+
+    .history-empty-mark-line {
+      position: absolute;
+      left: 9px;
+      right: 9px;
+      bottom: 8px;
+      height: 2px;
+      background: #9ebff5;
+      border-radius: 2px;
+    }
+
+    .history-empty-body {
+      min-width: 0;
     }
 
     .history-empty-kicker {
+      display: block;
       color: #4b658a;
       font-size: 12px;
       font-weight: 700;
     }
 
     .history-empty-title {
+      display: block;
+      margin-top: 4px;
       color: #17233d;
       font-size: 14px;
       font-weight: 700;
     }
 
     .history-empty-copy {
+      display: block;
+      margin-top: 5px;
       color: #66758f;
       font-size: 12px;
       line-height: 18px;

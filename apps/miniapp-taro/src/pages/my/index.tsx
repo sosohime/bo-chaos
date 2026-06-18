@@ -957,24 +957,40 @@ export default function My() {
                     />
                   ))
                 : !activeHistory.loading && (
-                    <View className="history-empty">
-                      <Text className="history-empty-kicker">
-                        {activeHistory.error ? "加载异常" : "队列状态"}
-                      </Text>
-                      <Text className="history-empty-title">
-                        {activeHistory.error ? "加载失败" : activeHistoryEmpty}
-                      </Text>
-                      <Text className="history-empty-copy">
-                        {activeHistory.error
-                          ? "点击下方按钮重试当前队列"
-                          : "当前队列没有图片记录"}
-                      </Text>
+                    <View
+                      className={`history-empty ${
+                        activeHistory.error ? "error" : ""
+                      }`}
+                    >
+                      <View className="history-empty-mark">
+                        <View className="history-empty-mark-line"></View>
+                      </View>
+                      <View className="history-empty-body">
+                        <Text className="history-empty-kicker">
+                          {activeHistory.error ? "加载异常" : "队列状态"}
+                        </Text>
+                        <Text className="history-empty-title">
+                          {activeHistory.error
+                            ? "加载失败"
+                            : activeHistoryEmpty}
+                        </Text>
+                        <Text className="history-empty-copy">
+                          {activeHistory.error
+                            ? "点击下方按钮重试当前队列"
+                            : "当前队列没有图片记录"}
+                        </Text>
+                      </View>
                     </View>
                   )}
               {activeHistory.loading && (
                 <View className="history-empty">
-                  <Text className="history-empty-kicker">队列加载</Text>
-                  <Text className="history-empty-title">加载中</Text>
+                  <View className="history-empty-mark">
+                    <View className="history-empty-mark-line"></View>
+                  </View>
+                  <View className="history-empty-body">
+                    <Text className="history-empty-kicker">队列加载</Text>
+                    <Text className="history-empty-title">加载中</Text>
+                  </View>
                 </View>
               )}
             </View>
