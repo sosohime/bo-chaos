@@ -1143,13 +1143,13 @@
       grid-column: 1 / -1;
       position: relative;
       overflow: hidden;
-      min-height: 96px;
-      padding: 12px;
+      min-height: 126px;
+      padding: 0;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 12px;
-      background: #fbfdff;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 0;
+      background: #ffffff;
       border: 0;
       border-radius: 0;
       box-sizing: border-box;
@@ -1159,27 +1159,62 @@
       }
 
       &.error {
+        .history-empty-node,
         .history-empty-glyph-head {
-          background: #6b7f9f;
-          border-color: #6b7f9f;
+          background: #d46b08;
+          border-color: #d46b08;
+        }
+
+        .history-empty-action {
+          color: #8a4b00;
+          background: #fff7ed;
+          border-color: #f2d3aa;
         }
       }
+    }
+
+    .history-empty-rail {
+      flex: 0 0 26px;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      padding: 16px 0 12px;
+      background: #fbfdff;
+      border-right: 1px solid #e6edf6;
+      box-sizing: border-box;
+    }
+
+    .history-empty-node {
+      width: 8px;
+      height: 8px;
+      background: #0052d9;
+      border: 1px solid #0052d9;
+      border-radius: 50%;
+      box-sizing: border-box;
+    }
+
+    .history-empty-line {
+      flex: 1;
+      width: 1px;
+      margin-top: 8px;
+      background: #d8e3f0;
     }
 
     .history-empty-glyph {
       position: relative;
       flex: 0 0 auto;
-      width: 34px;
-      height: 34px;
-      padding: 7px 6px;
-      background: #ffffff;
+      width: 38px;
+      height: 38px;
+      margin: 12px 10px 0 12px;
+      padding: 8px 7px;
+      background: #fbfdff;
       border: 1px solid #d8e3f0;
       border-radius: 4px;
       box-sizing: border-box;
     }
 
     .history-empty-glyph-head {
-      width: 14px;
+      width: 15px;
       height: 6px;
       background: #0052d9;
       border: 1px solid #0052d9;
@@ -1188,9 +1223,9 @@
     }
 
     .history-empty-glyph-row {
-      width: 20px;
+      width: 23px;
       height: 2px;
-      margin-top: 5px;
+      margin-top: 6px;
       background: #9ebff5;
       border-radius: 2px;
 
@@ -1203,6 +1238,8 @@
     .history-empty-body {
       min-width: 0;
       flex: 1;
+      padding: 12px 12px 12px 0;
+      box-sizing: border-box;
     }
 
     .history-empty-kicker {
@@ -1226,6 +1263,39 @@
       color: #66758f;
       font-size: 12px;
       line-height: 18px;
+    }
+
+    .history-empty-meta-row {
+      min-height: 28px;
+      margin-top: 10px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #fbfdff;
+      border: 1px solid #eef2f8;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .history-empty-meta {
+      color: #7b8da8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .history-empty-action {
+      flex: 0 0 auto;
+      padding: 2px 6px;
+      color: #0052d9;
+      background: #f3f8ff;
+      border: 1px solid #d8e8ff;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 15px;
+      box-sizing: border-box;
     }
   }
 

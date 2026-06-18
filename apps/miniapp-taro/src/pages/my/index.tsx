@@ -1014,7 +1014,14 @@ export default function My() {
                       className={`history-empty ${
                         activeHistory.error ? "error" : ""
                       }`}
+                      onClick={
+                        activeHistory.error ? activeHistory.refresh : undefined
+                      }
                     >
+                      <View className="history-empty-rail">
+                        <View className="history-empty-node"></View>
+                        <View className="history-empty-line"></View>
+                      </View>
                       <View className="history-empty-glyph">
                         <View className="history-empty-glyph-head"></View>
                         <View className="history-empty-glyph-row"></View>
@@ -1031,14 +1038,24 @@ export default function My() {
                         </Text>
                         <Text className="history-empty-copy">
                           {activeHistory.error
-                            ? "点击下方按钮重试当前队列"
+                            ? "点击当前状态面板重试队列"
                             : "当前队列没有图片记录"}
                         </Text>
+                        <View className="history-empty-meta-row">
+                          <Text className="history-empty-meta">下一步</Text>
+                          <Text className="history-empty-action">
+                            {activeHistory.error ? "重试" : "等待更新"}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   )}
               {activeHistory.loading && (
                 <View className="history-empty">
+                  <View className="history-empty-rail">
+                    <View className="history-empty-node"></View>
+                    <View className="history-empty-line"></View>
+                  </View>
                   <View className="history-empty-glyph">
                     <View className="history-empty-glyph-head"></View>
                     <View className="history-empty-glyph-row"></View>
@@ -1047,15 +1064,17 @@ export default function My() {
                   <View className="history-empty-body">
                     <Text className="history-empty-kicker">队列加载</Text>
                     <Text className="history-empty-title">加载中</Text>
+                    <Text className="history-empty-copy">
+                      正在获取当前上传记录
+                    </Text>
+                    <View className="history-empty-meta-row">
+                      <Text className="history-empty-meta">下一步</Text>
+                      <Text className="history-empty-action">保持当前页</Text>
+                    </View>
                   </View>
                 </View>
               )}
             </View>
-            {activeHistory.error && (
-              <Button className="load-more" onClick={activeHistory.refresh}>
-                重试{activeHistoryTitle}
-              </Button>
-            )}
             {activeHistory.hasMore && !activeHistory.error && (
               <Button className="load-more" onClick={handleHistoryReachBottom}>
                 加载更多 {activeHistoryTitle}
