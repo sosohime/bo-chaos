@@ -24,6 +24,8 @@ Use current public AI UI skill patterns as review input, then translate them int
 - UI Design Brain-style components: treat tabs, lists, empty states, upload controls, galleries, and error states as reusable product patterns with expected behavior.
 - DESIGN.md-style brand memory: keep BoChaos rules explicit enough that later agents preserve the Tencent Cloud console fit instead of reinventing the visual language.
 - Engineering-style frontend guidance: every visual flourish must survive accessibility, performance, responsive layout, data truthfulness, and maintainability checks.
+- Reference-board discipline: use Tencent Cloud product-console surfaces, real mini app constraints, and existing BoChaos product states as the reference board before choosing colors or effects.
+- Anti-template discipline: if a screen could be mistaken for a SaaS landing page, a generic AI prompt result, or a design marketplace preview, remove the showpiece element and rebuild the state hierarchy.
 
 Do not copy third-party visual themes into the app. Borrow their questions and quality gates only.
 
@@ -81,6 +83,8 @@ Before editing a screen, run a short design diagnosis in the task record:
 - Which existing element currently looks cheap, fake, noisy, or inconsistent?
 - Which copy, count, chip, or progress indicator might be unverifiable?
 - Which visual primitive should be removed instead of polished?
+- Which Tencent Cloud console pattern is the closest product reference: resource list, status summary, action footer, empty resource, detail drawer, or upload queue?
+- Which part of the screen is allowed to feel "AI/tech", and what real state or interaction justifies it?
 
 After editing, re-check the screen as a skeptical reviewer:
 
@@ -89,6 +93,17 @@ After editing, re-check the screen as a skeptical reviewer:
 - Does the tab bar keep stable size, rhythm, and contrast between active and inactive states?
 - Are all list, loading, empty, error, and footer states visually designed rather than left as text scraps?
 - Can every number or status on the screen be traced to API data, runtime config, or shared constants?
+- Would a user know the result of each tap without reading explanatory feature copy?
+- Does the screen still look deliberate when screenshots are cropped to the first viewport and bottom tab area?
+
+## Interaction Taste Rules
+
+- Put the highest-frequency action in the easiest reach zone and make secondary actions quieter, not equally loud.
+- Avoid mystery controls. Icon-only actions need established visual meaning; text actions need concrete verbs.
+- Loading, empty, error, retry, disabled, uploading, and submitted states should reuse the same product surface instead of swapping into unrelated decorative layouts.
+- Keep paginated surfaces honest: append new content without changing tab labels, section totals, selected states, or footer position unexpectedly.
+- Make destructive or dismiss actions precise and quiet. They should be findable without visually competing with submit, retry, or navigation actions.
+- Do not use motion, progress bars, or animated lines unless they represent real loading, upload progress, countdown progress, or a user-triggered transition.
 
 ## Anti-Slop Checks
 
@@ -111,6 +126,14 @@ Before finishing a visual change, scan the touched screens for:
 - UGC controls: honor runtime config and the single UGC kill switch across tabs, upload, history, and fetch behavior.
 - Approval/upload states: present as queue/resource states with clear retry paths and no fake system claims.
 - Generated bitmap slices: use them only for concrete branded texture or empty-state art. Never use them to simulate product credibility, hide poor layout, or replace real UI hierarchy.
+
+## Image Slice Rules
+
+- Use generated bitmap slices only after the native layout hierarchy is already credible.
+- Prefer small, functional assets: empty-state illustration, branded texture behind a real resource state, or page-specific icon art.
+- Do not use image slices for fake dashboards, fake diagnostics, artificial depth, large hero banners, or screenshot-like marketing panels.
+- Keep generated assets below the interaction layer. They must not obscure tappable controls, loading states, photo content, counts, or retirement facts.
+- Record why an image asset is needed in the task record; if the answer is "more tech", revise the native UI instead.
 
 ## Visual Evidence
 
