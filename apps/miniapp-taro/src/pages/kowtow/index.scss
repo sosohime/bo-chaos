@@ -22,7 +22,6 @@
 
   .kowtow-console-head,
   .kowtow-console-body,
-  .kowtow-action-panel,
   .kowtow-review-panel,
   .god-bo {
     position: relative;
@@ -71,12 +70,12 @@
 
   .kowtow-status {
     flex: 0 0 auto;
-    min-width: 48px;
+    min-width: 52px;
     padding: 5px 8px;
     color: #0052d9;
     text-align: center;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
+    background: #f3f8ff;
+    border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
@@ -260,21 +259,12 @@
     box-sizing: border-box;
   }
 
-  .kowtow-action-panel {
+  .kowtow-action-footer {
     position: relative;
-    margin-top: 12px;
-    padding: 14px 14px 15px 17px;
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 14px;
-      bottom: 14px;
-      width: 3px;
-      background: #0052d9;
-      border-radius: 0 3px 3px 0;
-    }
+    padding: 12px;
+    background: #fbfdff;
+    border-top: 1px solid #e6edf6;
+    box-sizing: border-box;
   }
 
   .kowtow-action-head {
@@ -309,7 +299,7 @@
     padding: 5px 8px;
     color: #0052d9;
     background: #f3f8ff;
-    border: 1px solid #c8dcfb;
+    border: 1px solid #d8e8ff;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
@@ -318,11 +308,11 @@
   .submit-kowtow {
     position: relative;
     z-index: 1;
-    margin-top: 14px;
+    margin-top: 12px;
     width: 100%;
     color: #ffffff;
     background: #0052d9;
-    border-radius: 6px;
+    border-radius: 4px;
     font-weight: 700;
     line-height: 44px;
 

@@ -287,6 +287,36 @@ export default function Kowtow() {
                 </Text>
               </View>
             </View>
+            <View className="kowtow-action-footer">
+              <View className="kowtow-action-head">
+                <View>
+                  <Text className="kowtow-action-kicker">操作</Text>
+                  <Text className="love">写入互动记录</Text>
+                </View>
+                <Text className="kowtow-action-state">
+                  {kowtowCount ? "待同步" : "可写入"}
+                </Text>
+              </View>
+              {kowtowStats.totalCount !== "-" && (
+                <Text className="kowtow-copy">
+                  {kowtowStats.iKowtowedToday
+                    ? "今日状态已记录，本地队列会自动同步"
+                    : "今日状态未记录，可写入一次本地队列"}
+                </Text>
+              )}
+              {syncFailed && (
+                <Text className="sync-warning" onClick={syncKowtowStats}>
+                  加载异常，点击重试
+                </Text>
+              )}
+              <Button
+                className={`submit-kowtow ${isKowtowing ? "loading" : ""}`}
+                type="primary"
+                onClick={handleKowtow}
+              >
+                {isKowtowing ? "写入中" : "写入本地队列"}
+              </Button>
+            </View>
           </View>
           <BoSheng boxStyle={{ marginTop: "12px" }} />
           <View className="god-bo">
@@ -335,36 +365,6 @@ export default function Kowtow() {
                 accountIndex={canvasInfo.swiperIndex}
               />
             </View>
-          </View>
-          <View className="kowtow-action-panel">
-            <View className="kowtow-action-head">
-              <View>
-                <Text className="kowtow-action-kicker">操作面板</Text>
-                <Text className="love">提交互动记录</Text>
-              </View>
-              <Text className="kowtow-action-state">
-                {kowtowCount ? "待同步" : "可提交"}
-              </Text>
-            </View>
-            {kowtowStats.totalCount !== "-" && (
-              <Text className="kowtow-copy">
-                {kowtowStats.iKowtowedToday
-                  ? "今日状态已记录，本地队列会自动同步"
-                  : "今日状态未记录，可写入一次本地队列"}
-              </Text>
-            )}
-            {syncFailed && (
-              <Text className="sync-warning" onClick={syncKowtowStats}>
-                加载异常，点击重试
-              </Text>
-            )}
-            <Button
-              className={`submit-kowtow ${isKowtowing ? "loading" : ""}`}
-              type="primary"
-              onClick={handleKowtow}
-            >
-              {isKowtowing ? "写入中" : "写入本地队列"}
-            </Button>
           </View>
         </>
       )}
