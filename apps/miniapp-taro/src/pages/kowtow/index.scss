@@ -34,22 +34,11 @@
 
   .kowtow-console-head {
     margin-top: 14px;
-    padding: 15px 14px 14px 17px;
+    padding: 14px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 14px;
-      bottom: 14px;
-      width: 3px;
-      background: #0052d9;
-      border-radius: 0 3px 3px 0;
-    }
   }
 
   .kowtow-eyebrow {
@@ -61,11 +50,11 @@
 
   .kowtow-title {
     display: block;
-    margin-top: 7px;
+    margin-top: 5px;
     color: #17233d;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
-    line-height: 27px;
+    line-height: 24px;
   }
 
   .kowtow-status {
@@ -136,12 +125,12 @@
 
   .kowtow-stat-value {
     display: block;
-    margin-top: 7px;
+    margin-top: 6px;
     overflow: hidden;
     color: #17233d;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
-    line-height: 29px;
+    line-height: 26px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -159,18 +148,7 @@
     position: relative;
     width: 100%;
     margin: 12px 0 0;
-    padding: 13px 12px 12px 15px;
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 13px;
-      bottom: 13px;
-      width: 3px;
-      background: #0052d9;
-      border-radius: 0 3px 3px 0;
-    }
+    padding: 12px;
 
     .canvas {
       position: absolute;
@@ -216,9 +194,9 @@
   }
 
   .god-bo-title {
-    margin-top: 5px;
+    margin-top: 4px;
     color: #17233d;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
   }
 
@@ -363,18 +341,7 @@
   }
 
   .kowtow-review-panel {
-    padding: 15px 14px 14px 17px;
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 14px;
-      bottom: 14px;
-      width: 3px;
-      background: #0052d9;
-      border-radius: 0 3px 3px 0;
-    }
+    padding: 14px;
   }
 
   .kowtow-review-head {
