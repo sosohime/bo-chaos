@@ -736,9 +736,16 @@ export default function My() {
                 onClick={handleUploadNextCommand}
               >
                 <View className="upload-command-copy">
-                  <Text className="upload-summary-label">下一步</Text>
+                  <Text className="upload-summary-label">主任务</Text>
                   <Text className="upload-command-title">
                     {uploadNextCommand}
+                  </Text>
+                  <Text className="upload-command-meta">
+                    {selectedImages.length
+                      ? `队列 ${selectedImages.length} 项`
+                      : uploadReadyForImages
+                        ? "配置已完成"
+                        : "等待配置完成"}
                   </Text>
                 </View>
                 <Text className="upload-command-action">

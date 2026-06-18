@@ -531,11 +531,11 @@
   }
 
   .upload-command-row {
-    min-height: 46px;
+    min-height: 58px;
     min-width: 0;
-    padding: 9px 12px;
+    padding: 10px 12px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     gap: 12px;
     background: #ffffff;
@@ -548,14 +548,20 @@
         background: #f3f8ff;
         border-color: #d8e8ff;
       }
+
+      .upload-command-title {
+        color: #0052d9;
+      }
     }
   }
 
   .upload-command-copy {
     min-width: 0;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    justify-content: center;
+    gap: 3px;
   }
 
   .upload-command-title {
@@ -569,10 +575,24 @@
     white-space: nowrap;
   }
 
+  .upload-command-meta {
+    display: block;
+    overflow: hidden;
+    color: #7b8da8;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .upload-command-action {
     flex: 0 0 auto;
-    min-width: 52px;
-    padding: 4px 8px;
+    min-width: 58px;
+    padding: 0 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #66758f;
     text-align: center;
     background: #ffffff;
@@ -580,7 +600,7 @@
     border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
-    line-height: 17px;
+    line-height: 18px;
     box-sizing: border-box;
   }
 
