@@ -22,11 +22,24 @@ export default function CategoryPhotoSections({
   onCategoryClick,
   onRetry,
 }: CategoryPhotoSectionsProps) {
+  const browserStatus = loading
+    ? "正在加载"
+    : hasMore
+      ? "上拉继续"
+      : "已全部显示";
+  const footerStatus = loading
+    ? "正在加载更多"
+    : activeCategory
+      ? hasMore
+        ? "上拉加载更多图片"
+        : "当前分组已全部显示"
+      : "展开一个分组查看图片";
+
   if (groups.length === 0 && loading) {
     return (
       <View className="list-state">
-        <Text className="state-kicker">分组加载</Text>
-        <Text className="state-title">图片加载中</Text>
+        <Text className="state-kicker">图库状态</Text>
+        <Text className="state-title">正在加载图片</Text>
         <Text className="state-copy">正在获取当前图库分组</Text>
       </View>
     );
@@ -36,7 +49,7 @@ export default function CategoryPhotoSections({
     return (
       <View className="list-state" onClick={onRetry}>
         <Text className="state-kicker">加载异常</Text>
-        <Text className="state-title">加载失败</Text>
+        <Text className="state-title">图片加载失败</Text>
         <Text className="state-action">点击重试</Text>
       </View>
     );
@@ -46,7 +59,7 @@ export default function CategoryPhotoSections({
     return (
       <View className="list-state">
         <Text className="state-kicker">图库分组</Text>
-        <Text className="state-title">暂无数据</Text>
+        <Text className="state-title">暂无图片</Text>
         <Text className="state-copy">当前板块还没有可展示图片</Text>
       </View>
     );
@@ -62,9 +75,7 @@ export default function CategoryPhotoSections({
               {activeCategory || "选择一个分组"}
             </Text>
           </View>
-          <Text className="photo-browser-sync">
-            {loading ? "加载中" : hasMore ? "可继续加载" : "已加载完"}
-          </Text>
+          <Text className="photo-browser-sync">{browserStatus}</Text>
         </View>
       </View>
       {groups.map((group) => (
@@ -82,7 +93,7 @@ export default function CategoryPhotoSections({
           >
             <View className="category-rail"></View>
             <View className="category-title">
-              <Text className="category-index">分组</Text>
+              <Text className="category-index">图库分组</Text>
               <Text className="category-name">{group.categoryName}</Text>
             </View>
             <View className="category-state">
@@ -97,7 +108,7 @@ export default function CategoryPhotoSections({
             <View className="category-body">
               <View className="category-body-head">
                 <Text>当前分组</Text>
-                <Text>{loading ? "加载中" : "图片列表"}</Text>
+                <Text>{loading ? "加载中" : "图片内容"}</Text>
               </View>
               <View className="photo-grid">
                 {group.photos.map((photo) => (
@@ -118,15 +129,7 @@ export default function CategoryPhotoSections({
         </View>
       ))}
       <View className="list-footer">
-        <Text>
-          {loading
-            ? "继续加载..."
-            : activeCategory
-              ? hasMore
-                ? "上拉加载更多"
-                : "已加载全部"
-              : "展开分组查看图片"}
-        </Text>
+        <Text className="list-footer-label">{footerStatus}</Text>
       </View>
     </>
   );

@@ -20,11 +20,22 @@ export default function WaterfallPhotoGrid({
   hasMore,
   onRetry,
 }: WaterfallPhotoGridProps) {
+  const browserStatus = loading
+    ? "正在加载"
+    : hasMore
+      ? "上拉继续"
+      : "已全部显示";
+  const footerStatus = loading
+    ? "正在加载更多"
+    : hasMore
+      ? "上拉加载更多图片"
+      : "当前图库已全部显示";
+
   if (photos.length === 0 && loading) {
     return (
       <View className="list-state">
-        <Text className="state-kicker">图库加载</Text>
-        <Text className="state-title">图片加载中</Text>
+        <Text className="state-kicker">图库状态</Text>
+        <Text className="state-title">正在加载图片</Text>
         <Text className="state-copy">正在获取当前图库内容</Text>
       </View>
     );
@@ -34,7 +45,7 @@ export default function WaterfallPhotoGrid({
     return (
       <View className="list-state" onClick={onRetry}>
         <Text className="state-kicker">加载异常</Text>
-        <Text className="state-title">加载失败</Text>
+        <Text className="state-title">图片加载失败</Text>
         <Text className="state-action">点击重试</Text>
       </View>
     );
@@ -44,7 +55,7 @@ export default function WaterfallPhotoGrid({
     return (
       <View className="list-state">
         <Text className="state-kicker">图库内容</Text>
-        <Text className="state-title">暂无数据</Text>
+        <Text className="state-title">暂无图片</Text>
         <Text className="state-copy">当前列表还没有可展示图片</Text>
       </View>
     );
@@ -56,11 +67,9 @@ export default function WaterfallPhotoGrid({
         <View className="photo-browser-toolbar">
           <View className="photo-browser-title-block">
             <Text className="photo-browser-label">图库视图</Text>
-            <Text className="photo-browser-active">瀑布排列</Text>
+            <Text className="photo-browser-active">全部图片</Text>
           </View>
-          <Text className="photo-browser-sync">
-            {loading ? "加载中" : hasMore ? "可继续加载" : "已加载完"}
-          </Text>
+          <Text className="photo-browser-sync">{browserStatus}</Text>
         </View>
       </View>
       <View className="waterfall">
@@ -81,9 +90,7 @@ export default function WaterfallPhotoGrid({
         ))}
       </View>
       <View className="list-footer">
-        <Text>
-          {loading ? "继续加载..." : hasMore ? "上拉加载更多" : "已加载全部"}
-        </Text>
+        <Text className="list-footer-label">{footerStatus}</Text>
       </View>
     </>
   );
