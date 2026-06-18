@@ -87,11 +87,11 @@ export default function CategoryPhotoSections({
         </View>
         <View className="photo-browser-matrix">
           <View className="photo-browser-metric">
-            <Text className="metric-label">已加载分组</Text>
+            <Text className="metric-label">本次分组</Text>
             <Text className="metric-value">{groups.length}</Text>
           </View>
           <View className="photo-browser-metric">
-            <Text className="metric-label">已加载图片</Text>
+            <Text className="metric-label">本次图片</Text>
             <Text className="metric-value">{loadedPhotoCount}</Text>
           </View>
           <View className="photo-browser-metric">
@@ -133,7 +133,7 @@ export default function CategoryPhotoSections({
               <View className="category-body-head">
                 <Text>当前分组</Text>
                 <Text>
-                  {loading ? "同步中" : `已加载 ${group.photos.length}`}
+                  {loading ? "同步中" : `本次 ${group.photos.length}`}
                 </Text>
               </View>
               <View className="photo-grid">

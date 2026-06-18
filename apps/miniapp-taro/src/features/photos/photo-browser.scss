@@ -53,12 +53,12 @@
 
 .photo-console-status {
   flex: 0 0 auto;
-  min-width: 48px;
+  min-width: 52px;
   padding: 5px 8px;
   color: #0052d9;
   text-align: center;
   background: #f3f8ff;
-  border: 1px solid #c8dcfb;
+  border: 1px solid #d8e8ff;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
@@ -125,8 +125,8 @@
   min-width: 58px;
   padding: 5px 8px;
   color: #0052d9;
-  background: #ffffff;
-  border: 1px solid #c8dcfb;
+  background: #f3f8ff;
+  border: 1px solid #d8e8ff;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
@@ -256,23 +256,23 @@
 
   .arrow {
     flex: 0 0 auto;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #0052d9;
-    background: #ffffff;
-    border: 1px solid #c8dcfb;
-    border-radius: 4px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
     box-sizing: border-box;
 
     &::before {
       content: "";
       width: 6px;
       height: 6px;
-      border-right: 1px solid #0052d9;
-      border-bottom: 1px solid #0052d9;
+      border-right: 1px solid #66758f;
+      border-bottom: 1px solid #66758f;
       transform: rotate(45deg) translate(-1px, -1px);
       box-sizing: border-box;
     }
@@ -283,7 +283,12 @@
   background: #0052d9;
 }
 
+.category-header.active .category-state {
+  color: #0052d9;
+}
+
 .category-header.active .arrow::before {
+  border-color: #0052d9;
   transform: rotate(225deg) translate(-1px, -1px);
 }
 

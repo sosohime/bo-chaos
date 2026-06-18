@@ -74,7 +74,7 @@ export default function WaterfallPhotoGrid({
         </View>
         <View className="photo-browser-matrix">
           <View className="photo-browser-metric">
-            <Text className="metric-label">已加载图片</Text>
+            <Text className="metric-label">本次图片</Text>
             <Text className="metric-value">{photos.length}</Text>
           </View>
           <View className="photo-browser-metric">
