@@ -23,6 +23,35 @@ Use this after `bo-chaos-miniapp` when the work touches mini app visual directio
 - Use AI/tech language only when it maps to actual runtime behavior or data state. Do not invent scans, diagnostics, intelligence scores, or system claims.
 - Make inactive states intentionally quiet and active states precise. Selection should not resize, jump, glow, or look like a campaign pill.
 
+## Tencent Cloud Console Fit
+
+Use Tencent Cloud as a product-console reference, not as a brand clone.
+
+- Page structure: lead with the user's current resource state, then the primary action, then secondary lists or history. Avoid first-screen campaign banners.
+- Surface style: prefer white or near-white panels over colored blocks; use thin dividers, compact rows, and calm gray-blue labels for hierarchy.
+- Action language: primary buttons should be operational and concrete. Avoid inflated labels such as "AI engine", "smart cockpit", "insight center", or "digital twin" unless a real feature supports them.
+- Icons: use restrained line-style icons with consistent visual weight. Active tab icons may be filled or accented, but inactive icons should remain legible and quiet.
+- Motion and effects: keep animation short and purposeful. Avoid glow, breathing halos, rotating grids, excessive blur, or decorative tech overlays.
+- Data honesty: show only backend-provided counts and canonical shared constants. If data is unknown, show an explicit unknown/loading/empty state rather than a guessed metric.
+
+## Taste-Skill Review Loop
+
+Before editing a screen, run a short design diagnosis in the task record:
+
+- What job does this screen do for the user?
+- What is the single most important state or action above the fold?
+- Which existing element currently looks cheap, fake, noisy, or inconsistent?
+- Which copy, count, chip, or progress indicator might be unverifiable?
+- Which visual primitive should be removed instead of polished?
+
+After editing, re-check the screen as a skeptical reviewer:
+
+- Would this pass as a real product interface if the brand name were removed?
+- Are there any "AI decoration" elements that do not improve a decision or action?
+- Does the tab bar keep stable size, rhythm, and contrast between active and inactive states?
+- Are all list, loading, empty, error, and footer states visually designed rather than left as text scraps?
+- Can every number or status on the screen be traced to API data, runtime config, or shared constants?
+
 ## Anti-Slop Checks
 
 Before finishing a visual change, scan the touched screens for:
@@ -33,6 +62,8 @@ Before finishing a visual change, scan the touched screens for:
 - Dark/purple neon, glow blobs, busy gradients, or decorative cards nested inside cards.
 - Empty/loading/error states that look like placeholders instead of product resource states.
 - Copy that exposes private employment detail, hard-codes retirement rules, or invents progress labels.
+- Mixed visual systems, such as legacy blue-white cards sitting beside new console panels.
+- Decorative image slices that make the app look like a sales mockup instead of a usable mini app.
 
 ## Component Rules
 
@@ -41,6 +72,13 @@ Before finishing a visual change, scan the touched screens for:
 - Retirement page: show canonical countdown/progress facts from shared constants only; avoid filler KPIs.
 - UGC controls: honor runtime config and the single UGC kill switch across tabs, upload, history, and fetch behavior.
 - Approval/upload states: present as queue/resource states with clear retry paths and no fake system claims.
+- Generated bitmap slices: use them only for concrete branded texture or empty-state art. Never use them to simulate product credibility, hide poor layout, or replace real UI hierarchy.
+
+## Visual Evidence
+
+- Prefer WeChat DevTools or real-device screenshots for final acceptance of broad UI work.
+- If DevTools is unavailable, record the exact blocker in the task record and rely on build output, source inspection, and style scans only as partial evidence.
+- Screenshots should be judged against the product-taste rules above, not merely checked for nonblank rendering.
 
 ## Verification
 
