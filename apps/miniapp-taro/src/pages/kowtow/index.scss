@@ -148,7 +148,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 11px;
     color: #5d6f8f;
     border-bottom: 1px solid #eef2f8;
     font-size: 12px;
@@ -184,8 +184,58 @@
     font-weight: 700;
   }
 
+  .god-bo-resource-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 10px;
+    overflow: hidden;
+    background: #e6edf6;
+    border: 1px solid #e6edf6;
+    border-radius: 6px;
+  }
+
+  .god-bo-resource-item {
+    min-width: 0;
+    padding: 8px 9px;
+    background: #ffffff;
+    box-sizing: border-box;
+
+    &.primary {
+      background: #f7fbff;
+    }
+  }
+
+  .god-bo-resource-label,
+  .god-bo-resource-value {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .god-bo-resource-label {
+    color: #6b7f9f;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 14px;
+  }
+
+  .god-bo-resource-value {
+    margin-top: 5px;
+    color: #17233d;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 17px;
+
+    &.metric {
+      color: #0052d9;
+      font-size: 12px;
+    }
+  }
+
   .god-bo-stage {
-    margin-top: 12px;
+    margin-top: 10px;
     overflow: hidden;
     background: #f7fbff;
     border: 1px solid #d8e3f0;
