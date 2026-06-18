@@ -472,7 +472,7 @@ export default function My() {
             onClick={handleAvatarClick}
           />
           <View className="user-name">
-            <Text className="hello">你好，</Text>
+            <Text className="account-kicker">ACCOUNT NODE</Text>
             {isEditingName ? (
               <View className="nickname-edit">
                 <Input
@@ -492,13 +492,14 @@ export default function My() {
               </View>
             ) : (
               <View
+                className="nickname-view"
                 onClick={() => {
                   setIsEditingName(true);
                   setEditingName(userInfo.nickname);
                 }}
               >
                 <Text className="nickname">
-                  {userInfo.nickname || "点击设置昵称"}
+                  {userInfo.nickname || "设置昵称"}
                 </Text>
                 <Image
                   className="nickname-edit-icon"
@@ -508,6 +509,7 @@ export default function My() {
               </View>
             )}
           </View>
+          <Text className="account-status">资料</Text>
         </View>
 
         <BoSheng boxStyle={{ padding: "14px 20px 0 20px" }} />
