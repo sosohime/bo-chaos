@@ -188,10 +188,39 @@
     padding: 14px;
   }
 
+  .kowtow-action-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .kowtow-action-kicker,
   .love {
     display: block;
+  }
+
+  .kowtow-action-kicker {
     color: #0052d9;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .love {
+    margin-top: 5px;
+    color: #17233d;
     font-size: 16px;
+    font-weight: 800;
+  }
+
+  .kowtow-action-state {
+    flex: 0 0 auto;
+    padding: 5px 8px;
+    color: #0052d9;
+    background: #eef6ff;
+    border: 1px solid #c8dcfb;
+    border-radius: 4px;
+    font-size: 12px;
     font-weight: 700;
   }
 

@@ -306,7 +306,15 @@ export default function Kowtow() {
             />
           </View>
           <View className="kowtow-action-panel">
-            <Text className="love">博爱世人</Text>
+            <View className="kowtow-action-head">
+              <View>
+                <Text className="kowtow-action-kicker">LOCAL OPERATION</Text>
+                <Text className="love">今日操作</Text>
+              </View>
+              <Text className="kowtow-action-state">
+                {kowtowCount ? "待同步" : "可提交"}
+              </Text>
+            </View>
             {kowtowStats.totalCount !== "-" && (
               <Text className="kowtow-copy">
                 {kowtowStats.iKowtowedToday
