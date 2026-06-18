@@ -7,6 +7,8 @@ description: Use when redesigning or polishing the bo-chaos Taro mini app UI, vi
 
 Use this after `bo-chaos-miniapp` when the work touches mini app visual direction.
 
+Before editing mini app visuals, read `apps/miniapp-taro/DESIGN.md`. Treat it as the project-local design memory; this skill explains the workflow and review gates around that contract.
+
 ## Direction
 
 - Aim for a Tencent Cloud product-console feel: clean white surfaces, quiet blue actions, gray-blue data text, precise dividers, compact resource cards, and clear operational states.
@@ -28,6 +30,14 @@ Use current public AI UI skill patterns as review input, then translate them int
 - Anti-template discipline: if a screen could be mistaken for a SaaS landing page, a generic AI prompt result, or a design marketplace preview, remove the showpiece element and rebuild the state hierarchy.
 
 Do not copy third-party visual themes into the app. Borrow their questions and quality gates only.
+
+## Project Design Memory
+
+`apps/miniapp-taro/DESIGN.md` is authoritative for miniapp visual direction:
+
+- Use it before redesigning pages, tab states, loading/empty/error states, photo feeds, upload flows, approval queues, retirement UI, or generated image slices.
+- If a screen-level decision conflicts with generic outside taste guidance, follow the BoChaos design memory and record the reason in the task record.
+- If repeated visual work reveals a new durable rule, update `DESIGN.md` instead of burying the rule in chat history.
 
 ## Taste Gate
 
