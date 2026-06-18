@@ -58,14 +58,14 @@
 
 .approval-console-status {
   flex: 0 0 auto;
-  min-width: 48px;
+  min-width: 52px;
   max-width: 72px;
   padding: 5px 8px;
   overflow: hidden;
   color: #0052d9;
   text-align: center;
   background: #f3f8ff;
-  border: 1px solid #c8dcfb;
+  border: 1px solid #d8e8ff;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
@@ -125,7 +125,7 @@
 }
 
 .approval-panel-head {
-  min-height: 48px;
+  min-height: 50px;
   padding: 11px 12px;
   display: flex;
   align-items: flex-start;
@@ -135,6 +135,22 @@
   color: #7b8da8;
   font-size: 12px;
   font-weight: 700;
+}
+
+.approval-panel-state {
+  flex: 0 0 auto;
+  max-width: 64px;
+  padding: 4px 7px;
+  overflow: hidden;
+  color: #0052d9;
+  background: #f3f8ff;
+  border: 1px solid #d8e8ff;
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .approval-panel-kicker,
@@ -230,15 +246,16 @@
   flex: 0 0 auto;
   padding: 3px 6px;
   color: #0052d9;
-  background: #ffffff;
-  border: 1px solid #cfe2ff;
+  background: #f3f8ff;
+  border: 1px solid #d8e8ff;
   border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
 
   &.approved {
     color: #006d75;
-    border-color: #b8dde0;
+    background: #f2fbfb;
+    border-color: #c7e6e8;
   }
 }
 
@@ -309,7 +326,7 @@
   margin-top: 2px;
   padding: 8px 7px;
   background: #fbfdff;
-  border: 1px solid #c8dcfb;
+  border: 1px solid #d8e8ff;
   border-radius: 6px;
   box-sizing: border-box;
 }

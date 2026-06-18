@@ -24,7 +24,6 @@
   gap: 6px;
   background: #ffffff;
   border: 0;
-  border-top: 3px solid transparent;
   border-radius: 0;
   box-sizing: border-box;
 
@@ -41,13 +40,28 @@
   &:first-child::before {
     display: none;
   }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 34px;
+    height: 2px;
+    background: transparent;
+    border-radius: 2px 2px 0 0;
+    transform: translateX(-50%);
+  }
 }
 
 .current-tab {
   color: #0052d9;
-  background: #f3f8ff;
-  border-top-color: #0052d9;
+  background: #fbfdff;
   font-weight: 700;
+
+  &::after {
+    background: #0052d9;
+  }
 
   .tab-state-dot {
     background: #0052d9;
@@ -56,8 +70,8 @@
 
   .approve-num {
     color: #0052d9;
-    background: #ffffff;
-    border-color: #bcd4f7;
+    background: #f3f8ff;
+    border-color: #d8e8ff;
   }
 }
 
@@ -78,7 +92,7 @@
   flex: 0 0 auto;
   width: 7px;
   height: 7px;
-  background: #ffffff;
+  background: #f6f9fd;
   border: 1px solid #b8c7dc;
   border-radius: 50%;
   box-sizing: border-box;

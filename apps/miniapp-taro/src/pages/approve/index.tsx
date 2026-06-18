@@ -106,7 +106,7 @@ export default function ApprovalPage() {
               <Text className="approval-summary-value">{queueLabel}</Text>
             </View>
             <View className="approval-summary-item">
-              <Text className="approval-summary-label">已加载</Text>
+              <Text className="approval-summary-label">本次图片</Text>
               <Text className="approval-summary-value">
                 {active.items.length}
               </Text>
@@ -167,7 +167,7 @@ export default function ApprovalPage() {
                   <Text className="approval-panel-kicker">图片列表</Text>
                   <Text className="approval-panel-title">{queueLabel}</Text>
                 </View>
-                <Text>{queueStage}</Text>
+                <Text className="approval-panel-state">{queueStage}</Text>
               </View>
               <View className="approval-grid">
                 {active.items.map((photo) => (
