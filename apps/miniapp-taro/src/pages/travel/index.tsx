@@ -52,7 +52,7 @@ export default function Travel() {
       <View className="photo-page-content">
         <View className="photo-console-head">
           <View>
-            <Text className="photo-console-kicker">媒体资源</Text>
+            <Text className="photo-console-kicker">图库内容</Text>
             <Text className="photo-console-title">旅行图库</Text>
           </View>
           <Text className="photo-console-status">

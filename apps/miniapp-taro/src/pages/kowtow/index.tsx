@@ -324,7 +324,7 @@ export default function Kowtow() {
             )}
             {syncFailed && (
               <Text className="sync-warning" onClick={syncKowtowStats}>
-                同步异常，点击重试
+                加载异常，点击重试
               </Text>
             )}
             <Button
