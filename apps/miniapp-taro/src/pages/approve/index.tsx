@@ -124,8 +124,8 @@ export default function ApprovalPage() {
             <View className="approval-panel">
               <View className="approval-panel-head">
                 <View>
-                  <Text className="approval-panel-kicker">图片资源</Text>
-                  <Text className="approval-panel-title">图片资源</Text>
+                  <Text className="approval-panel-kicker">资源列表</Text>
+                  <Text className="approval-panel-title">{queueLabel}</Text>
                 </View>
                 <Text>{queueStage}</Text>
               </View>
