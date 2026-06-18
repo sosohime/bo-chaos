@@ -489,6 +489,60 @@
     text-align: right;
   }
 
+  .upload-command-row {
+    min-height: 46px;
+    min-width: 0;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #ffffff;
+    border-top: 1px solid #eef2f8;
+    box-sizing: border-box;
+
+    &.ready {
+      .upload-command-action {
+        color: #0052d9;
+        background: #f3f8ff;
+        border-color: #d8e8ff;
+      }
+    }
+  }
+
+  .upload-command-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .upload-command-title {
+    display: block;
+    overflow: hidden;
+    color: #17233d;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .upload-command-action {
+    flex: 0 0 auto;
+    min-width: 52px;
+    padding: 4px 8px;
+    color: #66758f;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #e1eaf5;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 17px;
+    box-sizing: border-box;
+  }
+
   .upload-steps {
     margin: 0 0 12px;
     padding: 0 12px;

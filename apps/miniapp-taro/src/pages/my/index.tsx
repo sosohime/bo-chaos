@@ -471,6 +471,28 @@ export default function My() {
       ? "部分失败"
       : "等待审核"
     : "未提交";
+  const newCategoryReady = isNewCategory && Boolean(newCategoryName.trim());
+  const categoryReady = Boolean(selectedCategoryId) || newCategoryReady;
+  const uploadReadyForImages = Boolean(selectedSystem) && categoryReady;
+  const uploadNextCommand = selectedImages.length
+    ? "提交审核"
+    : uploadReadyForImages
+      ? "添加图片"
+      : selectedSystem
+        ? "选择分类"
+        : "选择板块";
+  const uploadNextCommandState =
+    selectedImages.length || uploadReadyForImages ? "可执行" : "待配置";
+  const handleUploadNextCommand = () => {
+    if (isSubmitting) return;
+    if (selectedImages.length) {
+      handleSubmit();
+      return;
+    }
+    if (uploadReadyForImages) {
+      handleAddImages();
+    }
+  };
   const uploadWorkflowSteps = [
     {
       key: "system",
@@ -482,12 +504,7 @@ export default function My() {
       key: "category",
       index: "02",
       label: "分类",
-      state:
-        selectedCategoryId || isNewCategory
-          ? "done"
-          : selectedSystem
-            ? "active"
-            : "pending",
+      state: categoryReady ? "done" : selectedSystem ? "active" : "pending",
     },
     {
       key: "images",
@@ -495,7 +512,7 @@ export default function My() {
       label: "图片",
       state: selectedImages.length
         ? "done"
-        : selectedCategoryId || isNewCategory
+        : categoryReady
           ? "active"
           : "pending",
     },
@@ -693,6 +710,22 @@ export default function My() {
               <View className="upload-summary-row">
                 <Text className="upload-summary-label">审核</Text>
                 <Text className="upload-summary-meta">{uploadReviewState}</Text>
+              </View>
+              <View
+                className={`upload-command-row ${
+                  uploadNextCommandState === "可执行" ? "ready" : "pending"
+                }`}
+                onClick={handleUploadNextCommand}
+              >
+                <View className="upload-command-copy">
+                  <Text className="upload-summary-label">下一步</Text>
+                  <Text className="upload-command-title">
+                    {uploadNextCommand}
+                  </Text>
+                </View>
+                <Text className="upload-command-action">
+                  {isSubmitting ? "执行中" : uploadNextCommandState}
+                </Text>
               </View>
             </View>
 
