@@ -642,8 +642,8 @@ export default function My() {
               >
                 <Text className="upload-result-title">
                   {uploadSummary.failedCount
-                    ? "部分图片没有传上去"
-                    : "图片已提交审核"}
+                    ? "队列部分提交失败"
+                    : "队列已提交审核"}
                 </Text>
                 <Text>
                   成功 {uploadSummary.successCount} 张
@@ -887,8 +887,8 @@ export default function My() {
             </View>
             <View className="history-note">
               {activeHistoryTab === "pending"
-                ? "提交后的图片会先进入审核，通过后自动出现在对应板块。"
-                : "已通过图片可以在原分类页中被其他博粉看到。"}
+                ? "提交后的图片会进入审核队列，通过后自动同步到对应板块。"
+                : "已通过图片会作为可见资源展示在对应分类页。"}
             </View>
             <View className="photo-grid">
               {activeHistory.items.length > 0
@@ -906,7 +906,7 @@ export default function My() {
                   ))
                 : !activeHistory.loading && (
                     <View className="history-empty">
-                      <Text className="history-empty-kicker">资源状态</Text>
+                      <Text className="history-empty-kicker">QUEUE STATE</Text>
                       <Text className="history-empty-title">
                         {activeHistoryEmpty}
                       </Text>
@@ -914,7 +914,7 @@ export default function My() {
                   )}
               {activeHistory.loading && (
                 <View className="history-empty">
-                  <Text className="history-empty-kicker">队列同步</Text>
+                  <Text className="history-empty-kicker">QUEUE SYNC</Text>
                   <Text className="history-empty-title">加载中</Text>
                 </View>
               )}
