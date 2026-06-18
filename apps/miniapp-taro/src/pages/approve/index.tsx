@@ -50,7 +50,7 @@ export default function ApprovalPage() {
     ? "正在加载图片"
     : active.hasMore
       ? `继续上滑加载 ${queueLabel}`
-      : `当前队列已全部显示`;
+      : `当前队列已完成`;
   const getSummaryValue = (queue: typeof pending) => {
     if (queue.error) return "需重试";
     if (queue.loading && queue.items.length === 0) return "加载中";

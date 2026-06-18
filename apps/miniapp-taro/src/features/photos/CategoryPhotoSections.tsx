@@ -28,7 +28,7 @@ export default function CategoryPhotoSections({
     : activeCategory
       ? hasMore
         ? "继续上滑加载"
-        : "当前分组已全部显示"
+        : "当前分组已完成"
       : "展开一个分组查看图片";
 
   if (groups.length === 0 && loading) {

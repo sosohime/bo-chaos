@@ -43,10 +43,10 @@ export default function TabHead({ active, queues, onClick }: TabHeadProps) {
             className={`${current ? "current-tab" : "default-tab"} tab-block`}
             onClick={() => onClick(tab.value)}
           >
-            <View className={`head-icon head-icon-${tab.value}`}>
-              <View className="head-icon-mark"></View>
+            <View className="tab-label-wrap">
+              <View className="tab-state-dot"></View>
+              <Text className="tab-title">{tab.label}</Text>
             </View>
-            <Text className="tab-title">{tab.label}</Text>
             <Text className="approve-num">{getQueueBadge(queue)}</Text>
           </View>
         );

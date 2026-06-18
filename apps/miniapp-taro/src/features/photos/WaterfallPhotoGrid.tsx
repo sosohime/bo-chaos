@@ -25,7 +25,7 @@ export default function WaterfallPhotoGrid({
     ? "正在加载图片"
     : hasMore
       ? "继续上滑加载"
-      : "当前图库已全部显示";
+      : "当前图库已完成";
 
   if (photos.length === 0 && loading) {
     return (

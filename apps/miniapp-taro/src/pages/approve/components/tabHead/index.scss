@@ -3,52 +3,42 @@
   top: 0;
   z-index: 10;
   width: 100%;
-  min-height: 50px;
-  padding: 8px 12px;
+  min-height: 52px;
+  padding: 0 12px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.99);
   box-sizing: border-box;
   border-bottom: 1px solid #d8e3f0;
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    top: 8px;
-    bottom: 8px;
-    background: #ffffff;
-    border: 1px solid #d8e3f0;
-    border-radius: 6px;
-  }
 }
 
 .tab-block {
   position: relative;
   z-index: 1;
-  height: 34px;
-  padding: 0 10px;
+  height: 52px;
+  padding: 0 6px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
-  border: 1px solid transparent;
-  border-radius: 5px;
+  border-bottom: 2px solid transparent;
   box-sizing: border-box;
 }
 
 .current-tab {
   color: #0052d9;
-  background: #ffffff;
-  border-color: #c8dcfb;
+  border-bottom-color: #0052d9;
   font-weight: 700;
-  box-shadow: none;
 
-  .head-icon {
-    color: #ffffff;
+  .tab-state-dot {
     background: #0052d9;
     border-color: #0052d9;
+  }
+
+  .approve-num {
+    color: #0052d9;
+    border-color: #c8dcfb;
   }
 }
 
@@ -58,62 +48,30 @@
   border-color: transparent;
 }
 
-.head-icon {
-  position: relative;
-  width: 20px;
-  height: 20px;
+.tab-label-wrap {
+  min-width: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #5d6f8f;
-  background: #ffffff;
-  border: 1px solid #d8e3f0;
-  border-radius: 4px;
-  box-sizing: border-box;
+  gap: 7px;
 }
 
-.head-icon-mark {
-  position: relative;
-  width: 10px;
-  height: 10px;
-  box-sizing: border-box;
-}
-
-.head-icon-pending .head-icon-mark {
-  border: 1px solid currentColor;
-  border-radius: 2px;
-
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    left: 2px;
-    right: 2px;
-    height: 1px;
-    background: currentColor;
-  }
-
-  &::before {
-    top: 3px;
-  }
-
-  &::after {
-    top: 6px;
-  }
-}
-
-.head-icon-approved .head-icon-mark {
-  width: 11px;
+.tab-state-dot {
+  flex: 0 0 auto;
+  width: 7px;
   height: 7px;
-  border-left: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(-45deg) translate(1px, -1px);
+  background: #ffffff;
+  border: 1px solid #b8c7dc;
+  border-radius: 50%;
+  box-sizing: border-box;
 }
 
 .tab-title {
-  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .approve-num {
@@ -126,9 +84,9 @@
   text-align: center;
   font-size: 11px;
   border-radius: 4px;
-  color: #0052d9;
+  color: #5d6f8f;
   background: #ffffff;
-  border: 1px solid #c8dcfb;
+  border: 1px solid #d8e3f0;
   text-overflow: ellipsis;
   white-space: nowrap;
   box-sizing: border-box;
