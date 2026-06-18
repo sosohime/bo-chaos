@@ -1,0 +1,66 @@
+.ugc-disabled-state {
+  position: relative;
+  overflow: hidden;
+  min-height: 152px;
+  margin: 14px;
+  padding: 18px 18px 18px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+  color: #66758f;
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #0052d9;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    width: 36px;
+    height: 10px;
+    border-top: 1px solid #d8e3f0;
+    border-bottom: 1px solid #d8e3f0;
+  }
+}
+
+.ugc-disabled-kicker,
+.ugc-disabled-title,
+.ugc-disabled-copy {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.ugc-disabled-kicker {
+  color: #4b658a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ugc-disabled-title {
+  color: #17233d;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 23px;
+}
+
+.ugc-disabled-copy {
+  max-width: 260px;
+  color: #66758f;
+  font-size: 13px;
+  line-height: 20px;
+}
