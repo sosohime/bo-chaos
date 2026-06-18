@@ -9,7 +9,7 @@
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom); // 适配 iPhone 底部
   border-top: 1px solid #d8e3f0;
-  box-shadow: 0 -8px 20px rgba(18, 50, 87, 0.06);
+  box-shadow: 0 -6px 14px rgba(18, 50, 87, 0.045);
   box-sizing: border-box;
 }
 
@@ -37,7 +37,7 @@
 
 .tab-bar-control {
   position: relative;
-  width: 100%;
+  width: 92%;
   height: 56px;
   padding: 7px 0 5px;
   display: flex;
@@ -76,7 +76,7 @@
   color: #0052d9;
 
   .tab-bar-control {
-    width: 100%;
+    width: 92%;
     height: 56px;
     padding: 7px 0 5px;
     background: transparent;
@@ -110,7 +110,7 @@
 .tab-bar-label {
   font-size: 10px;
   line-height: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: #6b7f9f;
   white-space: nowrap;
 }

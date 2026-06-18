@@ -1,6 +1,6 @@
 .photo-page {
   height: 100vh;
-  background: linear-gradient(180deg, #eef4fb 0%, #f7f9fc 42%, #f7f9fc 100%);
+  background: #f4f7fb;
   box-sizing: border-box;
 }
 
@@ -13,7 +13,7 @@
   position: relative;
   overflow: hidden;
   margin: 16px 14px 8px;
-  padding: 16px 14px 14px;
+  padding: 15px 14px 14px 17px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -21,41 +21,44 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(18, 50, 87, 0.055);
+  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.035);
 
   &::before {
     content: "";
     position: absolute;
-    top: 0;
     left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #0052d9, #00a4ff 52%, #8ab7ff);
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+    background: #0052d9;
+    border-radius: 0 3px 3px 0;
   }
 }
 
 .photo-console-kicker {
   display: block;
-  color: #0052d9;
-  font-size: 11px;
-  font-weight: 800;
+  color: #4b658a;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
 .photo-console-title {
   display: block;
-  margin-top: 7px;
+  margin-top: 6px;
   color: #17233d;
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 28px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 27px;
 }
 
 .photo-console-status {
   flex: 0 0 auto;
+  min-width: 48px;
   padding: 5px 8px;
   color: #0052d9;
-  background: #eef6ff;
+  text-align: center;
+  background: #f3f8ff;
   border: 1px solid #c8dcfb;
   border-radius: 4px;
   font-size: 12px;
@@ -64,11 +67,12 @@
 
 .photo-browser-shell {
   margin: 12px 14px 0;
-  padding: 12px 12px 11px;
+  padding: 0;
+  overflow: hidden;
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.04);
+  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.035);
   box-sizing: border-box;
 }
 
@@ -77,16 +81,21 @@
 }
 
 .photo-browser-toolbar {
+  min-height: 52px;
+  padding: 11px 12px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  background: #fbfdff;
+  border-bottom: 1px solid #e6edf6;
+  box-sizing: border-box;
 }
 
 .photo-browser-title-block {
   min-width: 0;
-  padding-left: 11px;
-  border-left: 3px solid #0070f0;
+  padding-left: 10px;
+  border-left: 3px solid #0052d9;
   box-sizing: border-box;
 }
 
@@ -96,15 +105,15 @@
 }
 
 .photo-browser-label {
-  color: #0052d9;
-  font-size: 10px;
-  font-weight: 800;
+  color: #4b658a;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
 .photo-browser-active {
   max-width: 210px;
-  margin-top: 5px;
+  margin-top: 4px;
   overflow: hidden;
   color: #13233a;
   font-size: 15px;
@@ -117,7 +126,7 @@
   flex: 0 0 auto;
   padding: 5px 8px;
   color: #0052d9;
-  background: #eef6ff;
+  background: #ffffff;
   border: 1px solid #c8dcfb;
   border-radius: 4px;
   font-size: 12px;
@@ -131,11 +140,11 @@
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(18, 50, 87, 0.04);
+  box-shadow: 0 4px 12px rgba(18, 50, 87, 0.03);
 
   &.active {
-    border-color: #c8dcfb;
-    box-shadow: 0 9px 22px rgba(18, 50, 87, 0.06);
+    border-color: #bed4f4;
+    box-shadow: 0 6px 16px rgba(18, 50, 87, 0.04);
   }
 }
 
@@ -150,8 +159,8 @@
   box-sizing: border-box;
 
   &.active {
-    background: linear-gradient(180deg, #f6faff, #ffffff);
-    border-bottom: 1px solid #d4e3f7;
+    background: #fbfdff;
+    border-bottom: 1px solid #e6edf6;
   }
 
   .category-rail {
@@ -160,7 +169,7 @@
     top: 12px;
     bottom: 12px;
     width: 3px;
-    background: #d7e5f8;
+    background: #d8e3f0;
     border-radius: 0 3px 3px 0;
   }
 
@@ -172,9 +181,9 @@
   }
 
   .category-index {
-    color: #0052d9;
-    font-size: 10px;
-    font-weight: 800;
+    color: #4b658a;
+    font-size: 12px;
+    font-weight: 700;
     letter-spacing: 0;
   }
 
@@ -182,7 +191,7 @@
     max-width: 240px;
     color: #17233d;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -208,7 +217,7 @@
     align-items: center;
     justify-content: center;
     color: #0052d9;
-    background: #eef6ff;
+    background: #ffffff;
     border: 1px solid #c8dcfb;
     border-radius: 4px;
     font-size: 15px;
@@ -218,11 +227,11 @@
 }
 
 .category-header.active .category-rail {
-  background: linear-gradient(180deg, #0052d9, #00a4ff);
+  background: #0052d9;
 }
 
 .category-body {
-  background: #f6faff;
+  background: #ffffff;
 }
 
 .category-body-head {
@@ -240,17 +249,17 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   padding: 12px;
-  background: #f6faff;
+  background: #ffffff;
   box-sizing: border-box;
 }
 
 .photo-item-wrapper {
   min-width: 0;
   overflow: hidden;
-  border: 1px solid #cfe0f5;
+  border: 1px solid #d8e3f0;
   border-radius: 8px;
   background: #ffffff;
-  box-shadow: 0 4px 12px rgba(15, 54, 105, 0.035);
+  box-shadow: 0 3px 10px rgba(18, 50, 87, 0.025);
 }
 
 .waterfall {
@@ -259,10 +268,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   padding: 10px;
-  background: #f6faff;
+  background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
-  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.04);
+  box-shadow: 0 6px 16px rgba(18, 50, 87, 0.035);
   box-sizing: border-box;
 
   .column {
@@ -338,10 +347,10 @@
   display: inline-flex;
   padding: 5px 9px;
   color: #0052d9;
-  background: #eef6ff;
+  background: #ffffff;
   border: 1px solid #c8dcfb;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 18px;
 }
