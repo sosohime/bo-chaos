@@ -2,32 +2,29 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  min-height: 86px;
+  min-height: 82px;
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 11px 11px 10px 14px;
+  padding: 0;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
   box-sizing: border-box;
 
-  .bosheng-rail {
-    position: absolute;
-    left: 0;
-    top: 10px;
-    bottom: 10px;
-    width: 3px;
-    background: #0052d9;
-    border-radius: 0 3px 3px 0;
-  }
-
   .bosheng-main {
+    min-height: 47px;
+    padding: 11px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     width: 100%;
+    border-bottom: 1px solid #eef2f8;
+    box-sizing: border-box;
+  }
+
+  .bosheng-title-block {
+    min-width: 0;
   }
 
   .bosheng-kicker,
@@ -44,10 +41,12 @@
   }
 
   .bosheng-title {
+    overflow: hidden;
     margin-top: 4px;
     color: #17233d;
     font-size: 14px;
     font-weight: 700;
+    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
@@ -63,39 +62,47 @@
   }
 
   .bosheng-meta {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
-    width: 100%;
-    background: #e6edf6;
-    border: 1px solid #e6edf6;
-    border-radius: 6px;
+    margin: 10px 12px 11px;
     overflow: hidden;
+    background: #f7fbff;
+    border: 1px solid #d8e3f0;
+    border-radius: 6px;
     box-sizing: border-box;
   }
 
-  .bosheng-meta-item {
+  .bosheng-meta-row {
+    min-height: 32px;
     min-width: 0;
-    padding: 6px 7px;
-    background: #ffffff;
+    padding: 7px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #e8eef7;
     box-sizing: border-box;
 
-    &:first-child {
-      background: #f7fbff;
+    &:last-child {
+      border-bottom: 0;
     }
   }
 
   .bosheng-meta-label {
+    flex: 0 0 auto;
     color: #6b7f9f;
-    font-size: 10px;
-    line-height: 1.2;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
   }
 
   .bosheng-meta-value {
-    margin-top: 3px;
+    min-width: 0;
+    overflow: hidden;
     color: #17233d;
     font-size: 12px;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 18px;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
