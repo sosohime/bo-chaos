@@ -244,10 +244,9 @@ export default function Kowtow() {
         </View>
       ) : (
         <>
-          <BoSheng />
           <View className="kowtow-console-head">
             <View>
-              <Text className="kowtow-eyebrow">互动概览</Text>
+              <Text className="kowtow-eyebrow">互动状态</Text>
               <Text className="kowtow-title">今日状态</Text>
             </View>
             <Text className="kowtow-status">
@@ -280,11 +279,12 @@ export default function Kowtow() {
               </Text>
             </View>
           </View>
+          <BoSheng boxStyle={{ marginTop: "12px" }} />
           <View className="god-bo">
             <View className="god-bo-head">
               <View>
-                <Text className="god-bo-kicker">图片预览</Text>
-                <Text className="god-bo-title">当前图片</Text>
+                <Text className="god-bo-kicker">互动图片</Text>
+                <Text className="god-bo-title">当前展示</Text>
               </View>
               <Text className="god-bo-index">
                 {canvasInfo.swiperIndex + 1}/{swiperImages.length}
@@ -308,8 +308,8 @@ export default function Kowtow() {
           <View className="kowtow-action-panel">
             <View className="kowtow-action-head">
               <View>
-                <Text className="kowtow-action-kicker">记录操作</Text>
-                <Text className="love">提交记录</Text>
+                <Text className="kowtow-action-kicker">操作队列</Text>
+                <Text className="love">记录一次</Text>
               </View>
               <Text className="kowtow-action-state">
                 {kowtowCount ? "待同步" : "可提交"}

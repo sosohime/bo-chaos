@@ -137,21 +137,19 @@ export default function Retire() {
 
             <View className="retire-fact-grid">
               <View className="retire-fact">
-                <Text className="retire-fact-label">开始</Text>
+                <Text className="retire-fact-label">剩余</Text>
+                <Text className="retire-fact-value">{countdown.days} 天</Text>
+              </View>
+              <View className="retire-fact">
+                <Text className="retire-fact-label">进度</Text>
                 <Text className="retire-fact-value">
-                  {BO_RETIRE_START.format(RETIRE_DATE_FORMAT)}
+                  {countdown.percent.toFixed(2)}%
                 </Text>
               </View>
               <View className="retire-fact">
                 <Text className="retire-fact-label">目标</Text>
                 <Text className="retire-fact-value">
                   {BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}
-                </Text>
-              </View>
-              <View className="retire-fact">
-                <Text className="retire-fact-label">状态</Text>
-                <Text className="retire-fact-value">
-                  {countdown.totalMs === 0 ? "已抵达" : "进行中"}
                 </Text>
               </View>
             </View>
