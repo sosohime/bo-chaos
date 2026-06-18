@@ -1,5 +1,5 @@
 export default {
-  navigationBarTitleText: "我的",
+  navigationBarTitleText: "账户资料",
   enableShareAppMessage: true,
   enableShareTimeline: true,
   // usingComponents: {},

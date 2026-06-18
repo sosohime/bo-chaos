@@ -1,5 +1,5 @@
 export default definePageConfig({
-  navigationBarTitleText: "审批",
+  navigationBarTitleText: "审核队列",
   enableShareAppMessage: true,
   enableShareTimeline: true,
   // usingComponents: {},

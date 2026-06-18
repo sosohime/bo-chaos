@@ -100,7 +100,7 @@ export default function Kowtow() {
   }, [systemConfig]);
 
   useShare({
-    title: "快来博Fans，今天你磕了吗？",
+    title: "BoFans 今日互动状态",
     path: "/pages/kowtow/index",
     imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
   });

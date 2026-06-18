@@ -24,9 +24,9 @@ export const DEFAULT_MINIAPP_CONFIG: Required<BofansMiniappRuntimeConfig> = {
     uploadTitle: "珍贵资料上传",
     reviewUploadTitle: "图片上传",
     photoTitles: {
-      history: "历史类图片",
-      travel: "旅行类图片",
-      tease: "搞笑类图片",
+      history: "历史图片",
+      travel: "旅行图片",
+      tease: "趣味图片",
     },
   },
 };

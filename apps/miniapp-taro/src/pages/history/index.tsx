@@ -28,7 +28,7 @@ export default function History() {
   } = useSystemPhotoGroups("history", ugcEnabled);
 
   useShare({
-    title: "来博Fans，一起磕！",
+    title: "BoFans 博史图库",
     path: "/pages/history/index",
     imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
   });

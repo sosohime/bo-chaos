@@ -1,5 +1,5 @@
 export default definePageConfig({
-  navigationBarTitleText: "搞笑",
+  navigationBarTitleText: "博逗图库",
   enableShareAppMessage: true,
   enableShareTimeline: true,
   // usingComponents: {},

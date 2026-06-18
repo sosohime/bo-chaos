@@ -25,7 +25,7 @@ export default function Tease() {
   } = useWaterfallPhotos("tease", 2, ugcEnabled);
 
   useShare({
-    title: "快来博Fans，跟博哥一起欢乐！",
+    title: "BoFans 博逗图库",
     path: "/pages/tease/index",
     imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
   });

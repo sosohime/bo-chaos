@@ -84,7 +84,7 @@ export default function My() {
   const [boDailyCard, setBoDailyCard] = useState<BoDailyCard | null>(null);
 
   useShare({
-    title: "快来博Fans，今天你磕了没？",
+    title: "BoFans 今日互动状态",
     path: "/pages/kowtow/index",
     imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
   });

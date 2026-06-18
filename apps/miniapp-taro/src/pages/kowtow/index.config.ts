@@ -1,5 +1,5 @@
 export default definePageConfig({
-  navigationBarTitleText: "博Fans",
+  navigationBarTitleText: "互动状态",
   enableShareAppMessage: true,
   enableShareTimeline: true,
   usingComponents: {},

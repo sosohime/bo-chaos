@@ -44,7 +44,7 @@ export default defineAppConfig({
   ],
   window: {
     backgroundTextStyle: "light",
-    navigationBarBackgroundColor: "#f7fbff",
+    navigationBarBackgroundColor: "#ffffff",
     navigationBarTitleText: "Bo Fans",
     navigationBarTextStyle: "black",
   },

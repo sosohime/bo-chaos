@@ -28,7 +28,7 @@ export default function Travel() {
   } = useSystemPhotoGroups("travel", ugcEnabled);
 
   useShare({
-    title: "来博Fans，看博哥环游世界！",
+    title: "BoFans 旅行图库",
     path: "/pages/travel/index",
     imageUrl: "https://yuanbo.online/bofans_static/images/miniapplogo.png",
   });
