@@ -34,12 +34,12 @@ export default function ApprovalPage() {
   const activeTotal = counts[activeTab] || 0;
   const queueLabel = activeTab === "pending" ? "审核中" : "已通过";
   const queueStage = active.loading
-    ? "同步中"
+    ? "加载中"
     : active.error
       ? "需重试"
       : active.hasMore
         ? "可继续加载"
-        : "已同步";
+        : "已加载完";
 
   const onRefresh = async () => {
     try {
@@ -79,7 +79,7 @@ export default function ApprovalPage() {
               </Text>
             </View>
             <Text className="approval-console-status">
-              {active.loading ? "同步中" : `${activeTotal} 项`}
+              {active.loading ? "加载中" : `${activeTotal} 项`}
             </Text>
           </View>
           <View className="approval-summary">
@@ -102,21 +102,21 @@ export default function ApprovalPage() {
           </View>
           {active.items.length === 0 && active.loading && (
             <View className="approval-state">
-              <Text className="approval-state-kicker">队列同步</Text>
+              <Text className="approval-state-kicker">队列加载</Text>
               <Text className="approval-state-title">加载中</Text>
-              <Text className="approval-state-copy">正在同步当前审核队列</Text>
+              <Text className="approval-state-copy">正在获取当前审核队列</Text>
             </View>
           )}
           {active.items.length === 0 && !active.loading && (
             <View className="approval-state">
               <Text className="approval-state-kicker">
-                {active.error ? "同步异常" : "队列状态"}
+                {active.error ? "加载异常" : "队列状态"}
               </Text>
               <Text className="approval-state-title">
                 {active.error ? "加载失败" : "这里还没有图片"}
               </Text>
               <Text className="approval-state-copy">
-                {active.error ? "下拉重试当前队列" : "当前队列暂无图片资源"}
+                {active.error ? "下拉重试当前队列" : "当前队列暂无图片"}
               </Text>
             </View>
           )}
@@ -124,7 +124,7 @@ export default function ApprovalPage() {
             <View className="approval-panel">
               <View className="approval-panel-head">
                 <View>
-                  <Text className="approval-panel-kicker">资源列表</Text>
+                  <Text className="approval-panel-kicker">图片列表</Text>
                   <Text className="approval-panel-title">{queueLabel}</Text>
                 </View>
                 <Text>{queueStage}</Text>
@@ -150,7 +150,7 @@ export default function ApprovalPage() {
                     </View>
                     <View className="approval-meta">
                       <Text className="approval-category">
-                        {photo.name || photo.category?.name || "图片资源"}
+                        {photo.name || photo.category?.name || "图片"}
                       </Text>
                       <Text className="approval-subcategory">
                         {photo.category?.name || "未分类"}
