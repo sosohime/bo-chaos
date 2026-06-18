@@ -20,7 +20,7 @@
     right: 12px;
     top: 8px;
     bottom: 8px;
-    background: #f6faff;
+    background: #ffffff;
     border: 1px solid #d8e3f0;
     border-radius: 6px;
   }
@@ -44,7 +44,7 @@
   background: #ffffff;
   border-color: #c8dcfb;
   font-weight: 700;
-  box-shadow: 0 3px 10px rgba(18, 50, 87, 0.05);
+  box-shadow: none;
 
   .head-icon {
     color: #ffffff;
@@ -65,7 +65,8 @@
   align-items: center;
   justify-content: center;
   color: #5d6f8f;
-  background: #edf5ff;
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
   border-radius: 4px;
   font-size: 10px;
   font-weight: 700;
@@ -84,9 +85,9 @@
   line-height: 20px;
   text-align: center;
   font-size: 11px;
-  border-radius: 999px;
+  border-radius: 4px;
   color: #0052d9;
-  background: #edf5ff;
+  background: #ffffff;
   border: 1px solid #c8dcfb;
   box-sizing: border-box;
 }
