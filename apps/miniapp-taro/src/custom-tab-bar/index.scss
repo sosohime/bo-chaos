@@ -39,7 +39,7 @@
   position: relative;
   width: 100%;
   height: 55px;
-  padding: 7px 0 5px;
+  padding: 8px 0 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,25 +53,25 @@
 
 .tab-bar-indicator {
   position: absolute;
-  bottom: 2px;
+  top: 0;
   left: 50%;
-  width: 18px;
+  width: 28px;
   height: 2px;
   background: transparent;
-  border-radius: 2px;
+  border-radius: 0;
   transform: translateX(-50%);
   box-sizing: border-box;
 }
 
 .tab-bar-icon-shell {
   width: 30px;
-  height: 28px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 7px;
+  border: 0;
+  border-radius: 0;
   box-sizing: border-box;
 }
 
@@ -93,8 +93,8 @@
   }
 
   .tab-bar-icon-shell {
-    background: #eef5ff;
-    border-color: #c8dcff;
+    background: transparent;
+    border-color: transparent;
   }
 
   .tab-bar-icon {
