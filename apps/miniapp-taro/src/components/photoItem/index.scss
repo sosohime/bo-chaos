@@ -29,26 +29,75 @@
       position: absolute;
       inset: 0;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       justify-content: center;
       align-items: center;
-      gap: 5px;
+      gap: 9px;
+      padding: 12px;
       color: #66758f;
       font-size: 12px;
       background: #f3f7fc;
-
-      &::before {
-        content: "";
-        width: 28px;
-        height: 2px;
-        background: #c8dcfb;
-        border-radius: 2px;
-      }
+      box-sizing: border-box;
     }
 
     .media-state-kicker,
     .media-state-title {
       display: block;
+    }
+
+    .media-state-mark {
+      position: relative;
+      flex: 0 0 auto;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 1px solid #c8dcfb;
+      border-radius: 5px;
+      box-sizing: border-box;
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        background: #0052d9;
+        border-radius: 2px;
+      }
+
+      &::before {
+        width: 12px;
+        height: 2px;
+      }
+
+      &::after {
+        width: 2px;
+        height: 12px;
+      }
+
+      &.error {
+        border-color: #d5dfec;
+
+        &::before,
+        &::after {
+          background: #6b7f9f;
+        }
+      }
+    }
+
+    .media-state-mark-line {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 7px;
+      height: 2px;
+      background: #9ebff5;
+      border-radius: 2px;
+    }
+
+    .media-state-body {
+      min-width: 0;
     }
 
     .media-state-kicker {
@@ -139,17 +188,47 @@
     }
 
     .photo-action-mark {
+      position: relative;
       width: 14px;
       height: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #0052d9;
       background: #f3f8ff;
       border: 1px solid #d8e8ff;
       border-radius: 3px;
-      font-size: 10px;
-      line-height: 12px;
+      box-sizing: border-box;
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        background: #0052d9;
+        border-radius: 1px;
+      }
+
+      &::before {
+        width: 2px;
+        height: 7px;
+        top: 3px;
+      }
+
+      &::after {
+        width: 7px;
+        height: 2px;
+        bottom: 3px;
+      }
+    }
+
+    .photo-action-mark-line {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      left: 3px;
+      top: 5px;
+      border-right: 2px solid #0052d9;
+      border-bottom: 2px solid #0052d9;
+      transform: rotate(45deg);
       box-sizing: border-box;
     }
 

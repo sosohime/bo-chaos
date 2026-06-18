@@ -124,16 +124,26 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       <View className="photo-box">
         {loading && (
           <View className="loading-container">
-            <Text className="media-state-kicker">图片加载</Text>
-            <Text className="media-state-title">加载中</Text>
+            <View className="media-state-mark">
+              <View className="media-state-mark-line"></View>
+            </View>
+            <View className="media-state-body">
+              <Text className="media-state-kicker">图片加载</Text>
+              <Text className="media-state-title">加载中</Text>
+            </View>
           </View>
         )}
 
         {error ? (
           <View className="error-container" onClick={handleRetry}>
-            <Text className="media-state-kicker">加载异常</Text>
-            <Text className="media-state-title">加载失败</Text>
-            <Text className="retry-text">点击重试</Text>
+            <View className="media-state-mark error">
+              <View className="media-state-mark-line"></View>
+            </View>
+            <View className="media-state-body">
+              <Text className="media-state-kicker">加载异常</Text>
+              <Text className="media-state-title">加载失败</Text>
+              <Text className="retry-text">点击重试</Text>
+            </View>
           </View>
         ) : (
           <Image
@@ -156,7 +166,9 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
 
       <View className="photo-actions">
         <View className="photo-action-primary" onClick={handleDownload}>
-          <Text className="photo-action-mark">↓</Text>
+          <View className="photo-action-mark">
+            <View className="photo-action-mark-line"></View>
+          </View>
           <Text>保存</Text>
         </View>
         {systemConfig?.inReview && (
