@@ -87,11 +87,9 @@ export default function CategoryPhotoSections({
             </View>
             <View className="category-state">
               <Text>
-                {activeCategory === group.categoryName ? "已展开" : "查看"}
+                {activeCategory === group.categoryName ? "收起" : "展开"}
               </Text>
-              <Text className="arrow">
-                {activeCategory === group.categoryName ? "−" : "+"}
-              </Text>
+              <Text className="arrow"></Text>
             </View>
           </View>
 

@@ -122,9 +122,6 @@ const PhotoItem: React.FC<PhotoItemProps> = ({
       }}
     >
       <View className="photo-box">
-        <View className="photo-media-tag">
-          <Text>图片</Text>
-        </View>
         {loading && (
           <View className="loading-container">
             <Text className="media-state-kicker">图片资源</Text>

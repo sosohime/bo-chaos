@@ -211,8 +211,8 @@
 
   .arrow {
     flex: 0 0 auto;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -220,14 +220,26 @@
     background: #ffffff;
     border: 1px solid #c8dcfb;
     border-radius: 4px;
-    font-size: 15px;
-    line-height: 1;
     box-sizing: border-box;
+
+    &::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-right: 1px solid #0052d9;
+      border-bottom: 1px solid #0052d9;
+      transform: rotate(45deg) translate(-1px, -1px);
+      box-sizing: border-box;
+    }
   }
 }
 
 .category-header.active .category-rail {
   background: #0052d9;
+}
+
+.category-header.active .arrow::before {
+  transform: rotate(225deg) translate(-1px, -1px);
 }
 
 .category-body {

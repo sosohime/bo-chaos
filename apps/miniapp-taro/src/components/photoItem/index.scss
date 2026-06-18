@@ -24,21 +24,6 @@
       object-fit: cover;
     }
 
-    .photo-media-tag {
-      position: absolute;
-      top: 6px;
-      left: 6px;
-      z-index: 1;
-      padding: 3px 6px;
-      color: #0052d9;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(0, 82, 217, 0.18);
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      line-height: 1;
-    }
-
     .loading-container,
     .error-container {
       position: absolute;
