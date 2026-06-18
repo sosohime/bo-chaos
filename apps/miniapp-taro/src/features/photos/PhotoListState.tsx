@@ -19,8 +19,10 @@ export default function PhotoListState({
 }: PhotoListStateProps) {
   return (
     <View className={`list-state ${tone}`} onClick={onClick}>
-      <View className="state-mark">
-        <View className="state-mark-line"></View>
+      <View className="state-glyph">
+        <View className="state-glyph-head"></View>
+        <View className="state-glyph-row"></View>
+        <View className="state-glyph-row short"></View>
       </View>
       <View className="state-body">
         <Text className="state-kicker">{kicker}</Text>
