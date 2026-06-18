@@ -75,7 +75,7 @@ export default function TabBar() {
   return (
     <CoverView className="tab-bar">
       <CoverView className="tab-bar-border"></CoverView>
-      {visibleTabs.map((item, index) => {
+      {visibleTabs.map((item) => {
         const active = activeTab === item.key;
         return (
           <CoverView
@@ -83,9 +83,6 @@ export default function TabBar() {
             className={`tab-bar-item ${active ? "active" : ""}`}
             onClick={() => switchTab(item.key, item.pagePath)}
           >
-            {index > 0 ? (
-              <CoverView className="tab-bar-divider"></CoverView>
-            ) : null}
             <CoverView className="tab-bar-control">
               <CoverView className="tab-bar-indicator"></CoverView>
               <CoverView className="tab-bar-icon-shell">
