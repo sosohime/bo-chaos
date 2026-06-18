@@ -117,31 +117,45 @@
     font-weight: 700;
   }
 
-  .account-resource-grid {
+  .account-resource-summary {
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
     overflow: hidden;
-    background: #e6edf6;
-    border: 1px solid #e6edf6;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid #d8e3f0;
     border-radius: 6px;
     box-sizing: border-box;
   }
 
-  .account-resource-item {
+  .account-resource-primary {
     min-width: 0;
-    padding: 7px 8px;
-    background: #ffffff;
+    padding: 10px;
+    background: #f7fbff;
+    border: 1px solid #d8e8ff;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  .account-resource-row {
+    min-height: 32px;
+    min-width: 0;
+    padding: 7px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #eef2f8;
     box-sizing: border-box;
 
-    &.primary {
-      background: #f7fbff;
+    &:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
     }
   }
 
   .account-resource-label,
-  .account-resource-value {
+  .account-resource-value,
+  .account-resource-meta {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -149,10 +163,11 @@
   }
 
   .account-resource-label {
+    flex: 0 0 auto;
     color: #6b7f9f;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
   }
 
   .account-resource-value {
@@ -161,6 +176,15 @@
     font-size: 12px;
     font-weight: 700;
     line-height: 16px;
+  }
+
+  .account-resource-meta {
+    min-width: 0;
+    color: #17233d;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: right;
   }
 }
 

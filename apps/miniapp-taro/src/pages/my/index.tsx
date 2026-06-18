@@ -532,22 +532,22 @@ export default function My() {
             </View>
             <Text className="account-status">{accountRoleLabel}</Text>
           </View>
-          <View className="account-resource-grid">
-            <View className="account-resource-item primary">
+          <View className="account-resource-summary">
+            <View className="account-resource-primary">
               <Text className="account-resource-label">运行</Text>
               <Text className="account-resource-value">
                 {accountRunDays} 天
               </Text>
             </View>
-            <View className="account-resource-item">
+            <View className="account-resource-row">
               <Text className="account-resource-label">交互</Text>
-              <Text className="account-resource-value">
+              <Text className="account-resource-meta">
                 {userInfo.kowtowCount}
               </Text>
             </View>
-            <View className="account-resource-item">
+            <View className="account-resource-row">
               <Text className="account-resource-label">权限</Text>
-              <Text className="account-resource-value">{accountRoleLabel}</Text>
+              <Text className="account-resource-meta">{accountRoleLabel}</Text>
             </View>
           </View>
         </View>
