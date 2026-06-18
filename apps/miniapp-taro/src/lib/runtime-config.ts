@@ -20,7 +20,7 @@ export const DEFAULT_MINIAPP_CONFIG: Required<BofansMiniappRuntimeConfig> = {
   },
   pages: {
     kowtowTitle: "磕袁",
-    reviewKowtowTitle: "博Fans图片压缩工具简介",
+    reviewKowtowTitle: "BoFans资料区状态",
     uploadTitle: "珍贵资料上传",
     reviewUploadTitle: "图片上传",
     photoTitles: {

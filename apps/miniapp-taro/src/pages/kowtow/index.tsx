@@ -238,27 +238,27 @@ export default function Kowtow() {
         <View className="kowtow-review-panel">
           <View className="kowtow-review-head">
             <View>
-              <Text className="kowtow-eyebrow">图片处理服务</Text>
-              <Text className="kowtow-title">BoFans 图片压缩工具</Text>
+              <Text className="kowtow-eyebrow">资料区状态</Text>
+              <Text className="kowtow-title">BoFans 资料区</Text>
             </View>
             <Text className="kowtow-review-status">可用</Text>
           </View>
           <View className="kowtow-review-summary">
             <View className="kowtow-review-primary">
-              <Text className="kowtow-review-label">当前流程</Text>
+              <Text className="kowtow-review-label">当前入口</Text>
               <Text className="kowtow-review-value">上传审核</Text>
             </View>
             <View className="kowtow-review-row">
-              <Text className="kowtow-review-label">分类</Text>
-              <Text className="kowtow-review-meta">个人中心选择</Text>
+              <Text className="kowtow-review-label">上传</Text>
+              <Text className="kowtow-review-meta">个人中心</Text>
             </View>
             <View className="kowtow-review-row">
-              <Text className="kowtow-review-label">处理</Text>
-              <Text className="kowtow-review-meta">审核后压缩</Text>
+              <Text className="kowtow-review-label">审核</Text>
+              <Text className="kowtow-review-meta">提交后处理</Text>
             </View>
             <View className="kowtow-review-row">
               <Text className="kowtow-review-label">查看</Text>
-              <Text className="kowtow-review-meta">对应分类页</Text>
+              <Text className="kowtow-review-meta">分类页</Text>
             </View>
           </View>
         </View>
