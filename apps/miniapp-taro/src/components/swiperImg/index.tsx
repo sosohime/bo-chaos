@@ -45,7 +45,7 @@ const SwiperImg = ({
                   className="image"
                   src={img.img}
                   lazyLoad
-                  mode="aspectFit"
+                  mode="aspectFill"
                 ></Image>
               </SwiperItem>
             );
