@@ -86,7 +86,7 @@ export default function Retire() {
           <View className="retire-console">
             <View className="retire-console-head">
               <View>
-                <Text className="retire-eyebrow">资源状态</Text>
+                <Text className="retire-eyebrow">时间资源</Text>
                 <Text className="retire-title">博退休倒计时</Text>
               </View>
               <Text className="retire-status">
@@ -151,6 +151,17 @@ export default function Retire() {
                 <Text>{BO_RETIRE_TARGET.format(RETIRE_DATE_FORMAT)}</Text>
               </View>
             </View>
+
+            <View className="retire-console-actions">
+              <Button className="retire-primary" onClick={copyCountdown}>
+                <Text className="retire-action-title">复制状态</Text>
+                <Text className="retire-action-copy">剪贴板</Text>
+              </Button>
+              <Button className="retire-secondary" onClick={goKowtow}>
+                <Text className="retire-action-title">记录互动</Text>
+                <Text className="retire-action-copy">进入互动页</Text>
+              </Button>
+            </View>
           </View>
         </View>
 
@@ -181,26 +192,6 @@ export default function Retire() {
                 {dayjs().format("YYYY-MM-DD HH:mm:ss")}
               </Text>
             </View>
-          </View>
-        </View>
-
-        <View className="retire-command-panel">
-          <View className="retire-command-head">
-            <View>
-              <Text className="retire-panel-kicker">快捷操作</Text>
-              <Text className="retire-panel-title">状态命令</Text>
-            </View>
-            <Text className="retire-panel-tag">可执行</Text>
-          </View>
-          <View className="retire-actions">
-            <Button className="retire-primary" onClick={copyCountdown}>
-              <Text className="retire-action-title">复制状态</Text>
-              <Text className="retire-action-copy">写入剪贴板</Text>
-            </Button>
-            <Button className="retire-secondary" onClick={goKowtow}>
-              <Text className="retire-action-title">记录互动</Text>
-              <Text className="retire-action-copy">进入互动页</Text>
-            </Button>
           </View>
         </View>
       </View>

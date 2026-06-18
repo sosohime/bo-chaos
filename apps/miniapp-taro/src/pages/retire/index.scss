@@ -18,7 +18,7 @@
 .retire-console {
   position: relative;
   overflow: hidden;
-  padding: 14px 14px 14px 17px;
+  padding: 14px 14px 12px 17px;
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
@@ -62,12 +62,12 @@
 
 .retire-status {
   flex: 0 0 auto;
-  min-width: 48px;
+  min-width: 52px;
   padding: 5px 8px;
   color: #0052d9;
   text-align: center;
-  background: #ffffff;
-  border: 1px solid #c8dcfb;
+  background: #f3f8ff;
+  border: 1px solid #d8e8ff;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 700;
@@ -191,7 +191,7 @@
 }
 
 .retire-panel {
-  margin: 2px 14px 14px;
+  margin: 2px 14px 104px;
   padding: 14px;
   background: #ffffff;
   border: 1px solid #d8e3f0;
@@ -293,30 +293,14 @@
   color: #17233d;
 }
 
-.retire-command-panel {
-  margin: 0 14px 104px;
-  padding: 14px;
-  background: #ffffff;
-  border: 1px solid #d8e3f0;
-  border-radius: 8px;
-  box-sizing: border-box;
-}
-
-.retire-command-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eef2f8;
-}
-
-.retire-actions {
-  display: flex;
-  flex-direction: column;
+.retire-console-actions {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 12px;
   overflow: hidden;
-  background: #ffffff;
+  background: #e1eaf5;
   border: 1px solid #e1eaf5;
   border-radius: 6px;
   box-sizing: border-box;
@@ -326,13 +310,13 @@
 .retire-secondary {
   position: relative;
   margin: 0;
-  min-height: 48px;
-  padding: 8px 34px 8px 14px;
+  min-height: 42px;
+  padding: 7px 28px 7px 11px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 8px;
   border-radius: 0;
   font-weight: 700;
   line-height: 1.2;
@@ -345,7 +329,7 @@
   &::before {
     content: "";
     position: absolute;
-    right: 14px;
+    right: 11px;
     top: 50%;
     width: 6px;
     height: 6px;
@@ -359,12 +343,12 @@
 .retire-primary {
   color: #0052d9;
   background: #fbfdff;
-  border-bottom: 1px solid #e6edf6;
+  border-right: 1px solid #e1eaf5;
 }
 
 .retire-secondary {
   color: #0052d9;
-  background: #ffffff;
+  background: #fbfdff;
 }
 
 .retire-action-title,
@@ -380,7 +364,7 @@
   flex: 1;
   min-width: 0;
   color: #17233d;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
 }
 
