@@ -88,19 +88,23 @@
   .kowtow-stats {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 8px;
+    padding: 8px;
+    background: #f8fbff;
+    border: 1px solid #d8e3f0;
+    border-radius: 8px;
   }
 
   .kowtow-stat {
     min-width: 0;
-    padding: 12px;
-    background: #f6faff;
-    border: 1px solid #dbe7f7;
+    padding: 11px;
+    background: #ffffff;
+    border: 1px solid #e1eaf5;
     border-radius: 6px;
     box-sizing: border-box;
 
     &.primary {
-      background: linear-gradient(180deg, #f6faff, #eef6ff);
+      background: #f3f8ff;
       border-color: #bed7ff;
     }
   }
@@ -113,16 +117,16 @@
 
   .kowtow-stat-value {
     display: block;
-    margin-top: 8px;
+    margin-top: 7px;
     color: #17233d;
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 30px;
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 29px;
   }
 
   .kowtow-node-status {
-    margin-top: 10px;
-    padding-top: 11px;
+    margin-top: 12px;
+    padding: 10px 0 0;
     display: flex;
     justify-content: space-between;
     gap: 10px;
@@ -154,8 +158,9 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 11px;
     color: #5d6f8f;
+    border-bottom: 1px solid #eef2f8;
     font-size: 12px;
   }
 
@@ -165,9 +170,9 @@
   }
 
   .god-bo-kicker {
-    color: #0052d9;
-    font-size: 10px;
-    font-weight: 800;
+    color: #4b658a;
+    font-size: 12px;
+    font-weight: 700;
   }
 
   .god-bo-title {
@@ -178,8 +183,19 @@
   }
 
   .kowtow-action-panel {
+    position: relative;
     margin-top: 12px;
-    padding: 14px;
+    padding: 14px 14px 14px 17px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #0052d9;
+    }
   }
 
   .kowtow-action-head {
@@ -195,9 +211,9 @@
   }
 
   .kowtow-action-kicker {
-    color: #0052d9;
-    font-size: 10px;
-    font-weight: 800;
+    color: #4b658a;
+    font-size: 12px;
+    font-weight: 700;
   }
 
   .love {
@@ -233,8 +249,12 @@
 
   .sync-warning {
     display: block;
-    margin-top: 8px;
+    margin-top: 9px;
+    padding: 8px 10px;
     color: #0052d9;
+    background: #eef6ff;
+    border: 1px solid #c8dcfb;
+    border-radius: 4px;
     font-size: 13px;
   }
 
