@@ -164,6 +164,18 @@
     font-size: 12px;
   }
 
+  .god-bo-index {
+    flex: 0 0 auto;
+    padding: 5px 8px;
+    color: #0052d9;
+    background: #ffffff;
+    border: 1px solid #c8dcfb;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 16px;
+  }
+
   .god-bo-kicker,
   .god-bo-title {
     display: block;
@@ -251,9 +263,9 @@
     display: block;
     margin-top: 9px;
     padding: 8px 10px;
-    color: #0052d9;
+    color: #b42318;
     background: #ffffff;
-    border: 1px solid #c8dcfb;
+    border: 1px solid rgba(180, 35, 24, 0.22);
     border-radius: 4px;
     font-size: 13px;
   }

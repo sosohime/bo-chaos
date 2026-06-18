@@ -248,7 +248,7 @@ export default function Kowtow() {
           <View className="kowtow-console-head">
             <View>
               <Text className="kowtow-eyebrow">交互服务</Text>
-              <Text className="kowtow-title">磕头状态台</Text>
+              <Text className="kowtow-title">互动状态</Text>
             </View>
             <Text className="kowtow-status">
               {syncFailed ? "需同步" : "运行中"}
@@ -257,7 +257,7 @@ export default function Kowtow() {
           <View className="kowtow-console-body">
             <View className="kowtow-stats">
               <View className="kowtow-stat primary">
-                <Text className="kowtow-stat-label">累计磕头</Text>
+                <Text className="kowtow-stat-label">累计记录</Text>
                 <Text className="kowtow-stat-value">
                   {kowtowCount && kowtowStats.totalCount !== "-"
                     ? (kowtowStats.totalCount as number) + kowtowCount
@@ -266,7 +266,7 @@ export default function Kowtow() {
               </View>
               <View className="kowtow-stat">
                 <Text className="kowtow-stat-label">
-                  今日签到 <Text className="utc">UTC+8</Text>
+                  今日参与 <Text className="utc">UTC+8</Text>
                 </Text>
                 <Text className="kowtow-stat-value">
                   {kowtowStats.todayKowtowedUser}
@@ -284,9 +284,9 @@ export default function Kowtow() {
             <View className="god-bo-head">
               <View>
                 <Text className="god-bo-kicker">节点预览</Text>
-                <Text className="god-bo-title">博哥节点</Text>
+                <Text className="god-bo-title">博哥资源</Text>
               </View>
-              <Text>
+              <Text className="god-bo-index">
                 {canvasInfo.swiperIndex + 1}/{swiperImages.length}
               </Text>
             </View>
@@ -309,7 +309,7 @@ export default function Kowtow() {
             <View className="kowtow-action-head">
               <View>
                 <Text className="kowtow-action-kicker">本地操作</Text>
-                <Text className="love">今日操作</Text>
+                <Text className="love">本地提交</Text>
               </View>
               <Text className="kowtow-action-state">
                 {kowtowCount ? "待同步" : "可提交"}
@@ -332,7 +332,7 @@ export default function Kowtow() {
               type="primary"
               onClick={handleKowtow}
             >
-              {isKowtowing ? "提交中" : "今日磕头"}
+              {isKowtowing ? "提交中" : "记录一次"}
             </Button>
           </View>
         </>
