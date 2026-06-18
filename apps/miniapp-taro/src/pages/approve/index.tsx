@@ -84,44 +84,48 @@ export default function ApprovalPage() {
           onRefresherRefresh={onRefresh}
           onScrollToLower={active.loadMore}
         >
-          <View className="approval-console-head">
-            <View>
-              <Text className="approval-console-kicker">审核队列</Text>
-              <Text className="approval-console-title">
-                {activeTab === "pending" ? "待处理图片" : "已通过图片"}
-              </Text>
-              <Text className="approval-console-subtitle">
-                当前队列：{queueLabel}
-              </Text>
-            </View>
-            <Text className="approval-console-status">{activeCountLabel}</Text>
-          </View>
-          <View className="approval-summary">
-            <View className="approval-summary-primary">
-              <Text className="approval-summary-label">队列状态</Text>
-              <Text className="approval-summary-value">{queueStage}</Text>
-            </View>
-            <View className="approval-summary-row">
-              <Text className="approval-summary-label">当前队列</Text>
-              <Text className="approval-summary-meta">{queueLabel}</Text>
-            </View>
-            <View className="approval-summary-row">
-              <Text className="approval-summary-label">可见项</Text>
-              <Text className="approval-summary-meta">
-                {active.items.length}
+          <View className="approval-console-panel">
+            <View className="approval-console-head">
+              <View>
+                <Text className="approval-console-kicker">审核队列</Text>
+                <Text className="approval-console-title">
+                  {activeTab === "pending" ? "待处理图片" : "已通过图片"}
+                </Text>
+                <Text className="approval-console-subtitle">
+                  当前队列：{queueLabel}
+                </Text>
+              </View>
+              <Text className="approval-console-status">
+                {activeCountLabel}
               </Text>
             </View>
-            <View className="approval-summary-row">
-              <Text className="approval-summary-label">审核中</Text>
-              <Text className="approval-summary-meta">
-                {getSummaryValue(pending)}
-              </Text>
-            </View>
-            <View className="approval-summary-row">
-              <Text className="approval-summary-label">已通过</Text>
-              <Text className="approval-summary-meta">
-                {getSummaryValue(approved)}
-              </Text>
+            <View className="approval-summary">
+              <View className="approval-summary-primary">
+                <Text className="approval-summary-label">队列状态</Text>
+                <Text className="approval-summary-value">{queueStage}</Text>
+              </View>
+              <View className="approval-summary-row">
+                <Text className="approval-summary-label">当前队列</Text>
+                <Text className="approval-summary-meta">{queueLabel}</Text>
+              </View>
+              <View className="approval-summary-row">
+                <Text className="approval-summary-label">可见项</Text>
+                <Text className="approval-summary-meta">
+                  {active.items.length}
+                </Text>
+              </View>
+              <View className="approval-summary-row">
+                <Text className="approval-summary-label">审核中</Text>
+                <Text className="approval-summary-meta">
+                  {getSummaryValue(pending)}
+                </Text>
+              </View>
+              <View className="approval-summary-row">
+                <Text className="approval-summary-label">已通过</Text>
+                <Text className="approval-summary-meta">
+                  {getSummaryValue(approved)}
+                </Text>
+              </View>
             </View>
           </View>
           {active.items.length === 0 && active.loading && (
