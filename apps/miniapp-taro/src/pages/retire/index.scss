@@ -18,22 +18,11 @@
 .retire-console {
   position: relative;
   overflow: hidden;
-  padding: 14px 14px 12px 17px;
+  padding: 14px 14px 12px;
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 8px;
   box-sizing: border-box;
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 14px;
-    bottom: 14px;
-    width: 3px;
-    background: #0052d9;
-    border-radius: 0 3px 3px 0;
-  }
 }
 
 .retire-console-head {
@@ -53,11 +42,11 @@
 }
 
 .retire-title {
-  margin-top: 6px;
+  margin-top: 5px;
   color: #17233d;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 27px;
+  line-height: 24px;
 }
 
 .retire-status {
@@ -76,7 +65,7 @@
 .retire-summary {
   position: relative;
   z-index: 1;
-  margin-top: 14px;
+  margin-top: 13px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(118px, 0.72fr);
   gap: 1px;
@@ -90,7 +79,7 @@
 .retire-summary-main,
 .retire-summary-side {
   min-width: 0;
-  padding: 12px;
+  padding: 11px 12px;
   background: #ffffff;
   box-sizing: border-box;
 }
@@ -107,17 +96,17 @@
 }
 
 .retire-days {
-  margin-top: 6px;
+  margin-top: 5px;
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 7px;
 }
 
 .retire-days-number {
   color: #17233d;
-  font-size: 40px;
+  font-size: 34px;
   font-weight: 700;
-  line-height: 46px;
+  line-height: 40px;
 }
 
 .retire-days-unit {
@@ -127,11 +116,11 @@
 }
 
 .retire-clock {
-  margin-top: 11px;
+  margin-top: 10px;
   display: flex;
   gap: 5px;
   color: #17233d;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   line-height: 22px;
   white-space: nowrap;
@@ -141,7 +130,7 @@
   position: relative;
   z-index: 1;
   margin-top: 12px;
-  padding: 12px;
+  padding: 11px 12px 12px;
   background: #ffffff;
   border: 1px solid #d8e3f0;
   border-radius: 6px;
@@ -220,16 +209,16 @@
 }
 
 .retire-progress {
-  height: 7px;
+  height: 5px;
   margin-top: 10px;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 3px;
   background: #edf3fb;
 }
 
 .retire-progress-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: 3px;
   background: #0052d9;
 }
 
@@ -261,9 +250,9 @@
 }
 
 .retire-panel-title {
-  margin-top: 5px;
+  margin-top: 4px;
   color: #17233d;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
 }
 
