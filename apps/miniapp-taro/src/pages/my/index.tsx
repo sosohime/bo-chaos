@@ -787,6 +787,18 @@ export default function My() {
                     </View>
                     {selectedImages.map((img, index) => (
                       <View key={index} className="image-item">
+                        {uploadStatus[index]?.status &&
+                          uploadStatus[index].status !== "waiting" && (
+                            <View
+                              className={`upload-state-chip ${uploadStatus[index].status}`}
+                            >
+                              {uploadStatus[index].status === "uploading" &&
+                                `${Math.round(uploadStatus[index].process)}%`}
+                              {uploadStatus[index].status === "finish" &&
+                                "已完成"}
+                              {uploadStatus[index].status === "error" && "失败"}
+                            </View>
+                          )}
                         <Image
                           src={img}
                           mode="aspectFit"
@@ -800,25 +812,14 @@ export default function My() {
                           }
                         />
                         {uploadStatus[index]?.status === "uploading" && (
-                          <View className="upload-process">
-                            <View className="circle-progress">
-                              <View
-                                className="progress-value"
-                                style={{
-                                  background: `conic-gradient(#0052d9 ${uploadStatus[index].process * 3.6}deg, rgba(255, 255, 255, 0.35) 0deg)`,
-                                }}
-                              />
-                              <View className="progress-text">
-                                {Math.round(uploadStatus[index].process)}%
-                              </View>
-                            </View>
+                          <View className="upload-progress-rail">
+                            <View
+                              className="upload-progress-bar"
+                              style={{
+                                width: `${uploadStatus[index].process}%`,
+                              }}
+                            />
                           </View>
-                        )}
-                        {uploadStatus[index]?.status === "finish" && (
-                          <View className="upload-success">✓</View>
-                        )}
-                        {uploadStatus[index]?.status === "error" && (
-                          <View className="upload-error">失败</View>
                         )}
                         {!isSubmitting && (
                           <View

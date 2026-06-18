@@ -617,6 +617,7 @@
     border-radius: 6px;
     overflow: hidden;
     background: #f3f7fc;
+    box-sizing: border-box;
 
     .preview-image {
       width: 100%;
@@ -624,81 +625,63 @@
       object-fit: cover;
     }
 
-    .upload-process,
-    .upload-error {
+    .upload-state-chip {
       position: absolute;
-      inset: 0;
+      top: 5px;
+      left: 5px;
+      z-index: 2;
+      min-width: 38px;
+      padding: 3px 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .upload-process {
-      color: #ffffff;
-      background: rgba(0, 82, 217, 0.64);
-    }
-
-    .circle-progress {
-      width: 60px;
-      height: 60px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .progress-value {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        position: relative;
-
-        &::before {
-          content: "";
-          position: absolute;
-          width: 80%;
-          height: 80%;
-          top: 10%;
-          left: 10%;
-          background-color: rgba(255, 255, 255, 0.9);
-          border-radius: 50%;
-        }
-      }
-
-      .progress-text {
-        position: absolute;
-        color: #0052d9;
-        font-size: 14px;
-        font-weight: 700;
-      }
-    }
-
-    .upload-success {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(0, 82, 217, 0.92);
-      color: white;
-      width: 34px;
-      height: 34px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-    }
-
-    .upload-error {
-      color: #fff;
-      background: rgba(190, 18, 60, 0.72);
-      font-size: 13px;
+      color: #0052d9;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(0, 82, 217, 0.18);
+      border-radius: 4px;
+      font-size: 10px;
       font-weight: 700;
+      line-height: 14px;
+      box-sizing: border-box;
+
+      &.finish {
+        color: #006d75;
+        border-color: rgba(0, 109, 117, 0.22);
+      }
+
+      &.error {
+        color: #b42318;
+        border-color: rgba(180, 35, 24, 0.22);
+      }
+    }
+
+    .upload-progress-rail {
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      bottom: 6px;
+      z-index: 2;
+      height: 4px;
+      overflow: hidden;
+      display: flex;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(0, 82, 217, 0.16);
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+
+    .upload-progress-bar {
+      height: 100%;
+      min-width: 3px;
+      background: #0052d9;
+      border-radius: 3px;
     }
 
     .remove-btn {
       position: absolute;
       top: 4px;
       right: 4px;
+      z-index: 3;
       width: 24px;
       height: 24px;
       border-radius: 4px;
