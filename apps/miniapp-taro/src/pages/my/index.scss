@@ -424,73 +424,69 @@
     position: relative;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
+    gap: 1px;
     margin: 4px 0 14px;
-    padding: 10px 8px;
-    background: #ffffff;
-    border: 1px solid #d8e3f0;
-    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+    background: #e6edf6;
+    border: 1px solid #e6edf6;
+    border-radius: 6px;
     box-sizing: border-box;
 
     &::before {
-      content: "";
-      position: absolute;
-      top: 23px;
-      left: calc(12.5% + 8px);
-      right: calc(12.5% + 8px);
-      height: 1px;
-      background: #d8e3f0;
+      display: none;
     }
 
     .upload-step {
       position: relative;
       min-width: 0;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 5px;
+      min-height: 42px;
+      padding: 0 6px;
       color: #7b8da8;
+      background: #ffffff;
       font-size: 12px;
       text-align: center;
       box-sizing: border-box;
     }
 
     .upload-step-index {
-      position: relative;
-      z-index: 1;
-      width: 28px;
-      height: 28px;
+      width: auto;
+      height: auto;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #7b8da8;
-      background: #ffffff;
-      border: 1px solid #cfdbea;
-      border-radius: 4px;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
       font-size: 10px;
       font-weight: 700;
       box-sizing: border-box;
     }
 
     .active {
-      color: #0052d9;
-      font-weight: 700;
-
-      .upload-step-index {
-        color: #ffffff;
-        background: #0052d9;
-        border-color: #0052d9;
-      }
-    }
-
-    .done {
+      background: #f3f8ff;
+      border-top: 3px solid #0052d9;
       color: #0052d9;
       font-weight: 700;
 
       .upload-step-index {
         color: #0052d9;
-        background: #ffffff;
-        border-color: #c8dcfb;
+      }
+    }
+
+    .done {
+      background: #fbfdff;
+      color: #0052d9;
+      font-weight: 700;
+
+      .upload-step-index {
+        color: #0052d9;
       }
     }
   }
