@@ -31,6 +31,13 @@ function getQueueBadge(queue: UploadHistoryState) {
   return queue.total ? String(queue.total) : "无";
 }
 
+function getQueueState(queue: UploadHistoryState) {
+  if (queue.error) return "异常";
+  if (queue.loading && queue.items.length === 0) return "同步中";
+  if (queue.hasMore) return "可加载";
+  return "完成";
+}
+
 export default function TabHead({ active, queues, onClick }: TabHeadProps) {
   return (
     <View className="tab-head">
@@ -45,9 +52,15 @@ export default function TabHead({ active, queues, onClick }: TabHeadProps) {
           >
             <View className="tab-label-wrap">
               <View className="tab-state-dot"></View>
-              <Text className="tab-title">{tab.label}</Text>
+              <View className="tab-title-block">
+                <Text className="tab-kicker">队列</Text>
+                <Text className="tab-title">{tab.label}</Text>
+              </View>
             </View>
-            <Text className="approve-num">{getQueueBadge(queue)}</Text>
+            <View className="tab-metric">
+              <Text className="approve-num">{getQueueBadge(queue)}</Text>
+              <Text className="tab-state-text">{getQueueState(queue)}</Text>
+            </View>
           </View>
         );
       })}

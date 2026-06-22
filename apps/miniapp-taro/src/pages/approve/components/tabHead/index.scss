@@ -3,7 +3,7 @@
   top: 0;
   z-index: 10;
   width: 100%;
-  min-height: 50px;
+  min-height: 58px;
   padding: 0 12px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -16,7 +16,7 @@
 .tab-block {
   position: relative;
   z-index: 1;
-  height: 50px;
+  height: 58px;
   padding: 0 10px;
   display: flex;
   align-items: center;
@@ -98,13 +98,41 @@
   box-sizing: border-box;
 }
 
+.tab-title-block {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tab-kicker {
+  display: block;
+  overflow: hidden;
+  color: #7b8da8;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .tab-title {
   min-width: 0;
   overflow: hidden;
   font-size: 14px;
   font-weight: 700;
+  line-height: 18px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.tab-metric {
+  flex: 0 0 auto;
+  min-width: 42px;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .approve-num {
@@ -123,4 +151,21 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   box-sizing: border-box;
+}
+
+.tab-state-text {
+  display: block;
+  max-width: 44px;
+  overflow: hidden;
+  color: #7b8da8;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.current-tab .tab-kicker,
+.current-tab .tab-state-text {
+  color: #0052d9;
 }
