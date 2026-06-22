@@ -630,8 +630,6 @@ importers:
         specifier: ^6.3.1
         version: 6.3.1(typescript@5.7.3)
 
-  packages/prisma-client/dist: {}
-
   packages/types: {}
 
   packages/ui:

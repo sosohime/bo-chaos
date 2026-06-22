@@ -1,24 +1,25 @@
 .tease-container {
-  height: 100vh;
-  background: #f5f5f5;
-  padding: 8px;
+  min-height: 100vh;
+  background: #f3f6fb;
+  padding: 12px;
   box-sizing: border-box;
 
   .waterfall {
     display: flex;
-    gap: 16px;
+    gap: 10px;
 
     .column {
-      width: calc(33% - 16px);
+      width: calc(33.333% - 7px);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
 
       .photo-item {
-        background: #fff;
-        border-radius: 8px;
+        background: #ffffff;
+        border: 1px solid #dbe5f2;
+        border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 8px 22px rgba(21, 37, 64, 0.06);
         transition: transform 0.2s ease;
         
         &:active {
@@ -27,7 +28,7 @@
         
         .photo-image {
           width: 100%;
-          background: #f0f0f0;
+          background: #eef4fb;
           display: block;
         }
 
@@ -47,7 +48,7 @@
     justify-content: center;
     align-items: center;
     height: 200px;
-    color: #999;
+    color: #6d7f95;
     font-size: 14px;
   }
 }
