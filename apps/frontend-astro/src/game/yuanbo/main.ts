@@ -1889,7 +1889,11 @@ class WorldScene extends Phaser.Scene {
     const panelColor =
       kind === 'boss' ? 0x2a1420 : kind === 'training' ? 0x173a34 : 0x16292d;
     const richPanel =
-      kind === 'menu' || kind === 'board' || kind === 'training';
+      kind === 'menu' ||
+      kind === 'board' ||
+      kind === 'training' ||
+      kind === 'quest' ||
+      kind === 'boss';
     const panelW = mobile ? vw - 20 : GAME_W - 64;
     const panelH = mobile
       ? Math.min(richPanel ? 520 : 330, vh - 174)
