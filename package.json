@@ -20,6 +20,7 @@
     "test:ci": "pnpm -C packages/utils test:run && pnpm -C apps/backend-nest test -- --runInBand",
     "verify": "pnpm run test:ci && pnpm run build:packages && pnpm run build:backend && pnpm run build:astro",
     "agent:lint": "node scripts/agent-lint.mjs",
+    "probe:yuanbo": "node scripts/yuanbo-probe.mjs",
     "visual:reckful": "node scripts/visual-reckful.mjs",
     "commit": "commit",
     "commitlint": "commitlint --edit"

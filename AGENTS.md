@@ -57,6 +57,7 @@ Default to maximum autonomy for normal engineering work:
 - Backend tests: `pnpm -C apps/backend-nest test`
 - Default verification: `pnpm run verify`
 - Agent harness check: `pnpm agent:lint`
+- Yuanbo game probe: `pnpm probe:yuanbo`
 
 `pnpm test` may enter package-local watch modes. Prefer `pnpm run test:ci` for automated checks.
 

@@ -22,6 +22,7 @@ Use exact commands from this file when validating changes.
 | Start Astro                     | `pnpm start:astro`                  |
 | Start mini app                  | `pnpm start:weapp`                  |
 | Agent harness lint              | `pnpm agent:lint`                   |
+| Yuanbo game probe               | `pnpm probe:yuanbo`                 |
 | Reckful visual acceptance       | `pnpm visual:reckful`               |
 | Update Lighthouse activity data | `pnpm update:lighthouse-news`       |
 

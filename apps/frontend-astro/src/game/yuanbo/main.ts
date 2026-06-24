@@ -83,10 +83,11 @@ type InteractionTarget = {
 
 const BO_FRAME_W = 42;
 const BO_FRAME_H = 58;
-const BO_WALK_FRAME_SIZE = 256;
+const BO_WALK_FRAME_W = 128;
+const BO_WALK_FRAME_H = 160;
 const BO_WALK_IDLE_FRAME = 1;
-const BO_PORTRAIT_W = 160;
-const BO_PORTRAIT_H = 170;
+const BO_PORTRAIT_W = 128;
+const BO_PORTRAIT_H = 160;
 const BO_PORTRAIT_FRAMES: Record<
   'map' | 'talk' | 'win' | 'fail' | 'shock' | 'shadow',
   number
@@ -187,10 +188,10 @@ export function startYuanboGame(root: HTMLElement): () => void {
       '/codex-pets/expertbo-cutout.png',
     boHeadPatch:
       root.dataset.boHeadPatchSrc || '/codex-pets/expertbo-map-cutout.png',
-    boWalk: root.dataset.boWalkSrc || '/codex-pets/yuanbo-source2-walk-v1.png',
+    boWalk: root.dataset.boWalkSrc || '/codex-pets/yuanbo-source2-walk-v2.png',
     boPortraits:
       root.dataset.boPortraitsSrc ||
-      '/codex-pets/yuanbo-source2-portraits-v1.png',
+      '/codex-pets/yuanbo-source2-portraits-v2.png',
     getState: () => state,
     setState: (next) => {
       state = next;
@@ -206,6 +207,7 @@ export function startYuanboGame(root: HTMLElement): () => void {
     parent: root,
     width: gameSize.width,
     height: gameSize.height,
+    resolution: getRenderResolution(),
     backgroundColor: '#102324',
     pixelArt: false,
     roundPixels: false,
@@ -406,8 +408,8 @@ class BootScene extends Phaser.Scene {
       frameHeight: BO_PORTRAIT_H,
     });
     this.load.spritesheet('boWalk', this.shared.boWalk, {
-      frameWidth: BO_WALK_FRAME_SIZE,
-      frameHeight: BO_WALK_FRAME_SIZE,
+      frameWidth: BO_WALK_FRAME_W,
+      frameHeight: BO_WALK_FRAME_H,
     });
   }
 
@@ -776,17 +778,19 @@ class WorldScene extends Phaser.Scene {
 
   private createPlayer(): void {
     const point = this.state().player[this.state().mapId];
-    const boDisplayH = this.isPortrait() ? 132 : 124;
+    const playerScale = this.isPortrait() ? 0.92 : 0.86;
+    const boDisplayH = BO_WALK_FRAME_H * playerScale;
     this.playerShadow = this.add
       .ellipse(point.x + 2, point.y + boDisplayH * 0.38, 44, 13, 0x000000, 0.22)
       .setDepth(19);
     this.player = this.physics.add
       .sprite(point.x, point.y, 'boWalk', BO_WALK_IDLE_FRAME)
       .setDepth(25);
-    this.player.setScale(this.isPortrait() ? 0.58 : 0.54);
+    this.player.setScale(playerScale);
     this.player.setCollideWorldBounds(true);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
-    body.setSize(36, 36, true);
+    body.setSize(48, 34, true);
+    body.setOffset(40, 108);
     this.add
       .text(
         point.x,
@@ -812,21 +816,21 @@ class WorldScene extends Phaser.Scene {
     const vw = this.viewW();
     const mobile = this.isPortrait();
     this.hud = this.add.container(0, 0).setDepth(100).setScrollFactor(0);
-    const topH = mobile ? 74 : 50;
+    const topH = mobile ? 88 : 50;
     const top = this.add
       .rectangle(vw / 2, topH / 2, vw, topH, 0x101e20, 0.97)
       .setStrokeStyle(1, 0x406b64);
     const title = this.add.text(
-      mobile ? 78 : 16,
+      mobile ? 12 : 16,
       mobile ? 7 : 9,
-      mobile ? `DAY ${state.day} / 周目 ${state.cycle}` : '袁博の极限售后',
+      '袁博の极限售后',
       pixelText(mobile ? 13 : 17, '#ffe6a8', '900'),
     );
     const day = this.add.text(
-      mobile ? 78 : 244,
+      mobile ? 12 : 244,
       mobile ? 27 : 10,
       mobile
-        ? `行动 ${state.actionPoints}/3  ${money(state.stats.cash)}  Lv.${state.level}`
+        ? `DAY ${state.day} / 周目 ${state.cycle} · 行动 ${state.actionPoints}/3 · ${money(state.stats.cash)}`
         : `DAY ${state.day} / 周目 ${state.cycle}`,
       pixelText(13, '#d8f6ed', '900'),
     );
@@ -887,7 +891,6 @@ class WorldScene extends Phaser.Scene {
       this.player?.setVelocity(0, 0);
       this.player?.anims.stop();
       this.player?.setTexture('boWalk', BO_WALK_IDLE_FRAME);
-      this.player?.setFlipX(false);
       this.moveVector.set(0, 0);
       return;
     }
@@ -905,7 +908,7 @@ class WorldScene extends Phaser.Scene {
     if (target.lengthSq() > 0)
       target
         .normalize()
-        .scale((this.isPortrait() ? 420 : 360) * Math.max(0.72, amount));
+        .scale((this.isPortrait() ? 500 : 440) * Math.max(0.72, amount));
     const alpha = 1 - Math.pow(0.00003, Math.max(0, delta) / 1000);
     this.moveVector.lerp(target, clamp(alpha, 0.18, 0.56));
     if (target.lengthSq() === 0 && this.moveVector.length() < 7)
@@ -915,14 +918,12 @@ class WorldScene extends Phaser.Scene {
       if (Math.abs(this.moveVector.x) > Math.abs(this.moveVector.y))
         this.direction = this.moveVector.x < 0 ? 'left' : 'right';
       else this.direction = this.moveVector.y < 0 ? 'up' : 'down';
-      this.player.setFlipX(this.direction === 'right');
       this.player.anims.play(`bo-walk-${this.direction}`, true);
       this.playerShadow?.setScale(1 + Math.sin(time / 95) * 0.05, 1);
     } else {
       this.player.setAngle(0);
       this.player.anims.stop();
       this.player.setTexture('boWalk', BO_WALK_IDLE_FRAME);
-      this.player.setFlipX(false);
       this.playerShadow?.setScale(1, 1);
     }
     this.player.setVelocity(this.moveVector.x, this.moveVector.y);
@@ -933,7 +934,7 @@ class WorldScene extends Phaser.Scene {
     const label = this.children.getByName(
       'boName',
     ) as Phaser.GameObjects.Text | null;
-    const boDisplayH = this.isPortrait() ? 136 : 128;
+    const boDisplayH = BO_WALK_FRAME_H * (this.isPortrait() ? 0.92 : 0.86);
     label?.setPosition(this.player.x, this.player.y - boDisplayH * 0.54);
     this.playerShadow?.setPosition(
       this.player.x + 2,
@@ -1002,9 +1003,11 @@ class WorldScene extends Phaser.Scene {
   }
 
   currentInteractionLabel(): string {
-    return this.currentTarget?.label
-      ? this.currentTarget.label.slice(0, 5)
-      : '互动';
+    if (this.currentTarget?.npc) return '接单';
+    if (this.currentTarget?.hotspot?.type === 'portal') return '切换';
+    if (this.currentTarget?.hotspot?.type === 'training') return '训练';
+    if (this.currentTarget?.hotspot?.type === 'save') return '菜单';
+    return '互动';
   }
 
   private findNear(): InteractionTarget {
@@ -1062,6 +1065,10 @@ class WorldScene extends Phaser.Scene {
         });
       }
     });
+    const nearestNpc = candidates
+      .filter((candidate) => candidate.npc)
+      .sort((a, b) => a.distance - b.distance)[0];
+    if (nearestNpc) return nearestNpc;
     candidates.sort((a, b) => {
       const priorityA = a.npc ? 0 : a.hotspot?.type === 'portal' ? 2 : 1;
       const priorityB = b.npc ? 0 : b.hotspot?.type === 'portal' ? 2 : 1;
@@ -2324,7 +2331,7 @@ class WorldScene extends Phaser.Scene {
       ? `遗留 ${this.state().issues.length}`
       : '无遗留';
     if (compact)
-      return `口${s.reputation} 体${s.energy} 耐${s.patience}\n边${s.boundary} 压${s.pressure} ${issues}`;
+      return `Lv.${this.state().level} XP ${this.state().xp}/${xpNeed(this.state().level)} · 口${s.reputation} 体${s.energy} 耐${s.patience} 边${s.boundary} 压${s.pressure} · ${issues}`;
     return `口碑 ${s.reputation} / 体力 ${s.energy} / 耐心 ${s.patience} / 边界 ${s.boundary} / 压力 ${s.pressure} / ${issues}`;
   }
 }
@@ -2713,6 +2720,7 @@ class NegotiationScene extends Phaser.Scene {
   private drawMobileSkills(y: number): void {
     const state = this.state();
     const available = sortedBattleSkills(state, this.quest);
+    const usable = this.usableSkills(available);
     const pageSize = 4;
     const maxPage = Math.max(0, Math.ceil(available.length / pageSize) - 1);
     this.skillPage = clamp(this.skillPage, 0, maxPage);
@@ -2742,6 +2750,28 @@ class NegotiationScene extends Phaser.Scene {
       );
       this.add.existing(button);
     });
+    this.add.text(
+      14,
+      y - 18,
+      `可用技能 ${usable.length}/${available.length}${usable.length === 0 ? ' · 先稳住场面避免死局' : ''}`,
+      pixelText(10, usable.length === 0 ? '#ffdf86' : '#c8ddd8', '900'),
+    );
+    if (usable.length === 0) {
+      const fallback = makeSceneButton(
+        this,
+        x0,
+        y + 116,
+        this.viewW() - x0 * 2,
+        42,
+        '稳住场面\n少回资源，推进回合',
+        () => this.useStabilize(),
+        0x78552b,
+        false,
+        11,
+      );
+      this.add.existing(fallback);
+      return;
+    }
     if (maxPage > 0) {
       const pagerY = y + 124;
       const prev = makeSceneButton(
@@ -2890,6 +2920,7 @@ class NegotiationScene extends Phaser.Scene {
   private drawSkills(): void {
     const state = this.state();
     const available = sortedBattleSkills(state, this.quest);
+    const usable = this.usableSkills(available);
     const pageSize = 8;
     const maxPage = Math.max(0, Math.ceil(available.length / pageSize) - 1);
     this.skillPage = clamp(this.skillPage, 0, maxPage);
@@ -2919,9 +2950,25 @@ class NegotiationScene extends Phaser.Scene {
     this.add.text(
       40,
       416,
-      `${phaseWinTarget(state, this.quest)}。技能组 ${this.skillPage + 1}/${maxPage + 1}`,
-      pixelText(10, '#c8ddd8', '700'),
+      `${phaseWinTarget(state, this.quest)}。技能组 ${this.skillPage + 1}/${maxPage + 1} · 可用 ${usable.length}/${available.length}`,
+      pixelText(10, usable.length === 0 ? '#ffdf86' : '#c8ddd8', '700'),
     );
+    if (usable.length === 0) {
+      const fallback = makeSceneButton(
+        this,
+        706,
+        434,
+        212,
+        88,
+        '稳住场面\n回一点资源，推进回合',
+        () => this.useStabilize(),
+        0x78552b,
+        false,
+        12,
+      );
+      this.add.existing(fallback);
+      return;
+    }
     if (maxPage > 0) {
       const prev = makeSceneButton(
         this,
@@ -3014,6 +3061,44 @@ class NegotiationScene extends Phaser.Scene {
     this.battle.intent = clientIntentKey(this.battle);
     this.battle.danger = dangerLine(state, this.battle, this.quest);
     this.flashLine(skill.category);
+
+    const early = this.evaluate();
+    if (early) {
+      this.finish(early);
+      return;
+    }
+
+    this.clientTurn();
+    Object.keys(this.battle.cooldowns).forEach((id) => {
+      this.battle!.cooldowns[id] = Math.max(0, this.battle!.cooldowns[id] - 1);
+    });
+    this.battle.round += 1;
+    const outcome = this.evaluate();
+    if (outcome) {
+      this.finish(outcome);
+      return;
+    }
+    this.save();
+    this.draw();
+  }
+
+  private usableSkills(skills = sortedBattleSkills(this.state(), this.quest)) {
+    return skills.filter((skill) => !this.skillDisabled(skill));
+  }
+
+  private useStabilize(): void {
+    if (!this.quest || !this.battle || this.modalLocked) return;
+    const state = this.state();
+    state.stats.energy = clamp(state.stats.energy + 7, 0, 100);
+    state.stats.patience = clamp(state.stats.patience + 7, 0, 100);
+    state.stats.boundary = clamp(state.stats.boundary + 4, 0, 100);
+    state.stats.pressure = clamp(state.stats.pressure - 2, 0, 100);
+    this.battle.client.trust = clamp(this.battle.client.trust + 3, 0, 100);
+    this.battle.client.anger = clamp(this.battle.client.anger - 3, 0, 100);
+    this.battle.client.budget = clamp(this.battle.client.budget - 3, 0, 100);
+    this.battle.log.unshift(
+      '博哥先稳住场面：不强行加码，补一口气，把会往结算推进。',
+    );
 
     const early = this.evaluate();
     if (early) {
@@ -3621,7 +3706,7 @@ class NegotiationScene extends Phaser.Scene {
 
 function syncProgression(state: SaveState): void {
   const done = state.completed.filter((id) => id !== 'boss').length;
-  const nextChapter = done >= 6 ? 3 : done >= 2 ? 2 : 1;
+  const nextChapter = done >= 4 ? 3 : done >= 2 ? 2 : 1;
   if (nextChapter > state.chapter) {
     state.chapter = nextChapter;
     const flag = `chapter-${nextChapter}`;
@@ -3833,7 +3918,7 @@ function chapterObjective(state: SaveState): string {
   if (state.chapter >= 3)
     return `去客户现场打联合验收 Boss，当前遗留 ${state.issues.length} 项，Boss 材料 ${bossDocketCards(state).length}/${BOSS_DOCKET_CARDS.length}。`;
   if (state.chapter >= 2)
-    return `处理高级客户，把“顺手一下”拆成报价、验收和 SLA；还差 ${Math.max(0, 6 - done)} 单和一条成型路线解锁 Boss。`;
+    return `处理高级客户，把“顺手一下”拆成报价、验收和 SLA；还差 ${Math.max(0, 4 - done)} 单打开 Boss 议程。`;
   return `先处理 2 个入口客户，让免费售后变成可收费服务；当前 ${done}/2。`;
 }
 
@@ -4790,7 +4875,7 @@ function unlockAchievements(
     add('first-paid-ledger', '第一张收费表');
   if (
     outcome === 'win' &&
-    state.completed.filter((id) => id !== 'boss').length >= 6
+    state.completed.filter((id) => id !== 'boss').length >= 4
   )
     add('boss-ready', '联合验收入场券');
   if (outcome === 'partial') add('first-gray-acceptance', '灰度通过');
@@ -4798,7 +4883,7 @@ function unlockAchievements(
   if (outcome === 'win' && wasRetry) add('comeback-week', '这锅我又捡回来了');
   if (
     !quest.boss &&
-    state.completed.filter((id) => id !== 'boss').length >= 6 &&
+    state.completed.filter((id) => id !== 'boss').length >= 4 &&
     state.issues.length === 0
   )
     add('clean-docket', '干净案卷');
@@ -5012,7 +5097,7 @@ function createGameTextures(scene: Phaser.Scene): void {
 function createBoWalkAnimations(scene: Phaser.Scene): void {
   const definitions: Array<[Direction, number, number]> = [
     ['down', 0, 2],
-    ['left', 6, 8],
+    ['left', 3, 5],
     ['right', 6, 8],
     ['up', 9, 11],
   ];

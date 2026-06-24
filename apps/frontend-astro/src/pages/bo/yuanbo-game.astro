@@ -14,11 +14,11 @@ const boHeadPatchSrc = import.meta.env.DEV
   ? '/codex-pets/expertbo-map-cutout.png'
   : sitePath('/codex-pets/expertbo-map-cutout.png');
 const boWalkSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-source2-walk-v1.png'
-  : sitePath('/codex-pets/yuanbo-source2-walk-v1.png');
+  ? '/codex-pets/yuanbo-source2-walk-v2.png'
+  : sitePath('/codex-pets/yuanbo-source2-walk-v2.png');
 const boPortraitsSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-source2-portraits-v1.png'
-  : sitePath('/codex-pets/yuanbo-source2-portraits-v1.png');
+  ? '/codex-pets/yuanbo-source2-portraits-v2.png'
+  : sitePath('/codex-pets/yuanbo-source2-portraits-v2.png');
 ---
 
 <Layout
@@ -152,8 +152,8 @@ const boPortraitsSrc = import.meta.env.DEV
 
   .yrpg-stage :global(canvas) {
     display: block;
-    width: min(100vw, calc(100svh * 16 / 9)) !important;
-    height: min(100svh, calc(100vw * 9 / 16)) !important;
+    width: min(100vw, 960px) !important;
+    height: min(100svh, 540px) !important;
     max-width: 100vw;
     max-height: 100svh;
     image-rendering: auto;

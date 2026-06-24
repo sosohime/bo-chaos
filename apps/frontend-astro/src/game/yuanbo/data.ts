@@ -701,7 +701,7 @@ export const QUESTS: QuestDefinition[] = [
     partialLine: '售后梳了一遍，头发没少，需求少了一点。',
     failLine: '财务截图一进群，博哥心率开始上云。',
     issue: { label: '预算质疑', type: 'budget', severity: 9 },
-    enemy: { anger: 30, budget: 58, scope: 38, trust: 42 },
+    enemy: { anger: 30, budget: 64, scope: 40, trust: 38 },
     chapter: 1,
     tier: 'tutorial',
     riskProfile: 'budget',
@@ -736,7 +736,7 @@ export const QUESTS: QuestDefinition[] = [
     partialLine: '客户点头了，但点得像留了三页补充意见。',
     failLine: '博哥嘴都说干了，客户还是觉得顺手等于免费。',
     issue: { label: '交付质疑', type: 'delivery', severity: 8 },
-    enemy: { anger: 32, budget: 58, scope: 52, trust: 34 },
+    enemy: { anger: 28, budget: 62, scope: 46, trust: 36 },
     chapter: 1,
     tier: 'tutorial',
     riskProfile: 'scope',
@@ -771,7 +771,7 @@ export const QUESTS: QuestDefinition[] = [
     partialLine: '这不算赢，但至少没白陪笑。',
     failLine: '合同没说话，群聊先开庭了。',
     issue: { label: 'SLA 追责', type: 'sla', severity: 10 },
-    enemy: { anger: 40, budget: 54, scope: 54, trust: 34 },
+    enemy: { anger: 32, budget: 60, scope: 44, trust: 38 },
     chapter: 1,
     tier: 'early',
     riskProfile: 'anger',
@@ -1257,10 +1257,7 @@ export const QUESTS: QuestDefinition[] = [
       '前面每个“顺手一下”都坐上了会议桌。',
     ],
     unlock: (state) =>
-      state.completed.filter((id) => id !== 'boss').length >= 6 &&
-      (state.level >= 3 ||
-        Math.max(...Object.values(state.routes)) >= 45 ||
-        state.cycle >= 2),
+      state.completed.filter((id) => id !== 'boss').length >= 4,
     boss: true,
     advanced: true,
   },
@@ -1352,7 +1349,7 @@ export const SKILLS: SkillDefinition[] = [
     patience: 10,
     boundary: 5,
     line: '再不行就拉表关单吧，不能免费续杯。',
-    effect: { scope: -20, anger: 5 },
+    effect: { scope: -20, anger: -8, trust: 6 },
   },
   {
     id: 'fallback',
@@ -1521,7 +1518,7 @@ export const STORY_CARDS: StoryCardDefinition[] = [
     id: 'chapter-3',
     title: '第三幕：联合验收开庭',
     line: '前面所有“再补一次”合并成 Boss 议程，博哥必须三表合一。',
-    unlockHint: '完成 6 个普通客户并形成路线',
+    unlockHint: '完成 4 个普通客户，Boss 议程打开',
   },
   {
     id: 'first-bad-debt',
@@ -2280,8 +2277,8 @@ export const WEEKLY_GOALS: WeeklyGoalDefinition[] = [
   {
     id: 'boss-week-goal',
     title: '联合验收不是旅游',
-    description: '完成 6 个普通客户并打开 Boss 议程。',
-    target: 6,
+    description: '完成 4 个普通客户并打开 Boss 议程。',
+    target: 4,
     route: 'boundary',
     rewardLine: '周目标奖励：验收预案强化，边界 +6。',
   },
