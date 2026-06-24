@@ -71,12 +71,7 @@ type Shared = {
 const BO_FRAME_W = 42;
 const BO_FRAME_H = 58;
 const BO_WALK_FRAME_SIZE = 256;
-const BO_WALK_IDLE_FRAME: Record<Direction, number> = {
-  down: 1,
-  left: 4,
-  right: 7,
-  up: 10,
-};
+const BO_WALK_IDLE_FRAME = 1;
 const SAVE_OK = '本地自动存档已写入。';
 const PERK_LABELS: Record<PerkId, string> = {
   'quote-ledger': '报价台账：商业技能预算收益 +5',
@@ -163,7 +158,7 @@ export function startYuanboGame(root: HTMLElement): () => void {
       '/codex-pets/expertbo-cutout.png',
     boHeadPatch:
       root.dataset.boHeadPatchSrc || '/codex-pets/expertbo-map-cutout.png',
-    boWalk: root.dataset.boWalkSrc || '/codex-pets/yuanbo-walk-sprite-v1.png',
+    boWalk: root.dataset.boWalkSrc || '/codex-pets/yuanbo-source2-walk-v1.png',
     getState: () => state,
     setState: (next) => {
       state = next;
@@ -708,9 +703,9 @@ class WorldScene extends Phaser.Scene {
       .ellipse(point.x + 2, point.y + boDisplayH * 0.38, 44, 13, 0x000000, 0.22)
       .setDepth(19);
     this.player = this.physics.add
-      .sprite(point.x, point.y, 'boWalk', BO_WALK_IDLE_FRAME.down)
+      .sprite(point.x, point.y, 'boWalk', BO_WALK_IDLE_FRAME)
       .setDepth(25);
-    this.player.setScale(this.isPortrait() ? 0.61 : 0.57);
+    this.player.setScale(this.isPortrait() ? 0.58 : 0.54);
     this.player.setCollideWorldBounds(true);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     body.setSize(36, 36, true);
@@ -801,7 +796,7 @@ class WorldScene extends Phaser.Scene {
     if (!this.player || this.modal) {
       this.player?.setVelocity(0, 0);
       this.player?.anims.stop();
-      this.player?.setFrame(BO_WALK_IDLE_FRAME[this.direction]);
+      this.player?.setTexture('boWalk', BO_WALK_IDLE_FRAME);
       this.moveVector.set(0, 0);
       return;
     }
@@ -829,13 +824,12 @@ class WorldScene extends Phaser.Scene {
       if (Math.abs(this.moveVector.x) > Math.abs(this.moveVector.y))
         this.direction = this.moveVector.x < 0 ? 'left' : 'right';
       else this.direction = this.moveVector.y < 0 ? 'up' : 'down';
-      this.player.setFlipX(false);
       this.player.anims.play(`bo-walk-${this.direction}`, true);
       this.playerShadow?.setScale(1 + Math.sin(time / 95) * 0.05, 1);
     } else {
       this.player.setAngle(0);
       this.player.anims.stop();
-      this.player.setFrame(BO_WALK_IDLE_FRAME[this.direction]);
+      this.player.setTexture('boWalk', BO_WALK_IDLE_FRAME);
       this.playerShadow?.setScale(1, 1);
     }
     this.player.setVelocity(this.moveVector.x, this.moveVector.y);
