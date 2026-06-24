@@ -151,7 +151,7 @@ export function startYuanboGame(root: HTMLElement): () => void {
     mapBo:
       root.dataset.mapBoSrc ||
       root.dataset.boSrc ||
-      '/codex-pets/expertbo-map-cutout.png',
+      '/codex-pets/expertbo-cutout.png',
     getState: () => state,
     setState: (next) => {
       state = next;
@@ -681,14 +681,14 @@ class WorldScene extends Phaser.Scene {
 
   private createPlayer(): void {
     const point = this.state().player[this.state().mapId];
-    const boDisplayH = this.isPortrait() ? 136 : 128;
+    const boDisplayH = this.isPortrait() ? 132 : 124;
     this.playerShadow = this.add
       .ellipse(point.x + 2, point.y + boDisplayH * 0.38, 44, 13, 0x000000, 0.22)
       .setDepth(19);
     this.player = this.physics.add
       .image(point.x, point.y, 'expertBoMapPortrait')
       .setDepth(25);
-    setImageFit(this.player, this.isPortrait() ? 72 : 68, boDisplayH);
+    setImageFit(this.player, this.isPortrait() ? 96 : 90, boDisplayH);
     this.player.setCollideWorldBounds(true);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     body.setSize(36, 36, true);
