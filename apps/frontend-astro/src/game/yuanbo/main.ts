@@ -63,6 +63,7 @@ type Shared = {
   mapBo: string;
   boHeadPatch: string;
   boWalk: string;
+  boPortraits: string;
   getState: () => SaveState;
   setState: (next: SaveState) => void;
   save: () => void;
@@ -72,6 +73,19 @@ const BO_FRAME_W = 42;
 const BO_FRAME_H = 58;
 const BO_WALK_FRAME_SIZE = 256;
 const BO_WALK_IDLE_FRAME = 1;
+const BO_PORTRAIT_W = 160;
+const BO_PORTRAIT_H = 170;
+const BO_PORTRAIT_FRAMES: Record<
+  'map' | 'talk' | 'win' | 'fail' | 'shock' | 'shadow',
+  number
+> = {
+  talk: 0,
+  win: 1,
+  shock: 2,
+  fail: 3,
+  shadow: 4,
+  map: 5,
+};
 const SAVE_OK = '本地自动存档已写入。';
 const PERK_LABELS: Record<PerkId, string> = {
   'quote-ledger': '报价台账：商业技能预算收益 +5',
@@ -159,6 +173,9 @@ export function startYuanboGame(root: HTMLElement): () => void {
     boHeadPatch:
       root.dataset.boHeadPatchSrc || '/codex-pets/expertbo-map-cutout.png',
     boWalk: root.dataset.boWalkSrc || '/codex-pets/yuanbo-source2-walk-v1.png',
+    boPortraits:
+      root.dataset.boPortraitsSrc ||
+      '/codex-pets/yuanbo-source2-portraits-v1.png',
     getState: () => state,
     setState: (next) => {
       state = next;
@@ -342,6 +359,10 @@ class BootScene extends Phaser.Scene {
     this.load.image('shadowBoPortrait', this.shared.shadowBo);
     this.load.image('expertBoMapPortrait', this.shared.mapBo);
     this.load.image('expertBoHeadPatch', this.shared.boHeadPatch);
+    this.load.spritesheet('boPortraits', this.shared.boPortraits, {
+      frameWidth: BO_PORTRAIT_W,
+      frameHeight: BO_PORTRAIT_H,
+    });
     this.load.spritesheet('boWalk', this.shared.boWalk, {
       frameWidth: BO_WALK_FRAME_SIZE,
       frameHeight: BO_WALK_FRAME_SIZE,
@@ -5062,18 +5083,13 @@ function addBoPhoto(
     0x000000,
     0.22,
   );
-  const key =
-    mood === 'shadow'
-      ? 'shadowBoCutout'
-      : mood === 'map'
-        ? 'expertBoMapCutout'
-        : 'expertBoCutout';
-  const photo = scene.add.image(w / 2, h / 2 + 2, key);
-  setImageFit(photo, w - 6, h - 4);
-  if (mood === 'fail') photo.setTint(0xffb6a9);
-  if (mood === 'shock') photo.setTint(0xffecaa);
-  if (mood === 'win') photo.setTint(0xc8ffe1);
-  if (mood === 'shadow') photo.setTint(0xd8c7ff);
+  const photo = scene.add.sprite(
+    w / 2,
+    h / 2 + 2,
+    'boPortraits',
+    BO_PORTRAIT_FRAMES[mood],
+  );
+  photo.setScale(Math.min((w - 6) / BO_PORTRAIT_W, (h - 4) / BO_PORTRAIT_H));
   if (mood === 'fail' || mood === 'shock')
     photo.setAngle(mood === 'fail' ? -2 : 2);
   const chip = scene.add

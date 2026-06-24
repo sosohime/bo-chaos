@@ -16,6 +16,9 @@ const boHeadPatchSrc = import.meta.env.DEV
 const boWalkSrc = import.meta.env.DEV
   ? '/codex-pets/yuanbo-source2-walk-v1.png'
   : sitePath('/codex-pets/yuanbo-source2-walk-v1.png');
+const boPortraitsSrc = import.meta.env.DEV
+  ? '/codex-pets/yuanbo-source2-portraits-v1.png'
+  : sitePath('/codex-pets/yuanbo-source2-portraits-v1.png');
 ---
 
 <Layout
@@ -23,9 +26,6 @@ const boWalkSrc = import.meta.env.DEV
   description="袁博の极限售后，一个 Phaser 驱动的像素经营网页 RPG。"
 >
   <main class="yrpg-page">
-    <a class="yrpg-back" href={sitePath('/bo')} aria-label="返回袁博主页"
-      >← 返回袁博</a
-    >
     <section
       class="yrpg-stage"
       data-yuanbo-rpg
@@ -34,6 +34,7 @@ const boWalkSrc = import.meta.env.DEV
       data-map-bo-src={mapBoSrc}
       data-bo-head-patch-src={boHeadPatchSrc}
       data-bo-walk-src={boWalkSrc}
+      data-bo-portraits-src={boPortraitsSrc}
       aria-label="袁博の极限售后游戏画面"
     >
       <noscript>需要启用 JavaScript 才能游玩《袁博の极限售后》。</noscript>
@@ -69,26 +70,6 @@ const boWalkSrc = import.meta.env.DEV
       ),
       radial-gradient(circle at 78% 84%, rgb(48 160 120 / 16%), transparent 32%);
     color: #fff8dc;
-  }
-
-  .yrpg-back {
-    position: fixed;
-    z-index: 10;
-    top: max(0.75rem, env(safe-area-inset-top));
-    left: max(0.75rem, env(safe-area-inset-left));
-    display: inline-flex;
-    min-height: 2.25rem;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgb(255 248 220 / 26%);
-    background: rgb(13 26 30 / 78%);
-    color: #fff8dc;
-    font-size: 0.82rem;
-    font-weight: 900;
-    line-height: 1;
-    padding: 0.5rem 0.72rem;
-    text-decoration: none;
-    backdrop-filter: blur(10px);
   }
 
   .yrpg-stage {
@@ -170,23 +151,6 @@ const boWalkSrc = import.meta.env.DEV
   }
 
   @media (max-width: 720px) {
-    .yrpg-back {
-      top: max(0.45rem, env(safe-area-inset-top));
-      left: max(0.45rem, env(safe-area-inset-left));
-      width: 1.65rem;
-      min-height: 1.65rem;
-      overflow: hidden;
-      padding: 0;
-      font-size: 0;
-      opacity: 0.78;
-    }
-
-    .yrpg-back::before {
-      content: '←';
-      font-size: 0.9rem;
-      line-height: 1;
-    }
-
     .yrpg-stage :global(canvas) {
       width: 100vw !important;
       height: 100svh !important;
