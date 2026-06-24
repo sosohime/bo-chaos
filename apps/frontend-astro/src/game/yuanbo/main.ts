@@ -686,7 +686,7 @@ class WorldScene extends Phaser.Scene {
       .ellipse(point.x + 2, point.y + boDisplayH * 0.38, 44, 13, 0x000000, 0.22)
       .setDepth(19);
     this.player = this.physics.add
-      .image(point.x, point.y, 'expertBoMapPortrait')
+      .image(point.x, point.y, 'expertBoMapCutout')
       .setDepth(25);
     setImageFit(this.player, this.isPortrait() ? 96 : 90, boDisplayH);
     this.player.setCollideWorldBounds(true);
@@ -4505,6 +4505,9 @@ function createBoCutoutTextures(scene: Phaser.Scene): void {
   createCutoutTexture(scene, 'expertBoPortrait', 'expertBoCutout', {
     removeBoPetBadge: true,
   });
+  createCutoutTexture(scene, 'expertBoMapPortrait', 'expertBoMapCutout', {
+    removeBoPetBadge: true,
+  });
   createCutoutTexture(scene, 'shadowBoPortrait', 'shadowBoCutout');
 }
 
@@ -4976,7 +4979,7 @@ function addBoPhoto(
     mood === 'shadow'
       ? 'shadowBoCutout'
       : mood === 'map'
-        ? 'expertBoMapPortrait'
+        ? 'expertBoMapCutout'
         : 'expertBoCutout';
   const photo = scene.add.image(w / 2, h / 2 + 2, key);
   setImageFit(photo, w - 6, h - 4);
