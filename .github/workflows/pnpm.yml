@@ -50,6 +50,7 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         cd apps/frontend-astro
+        find dist -type f -name "*.map" -delete
         tar -czf dist.tar.gz dist/
 
     # 添加上传步骤
@@ -57,7 +58,7 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         cd apps/frontend-astro
-        curl --fail --show-error --connect-timeout 30 --max-time 900 -X POST https://yuanbo.online/oss_service/upload \
+        curl --fail --show-error --connect-timeout 30 --max-time 1800 --retry 2 --retry-delay 15 -X POST https://yuanbo.online/oss_service/upload \
           -F "file=@dist.tar.gz" \
           -F "path=retire" \
           -F "should_unzip=true" \
