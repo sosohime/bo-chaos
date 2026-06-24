@@ -61,6 +61,7 @@ type Shared = {
   expertBo: string;
   shadowBo: string;
   mapBo: string;
+  boHeadPatch: string;
   getState: () => SaveState;
   setState: (next: SaveState) => void;
   save: () => void;
@@ -152,6 +153,8 @@ export function startYuanboGame(root: HTMLElement): () => void {
       root.dataset.mapBoSrc ||
       root.dataset.boSrc ||
       '/codex-pets/expertbo-cutout.png',
+    boHeadPatch:
+      root.dataset.boHeadPatchSrc || '/codex-pets/expertbo-map-cutout.png',
     getState: () => state,
     setState: (next) => {
       state = next;
@@ -330,6 +333,7 @@ class BootScene extends Phaser.Scene {
     this.load.image('expertBoPortrait', this.shared.expertBo);
     this.load.image('shadowBoPortrait', this.shared.shadowBo);
     this.load.image('expertBoMapPortrait', this.shared.mapBo);
+    this.load.image('expertBoHeadPatch', this.shared.boHeadPatch);
   }
 
   create(): void {
@@ -4504,9 +4508,11 @@ function createGameTextures(scene: Phaser.Scene): void {
 function createBoCutoutTextures(scene: Phaser.Scene): void {
   createCutoutTexture(scene, 'expertBoPortrait', 'expertBoCutout', {
     removeBoPetBadge: true,
+    repairBoHeadSourceKey: 'expertBoHeadPatch',
   });
   createCutoutTexture(scene, 'expertBoMapPortrait', 'expertBoMapCutout', {
     removeBoPetBadge: true,
+    repairBoHeadSourceKey: 'expertBoHeadPatch',
   });
   createCutoutTexture(scene, 'shadowBoPortrait', 'shadowBoCutout');
 }
@@ -4515,7 +4521,7 @@ function createCutoutTexture(
   scene: Phaser.Scene,
   sourceKey: string,
   targetKey: string,
-  options: { removeBoPetBadge?: boolean } = {},
+  options: { removeBoPetBadge?: boolean; repairBoHeadSourceKey?: string } = {},
 ): void {
   if (scene.textures.exists(targetKey)) return;
   const source = scene.textures
@@ -4579,6 +4585,17 @@ function createCutoutTexture(
     }
   }
   ctx.putImageData(image, 0, 0);
+  if (options.repairBoHeadSourceKey) {
+    const repairSource = scene.textures
+      .get(options.repairBoHeadSourceKey)
+      .getSourceImage() as CanvasImageSource & {
+      width: number;
+      height: number;
+    };
+    if (repairSource?.width && repairSource.height) {
+      ctx.drawImage(repairSource, 0, 0);
+    }
+  }
   scene.textures.addCanvas(targetKey, canvas);
 }
 
