@@ -62,6 +62,7 @@ type Shared = {
   shadowBo: string;
   mapBo: string;
   boHeadPatch: string;
+  boWalk: string;
   getState: () => SaveState;
   setState: (next: SaveState) => void;
   save: () => void;
@@ -69,6 +70,13 @@ type Shared = {
 
 const BO_FRAME_W = 42;
 const BO_FRAME_H = 58;
+const BO_WALK_FRAME_SIZE = 256;
+const BO_WALK_IDLE_FRAME: Record<Direction, number> = {
+  down: 1,
+  left: 4,
+  right: 7,
+  up: 10,
+};
 const SAVE_OK = '本地自动存档已写入。';
 const PERK_LABELS: Record<PerkId, string> = {
   'quote-ledger': '报价台账：商业技能预算收益 +5',
@@ -155,6 +163,7 @@ export function startYuanboGame(root: HTMLElement): () => void {
       '/codex-pets/expertbo-cutout.png',
     boHeadPatch:
       root.dataset.boHeadPatchSrc || '/codex-pets/expertbo-map-cutout.png',
+    boWalk: root.dataset.boWalkSrc || '/codex-pets/yuanbo-walk-sprite-v1.png',
     getState: () => state,
     setState: (next) => {
       state = next;
@@ -233,6 +242,10 @@ function getInitialGameSize(): { width: number; height: number } {
     };
   }
   return { width: GAME_W, height: GAME_H };
+}
+
+function getRenderResolution(): number {
+  return Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
 }
 
 function createTouchControls(
@@ -334,17 +347,22 @@ class BootScene extends Phaser.Scene {
     this.load.image('shadowBoPortrait', this.shared.shadowBo);
     this.load.image('expertBoMapPortrait', this.shared.mapBo);
     this.load.image('expertBoHeadPatch', this.shared.boHeadPatch);
+    this.load.spritesheet('boWalk', this.shared.boWalk, {
+      frameWidth: BO_WALK_FRAME_SIZE,
+      frameHeight: BO_WALK_FRAME_SIZE,
+    });
   }
 
   create(): void {
     createBoCutoutTextures(this);
     createGameTextures(this);
+    createBoWalkAnimations(this);
     this.scene.start('WorldScene');
   }
 }
 
 class WorldScene extends Phaser.Scene {
-  private player?: Phaser.Physics.Arcade.Image;
+  private player?: Phaser.Physics.Arcade.Sprite;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private keys?: Record<string, Phaser.Input.Keyboard.Key>;
   private direction: Direction = 'down';
@@ -690,9 +708,9 @@ class WorldScene extends Phaser.Scene {
       .ellipse(point.x + 2, point.y + boDisplayH * 0.38, 44, 13, 0x000000, 0.22)
       .setDepth(19);
     this.player = this.physics.add
-      .image(point.x, point.y, 'expertBoMapCutout')
+      .sprite(point.x, point.y, 'boWalk', BO_WALK_IDLE_FRAME.down)
       .setDepth(25);
-    setImageFit(this.player, this.isPortrait() ? 96 : 90, boDisplayH);
+    this.player.setScale(this.isPortrait() ? 0.61 : 0.57);
     this.player.setCollideWorldBounds(true);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     body.setSize(36, 36, true);
@@ -782,6 +800,8 @@ class WorldScene extends Phaser.Scene {
   private updatePlayer(time: number, delta: number): void {
     if (!this.player || this.modal) {
       this.player?.setVelocity(0, 0);
+      this.player?.anims.stop();
+      this.player?.setFrame(BO_WALK_IDLE_FRAME[this.direction]);
       this.moveVector.set(0, 0);
       return;
     }
@@ -809,10 +829,13 @@ class WorldScene extends Phaser.Scene {
       if (Math.abs(this.moveVector.x) > Math.abs(this.moveVector.y))
         this.direction = this.moveVector.x < 0 ? 'left' : 'right';
       else this.direction = this.moveVector.y < 0 ? 'up' : 'down';
-      this.player.setFlipX(this.direction === 'left');
+      this.player.setFlipX(false);
+      this.player.anims.play(`bo-walk-${this.direction}`, true);
       this.playerShadow?.setScale(1 + Math.sin(time / 95) * 0.05, 1);
     } else {
       this.player.setAngle(0);
+      this.player.anims.stop();
+      this.player.setFrame(BO_WALK_IDLE_FRAME[this.direction]);
       this.playerShadow?.setScale(1, 1);
     }
     this.player.setVelocity(this.moveVector.x, this.moveVector.y);
@@ -3426,7 +3449,7 @@ function mapBlockers(
 }
 
 function pushOutOfRect(
-  player: Phaser.Physics.Arcade.Image,
+  player: Phaser.Physics.Arcade.Image | Phaser.Physics.Arcade.Sprite,
   rect: { x: number; y: number; w: number; h: number },
 ): void {
   const halfW = 15;
@@ -4505,6 +4528,25 @@ function createGameTextures(scene: Phaser.Scene): void {
   createNpc(scene);
 }
 
+function createBoWalkAnimations(scene: Phaser.Scene): void {
+  const definitions: Array<[Direction, number, number]> = [
+    ['down', 0, 2],
+    ['left', 3, 5],
+    ['right', 6, 8],
+    ['up', 9, 11],
+  ];
+  definitions.forEach(([direction, start, end]) => {
+    const key = `bo-walk-${direction}`;
+    if (scene.anims.exists(key)) return;
+    scene.anims.create({
+      key,
+      frames: scene.anims.generateFrameNumbers('boWalk', { start, end }),
+      frameRate: 8,
+      repeat: -1,
+    });
+  });
+}
+
 function createBoCutoutTextures(scene: Phaser.Scene): void {
   createCutoutTexture(scene, 'expertBoPortrait', 'expertBoCutout', {
     removeBoPetBadge: true,
@@ -4955,6 +4997,7 @@ function pixelText(
     color,
     backgroundColor,
     padding: backgroundColor ? { x: 5, y: 3 } : undefined,
+    resolution: getRenderResolution(),
   };
 }
 
