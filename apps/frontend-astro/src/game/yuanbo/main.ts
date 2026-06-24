@@ -116,7 +116,6 @@ const CORE_REFRAINS = [
   '不行姐再给你梳一次，但这次叫 POC、复盘、成本治理。',
   '再不行就拉表关单吧，不能免费续杯到天亮。',
 ];
-const BOARD_ACTION_LIMIT = 6;
 const ROUTE_VOWS: Record<
   RouteKey,
   { id: PerkId; title: string; line: string }
@@ -346,6 +345,7 @@ class WorldScene extends Phaser.Scene {
   private keys?: Record<string, Phaser.Input.Keyboard.Key>;
   private direction: Direction = 'down';
   private modal?: Phaser.GameObjects.Container;
+  private modalHitZones: Phaser.GameObjects.GameObject[] = [];
   private modalDefaultAction?: () => void;
   private hud?: Phaser.GameObjects.Container;
   private hint?: Phaser.GameObjects.Text;
@@ -417,6 +417,7 @@ class WorldScene extends Phaser.Scene {
     this.npcSprites.clear();
     this.hotspotRects.clear();
     this.modal = undefined;
+    this.modalHitZones = [];
     this.hud = undefined;
 
     const state = this.state();
@@ -1522,24 +1523,10 @@ class WorldScene extends Phaser.Scene {
     const longGoalLine = longGoal
       ? `${longGoal.title} ${longTermGoalProgress(state, longGoal)}/${longGoal.target}${longTermGoalComplete(state, longGoal) ? ' 可领奖' : ''}`
       : '长期目标全清，去打更高周目。';
-    const directQuestOptions = open
-      .slice(0, BOARD_ACTION_LIMIT)
-      .map((quest) => {
-        const locked = (state.locks[quest.id] || 0) > state.day;
-        const actionShortage = state.actionPoints < quest.cost;
-        return {
-          label: `${quest.boss ? 'Boss' : quest.advanced ? '现场' : '接单'}：${quest.title}`,
-          disabled: locked || actionShortage,
-          onClick: () => this.showQuestBrief(quest),
-        };
-      });
     this.showDialog(
       '任务板',
-      `${chapterTitle(state.chapter)}\n主线目标：${chapterObjective(state)}\n本周目标：${weeklyLine}\n长期经营：${longGoalLine}\n当前路线：${routeLabel(route)} ${state.routes[route]} / 专精：${vows} / 特质：${perks}\n下一里程碑：${nextRouteMilestoneLine(state)}\n\n今日可处理：\n${questLines || '没有新客户'}\n\n遗留问题：${issues}\n${bossDocketLine(state)}\n\n失败会冻结客户一天，并把问题带进 Boss 验收；部分成功能推进主线，但会留下后患。`,
-      [
-        ...directQuestOptions,
-        { label: '知道了', onClick: () => this.closeModal() },
-      ],
+      `${chapterTitle(state.chapter)}\n主线目标：${chapterObjective(state)}\n本周目标：${weeklyLine}\n长期经营：${longGoalLine}\n当前路线：${routeLabel(route)} ${state.routes[route]} / 专精：${vows} / 特质：${perks}\n下一里程碑：${nextRouteMilestoneLine(state)}\n\n今日可处理：\n${questLines || '没有新客户'}\n\n遗留问题：${issues}\n${bossDocketLine(state)}\n\n任务板只做情报，不直接接单。要接客户，回到地图靠近 NPC；要处理现场风险，靠近服务器墙、会议室、采购桌这些热点。案卷和存档在右上角菜单里。`,
+      [{ label: '知道了', onClick: () => this.closeModal() }],
       'board',
     );
   }
@@ -1926,27 +1913,43 @@ class WorldScene extends Phaser.Scene {
       .setLineSpacing(4);
     this.modal.add([shade, box, header, copy]);
     options.forEach((option, index) => {
+      const boardHeaderAction =
+        mobile && kind === 'board' && options.length === 1;
       const columns = compactMobileOptions ? 2 : 1;
       const row = compactMobileOptions ? Math.floor(index / 2) : index;
       const col = compactMobileOptions ? index % 2 : 0;
       const mobileButtonH = compactMobileOptions ? 34 : 42;
       const mobileGap = compactMobileOptions ? 7 : 0;
       const mobileRows = Math.ceil(options.length / columns);
-      const bx = mobile
-        ? left + col * ((panelW - 36 + mobileGap) / columns)
-        : 708;
-      const by = mobile
-        ? top + panelH - 42 - (mobileRows - 1 - row) * (mobileButtonH + 6)
-        : richPanel
-          ? top + 58 + index * 32
-          : GAME_H - 176 + index * 38;
-      const bw = mobile ? (panelW - 36 - mobileGap) / columns : 196;
-      const desktopButtonH = richPanel ? 29 : 31;
+      const bx = boardHeaderAction
+        ? vw - 116
+        : mobile
+          ? left + col * ((panelW - 36 + mobileGap) / columns)
+          : 708;
+      const by = boardHeaderAction
+        ? top + 14
+        : mobile
+          ? top + panelH - 42 - (mobileRows - 1 - row) * (mobileButtonH + 6)
+          : richPanel
+            ? top + 58 + index * 32
+            : GAME_H - 176 + index * 38;
+      const bw = boardHeaderAction
+        ? 98
+        : mobile
+          ? (panelW - 36 - mobileGap) / columns
+          : 196;
+      const buttonH = boardHeaderAction
+        ? 34
+        : mobile
+          ? mobileButtonH
+          : richPanel
+            ? 29
+            : 31;
       const button = this.makeButton(
         bx,
         by,
         bw,
-        mobile ? mobileButtonH : desktopButtonH,
+        buttonH,
         option.label,
         option.onClick,
         option.disabled ? 0x4c4c4c : 0x285d72,
@@ -1954,10 +1957,36 @@ class WorldScene extends Phaser.Scene {
         option.disabled,
       );
       this.modal?.add(button);
+      if (!option.disabled) {
+        let hitFiring = false;
+        const hit = this.add
+          .rectangle(
+            bx + bw / 2,
+            by + buttonH / 2,
+            bw,
+            buttonH,
+            0xffffff,
+            0.001,
+          )
+          .setDepth(260)
+          .setScrollFactor(0)
+          .setInteractive({ useHandCursor: true })
+          .on('pointerdown', () => {
+            if (hitFiring) return;
+            hitFiring = true;
+            option.onClick();
+            this.time.delayedCall(140, () => {
+              hitFiring = false;
+            });
+          });
+        this.modalHitZones.push(hit);
+      }
     });
   }
 
   private closeModal(): void {
+    this.modalHitZones.forEach((hit) => hit.destroy());
+    this.modalHitZones = [];
     this.modal?.destroy(true);
     this.modal = undefined;
     this.modalDefaultAction = undefined;
@@ -2020,7 +2049,10 @@ class WorldScene extends Phaser.Scene {
       .setOrigin(0.5);
     c.add([rect, text]);
     if (!disabled) {
+      let firing = false;
       const fire = () => {
+        if (firing) return;
+        firing = true;
         this.tweens.add({
           targets: c,
           scaleX: 0.97,
@@ -2029,7 +2061,15 @@ class WorldScene extends Phaser.Scene {
           duration: 70,
         });
         onClick();
+        this.time.delayedCall(140, () => {
+          firing = false;
+        });
       };
+      c.setSize(w, h).setInteractive(
+        new Phaser.Geom.Rectangle(0, 0, w, h),
+        Phaser.Geom.Rectangle.Contains,
+      );
+      c.on('pointerdown', fire);
       rect.setInteractive({ useHandCursor: true }).on('pointerdown', fire);
       text.setInteractive({ useHandCursor: true }).on('pointerdown', fire);
     }
@@ -5035,7 +5075,10 @@ function makeSceneButton(
     .setWordWrapWidth(w - 10);
   c.add([rect, text]);
   if (!disabled) {
+    let firing = false;
     const fire = () => {
+      if (firing) return;
+      firing = true;
       scene.tweens.add({
         targets: c,
         scaleX: 0.97,
@@ -5044,7 +5087,15 @@ function makeSceneButton(
         duration: 70,
       });
       onClick();
+      scene.time.delayedCall(140, () => {
+        firing = false;
+      });
     };
+    c.setSize(w, h).setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, w, h),
+      Phaser.Geom.Rectangle.Contains,
+    );
+    c.on('pointerdown', fire);
     rect.setInteractive({ useHandCursor: true }).on('pointerdown', fire);
     text.setInteractive({ useHandCursor: true }).on('pointerdown', fire);
   }
