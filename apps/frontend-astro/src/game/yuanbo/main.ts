@@ -14,7 +14,9 @@ import {
   LONG_TERM_GOALS,
   MAP_TOP,
   NPCS,
+  PHASE_RULES,
   QUESTS,
+  RISK_PROFILE_LABELS,
   ROUTE_MILESTONES,
   SKILLS,
   STORY_CARDS,
@@ -49,6 +51,7 @@ import type {
   MapId,
   Outcome,
   PerkId,
+  ProgressionPhase,
   QuestDefinition,
   RouteKey,
   SaveState,
@@ -288,6 +291,10 @@ function createTouchControls(
   interact.type = 'button';
   interact.className = 'yrpg-touch-bridge__interact';
   interact.textContent = '互动';
+  const menu = document.createElement('button');
+  menu.type = 'button';
+  menu.className = 'yrpg-touch-bridge__menu';
+  menu.textContent = '菜单';
   let activePointerId: number | null = null;
 
   const setVector = (x: number, y: number) => {
@@ -365,8 +372,15 @@ function createTouchControls(
     if (game.scene.isActive('WorldScene')) world.interact?.();
     syncInteractLabel();
   });
+  menu.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    const world = game.scene.getScene('WorldScene') as unknown as {
+      showMenu?: () => void;
+    };
+    if (game.scene.isActive('WorldScene')) world.showMenu?.();
+  });
 
-  controls.append(stick, interact);
+  controls.append(stick, interact, menu);
   root.appendChild(controls);
   const timer = window.setInterval(syncInteractLabel, 250);
   const remove = controls.remove.bind(controls);
@@ -1132,11 +1146,16 @@ class WorldScene extends Phaser.Scene {
       variant
         ? `今日变体：${variant.title}\n${variant.introLine}\n影响：${caseVariantEffectLine(variant)}`
         : '',
+      phaseLabel(state, quest),
+      riskProfileLine(quest),
+      quest.teachingHint ? `打法提示：${quest.teachingHint}` : '',
+      recommendedPlanLine(quest),
       `当前策略：${stance.title}。${stance.line}`,
       memory,
       '',
       `目标：${quest.objective}`,
       `客户特质：${quest.traits.join(' / ')}`,
+      phaseWinTarget(state, quest),
       `推荐 Lv.${quest.recommendedLevel} / 消耗行动 ${quest.cost} / 奖励 ${money(quest.reward)} / ${quest.xp} XP`,
       quest.boss
         ? bossDocket ||
@@ -1253,12 +1272,12 @@ class WorldScene extends Phaser.Scene {
             const risk = operation.issue
               ? ` / 风险：${operation.issue.label}`
               : '';
-            return `${done ? '已处理' : operation.unlock(state) ? '可处理' : '锁定'} · ${routeLabel(operation.route)} · 行动${operation.cost} · ${operation.title}${clear}${risk}\n${operation.line}${locked}`;
+            return `${done ? '已处理' : operation.unlock(state) ? '可处理' : '锁定'} · ${routeLabel(operation.route)} · 行动${operation.cost} · ${operation.title}${clear}${risk}\n预测收益：${effectPreview(operation.effect)} · 路线+${operation.routeGain}${operation.clearIssueType ? ` · 可清${issueTypeLabel(operation.clearIssueType)}旧账` : ''}\n${operation.line}${locked}`;
           })
           .join('\n')
       : '这个地点今天没有可处理的现场操作。';
     const options = active.map((operation) => ({
-      label: `${operation.title} · 行动${operation.cost}`,
+      label: `${operation.title} · 行动${operation.cost} · ${effectPreview(operation.effect)}`,
       disabled: state.actionPoints < operation.cost,
       onClick: () => this.performFieldOperation(operation, hotspot),
     }));
@@ -1329,7 +1348,7 @@ class WorldScene extends Phaser.Scene {
         ? '已开特质'
         : `Lv.${perk.level} 解锁`;
       return {
-        label: `${meta.name} Lv.${state.training[trainingKey]}  ${money(cost)} · ${perkText}`,
+        label: `${meta.name} Lv.${state.training[trainingKey]} · ${meta.stat} · 行动1 · ${money(cost)} · ${perkText}`,
         disabled: state.actionPoints <= 0 || state.stats.cash < cost,
         onClick: () => this.train(trainingKey),
       };
@@ -1393,6 +1412,7 @@ class WorldScene extends Phaser.Scene {
       quest
         ? `当前按「${quest.title}」排序：${quest.traits.join(' / ')}`
         : '当前按通用经营构筑排序。',
+      quest ? `${riskProfileLine(quest)} · ${recommendedPlanLine(quest)}` : '',
       `已装：${
         equipped
           .map((id) => skillById(id)?.name)
@@ -1406,7 +1426,7 @@ class WorldScene extends Phaser.Scene {
       body,
       [
         ...page.map((skill) => ({
-          label: `${equipped.includes(skill.id) ? '卸下' : '装上'} ${skill.name}`,
+          label: `${equipped.includes(skill.id) ? '卸下' : '装上'} ${quest?.recommendedPlan?.includes(skill.id) ? '★' : ''}${skill.name} · ${skillIntentLabel(skill)}`,
           disabled: !equipped.includes(skill.id) && equipped.length >= slots,
           onClick: () => this.toggleSkillEquip(skill.id),
         })),
@@ -1702,8 +1722,7 @@ class WorldScene extends Phaser.Scene {
       : '长期目标全清，去打更高周目。';
     this.showDialog(
       '任务板',
-      `${chapterTitle(state.chapter)}\n主线目标：${chapterObjective(state)}\n本周目标：${weeklyLine}\n长期经营：${longGoalLine}\n当前路线：${routeLabel(route)} ${state.routes[route]} / 专精：${vows} / 特质：${perks}\n下一里程碑：${nextRouteMilestoneLine(state)}\n\n今日可处理：\n${questLines || '没有新客户'}\n\n遗留问题：${issues}\n${bossDocketLine(state)}\n\n任务板只做情报，不直接接单。要接客户，回到地图靠近 NPC；要处理现场风险，靠近服务器墙、会议室、采购桌这些热点。案卷和存档在右上角菜单里。`,
-      `${chapterTitle(state.chapter)}\n主线目标：${chapterObjective(state)}\n本周目标：${weeklyLine}\n长期经营：${longGoalLine}\n当前路线：${routeLabel(route)} ${state.routes[route]} / 专精：${vows} / 特质：${perks}\n下一里程碑：${nextRouteMilestoneLine(state)}\n\n今日可处理：\n${questLines || '没有新客户'}\n\n遗留问题：${issues}\n${bossDocketLine(state)}\n\n任务板只报案情，不替你收钱。要接客户，回地图靠近 NPC；要垫一手准备，去服务器墙、会议室、采购桌这些热点。案卷和存档在右上角菜单里。`,
+      `${chapterTitle(state.chapter)}\n${phaseLabel(state)}\n主线目标：${chapterObjective(state)}\n${dailyAdviceLine(state)}\n${issueImpactLine(state)}\n\n本周目标：${weeklyLine}\n长期经营：${longGoalLine}\n当前路线：${routeLabel(route)} ${state.routes[route]} / 专精：${vows} / 特质：${perks}\n下一里程碑：${nextRouteMilestoneLine(state)}\n\n今日可处理：\n${questLines || '没有新客户'}\n\n遗留问题：${issues}\n${bossDocketLine(state)}\n\n任务板只报案情，不替你收钱。要接客户，回地图靠近 NPC；要垫一手准备，去服务器墙、会议室、采购桌这些热点。案卷和存档在右上角菜单里。`,
       [{ label: '知道了', onClick: () => this.closeModal() }],
       'board',
     );
@@ -2348,12 +2367,18 @@ class NegotiationScene extends Phaser.Scene {
         : -Math.floor(relationship / 5);
     const variant = activeCaseVariant(state, this.quest);
     const stance = selectedStance(state);
+    const phase = progressionPhase(state, this.quest);
+    const rule = PHASE_RULES[phase];
     applyStatEffect(state, { effect: stance.selfEffect });
     this.battle = {
       questId: this.quest.id,
       variantId: variant?.id,
       stanceId: stance.id,
       round: 1,
+      phase,
+      intent: 'trust',
+      danger: '',
+      bossStage: this.quest.boss ? 1 : undefined,
       client: {
         anger: clamp(
           this.quest.enemy.anger +
@@ -2403,8 +2428,10 @@ class NegotiationScene extends Phaser.Scene {
       cooldowns: {},
       flags: [],
       log: [
+        `${rule.label}：${rule.line}`,
         `${this.quest.client} 入场：${this.quest.intro}`,
         `策略开局：${stance.title}。${stance.line}`,
+        this.quest.teachingHint ? `打法提示：${this.quest.teachingHint}` : '',
         variant ? `今日变体：${variant.introLine}` : '',
         okrPenalty && weekly
           ? `验收准备不足：本周 OKR「${weekly.title}」没完成，姐团开局更冲。`
@@ -2413,6 +2440,7 @@ class NegotiationScene extends Phaser.Scene {
       ].filter(Boolean),
     };
     if (this.quest.boss) {
+      this.battle.log.unshift(bossStageLine(state, 1, this.quest));
       const cards = bossDocketCards(state);
       cards.forEach((card) => {
         Object.entries(card.effect).forEach(([key, amount]) => {
@@ -2435,6 +2463,8 @@ class NegotiationScene extends Phaser.Scene {
         );
       }
     }
+    this.battle.intent = clientIntentKey(this.battle);
+    this.battle.danger = dangerLine(state, this.battle, this.quest);
   }
 
   create(): void {
@@ -2468,15 +2498,15 @@ class NegotiationScene extends Phaser.Scene {
     this.add.text(
       22,
       42,
-      `ROUND ${this.battle.round}/6 · ${this.quest.client}`,
+      `ROUND ${this.battle.round}/6 · ${PHASE_RULES[this.battle.phase].label} · ${this.quest.client}`,
       pixelText(12, '#d8f6ed', '900'),
     );
     this.add.text(
-      758,
-      18,
-      `现金风险 ${money(Math.max(0, 100 - this.battle.client.budget))}`,
-      pixelText(13, '#f8d76a', '900'),
-    );
+      610,
+      14,
+      `${clientIntentLine(this.battle.intent)}\n${this.battle.danger}`,
+      pixelText(11, '#f8d76a', '900'),
+    ).setWordWrapWidth(330);
 
     this.drawPortraits();
     this.drawStats();
@@ -2512,16 +2542,16 @@ class NegotiationScene extends Phaser.Scene {
       .text(
         12,
         36,
-        `ROUND ${this.battle.round}/6 · ${this.quest.client}`,
+        `ROUND ${this.battle.round}/6 · ${PHASE_RULES[this.battle.phase].label} · ${this.quest.client}`,
         pixelText(11, '#d8f6ed', '900'),
       )
       .setWordWrapWidth(vw - 24);
     this.add.text(
       12,
       58,
-      `现金风险 ${money(Math.max(0, 100 - this.battle.client.budget))}`,
+      wrapCjkText(`${clientIntentLine(this.battle.intent)} ${this.battle.danger}`, 24, 2),
       pixelText(11, '#f8d76a', '900'),
-    );
+    ).setWordWrapWidth(vw - 24);
 
     this.drawMobilePortraits(compact ? 84 : 92);
     this.drawMobileStats(compact ? 190 : 216);
@@ -2536,7 +2566,7 @@ class NegotiationScene extends Phaser.Scene {
         .text(
           14,
           skillY - 36,
-          '目标：信任>=70 且预算>=50；撑到 6 回合可部分成功。怒气/蔓延爆表会失败。',
+          `${phaseWinTarget(this.state(), this.quest)}；撑到 6 回合可部分成功。`,
           pixelText(10, '#c8ddd8', '700'),
         )
         .setWordWrapWidth(vw - 28);
@@ -2697,7 +2727,7 @@ class NegotiationScene extends Phaser.Scene {
       const x = x0 + (index % 2) * (bw + gap);
       const by = y + Math.floor(index / 2) * 58;
       const disabled = this.skillDisabled(skill);
-      const label = `${skill.name}\n${skillEffectSummary(skill)} · 体${skill.energy} 耐${skill.patience}${this.battle?.cooldowns[skill.id] ? ` CD${this.battle.cooldowns[skill.id]}` : ''}`;
+      const label = `${this.quest?.recommendedPlan?.includes(skill.id) ? '★' : ''}${skill.name}【${skillIntentLabel(skill)}】\n${skillEffectSummary(skill)} · 体${skill.energy} 耐${skill.patience}${this.battle?.cooldowns[skill.id] ? ` CD${this.battle.cooldowns[skill.id]}` : ''}`;
       const button = makeSceneButton(
         this,
         x,
@@ -2871,7 +2901,7 @@ class NegotiationScene extends Phaser.Scene {
       const x = 42 + (index % 4) * 222;
       const y = 434 + Math.floor(index / 4) * 48;
       const disabled = this.skillDisabled(skill);
-      const label = `${skill.name}\n${skillEffectSummary(skill)} · 体${skill.energy} 耐${skill.patience}${this.battle?.cooldowns[skill.id] ? ` CD${this.battle.cooldowns[skill.id]}` : ''}`;
+      const label = `${this.quest?.recommendedPlan?.includes(skill.id) ? '★' : ''}${skill.name}【${skillIntentLabel(skill)}】\n${skillEffectSummary(skill)} · 体${skill.energy} 耐${skill.patience}${this.battle?.cooldowns[skill.id] ? ` CD${this.battle.cooldowns[skill.id]}` : ''}`;
       const button = makeSceneButton(
         this,
         x,
@@ -2889,7 +2919,7 @@ class NegotiationScene extends Phaser.Scene {
     this.add.text(
       40,
       416,
-      `目标：信任>=70 且预算>=50；怒气/蔓延爆表会失败。技能组 ${this.skillPage + 1}/${maxPage + 1}`,
+      `${phaseWinTarget(state, this.quest)}。技能组 ${this.skillPage + 1}/${maxPage + 1}`,
       pixelText(10, '#c8ddd8', '700'),
     );
     if (maxPage > 0) {
@@ -2981,6 +3011,8 @@ class NegotiationScene extends Phaser.Scene {
     );
     this.battle.cooldowns[skill.id] = skill.cooldown + 1;
     this.battle.log.unshift(`博哥：${skill.line}`);
+    this.battle.intent = clientIntentKey(this.battle);
+    this.battle.danger = dangerLine(state, this.battle, this.quest);
     this.flashLine(skill.category);
 
     const early = this.evaluate();
@@ -3043,12 +3075,9 @@ class NegotiationScene extends Phaser.Scene {
     if (!this.battle || !this.quest) return;
     const state = this.state();
     const client = this.battle.client;
-    const highest = Object.entries({
-      anger: client.anger,
-      budget: 100 - client.budget,
-      scope: client.scope,
-      trust: 100 - client.trust,
-    }).sort((a, b) => b[1] - a[1])[0][0];
+    const highest = clientIntentKey(this.battle);
+    this.battle.intent = highest;
+    const rule = PHASE_RULES[this.battle.phase];
     const issueBonus = Math.min(
       9,
       state.issues.reduce((sum, issue) => sum + issue.severity, 0) / 6,
@@ -3084,7 +3113,10 @@ class NegotiationScene extends Phaser.Scene {
     };
     const action = actions[highest];
     const stanceId = this.battle.stanceId || state.contractStanceId;
-    const actionEffect = { ...action.effect };
+    const actionEffect = scaleEffect(action.effect, rule.clientIntensity);
+    const selfEffect = action.self
+      ? scaleEffect<keyof SaveState['stats']>(action.self, rule.clientIntensity)
+      : undefined;
     let actionLine = action.line;
     if (stanceId === 'prepaid' && highest === 'budget') {
       actionEffect.budget = Math.ceil((actionEffect.budget || 0) * 0.55);
@@ -3118,12 +3150,12 @@ class NegotiationScene extends Phaser.Scene {
         100,
       );
     });
-    if (action.self)
+    if (selfEffect)
       applyStatEffect(state, {
         id: 'client',
         title: 'client',
         line: actionLine,
-        effect: action.self,
+        effect: selfEffect,
       });
     const phase =
       this.quest.phaseLines?.[
@@ -3150,10 +3182,16 @@ class NegotiationScene extends Phaser.Scene {
           line: trial.line,
           effect: trial.self,
         });
-      this.battle.log.unshift(trial.line);
+      const stage = bossStageForRound(this.battle.round);
+      this.battle.bossStage = stage;
+      this.battle.log.unshift(`${bossStageLine(state, stage, this.quest)} ${trial.line}`);
     } else {
-      this.battle.log.unshift(phase || actionLine);
+      this.battle.log.unshift(
+        `${clientIntentLine(highest)} ${phase || actionLine}`,
+      );
     }
+    this.battle.intent = clientIntentKey(this.battle);
+    this.battle.danger = dangerLine(state, this.battle, this.quest);
     this.battle.log = this.battle.log.slice(0, 6);
   }
 
@@ -3162,6 +3200,7 @@ class NegotiationScene extends Phaser.Scene {
     const state = this.state();
     const c = this.battle.client;
     const stanceId = this.battle.stanceId || state.contractStanceId;
+    const rule = PHASE_RULES[this.battle.phase];
     if (
       stanceId === 'hard-boundary' &&
       (c.scope >= 96 || c.anger >= 98) &&
@@ -3181,24 +3220,37 @@ class NegotiationScene extends Phaser.Scene {
       c.anger >= 100 ||
       c.scope >= 100 ||
       c.budget <= 0
-    )
+    ) {
+      if (rule.tutorialGuard && !this.battle.tutorialGuardUsed) {
+        this.battle.tutorialGuardUsed = true;
+        this.battle.flags.push('tutorial-guard');
+        this.battle.log.unshift(
+          '新手保护：博哥把会拉回复盘，不让第一幕直接炸穿。先拿灰度通过，后面用训练补。',
+        );
+        return 'partial';
+      }
       return 'fail';
-    const winTrust = stanceId === 'prepaid' ? 68 : 70;
-    const winBudget = stanceId === 'prepaid' ? 42 : 50;
+    }
+    const winTrust =
+      stanceId === 'prepaid' ? Math.max(rule.win.trust - 2, 58) : rule.win.trust;
+    const winBudget =
+      stanceId === 'prepaid'
+        ? Math.max(rule.win.budget - 8, 38)
+        : rule.win.budget;
     if (
       c.trust >= winTrust &&
       c.budget >= winBudget &&
-      c.anger <= 88 &&
-      c.scope <= 84
+      c.anger <= rule.win.angerMax &&
+      c.scope <= rule.win.scopeMax
     )
       return 'win';
     if (
       stanceId === 'milestone' &&
       this.battle.round >= 4 &&
-      c.trust >= 52 &&
-      c.budget >= 34 &&
-      c.anger < 96 &&
-      c.scope < 96
+      c.trust >= rule.partial.trust + 8 &&
+      c.budget >= rule.partial.budget + 4 &&
+      c.anger < rule.partial.angerMax &&
+      c.scope < rule.partial.scopeMax
     ) {
       this.battle.flags.push('milestone-close');
       this.battle.log.unshift(
@@ -3207,7 +3259,21 @@ class NegotiationScene extends Phaser.Scene {
       return 'partial';
     }
     if (this.battle.round >= 6) {
-      if (c.trust >= 44 && c.budget >= 30 && c.anger < 100) return 'partial';
+      if (
+        c.trust >= rule.partial.trust &&
+        c.budget >= rule.partial.budget &&
+        c.anger < rule.partial.angerMax &&
+        c.scope < rule.partial.scopeMax
+      )
+        return 'partial';
+      if (rule.tutorialGuard && !this.battle.tutorialGuardUsed) {
+        this.battle.tutorialGuardUsed = true;
+        this.battle.flags.push('tutorial-guard');
+        this.battle.log.unshift(
+          '教学结算：这局没赢透，但系统把失败转成可复盘的部分成功。',
+        );
+        return 'partial';
+      }
       return 'fail';
     }
     return '';
@@ -3225,6 +3291,7 @@ class NegotiationScene extends Phaser.Scene {
       issues: state.issues.length,
     };
     const wasRetry = state.failed.includes(quest.id);
+    const rule = PHASE_RULES[this.battle.phase];
     state.actionPoints = Math.max(0, state.actionPoints - quest.cost);
     const failureCost =
       80 + Math.max(0, state.cycle - 1) * 35 + state.issues.length * 8;
@@ -3234,6 +3301,7 @@ class NegotiationScene extends Phaser.Scene {
         : outcome === 'partial'
           ? Math.floor(quest.reward * 0.58)
           : -failureCost;
+    if (outcome !== 'fail') reward = Math.floor(reward * rule.rewardMultiplier);
     if (outcome === 'win' && hasRouteVow(state, 'business'))
       reward = Math.floor(reward * 1.12);
     if (outcome === 'partial' && hasRouteVow(state, 'delivery'))
@@ -3292,18 +3360,24 @@ class NegotiationScene extends Phaser.Scene {
         (stance?.id === 'hard-boundary' ? 3 : 0) +
         (outcome === 'partial' && hasRouteVow(state, 'delivery') ? 2 : 0) +
         (outcome === 'partial' && stance?.id === 'milestone' ? 3 : 0);
+      const baseSeverity =
+        outcome === 'partial'
+          ? Math.floor(quest.issue.severity * 0.56 * rule.issueSeverity)
+          : Math.floor(quest.issue.severity * rule.issueSeverity);
       state.issues.unshift({
         id: `${quest.id}-${Date.now()}`,
         sourceQuest: quest.id,
         ...quest.issue,
-        severity: Math.max(
-          3,
-          (outcome === 'partial'
-            ? Math.floor(quest.issue.severity * 0.56)
-            : quest.issue.severity) - shield,
-        ),
+        severity: Math.max(rule.tutorialGuard ? 2 : 3, baseSeverity - shield),
       });
       state.issues = state.issues.slice(0, 6);
+    }
+    if (this.battle.tutorialGuardUsed) {
+      state.tutorialConversions += 1;
+      addLog(
+        state,
+        '教学保护触发：这次算灰度通过。系统不是放水，是把“为啥输”讲清楚。',
+      );
     }
     if (quest.id === 'boss' && outcome === 'partial') {
       state.completed = state.completed.filter((id) => id !== 'boss');
@@ -3345,9 +3419,10 @@ class NegotiationScene extends Phaser.Scene {
       grantLegacy(state, route).forEach((legacyLine) =>
         addLog(state, legacyLine),
       );
+      state.postgameLevel += 1;
       addLog(
         state,
-        `第 ${state.cycle} 周目结算：${state.ending}。${endingLine(route)}`,
+        `第 ${state.cycle} 周目结算：${state.ending}。长线等级 +1，路线、训练、案卷和遗产保留。${endingLine(route)}`,
       );
     }
 
@@ -3361,7 +3436,8 @@ class NegotiationScene extends Phaser.Scene {
         : outcome === 'partial'
           ? quest.partialLine
           : variant?.failLine || quest.failLine;
-    addLog(state, `${labelOutcome(outcome)}：${quest.title}。${line}`);
+    const advice = nextAdviceLine(state, quest, outcome);
+    addLog(state, `${labelOutcome(outcome)}：${quest.title}。${line} ${advice}`);
     this.save();
     const delta = {
       cash: state.stats.cash - before.cash,
@@ -3372,7 +3448,7 @@ class NegotiationScene extends Phaser.Scene {
     };
     this.showResult(
       outcome,
-      `${line}\n${storyAftermath(state, quest, outcome)}`,
+      `${line}\n${storyAftermath(state, quest, outcome)}\n${advice}`,
       delta,
     );
   }
@@ -3522,7 +3598,7 @@ class NegotiationScene extends Phaser.Scene {
       state.stats.pressure = clamp(state.stats.pressure + 8, 0, 100);
       addLog(
         state,
-        `第 ${state.cycle} 周目开始：客户刷新，但带着上周 ${lastEnding} 的名声来谈价。`,
+        `第 ${state.cycle} 周目开始：客户刷新，挑战进入长线 Lv.${state.postgameLevel}。${lastEnding} 的名声、训练、路线、案卷和遗产都会继续生效。`,
       );
       state.ending = '';
     }
@@ -3559,6 +3635,191 @@ function syncProgression(state: SaveState): void {
   } else {
     state.chapter = Math.max(state.chapter, nextChapter);
   }
+}
+
+function progressionPhase(
+  state: SaveState,
+  quest?: QuestDefinition,
+): ProgressionPhase {
+  if (state.postgameLevel > 0 || state.cycle > 1)
+    return quest?.boss ? 'boss' : 'postgame';
+  if (quest?.boss) return 'boss';
+  if (quest?.tier) return quest.tier;
+  const done = state.completed.filter((id) => id !== 'boss').length;
+  if (done < 2) return 'tutorial';
+  if (done < 4) return 'early';
+  if (done < 6) return 'mid';
+  return 'late';
+}
+
+function phaseLabel(state: SaveState, quest?: QuestDefinition): string {
+  const phase = progressionPhase(state, quest);
+  return `${PHASE_RULES[phase].label} · ${PHASE_RULES[phase].line}`;
+}
+
+function phaseWinTarget(
+  state: SaveState,
+  quest?: QuestDefinition,
+): string {
+  const rule = PHASE_RULES[progressionPhase(state, quest)];
+  return `胜利：信任>=${rule.win.trust} 预算>=${rule.win.budget} 怒气<=${rule.win.angerMax} 蔓延<=${rule.win.scopeMax}`;
+}
+
+function riskProfileLine(quest: QuestDefinition): string {
+  return quest.riskProfile
+    ? `主要风险：${RISK_PROFILE_LABELS[quest.riskProfile]}`
+    : '主要风险：复合售后压力';
+}
+
+function recommendedPlanLine(quest: QuestDefinition): string {
+  if (!quest.recommendedPlan?.length) return '';
+  const names = quest.recommendedPlan
+    .map((id) => skillById(id)?.name || id)
+    .join(' → ');
+  return `推荐打法：${names}`;
+}
+
+function issueImpactLine(state: SaveState): string {
+  if (!state.issues.length) return '遗留影响：暂无旧账，今天可以主动接单或训练路线。';
+  const heat = state.issues.reduce((sum, issue) => sum + issue.severity, 0);
+  const first = state.issues[0];
+  return `遗留影响：${state.issues.length} 项旧账，总热度 ${heat}。优先清「${first.label}」，否则后续谈判和 Boss 都会引用。`;
+}
+
+function dailyAdviceLine(state: SaveState): string {
+  const done = state.completed.filter((id) => id !== 'boss').length;
+  if (done === 0) return '今日建议：先接 GPU 账单，学会守预算和拉信任。';
+  if (done === 1 && state.actionPoints > 0)
+    return '今日建议：先训练一次报价/交付，再接第二单，前期别裸奔。';
+  if (state.issues.length >= 3)
+    return '今日建议：先做现场准备或复盘清旧账，不然 Boss 桌上全是截图。';
+  if (state.chapter >= 3)
+    return `今日建议：${bossDocketCards(state).length ? '带材料去客户现场打 Boss。' : '先完成长期/周目标攒 Boss 材料。'}`;
+  return '今日建议：每天 3 行动点，至少留 1 点给训练或准备，别把经营打成纯接单。';
+}
+
+function clientIntentKey(battle: BattleState): keyof ClientStats {
+  const c = battle.client;
+  return Object.entries({
+    anger: c.anger,
+    budget: 100 - c.budget,
+    scope: c.scope,
+    trust: 100 - c.trust,
+  }).sort((a, b) => b[1] - a[1])[0][0] as keyof ClientStats;
+}
+
+function clientIntentLine(intent: keyof ClientStats): string {
+  return {
+    anger: '客户意图：追责升温，下一步会抬怒气、压耐心。',
+    budget: '客户意图：砍预算，下一步会压回款和体力。',
+    scope: '客户意图：追加需求，下一步会涨蔓延、耗耐心。',
+    trust: '客户意图：追问案例，下一步会降信任并扩大范围。',
+  }[intent];
+}
+
+function dangerLine(
+  state: SaveState,
+  battle: BattleState,
+  quest?: QuestDefinition,
+): string {
+  const rule = PHASE_RULES[battle.phase];
+  const c = battle.client;
+  const warnings = [
+    c.budget <= rule.partial.budget + 10
+      ? `预算再掉 ${Math.max(1, c.budget - rule.partial.budget + 1)} 就进失败区`
+      : '',
+    c.trust < rule.partial.trust
+      ? `信任还差 ${rule.partial.trust - c.trust} 才能保底灰度`
+      : '',
+    c.scope >= rule.partial.scopeMax - 8
+      ? `蔓延快爆，优先压范围`
+      : '',
+    c.anger >= rule.partial.angerMax - 8
+      ? `怒气快爆，先降追责`
+      : '',
+    state.stats.energy <= 18 || state.stats.patience <= 18
+      ? '博哥资源见底，继续硬扛会失败'
+      : '',
+  ].filter(Boolean);
+  const hint = quest?.teachingHint || PHASE_RULES[battle.phase].line;
+  return warnings.length ? `危险预警：${warnings[0]}` : `打法提示：${hint}`;
+}
+
+function scaleEffect<T extends string>(
+  effect: Partial<Record<T, number>>,
+  intensity: number,
+): Partial<Record<T, number>> {
+  const next: Partial<Record<T, number>> = {};
+  Object.entries(effect).forEach(([key, value]) => {
+    const amount = Number(value) || 0;
+    next[key as T] =
+      amount === 0 ? 0 : Math.trunc(amount * intensity) || (amount > 0 ? 1 : -1);
+  });
+  return next;
+}
+
+function bossStageForRound(round: number): 1 | 2 | 3 {
+  if (round <= 2) return 1;
+  if (round <= 4) return 2;
+  return 3;
+}
+
+function bossStageLine(
+  state: SaveState,
+  stage: 1 | 2 | 3,
+  quest?: QuestDefinition,
+): string {
+  if (!quest?.boss) return '';
+  if (stage === 1)
+    return `Boss 第一段：预算审判。现金 ${money(state.stats.cash)}，商业路线 ${state.routes.business}，旧预算账 ${state.issues.filter((issue) => issue.type === 'budget').length} 项。`;
+  if (stage === 2)
+    return `Boss 第二段：交付审判。口碑 ${state.stats.reputation}，交付路线 ${state.routes.delivery}，Boss 材料 ${bossDocketCards(state).length}/${BOSS_DOCKET_CARDS.length}。`;
+  return `Boss 第三段：边界审判。SLA/合规/压力旧账 ${state.issues.filter((issue) => ['sla', 'compliance', 'pressure'].includes(issue.type)).length} 项，边界 ${state.stats.boundary}。`;
+}
+
+function skillIntentLabel(skill: SkillDefinition): string {
+  const labels: string[] = [];
+  if ((skill.effect.budget || 0) > 0) labels.push('补预算');
+  if ((skill.effect.trust || 0) > 0) labels.push('拉信任');
+  if ((skill.effect.scope || 0) < 0) labels.push('压蔓延');
+  if ((skill.effect.anger || 0) < 0) labels.push('降怒气');
+  if (skill.self?.energy || skill.self?.patience) labels.push('回状态');
+  if ((skill.self?.pressure || 0) < 0) labels.push('降压力');
+  return labels.slice(0, 2).join('/') || routeShort(skill.category);
+}
+
+function effectPreview(effect: Partial<PlayerStats>): string {
+  return Object.entries(effect)
+    .map(([key, value]) => {
+      const label: Record<keyof PlayerStats, string> = {
+        cash: '现金',
+        reputation: '口碑',
+        energy: '体力',
+        patience: '耐心',
+        boundary: '边界',
+        pressure: '压力',
+      };
+      return `${label[key as keyof PlayerStats]}${signed(value || 0)}`;
+    })
+    .join(' / ');
+}
+
+function nextAdviceLine(
+  state: SaveState,
+  quest: QuestDefinition,
+  outcome: Outcome,
+): string {
+  if (outcome === 'win')
+    return `下一步：${state.actionPoints > 0 ? '用剩余行动点训练或清遗留，别把好局打成裸奔 Boss。' : '行动点用完，收工复盘保状态。'}`;
+  const profile = quest.riskProfile || 'mixed';
+  const training: Record<string, string> = {
+    budget: '报价训练或成本快照',
+    trust: '交付包装或老客户回访',
+    scope: 'SLA 边界或需求裁剪会',
+    anger: '降级预案、SLA 训练或关门复盘',
+    mixed: '先清遗留，再按推荐技能装配',
+  };
+  return `下次建议：先做${training[profile]}；${recommendedPlanLine(quest) || '把补预算、拉信任、压蔓延至少各带一个。'}`;
 }
 
 function chapterTitle(chapter: number): string {
@@ -4408,6 +4669,8 @@ function sortedUnlockedSkills(
   return SKILLS.filter((skill) => skillUnlocked(state, skill)).sort((a, b) => {
     const score = (skill: SkillDefinition) => {
       let value = 0;
+      const planIndex = quest?.recommendedPlan?.indexOf(skill.id) ?? -1;
+      if (planIndex >= 0) value += 120 - planIndex * 12;
       if (quest?.preferred?.includes(skill.training as TrainingKey))
         value += 40;
       if (hasRouteVow(state, skill.category)) value += 30;

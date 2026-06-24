@@ -10,8 +10,10 @@ import type {
   LongTermGoalDefinition,
   MapHotspot,
   NpcDefinition,
+  ProgressionPhase,
   QuestDefinition,
   RouteMilestoneDefinition,
+  RiskProfile,
   SkillDefinition,
   StoryCardDefinition,
   WeeklyGoalDefinition,
@@ -22,6 +24,94 @@ export const GAME_W = 960;
 export const GAME_H = 540;
 export const TILE = 32;
 export const MAP_TOP = 52;
+
+export const PHASE_RULES: Record<
+  ProgressionPhase,
+  {
+    label: string;
+    line: string;
+    win: { trust: number; budget: number; angerMax: number; scopeMax: number };
+    partial: {
+      trust: number;
+      budget: number;
+      angerMax: number;
+      scopeMax: number;
+    };
+    clientIntensity: number;
+    issueSeverity: number;
+    rewardMultiplier: number;
+    tutorialGuard: boolean;
+  }
+> = {
+  tutorial: {
+    label: '教学期',
+    line: '前两单先教预算、信任、蔓延和怒气；乱点不会立刻死，但会留下可复盘的锅。',
+    win: { trust: 58, budget: 38, angerMax: 94, scopeMax: 92 },
+    partial: { trust: 34, budget: 20, angerMax: 100, scopeMax: 100 },
+    clientIntensity: 0.52,
+    issueSeverity: 0.42,
+    rewardMultiplier: 0.95,
+    tutorialGuard: true,
+  },
+  early: {
+    label: '起步期',
+    line: '客户开始追问，但经营重点还是把打法练出来。',
+    win: { trust: 64, budget: 44, angerMax: 92, scopeMax: 90 },
+    partial: { trust: 40, budget: 26, angerMax: 100, scopeMax: 98 },
+    clientIntensity: 0.75,
+    issueSeverity: 0.75,
+    rewardMultiplier: 1,
+    tutorialGuard: false,
+  },
+  mid: {
+    label: '经营期',
+    line: '每天 3 行动点开始不够用，接单、准备、训练都要取舍。',
+    win: { trust: 70, budget: 50, angerMax: 88, scopeMax: 84 },
+    partial: { trust: 44, budget: 30, angerMax: 100, scopeMax: 96 },
+    clientIntensity: 1,
+    issueSeverity: 1,
+    rewardMultiplier: 1,
+    tutorialGuard: false,
+  },
+  late: {
+    label: '验收前',
+    line: '旧账会回流，没清遗留就别指望 Boss 桌上没人翻截图。',
+    win: { trust: 74, budget: 54, angerMax: 84, scopeMax: 80 },
+    partial: { trust: 50, budget: 34, angerMax: 96, scopeMax: 94 },
+    clientIntensity: 1.12,
+    issueSeverity: 1.08,
+    rewardMultiplier: 1.08,
+    tutorialGuard: false,
+  },
+  boss: {
+    label: '联合验收',
+    line: 'Boss 会读取遗留、路线、周目标和案卷材料，三段质询不是普通客户加血。',
+    win: { trust: 76, budget: 56, angerMax: 82, scopeMax: 78 },
+    partial: { trust: 58, budget: 40, angerMax: 94, scopeMax: 92 },
+    clientIntensity: 1.18,
+    issueSeverity: 1.15,
+    rewardMultiplier: 1.15,
+    tutorialGuard: false,
+  },
+  postgame: {
+    label: '周目挑战',
+    line: '客户刷新且更难，但训练、路线、遗产和案卷会继续带进下一周目。',
+    win: { trust: 78, budget: 58, angerMax: 80, scopeMax: 76 },
+    partial: { trust: 60, budget: 42, angerMax: 92, scopeMax: 90 },
+    clientIntensity: 1.28,
+    issueSeverity: 1.25,
+    rewardMultiplier: 1.25,
+    tutorialGuard: false,
+  },
+};
+
+export const RISK_PROFILE_LABELS: Record<RiskProfile, string> = {
+  budget: '预算压力',
+  trust: '信任缺口',
+  scope: '需求蔓延',
+  anger: '怒气追责',
+  mixed: '复合风险',
+};
 
 export const TRAINING: Record<
   TrainingKey,
@@ -611,8 +701,13 @@ export const QUESTS: QuestDefinition[] = [
     partialLine: '售后梳了一遍，头发没少，需求少了一点。',
     failLine: '财务截图一进群，博哥心率开始上云。',
     issue: { label: '预算质疑', type: 'budget', severity: 9 },
-    enemy: { anger: 46, budget: 42, scope: 54, trust: 24 },
+    enemy: { anger: 30, budget: 58, scope: 38, trust: 42 },
     chapter: 1,
+    tier: 'tutorial',
+    riskProfile: 'budget',
+    teachingHint:
+      '第一单教“预算不是怒吼出来的”：先用账单和报价守预算，再用 POC/边界收需求。',
+    recommendedPlan: ['report', 'anchor', 'poc', 'contract'],
     arc: '第一幕：免费售后的入口',
     objective: '把“顺手看账单”改成可收费的成本治理。',
     traits: ['预算敏感', '会拿截图追问', '报价类技能收益更高'],
@@ -641,8 +736,13 @@ export const QUESTS: QuestDefinition[] = [
     partialLine: '客户点头了，但点得像留了三页补充意见。',
     failLine: '博哥嘴都说干了，客户还是觉得顺手等于免费。',
     issue: { label: '交付质疑', type: 'delivery', severity: 8 },
-    enemy: { anger: 34, budget: 56, scope: 64, trust: 22 },
+    enemy: { anger: 32, budget: 58, scope: 52, trust: 34 },
     chapter: 1,
+    tier: 'tutorial',
+    riskProfile: 'scope',
+    teachingHint:
+      '第二单教“顺手会长腿”：先 POC 拉信任，再用边界把今天上线拆成阶段。',
+    recommendedPlan: ['poc', 'report', 'contract', 'anchor'],
     arc: '第一幕：免费售后的入口',
     objective: '把“今天上线”拆成 POC、验收和排期。',
     traits: ['需求蔓延快', '信任缺口大', '交付类技能收益更高'],
@@ -671,8 +771,13 @@ export const QUESTS: QuestDefinition[] = [
     partialLine: '这不算赢，但至少没白陪笑。',
     failLine: '合同没说话，群聊先开庭了。',
     issue: { label: 'SLA 追责', type: 'sla', severity: 10 },
-    enemy: { anger: 42, budget: 50, scope: 58, trust: 25 },
+    enemy: { anger: 40, budget: 54, scope: 54, trust: 34 },
     chapter: 1,
+    tier: 'early',
+    riskProfile: 'anger',
+    teachingHint:
+      '第三单开始有追责压力：怒气高时别硬报价，先降级预案或合同边界止血。',
+    recommendedPlan: ['contract', 'poc', 'report', 'anchor'],
     arc: '第一幕：免费售后的入口',
     objective: '把“两秒事故”收回 SLA 边界。',
     traits: ['怒气上升快', '边界不足会被追责', 'SLA 训练收益更高'],
@@ -703,6 +808,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '合规补材料', type: 'compliance', severity: 12 },
     enemy: { anger: 44, budget: 52, scope: 72, trust: 20 },
     chapter: 2,
+    tier: 'mid',
+    riskProfile: 'scope',
+    teachingHint:
+      '合规客户会把“离线可用”扩成材料宇宙；先压蔓延，再补信任。',
+    recommendedPlan: ['contract', 'milestone', 'poc', 'report'],
     arc: '第二幕：客户学会复用顺手一下',
     objective: '让私有化、审计、脱敏和部署文档分别进报价。',
     traits: ['蔓延极高', '合同边界更关键', '口头承诺效果打折'],
@@ -740,6 +850,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '免费期待', type: 'budget', severity: 11 },
     enemy: { anger: 46, budget: 44, scope: 66, trust: 24 },
     chapter: 2,
+    tier: 'mid',
+    riskProfile: 'budget',
+    teachingHint:
+      '成本日报的核心不是解释，是套餐化；预算掉太低就先报表再锚价。',
+    recommendedPlan: ['report', 'anchor', 'contract', 'review'],
     arc: '第二幕：客户学会复用顺手一下',
     objective: '把日报、阈值和预警分成套餐，别让免费续杯成习惯。',
     traits: ['预算压力高', '会吃报价锚定', '失败会拖出财务追杀'],
@@ -774,6 +889,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '方案内耗', type: 'pressure', severity: 12 },
     enemy: { anger: 38, budget: 54, scope: 76, trust: 26 },
     chapter: 2,
+    tier: 'mid',
+    riskProfile: 'mixed',
+    teachingHint:
+      '影流三案能拉信任也会撩大范围；没有边界时别把三案开成免费菜单。',
+    recommendedPlan: ['shadow', 'poc', 'contract', 'anchor'],
     arc: '第二幕：客户学会复用顺手一下',
     objective: '用 A/B/C 三套方案把选择权交给客户，把价格留给自己。',
     traits: ['选择困难', '影流收益高但会刺激范围', '路线分影响结局'],
@@ -809,6 +929,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '话术失控', type: 'delivery', severity: 9 },
     enemy: { anger: 52, budget: 48, scope: 66, trust: 18 },
     chapter: 2,
+    tier: 'mid',
+    riskProfile: 'trust',
+    teachingHint:
+      'AI 客服翻车先补信任，别一上来谈钱；案例、护栏、灰度比嘴硬有用。',
+    recommendedPlan: ['poc', 'demo', 'fallback', 'review'],
     arc: '第二幕：AI 上线不是许愿池',
     objective: '把“机器人胡说”拆成护栏、知识库和灰度验收。',
     traits: ['信任低', '需求会扩成知识库治理', '交付路线能快速止血'],
@@ -843,6 +968,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '算力插队', type: 'budget', severity: 12 },
     enemy: { anger: 48, budget: 38, scope: 62, trust: 26 },
     chapter: 2,
+    tier: 'late',
+    riskProfile: 'budget',
+    teachingHint:
+      '算力插队是预算战，报价阶梯和预收款会比免费协调更稳。',
+    recommendedPlan: ['anchor', 'ladder', 'report', 'contract'],
     arc: '第二幕：AI 热潮开始抢资源',
     objective: '把 GPU 插队改成可收费的配额预留和加急排期。',
     traits: ['预算低', '商业预收收益高', '失败会推高维护债'],
@@ -876,6 +1006,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '割接追责', type: 'sla', severity: 13 },
     enemy: { anger: 50, budget: 46, scope: 76, trust: 20 },
     chapter: 2,
+    tier: 'late',
+    riskProfile: 'scope',
+    teachingHint:
+      '迁移三天完成是边界战，先把演练和回滚写出来，再谈交付。',
+    recommendedPlan: ['contract', 'milestone', 'fallback', 'poc'],
     arc: '第二幕：顺手开始搬家',
     objective: '把三天迁移拆成演练、窗口和回滚预案。',
     traits: ['蔓延极高', '边界先行能压风险', '交付里程碑收益高'],
@@ -909,6 +1044,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '峰值告警', type: 'pressure', severity: 11 },
     enemy: { anger: 45, budget: 50, scope: 70, trust: 24 },
     chapter: 2,
+    tier: 'mid',
+    riskProfile: 'mixed',
+    teachingHint:
+      '直播峰值先做降级和压测，不然压力会把当天经营拖爆。',
+    recommendedPlan: ['fallback', 'poc', 'milestone', 'review'],
     arc: '第二幕：客户开始拿峰值许愿',
     objective: '把“不确定流量”拆成压测、弹性、降级和保障套餐。',
     traits: ['压力增长快', '交付演示有效', 'SLA 边界能保命'],
@@ -941,6 +1081,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '安全红字', type: 'compliance', severity: 14 },
     enemy: { anger: 56, budget: 45, scope: 78, trust: 22 },
     chapter: 3,
+    tier: 'late',
+    riskProfile: 'anger',
+    teachingHint:
+      '安全红字会同时涨怒气和蔓延；先降追责，再把修复拆成例外说明。',
+    recommendedPlan: ['fallback', 'freeze', 'contract', 'review'],
     arc: '第三幕：验收前的红字追杀',
     objective: '把渗透测试拆成修复、复测和例外边界。',
     traits: ['合规压力强', '边界先行关键', '失败会喂 Boss'],
@@ -975,6 +1120,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '回款卡点', type: 'budget', severity: 12 },
     enemy: { anger: 40, budget: 34, scope: 58, trust: 30 },
     chapter: 2,
+    tier: 'mid',
+    riskProfile: 'budget',
+    teachingHint:
+      '发票合同先救现金流，预算条低的时候别把耐心耗在演示上。',
+    recommendedPlan: ['anchor', 'report', 'review', 'contract'],
     arc: '第二幕：钱在流程里迷路',
     objective: '把合同、报价和发票对齐，别让售后替流程背锅。',
     traits: ['预算条很低', '商业预收强', '复盘能减少压力'],
@@ -1009,6 +1159,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '知识库污染', type: 'delivery', severity: 13 },
     enemy: { anger: 44, budget: 52, scope: 82, trust: 18 },
     chapter: 3,
+    tier: 'late',
+    riskProfile: 'scope',
+    teachingHint:
+      '十万条知识库不能一口吞；影流可以分案，但必须配边界。',
+    recommendedPlan: ['shadow', 'freeze', 'poc', 'milestone'],
     arc: '第三幕：AI 数据开始反噬',
     objective: '把全量导入拆成清洗、标注、灰度和回滚。',
     traits: ['范围爆炸', '影流替代方案有效', '交付信任缺口大'],
@@ -1043,6 +1198,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: 'VIP 无限责任', type: 'pressure', severity: 16 },
     enemy: { anger: 60, budget: 50, scope: 86, trust: 24 },
     chapter: 3,
+    tier: 'late',
+    riskProfile: 'mixed',
+    teachingHint:
+      'VIP 是后期压力测试：行动消耗高，先准备或训练再打会明显更稳。',
+    recommendedPlan: ['shadow', 'fallback', 'ladder', 'freeze'],
     arc: '第三幕：无限保障开庭',
     objective: '把无限保障拆成等级、窗口、响应和加急费。',
     traits: ['高压高奖', '消耗 2 行动', '路线构筑不足会翻车'],
@@ -1078,6 +1238,11 @@ export const QUESTS: QuestDefinition[] = [
     issue: { label: '联合追责', type: 'pressure', severity: 16 },
     enemy: { anger: 58, budget: 48, scope: 80, trust: 22 },
     chapter: 3,
+    tier: 'boss',
+    riskProfile: 'mixed',
+    teachingHint:
+      'Boss 三段质询：先问钱，再问交付，最后翻 SLA 和遗留。材料越多越好打。',
+    recommendedPlan: ['review', 'fallback', 'mirror', 'freeze', 'demo', 'ladder'],
     arc: '第三幕：三表合一关单',
     objective: '把报价表、验收表、SLA 表摊开，处理本周所有遗留追责。',
     traits: [

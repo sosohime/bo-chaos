@@ -98,7 +98,8 @@ const boPortraitsSrc = import.meta.env.DEV
   }
 
   .yrpg-stage :global(.yrpg-touch-bridge__stick),
-  .yrpg-stage :global(.yrpg-touch-bridge__interact) {
+  .yrpg-stage :global(.yrpg-touch-bridge__interact),
+  .yrpg-stage :global(.yrpg-touch-bridge__menu) {
     pointer-events: auto;
     position: absolute;
     border: 1px solid rgb(255 248 220 / 34%);
@@ -140,6 +141,15 @@ const boPortraitsSrc = import.meta.env.DEV
     font-size: 1rem;
   }
 
+  .yrpg-stage :global(.yrpg-touch-bridge__menu) {
+    display: grid;
+    place-items: center;
+    width: 4.1rem;
+    height: 2.8rem;
+    border-radius: 0;
+    font-size: 0.9rem;
+  }
+
   .yrpg-stage :global(canvas) {
     display: block;
     width: min(100vw, calc(100svh * 16 / 9)) !important;
@@ -173,6 +183,12 @@ const boPortraitsSrc = import.meta.env.DEV
       width: 4.7rem;
       height: 3.25rem;
       background: rgb(140 90 35 / 82%);
+    }
+
+    .yrpg-stage :global(.yrpg-touch-bridge__menu) {
+      top: max(0.45rem, env(safe-area-inset-top));
+      right: 0.6rem;
+      background: rgb(41 78 88 / 82%);
     }
   }
 </style>

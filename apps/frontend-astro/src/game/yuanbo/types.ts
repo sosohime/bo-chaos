@@ -8,6 +8,14 @@ export type TrainingKey =
   | 'shadow';
 export type Outcome = 'win' | 'partial' | 'fail';
 export type Direction = 'down' | 'left' | 'right' | 'up';
+export type ProgressionPhase =
+  | 'tutorial'
+  | 'early'
+  | 'mid'
+  | 'late'
+  | 'boss'
+  | 'postgame';
+export type RiskProfile = 'budget' | 'trust' | 'scope' | 'anger' | 'mixed';
 export type PerkId =
   | 'quote-ledger'
   | 'poc-playbook'
@@ -175,6 +183,9 @@ export interface SaveState {
   perks: PerkId[];
   claimedRewards: string[];
   equippedSkills: string[];
+  postgameLevel: number;
+  tutorialConversions: number;
+  phaseHintsSeen: string[];
   weeklyGoalId: string;
   contractStanceId: string;
   weeklyGoalStartedDay: number;
@@ -235,6 +246,10 @@ export interface QuestDefinition {
   preferred?: TrainingKey[];
   resistance?: Partial<Record<keyof ClientStats, number>>;
   phaseLines?: string[];
+  tier?: ProgressionPhase;
+  riskProfile?: RiskProfile;
+  teachingHint?: string;
+  recommendedPlan?: string[];
   unlock: (state: SaveState) => boolean;
   boss?: boolean;
   advanced?: boolean;
@@ -294,6 +309,11 @@ export interface BattleState {
   variantId?: string;
   stanceId?: string;
   round: number;
+  phase: ProgressionPhase;
+  intent: keyof ClientStats;
+  danger: string;
+  tutorialGuardUsed?: boolean;
+  bossStage?: 1 | 2 | 3;
   client: ClientStats;
   cooldowns: Record<string, number>;
   flags: string[];

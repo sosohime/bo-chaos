@@ -48,6 +48,9 @@ export function defaultState(): SaveState {
     perks: [],
     claimedRewards: [],
     equippedSkills: [],
+    postgameLevel: 0,
+    tutorialConversions: 0,
+    phaseHintsSeen: [],
     weeklyGoalId: '',
     contractStanceId: 'standard',
     weeklyGoalStartedDay: 0,
@@ -103,6 +106,17 @@ export function normalizeState(raw: unknown): SaveState {
       : [],
     equippedSkills: Array.isArray(input.equippedSkills)
       ? input.equippedSkills.map(String).slice(0, 8)
+      : [],
+    postgameLevel: Math.max(
+      0,
+      Math.floor(Number(input.postgameLevel) || 0),
+    ),
+    tutorialConversions: Math.max(
+      0,
+      Math.floor(Number(input.tutorialConversions) || 0),
+    ),
+    phaseHintsSeen: Array.isArray(input.phaseHintsSeen)
+      ? input.phaseHintsSeen.map(String).slice(0, 40)
       : [],
     weeklyGoalId:
       typeof input.weeklyGoalId === 'string' ? input.weeklyGoalId : '',
