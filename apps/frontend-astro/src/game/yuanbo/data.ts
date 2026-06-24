@@ -443,7 +443,7 @@ export const FIELD_OPERATIONS: FieldOperationDefinition[] = [
 export const NPCS: NpcDefinition[] = [
   {
     id: 'npc-gpu',
-    name: '训练团队',
+    name: 'GPU 账单客户',
     role: '账单爆炸',
     mapId: 'office',
     x: 330,
@@ -597,7 +597,7 @@ export const QUESTS: QuestDefinition[] = [
   {
     id: 'gpu',
     title: 'GPU 账单爆炸',
-    client: '财务凝视的训练团队',
+    client: '财务凝视的 GPU 团队',
     mapId: 'office',
     npcId: 'npc-gpu',
     route: 'business',

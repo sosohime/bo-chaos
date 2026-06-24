@@ -69,6 +69,15 @@ type Shared = {
   save: () => void;
 };
 
+type InteractionTarget = {
+  id: string;
+  label: string;
+  action: string;
+  distance: number;
+  npc?: (typeof NPCS)[number];
+  hotspot?: MapHotspot;
+};
+
 const BO_FRAME_W = 42;
 const BO_FRAME_H = 58;
 const BO_WALK_FRAME_SIZE = 256;
@@ -87,6 +96,9 @@ const BO_PORTRAIT_FRAMES: Record<
   map: 5,
 };
 const SAVE_OK = '本地自动存档已写入。';
+const PLAYER_VISUAL_MARGIN_X = 78;
+const PLAYER_VISUAL_MARGIN_TOP = 86;
+const PLAYER_VISUAL_MARGIN_BOTTOM = 70;
 const PERK_LABELS: Record<PerkId, string> = {
   'quote-ledger': '报价台账：商业技能预算收益 +5',
   'poc-playbook': 'POC 剧本：交付技能信任收益 +5',
@@ -284,6 +296,15 @@ function createTouchControls(
     };
     if (game.scene.isActive('WorldScene')) world.setVirtualVector?.(x, y);
   };
+  const syncInteractLabel = () => {
+    const world = game.scene.getScene('WorldScene') as unknown as {
+      currentInteractionLabel?: () => string;
+    };
+    interact.textContent =
+      game.scene.isActive('WorldScene') && world.currentInteractionLabel
+        ? world.currentInteractionLabel()
+        : '互动';
+  };
   const resetStick = () => {
     knob.style.transform = 'translate(-50%, -50%)';
     setVector(0, 0);
@@ -342,10 +363,17 @@ function createTouchControls(
       interact?: () => void;
     };
     if (game.scene.isActive('WorldScene')) world.interact?.();
+    syncInteractLabel();
   });
 
   controls.append(stick, interact);
   root.appendChild(controls);
+  const timer = window.setInterval(syncInteractLabel, 250);
+  const remove = controls.remove.bind(controls);
+  controls.remove = () => {
+    window.clearInterval(timer);
+    remove();
+  };
   return controls;
 }
 
@@ -393,6 +421,7 @@ class WorldScene extends Phaser.Scene {
   private npcSprites = new Map<string, Phaser.GameObjects.Container>();
   private hotspotRects = new Map<string, Phaser.GameObjects.Rectangle>();
   private lastNearId = '';
+  private currentTarget?: InteractionTarget;
   private codexPage: 'overview' | 'goals' | 'achievements' | 'stories' =
     'overview';
   private loadoutPage = 0;
@@ -454,6 +483,7 @@ class WorldScene extends Phaser.Scene {
     this.children.removeAll();
     this.npcSprites.clear();
     this.hotspotRects.clear();
+    this.currentTarget = undefined;
     this.modal = undefined;
     this.modalHitZones = [];
     this.hud = undefined;
@@ -498,9 +528,9 @@ class WorldScene extends Phaser.Scene {
       [
         '客户姐把账单、SLA、Agent 上线和合规材料一起拍到桌上。',
         ...CORE_REFRAINS,
-        '从今天开始，白天接客户，晚上练报价、交付、SLA、复盘和影流。人这辈子，售后也得经营。',
+        '先去找「GPU 账单客户」打一单，谈完回来去训练台。人这辈子，售后也得经营。',
       ].join('\n'),
-      [{ label: '开门接单', onClick: () => this.closeModal() }],
+      [{ label: '去接第一单', onClick: () => this.closeModal() }],
       'event',
     );
   }
@@ -661,6 +691,11 @@ class WorldScene extends Phaser.Scene {
       if (!quest || !quest.unlock(state)) return;
       const done = state.completed.includes(quest.id);
       const failed = state.failed.includes(quest.id);
+      const firstOrder =
+        quest.id === 'gpu' &&
+        state.mapId === 'office' &&
+        !state.completed.length &&
+        !state.failed.length;
       const container = this.add.container(npc.x, npc.y).setDepth(18);
       const shadow = this.add.ellipse(3, 20, 30, 10, 0x000000, 0.18);
       const sprite = this.add
@@ -671,9 +706,11 @@ class WorldScene extends Phaser.Scene {
         ? 'OK'
         : quest.boss
           ? 'BOSS'
-          : failed
-            ? '!'
-            : 'NEW';
+          : firstOrder
+            ? '第一单'
+            : failed
+              ? '!'
+              : 'NEW';
       const bubble = this.add
         .text(
           0,
@@ -683,7 +720,13 @@ class WorldScene extends Phaser.Scene {
             11,
             '#fff8dc',
             '900',
-            quest.boss ? '#8e334d' : failed ? '#ad4d36' : '#2368ad',
+            quest.boss
+              ? '#8e334d'
+              : firstOrder
+                ? '#9b6a22'
+                : failed
+                  ? '#ad4d36'
+                  : '#2368ad',
           ),
         )
         .setOrigin(0.5);
@@ -810,7 +853,19 @@ class WorldScene extends Phaser.Scene {
       0x294e58,
       mobile ? 11 : 12,
     );
+    const menuHit = this.add
+      .rectangle(
+        vw - (mobile ? 48 : 70),
+        mobile ? 31 : 24,
+        mobile ? 92 : 120,
+        mobile ? 58 : 44,
+        0xffffff,
+        0.001,
+      )
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.showMenu());
     this.hud.add([top, title, day, ap, cash, level, status, save]);
+    this.hud.add(menuHit);
   }
 
   private updatePlayer(time: number, delta: number): void {
@@ -887,8 +942,16 @@ class WorldScene extends Phaser.Scene {
 
   private keepOutOfDecor(): void {
     if (!this.player) return;
-    this.player.x = clamp(this.player.x, 34, GAME_W - 34);
-    this.player.y = clamp(this.player.y, MAP_TOP + 44, this.mapBottom());
+    this.player.x = clamp(
+      this.player.x,
+      PLAYER_VISUAL_MARGIN_X,
+      GAME_W - PLAYER_VISUAL_MARGIN_X,
+    );
+    this.player.y = clamp(
+      this.player.y,
+      MAP_TOP + PLAYER_VISUAL_MARGIN_TOP,
+      this.mapBottom() - PLAYER_VISUAL_MARGIN_BOTTOM,
+    );
     mapBlockers(this.state().mapId).forEach((rect) =>
       pushOutOfRect(this.player!, rect),
     );
@@ -897,6 +960,7 @@ class WorldScene extends Phaser.Scene {
   private updateHint(): void {
     if (!this.hint || !this.player) return;
     const near = this.findNear();
+    this.currentTarget = near.id ? near : undefined;
     if (near.id === this.lastNearId) return;
     this.lastNearId = near.id;
     this.hotspotRects.forEach((rect, id) => {
@@ -907,28 +971,39 @@ class WorldScene extends Phaser.Scene {
       }
     });
     this.npcSprites.forEach((container) => container.setScale(1));
+    if (near.npc) this.npcSprites.get(near.npc.id)?.setScale(1.08);
     const label = this.children.getByName(
       'boName',
     ) as Phaser.GameObjects.Text | null;
     label?.setVisible(!near.npc);
     this.hint.setText(
       near.label
-        ? `靠近 ${near.label}，${this.isPortrait() ? '点互动' : '按 E/空格互动'}`
+        ? `${
+            this.isPortrait() ? '点互动' : '按 E/空格'
+          }：${near.action}${near.distance > 74 ? '（再靠近一点更稳）' : ''}`
         : this.isPortrait()
-          ? '方向键移动，点互动'
-          : 'WASD/方向键移动，E/空格互动',
+          ? this.onboardingHint()
+          : `${this.onboardingHint()} · WASD/方向键移动`,
     );
   }
 
-  private findNear(): {
-    id: string;
-    label: string;
-    npc?: (typeof NPCS)[number];
-    hotspot?: MapHotspot;
-  } {
-    if (!this.player) return { id: '', label: '' };
+  currentInteractionLabel(): string {
+    return this.currentTarget?.label
+      ? this.currentTarget.label.slice(0, 5)
+      : '互动';
+  }
+
+  private findNear(): InteractionTarget {
+    if (!this.player)
+      return {
+        id: '',
+        label: '',
+        action: '',
+        distance: Number.POSITIVE_INFINITY,
+      };
     const state = this.state();
-    const nearNpc = NPCS.find((npc) => {
+    const candidates: InteractionTarget[] = [];
+    NPCS.forEach((npc) => {
       const quest = questById(npc.questId);
       if (
         !quest ||
@@ -936,43 +1011,100 @@ class WorldScene extends Phaser.Scene {
         !quest.unlock(state) ||
         state.completed.includes(quest.id)
       )
-        return false;
-      return (
-        Phaser.Math.Distance.Between(
-          this.player!.x,
-          this.player!.y,
-          npc.x,
-          npc.y,
-        ) < 58
+        return;
+      const distance = Phaser.Math.Distance.Between(
+        this.player!.x,
+        this.player!.y,
+        npc.x,
+        npc.y,
       );
+      if (distance <= 92) {
+        candidates.push({
+          id: npc.id,
+          label: npc.name,
+          action: `接 ${quest.title}`,
+          distance,
+          npc,
+        });
+      }
     });
-    if (nearNpc) return { id: nearNpc.id, label: nearNpc.name, npc: nearNpc };
-    const nearSpot = HOTSPOTS[state.mapId].find((spot) => {
-      const cx = spot.x + spot.w / 2;
-      const cy = spot.y + spot.h / 2;
-      return (
-        Phaser.Math.Distance.Between(this.player!.x, this.player!.y, cx, cy) <
-        Math.max(spot.w, spot.h) * 0.72
+    HOTSPOTS[state.mapId].forEach((spot) => {
+      const distance = distanceToRect(
+        this.player!.x,
+        this.player!.y,
+        spot.x - 18,
+        spot.y - 18,
+        spot.w + 36,
+        spot.h + 36,
       );
+      const reach = Math.max(42, Math.min(96, Math.max(spot.w, spot.h) * 0.36));
+      if (distance <= reach) {
+        candidates.push({
+          id: spot.id,
+          label: spot.label,
+          action: hotspotActionLabel(spot),
+          distance: distance + (spot.type === 'portal' ? 10 : 0),
+          hotspot: spot,
+        });
+      }
     });
-    if (nearSpot)
-      return { id: nearSpot.id, label: nearSpot.label, hotspot: nearSpot };
-    return { id: '', label: '' };
+    candidates.sort((a, b) => {
+      const priorityA = a.npc ? 0 : a.hotspot?.type === 'portal' ? 2 : 1;
+      const priorityB = b.npc ? 0 : b.hotspot?.type === 'portal' ? 2 : 1;
+      return a.distance + priorityA * 18 - (b.distance + priorityB * 18);
+    });
+    return (
+      candidates[0] || {
+        id: '',
+        label: '',
+        action: '',
+        distance: Number.POSITIVE_INFINITY,
+      }
+    );
   }
 
   interact(): void {
     if (this.modal) return;
     const near = this.findNear();
+    this.currentTarget = near.id ? near : undefined;
     if (near.npc) {
       const quest = questById(near.npc.questId);
       if (quest) this.showQuestBrief(quest);
       return;
     }
     if (!near.hotspot) {
-      this.toast('附近没有客户或设施。');
+      this.toast(this.emptyInteractionLine());
       return;
     }
     this.handleHotspot(near.hotspot);
+  }
+
+  private onboardingHint(): string {
+    const state = this.state();
+    if (
+      !state.completed.length &&
+      !state.failed.length &&
+      state.mapId === 'office'
+    )
+      return '先找「GPU 账单客户」接第一单';
+    if (
+      state.completed.length === 1 &&
+      state.actionPoints > 0 &&
+      state.mapId === 'office'
+    )
+      return '谈完第一单，去「训练台」把打法练一下';
+    return this.isPortrait() ? '方向键移动，点互动' : 'E/空格互动';
+  }
+
+  private emptyInteractionLine(): string {
+    const state = this.state();
+    if (
+      !state.completed.length &&
+      !state.failed.length &&
+      state.mapId === 'office'
+    )
+      return '博哥离客户还有点远，先去找「GPU 账单客户」开第一单。';
+    return '这位置跟谁售后呢？靠近发光的客户或设施再按互动。';
   }
 
   private handleHotspot(hotspot: MapHotspot): void {
@@ -1132,7 +1264,7 @@ class WorldScene extends Phaser.Scene {
     }));
     this.showDialog(
       hotspot.label,
-      `现场操作会消耗行动点。它不替代客户谈判，但会改变遗留、路线、客户关系和 Boss 准备。\n\n${lines}`,
+      `每动一次都算成本，别搁客户现场免费陪聊。这里是开谈前的准备动作：能降风险、补材料、清旧账，但不替代正式谈判。\n\n${lines}`,
       [...options, { label: '离开', onClick: () => this.closeModal() }],
       'training',
     );
@@ -1222,7 +1354,7 @@ class WorldScene extends Phaser.Scene {
     const weekly = selectedWeeklyGoal(state);
     this.showDialog(
       '训练台',
-      `每次训练消耗 1 行动。训练线会强化谈判技能，并解锁构筑特质。\n${vowLine}\n本周 OKR：${weekly ? `${weekly.title} ${weeklyGoalProgress(state, weekly)}/${weekly.target}` : '未承诺，Boss 不惩罚也不领奖'}\n当前装配：${loadout}\n\n当前特质：\n${perks}`,
+      `训练也算行动点，嘴皮子、表格和边界感都不是免费刷出来的。练完会强化谈判技能，并解锁构筑特质。\n${vowLine}\n本周 OKR：${weekly ? `${weekly.title} ${weeklyGoalProgress(state, weekly)}/${weekly.target}` : '未承诺，Boss 不惩罚也不领奖'}\n当前装配：${loadout}\n\n当前特质：\n${perks}`,
       [
         { label: '技能装配', onClick: () => this.showSkillLoadout() },
         { label: '选择本周 OKR', onClick: () => this.showWeeklyGoalMenu() },
@@ -1571,6 +1703,7 @@ class WorldScene extends Phaser.Scene {
     this.showDialog(
       '任务板',
       `${chapterTitle(state.chapter)}\n主线目标：${chapterObjective(state)}\n本周目标：${weeklyLine}\n长期经营：${longGoalLine}\n当前路线：${routeLabel(route)} ${state.routes[route]} / 专精：${vows} / 特质：${perks}\n下一里程碑：${nextRouteMilestoneLine(state)}\n\n今日可处理：\n${questLines || '没有新客户'}\n\n遗留问题：${issues}\n${bossDocketLine(state)}\n\n任务板只做情报，不直接接单。要接客户，回到地图靠近 NPC；要处理现场风险，靠近服务器墙、会议室、采购桌这些热点。案卷和存档在右上角菜单里。`,
+      `${chapterTitle(state.chapter)}\n主线目标：${chapterObjective(state)}\n本周目标：${weeklyLine}\n长期经营：${longGoalLine}\n当前路线：${routeLabel(route)} ${state.routes[route]} / 专精：${vows} / 特质：${perks}\n下一里程碑：${nextRouteMilestoneLine(state)}\n\n今日可处理：\n${questLines || '没有新客户'}\n\n遗留问题：${issues}\n${bossDocketLine(state)}\n\n任务板只报案情，不替你收钱。要接客户，回地图靠近 NPC；要垫一手准备，去服务器墙、会议室、采购桌这些热点。案卷和存档在右上角菜单里。`,
       [{ label: '知道了', onClick: () => this.closeModal() }],
       'board',
     );
@@ -1734,16 +1867,27 @@ class WorldScene extends Phaser.Scene {
   }
 
   private importSave(): void {
-    const code = window.prompt('粘贴 YBRPG3: 开头的存档迁移码');
-    if (!code) return;
-    try {
-      this.shared.setState(decodeSave(code.trim()));
-      this.save();
-      this.drawWorld();
-      this.toast('导入成功。');
-    } catch {
-      this.toast('导入失败，需要完整 v3 存档码。');
-    }
+    this.closeModal();
+    document.querySelector('.yrpg-touch-bridge')?.setAttribute('hidden', '');
+    openImportOverlay({
+      onImport: (code) => {
+        try {
+          this.shared.setState(decodeSave(code.trim()));
+          this.save();
+          this.drawWorld();
+          this.toast('导入成功，案卷接上了。');
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      onClose: () => {
+        if (this.scene.isActive('WorldScene'))
+          document
+            .querySelector('.yrpg-touch-bridge')
+            ?.removeAttribute('hidden');
+      },
+    });
   }
 
   private resetGame(): void {
@@ -1917,7 +2061,7 @@ class WorldScene extends Phaser.Scene {
       kind === 'boss';
     const panelW = mobile ? vw - 20 : GAME_W - 64;
     const panelH = mobile
-      ? Math.min(richPanel ? 520 : 330, vh - 174)
+      ? Math.min(richPanel ? 560 : 340, vh - 154)
       : richPanel
         ? 354
         : 184;
@@ -1946,7 +2090,7 @@ class WorldScene extends Phaser.Scene {
       ? kind === 'quest' || kind === 'boss'
         ? 7
         : compactMobileOptions
-          ? 10
+          ? 7
           : 12
       : richPanel
         ? 12
@@ -1989,8 +2133,9 @@ class WorldScene extends Phaser.Scene {
       const columns = compactMobileOptions ? 2 : 1;
       const row = compactMobileOptions ? Math.floor(index / 2) : index;
       const col = compactMobileOptions ? index % 2 : 0;
-      const mobileButtonH = compactMobileOptions ? 34 : 42;
-      const mobileGap = compactMobileOptions ? 7 : 0;
+      const mobileButtonH = compactMobileOptions ? 42 : 46;
+      const mobileGap = compactMobileOptions ? 10 : 0;
+      const mobileRowGap = compactMobileOptions ? 10 : 8;
       const mobileRows = Math.ceil(options.length / columns);
       const bx = boardHeaderAction
         ? vw - 116
@@ -2000,7 +2145,10 @@ class WorldScene extends Phaser.Scene {
       const by = boardHeaderAction
         ? top + 14
         : mobile
-          ? top + panelH - 42 - (mobileRows - 1 - row) * (mobileButtonH + 6)
+          ? top +
+            panelH -
+            48 -
+            (mobileRows - 1 - row) * (mobileButtonH + mobileRowGap)
           : richPanel
             ? top + 58 + index * 32
             : GAME_H - 176 + index * 38;
@@ -2157,7 +2305,7 @@ class WorldScene extends Phaser.Scene {
       ? `遗留 ${this.state().issues.length}`
       : '无遗留';
     if (compact)
-      return `口碑${s.reputation} 体${s.energy} 耐${s.patience} 边${s.boundary} 压${s.pressure} ${issues}`;
+      return `口${s.reputation} 体${s.energy} 耐${s.patience}\n边${s.boundary} 压${s.pressure} ${issues}`;
     return `口碑 ${s.reputation} / 体力 ${s.energy} / 耐心 ${s.patience} / 边界 ${s.boundary} / 压力 ${s.pressure} / ${issues}`;
   }
 }
@@ -2547,7 +2695,7 @@ class NegotiationScene extends Phaser.Scene {
     const bw = Math.floor((this.viewW() - x0 * 2 - gap) / 2);
     page.forEach((skill, index) => {
       const x = x0 + (index % 2) * (bw + gap);
-      const by = y + Math.floor(index / 2) * 48;
+      const by = y + Math.floor(index / 2) * 58;
       const disabled = this.skillDisabled(skill);
       const label = `${skill.name}\n${skillEffectSummary(skill)} · 体${skill.energy} 耐${skill.patience}${this.battle?.cooldowns[skill.id] ? ` CD${this.battle.cooldowns[skill.id]}` : ''}`;
       const button = makeSceneButton(
@@ -2555,7 +2703,7 @@ class NegotiationScene extends Phaser.Scene {
         x,
         by,
         bw,
-        40,
+        48,
         label,
         () => this.useSkill(skill),
         disabled ? 0x3e4145 : routeColor(skill.category),
@@ -2565,7 +2713,7 @@ class NegotiationScene extends Phaser.Scene {
       this.add.existing(button);
     });
     if (maxPage > 0) {
-      const pagerY = y + 100;
+      const pagerY = y + 124;
       const prev = makeSceneButton(
         this,
         x0,
@@ -3494,6 +3642,28 @@ function mapBlockers(
     { x: 665, y: 174, w: 210, h: 88 },
     { x: 778, y: 386, w: 146, h: 76 },
   ];
+}
+
+function distanceToRect(
+  x: number,
+  y: number,
+  rx: number,
+  ry: number,
+  rw: number,
+  rh: number,
+): number {
+  const dx = Math.max(rx - x, 0, x - (rx + rw));
+  const dy = Math.max(ry - y, 0, y - (ry + rh));
+  return Math.hypot(dx, dy);
+}
+
+function hotspotActionLabel(spot: MapHotspot): string {
+  if (spot.type === 'portal') return spot.label;
+  if (spot.type === 'training') return '训练技能';
+  if (spot.type === 'board') return '查看今日客户';
+  if (spot.type === 'rest') return '收工复盘';
+  if (spot.type === 'save') return '打开存档菜单';
+  return `处理 ${spot.label}`;
 }
 
 function pushOutOfRect(
@@ -4579,7 +4749,7 @@ function createGameTextures(scene: Phaser.Scene): void {
 function createBoWalkAnimations(scene: Phaser.Scene): void {
   const definitions: Array<[Direction, number, number]> = [
     ['down', 0, 2],
-    ['left', 3, 5],
+    ['left', 6, 8],
     ['right', 6, 8],
     ['up', 9, 11],
   ];
@@ -5222,4 +5392,61 @@ function makeSceneButton(
     text.setInteractive({ useHandCursor: true }).on('pointerdown', fire);
   }
   return c;
+}
+
+function openImportOverlay(options: {
+  onImport: (code: string) => boolean;
+  onClose: () => void;
+}): void {
+  document.querySelector('.yrpg-import-overlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'yrpg-import-overlay';
+  overlay.style.cssText =
+    'position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(3,10,12,.72);color:#fff8dc;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;';
+  const panel = document.createElement('div');
+  panel.style.cssText =
+    'width:min(92vw,620px);border:3px solid #ffdf86;background:#16292d;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.42);';
+  const title = document.createElement('div');
+  title.textContent = '导入迁移码';
+  title.style.cssText =
+    'font-size:22px;font-weight:900;color:#ffe6a8;margin-bottom:10px;';
+  const note = document.createElement('div');
+  note.textContent =
+    '把 YBRPG3: 开头的案卷码粘进来。博哥只认完整存档，半截表别拿来开会。';
+  note.style.cssText =
+    'font-size:13px;line-height:1.65;color:#f7ecd0;margin-bottom:12px;';
+  const textarea = document.createElement('textarea');
+  textarea.setAttribute('aria-label', '存档迁移码');
+  textarea.placeholder = 'YBRPG3:...';
+  textarea.style.cssText =
+    'box-sizing:border-box;width:100%;min-height:132px;resize:vertical;border:1px solid rgba(255,223,134,.7);background:#0b1519;color:#fff8dc;padding:10px;font:700 13px/1.5 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none;';
+  const error = document.createElement('div');
+  error.style.cssText =
+    'min-height:22px;margin-top:8px;color:#ffb6a9;font-size:12px;font-weight:800;';
+  const actions = document.createElement('div');
+  actions.style.cssText =
+    'display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;';
+  const close = () => {
+    overlay.remove();
+    options.onClose();
+  };
+  const makeButton = (label: string, color: string, onClick: () => void) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    button.style.cssText = `min-height:44px;border:1px solid rgba(255,223,134,.75);background:${color};color:#fff8dc;font:900 14px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;`;
+    button.addEventListener('click', onClick);
+    return button;
+  };
+  actions.append(
+    makeButton('导入', '#285d72', () => {
+      if (options.onImport(textarea.value)) close();
+      else error.textContent = '导入失败：需要完整 YBRPG3 存档码。';
+    }),
+    makeButton('关闭', '#534532', close),
+  );
+  panel.append(title, note, textarea, error, actions);
+  overlay.append(panel);
+  document.body.append(overlay);
+  textarea.focus();
 }
