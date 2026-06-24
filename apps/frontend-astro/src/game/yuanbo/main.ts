@@ -797,6 +797,7 @@ class WorldScene extends Phaser.Scene {
       this.player?.setVelocity(0, 0);
       this.player?.anims.stop();
       this.player?.setTexture('boWalk', BO_WALK_IDLE_FRAME);
+      this.player?.setFlipX(false);
       this.moveVector.set(0, 0);
       return;
     }
@@ -824,12 +825,14 @@ class WorldScene extends Phaser.Scene {
       if (Math.abs(this.moveVector.x) > Math.abs(this.moveVector.y))
         this.direction = this.moveVector.x < 0 ? 'left' : 'right';
       else this.direction = this.moveVector.y < 0 ? 'up' : 'down';
+      this.player.setFlipX(this.direction === 'right');
       this.player.anims.play(`bo-walk-${this.direction}`, true);
       this.playerShadow?.setScale(1 + Math.sin(time / 95) * 0.05, 1);
     } else {
       this.player.setAngle(0);
       this.player.anims.stop();
       this.player.setTexture('boWalk', BO_WALK_IDLE_FRAME);
+      this.player.setFlipX(false);
       this.playerShadow?.setScale(1, 1);
     }
     this.player.setVelocity(this.moveVector.x, this.moveVector.y);
@@ -1914,15 +1917,37 @@ class WorldScene extends Phaser.Scene {
       )
       .setWordWrapWidth(panelW - 30);
     const compactMobileOptions = mobile && options.length > 4;
-    const maxMobileBodyLines =
-      kind === 'quest' || kind === 'boss' ? 7 : compactMobileOptions ? 10 : 12;
-    const bodyLines = mobile
-      ? body.split('\n').slice(0, maxMobileBodyLines)
-      : body.split('\n');
-    const truncated = mobile && body.split('\n').length > maxMobileBodyLines;
-    const copyText = mobile
-      ? `${bodyLines.map((line) => wrapCjkText(line, compactMobileOptions ? 25 : 30, kind === 'quest' || kind === 'boss' ? 2 : compactMobileOptions ? 2 : 3)).join('\n')}${truncated ? '\n……' : ''}`
-      : body;
+    const maxBodyLines = mobile
+      ? kind === 'quest' || kind === 'boss'
+        ? 7
+        : compactMobileOptions
+          ? 10
+          : 12
+      : richPanel
+        ? 12
+        : 4;
+    const rawBodyLines = body.split('\n');
+    const bodyLines = rawBodyLines.slice(0, maxBodyLines);
+    const truncated = rawBodyLines.length > maxBodyLines;
+    const charsPerLine = mobile
+      ? compactMobileOptions
+        ? 25
+        : 30
+      : richPanel
+        ? 46
+        : 44;
+    const maxWrappedLines = mobile
+      ? kind === 'quest' || kind === 'boss'
+        ? 2
+        : compactMobileOptions
+          ? 2
+          : 3
+      : richPanel
+        ? 2
+        : 2;
+    const copyText = `${bodyLines
+      .map((line) => wrapCjkText(line, charsPerLine, maxWrappedLines))
+      .join('\n')}${truncated ? '\n……' : ''}`;
     const copy = this.add
       .text(
         left,
@@ -2067,7 +2092,11 @@ class WorldScene extends Phaser.Scene {
         label,
         pixelText(size, disabled ? '#b9b9b9' : '#fff8dc', '900'),
       )
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setAlign('center')
+      .setLineSpacing(2)
+      .setWordWrapWidth(w - 12);
+    fitTextToBox(text, w - 12, h - 8, size, 8);
     c.add([rect, text]);
     if (!disabled) {
       let firing = false;
@@ -5102,6 +5131,21 @@ function wrapCjkText(text: string, maxChars: number, maxLines = 3): string {
   return lines.join('\n');
 }
 
+function fitTextToBox(
+  text: Phaser.GameObjects.Text,
+  maxW: number,
+  maxH: number,
+  initialSize: number,
+  minSize: number,
+): void {
+  let size = initialSize;
+  while ((text.width > maxW || text.height > maxH) && size > minSize) {
+    size -= 1;
+    text.setFontSize(size);
+  }
+  if (text.height > maxH) text.setLineSpacing(0);
+}
+
 function makeSceneButton(
   scene: Phaser.Scene,
   x: number,
@@ -5130,6 +5174,7 @@ function makeSceneButton(
     .setAlign('center')
     .setLineSpacing(2)
     .setWordWrapWidth(w - 10);
+  fitTextToBox(text, w - 10, h - 8, fontSize, 8);
   c.add([rect, text]);
   if (!disabled) {
     let firing = false;
