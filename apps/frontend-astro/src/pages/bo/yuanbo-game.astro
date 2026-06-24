@@ -10,6 +10,9 @@ const shadowBoSrc = import.meta.env.DEV
   ? '/codex-pets/shadowbo-cutout.png'
   : sitePath('/codex-pets/shadowbo-cutout.png');
 const mapBoSrc = expertBoSrc;
+const boHeadPatchSrc = import.meta.env.DEV
+  ? '/codex-pets/expertbo-map-cutout.png'
+  : sitePath('/codex-pets/expertbo-map-cutout.png');
 ---
 
 <Layout
@@ -26,6 +29,7 @@ const mapBoSrc = expertBoSrc;
       data-bo-src={expertBoSrc}
       data-shadow-bo-src={shadowBoSrc}
       data-map-bo-src={mapBoSrc}
+      data-bo-head-patch-src={boHeadPatchSrc}
       aria-label="袁博の极限售后游戏画面"
     >
       <noscript>需要启用 JavaScript 才能游玩《袁博の极限售后》。</noscript>
