@@ -88,8 +88,10 @@ export function startYuanboPixiGame(root: HTMLElement): () => void {
       root.dataset.boPortraitsSrc || '/codex-pets/yuanbo-pixi/v1/bo-portraits.png',
     boActions: root.dataset.boActionsSrc || '/codex-pets/yuanbo-pixi/v1/bo-actions.png',
     npcAtlas: root.dataset.npcAtlasSrc || '/codex-pets/yuanbo-pixi/v1/npc-atlas.png',
-    officeMap: root.dataset.officeMapSrc || '/codex-pets/yuanbo-pixi/v1/office-map.png',
-    siteMap: root.dataset.siteMapSrc || '/codex-pets/yuanbo-pixi/v1/site-map.png',
+    officeMap:
+      root.dataset.officeMapSrc || '/codex-pets/yuanbo-pixi/v1/office-map-floor-v2.png',
+    siteMap:
+      root.dataset.siteMapSrc || '/codex-pets/yuanbo-pixi/v1/site-map-floor-v2.png',
   };
   let app: Application | undefined;
   let game: YuanboPixiGame | undefined;
