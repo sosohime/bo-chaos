@@ -4,6 +4,7 @@ export type TrainingKey = 'pricing' | 'delivery' | 'sla' | 'review' | 'shadow';
 export type RouteKey = 'business' | 'delivery' | 'boundary' | 'shadow';
 export type Outcome = 'win' | 'partial' | 'fail';
 export type SceneId = 'map' | 'battle';
+export type IssueKind = 'budget' | 'delivery' | 'sla' | 'compliance' | 'pressure';
 
 export interface Point {
   x: number;
@@ -28,13 +29,14 @@ export interface ClientState {
 
 export interface Issue {
   id: string;
+  kind: IssueKind;
   label: string;
   sourceQuest: string;
   severity: number;
 }
 
 export interface SaveState {
-  version: 1;
+  version: 2;
   day: number;
   cycle: number;
   scene: SceneId;
@@ -42,21 +44,25 @@ export interface SaveState {
   mapId: MapId;
   player: Record<MapId, Point>;
   resources: PlayerResources;
+  xp: number;
+  level: number;
   training: Record<TrainingKey, number>;
   routes: Record<RouteKey, number>;
+  equippedSkills: string[];
   completed: string[];
   failed: string[];
   issues: Issue[];
   flags: string[];
   log: string[];
   ending: string;
+  battle: BattleState | null;
 }
 
 export interface Hotspot {
   id: string;
   mapId: MapId;
   label: string;
-  kind: 'board' | 'training' | 'rest' | 'portal' | 'save' | 'prep';
+  kind: 'board' | 'training' | 'rest' | 'portal' | 'save' | 'prep' | 'debt';
   x: number;
   y: number;
   w: number;
@@ -109,15 +115,21 @@ export interface Quest {
   initial: ClientState;
   unlock: (state: SaveState) => boolean;
   boss?: boolean;
+  actIntro?: string;
+  bossPhase?: string[];
 }
 
 export interface BattleState {
   questId: string;
   round: number;
+  phase: number;
+  maxPhase: number;
   client: ClientState;
   cooldowns: Record<string, number>;
   log: string[];
   outcome: Outcome | '';
+  lastSkill: string;
+  intent: string;
 }
 
 export interface BattleResult {

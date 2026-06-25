@@ -14,11 +14,23 @@ const boHeadPatchSrc = import.meta.env.DEV
   ? '/codex-pets/expertbo-map-cutout.png'
   : sitePath('/codex-pets/expertbo-map-cutout.png');
 const boWalkSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-source2-walk-v2.png'
-  : sitePath('/codex-pets/yuanbo-source2-walk-v2.png');
+  ? '/codex-pets/yuanbo-pixi/v1/bo-walk.png'
+  : sitePath('/codex-pets/yuanbo-pixi/v1/bo-walk.png');
 const boPortraitsSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-source2-portraits-v2.png'
-  : sitePath('/codex-pets/yuanbo-source2-portraits-v2.png');
+  ? '/codex-pets/yuanbo-pixi/v1/bo-portraits.png'
+  : sitePath('/codex-pets/yuanbo-pixi/v1/bo-portraits.png');
+const boActionsSrc = import.meta.env.DEV
+  ? '/codex-pets/yuanbo-pixi/v1/bo-actions.png'
+  : sitePath('/codex-pets/yuanbo-pixi/v1/bo-actions.png');
+const npcAtlasSrc = import.meta.env.DEV
+  ? '/codex-pets/yuanbo-pixi/v1/npc-atlas.png'
+  : sitePath('/codex-pets/yuanbo-pixi/v1/npc-atlas.png');
+const officeMapSrc = import.meta.env.DEV
+  ? '/codex-pets/yuanbo-pixi/v1/office-map.png'
+  : sitePath('/codex-pets/yuanbo-pixi/v1/office-map.png');
+const siteMapSrc = import.meta.env.DEV
+  ? '/codex-pets/yuanbo-pixi/v1/site-map.png'
+  : sitePath('/codex-pets/yuanbo-pixi/v1/site-map.png');
 ---
 
 <Layout
@@ -35,6 +47,10 @@ const boPortraitsSrc = import.meta.env.DEV
       data-bo-head-patch-src={boHeadPatchSrc}
       data-bo-walk-src={boWalkSrc}
       data-bo-portraits-src={boPortraitsSrc}
+      data-bo-actions-src={boActionsSrc}
+      data-npc-atlas-src={npcAtlasSrc}
+      data-office-map-src={officeMapSrc}
+      data-site-map-src={siteMapSrc}
       aria-label="袁博の极限售后游戏画面"
     >
       <noscript>需要启用 JavaScript 才能游玩《袁博の极限售后》。</noscript>

@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 import { existsSync } from 'node:fs';
 
 const URL = process.env.YUANBO_URL || 'http://localhost:4321/bo/yuanbo-game/';
-const STORAGE_KEY = 'bo-chaos:yuanbo-pixi-alpha:v1';
+const STORAGE_KEY = 'bo-chaos:yuanbo-pixi-alpha:v2';
 const MAC_CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 function assert(condition, message) {
@@ -22,7 +22,7 @@ function ignoreNetworkIssue(urlOrText) {
 
 function worldToScreen(viewport, world, player) {
   const mobile = viewport.width <= 720 && viewport.height > viewport.width;
-  const top = mobile ? 88 : 72;
+  const top = mobile ? 118 : 72;
   const bottom = mobile ? 28 : 24;
   const maxW = mobile ? viewport.width : Math.min(viewport.width - 48, 1120);
   const maxH = viewport.height - top - bottom;
@@ -118,6 +118,7 @@ async function checkDesktop(browser) {
   await page.keyboard.down('d');
   await page.waitForTimeout(360);
   await page.keyboard.up('d');
+  await page.waitForTimeout(900);
   const moved = await metrics(page);
   assert(moved.state.player.office.x > beforeX + 24, 'desktop keyboard movement did not update save state');
 
@@ -133,6 +134,23 @@ async function checkDesktop(browser) {
   );
   const battle = await metrics(page);
   assert(battle.documentScrollWidth <= battle.width + 2, 'desktop battle horizontal overflow');
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForSelector('canvas', { timeout: 15000 });
+  await page.waitForFunction(
+    (storageKey) => {
+      const state = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      return state.scene === 'battle' && state.battle?.questId === 'gpu';
+    },
+    STORAGE_KEY,
+    { timeout: 5000 },
+  );
+  await page.mouse.click(120, 386);
+  await page.waitForTimeout(300);
+  const afterReloadSkill = await metrics(page);
+  assert(
+    afterReloadSkill.state.battle?.round > 1 || afterReloadSkill.state.battle?.outcome,
+    'battle did not remain playable after reload',
+  );
   assert(errors.length === 0, `desktop console errors: ${errors.join(' | ')}`);
   await context.close();
 }
@@ -188,6 +206,29 @@ async function checkMobile(browser) {
   await context.close();
 }
 
+async function checkShortMobile(browser) {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 640 },
+    deviceScaleFactor: 3,
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await waitForGame(page);
+  await page.locator('.yrpg-touch-bridge__interact').tap();
+  await page.waitForTimeout(260);
+  await page.touchscreen.tap(195, 520);
+  await page.waitForFunction(
+    (storageKey) => JSON.parse(localStorage.getItem(storageKey) || '{}').scene === 'battle',
+    STORAGE_KEY,
+    { timeout: 5000 },
+  );
+  const battle = await metrics(page);
+  assert(battle.documentScrollWidth <= battle.width + 2, 'short mobile battle horizontal overflow');
+  assert(battle.bodyScrollHeight <= battle.height + 2, 'short mobile battle vertical overflow');
+  await context.close();
+}
+
 const browser = await chromium.launch({
   headless: true,
   executablePath: existsSync(MAC_CHROME) ? MAC_CHROME : undefined,
@@ -195,6 +236,7 @@ const browser = await chromium.launch({
 try {
   await checkDesktop(browser);
   await checkMobile(browser);
+  await checkShortMobile(browser);
   console.log(`browser probe passed: ${URL}`);
 } finally {
   await browser.close();

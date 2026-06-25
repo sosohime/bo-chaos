@@ -1,11 +1,15 @@
-import type { Issue, MapId, SaveState, TrainingKey } from './types';
+import type { BattleState, Issue, IssueKind, MapId, SaveState, TrainingKey } from './types';
 
-export const STORAGE_KEY = 'bo-chaos:yuanbo-pixi-alpha:v1';
-export const SAVE_PREFIX = 'YBPIXI1:';
+export const STORAGE_KEY = 'bo-chaos:yuanbo-pixi-alpha:v2';
+export const LEGACY_STORAGE_KEY = 'bo-chaos:yuanbo-pixi-alpha:v1';
+export const SAVE_PREFIX = 'YBPIXI2:';
+export const LEGACY_SAVE_PREFIX = 'YBPIXI1:';
+
+const DEFAULT_EQUIPPED = ['anchor', 'report', 'poc', 'contract', 'fallback'];
 
 export function defaultState(): SaveState {
   return {
-    version: 1,
+    version: 2,
     day: 1,
     cycle: 1,
     scene: 'map',
@@ -23,6 +27,8 @@ export function defaultState(): SaveState {
       boundary: 58,
       pressure: 18,
     },
+    xp: 0,
+    level: 1,
     training: {
       pricing: 0,
       delivery: 0,
@@ -36,12 +42,14 @@ export function defaultState(): SaveState {
       boundary: 0,
       shadow: 0,
     },
+    equippedSkills: [...DEFAULT_EQUIPPED],
     completed: [],
     failed: [],
     issues: [],
     flags: [],
     log: ['DAY 1：客户已经在办公室门口，博哥先把免费售后改造成可收费服务。'],
     ending: '',
+    battle: null,
   };
 }
 
@@ -51,16 +59,19 @@ export function normalizeState(input: unknown): SaveState {
   const state: SaveState = {
     ...base,
     ...raw,
-    version: 1,
-    scene: raw.scene === 'battle' ? 'battle' : 'map',
+    version: 2,
+    scene: raw.scene === 'battle' && raw.battle ? 'battle' : 'map',
     mapId: raw.mapId === 'site' ? 'site' : 'office',
     player: {
       office: { ...base.player.office, ...(raw.player?.office || {}) },
       site: { ...base.player.site, ...(raw.player?.site || {}) },
     },
     resources: { ...base.resources, ...(raw.resources || {}) },
+    xp: Math.floor(Number(raw.xp) || 0),
+    level: Math.floor(Number(raw.level) || 1),
     training: { ...base.training, ...(raw.training || {}) },
     routes: { ...base.routes, ...(raw.routes || {}) },
+    equippedSkills: normalizeEquipped(raw.equippedSkills),
     completed: Array.isArray(raw.completed) ? raw.completed.map(String).slice(0, 20) : [],
     failed: Array.isArray(raw.failed) ? raw.failed.map(String).slice(0, 20) : [],
     issues: Array.isArray(raw.issues)
@@ -69,10 +80,13 @@ export function normalizeState(input: unknown): SaveState {
     flags: Array.isArray(raw.flags) ? raw.flags.map(String).slice(0, 50) : [],
     log: Array.isArray(raw.log) ? raw.log.map(String).slice(0, 8) : base.log,
     ending: String(raw.ending || ''),
+    battle: normalizeBattle(raw.battle),
   };
 
   state.day = clamp(Math.floor(Number(state.day) || 1), 1, 99);
   state.cycle = clamp(Math.floor(Number(state.cycle) || 1), 1, 99);
+  state.xp = clamp(Math.floor(Number(state.xp) || 0), 0, 99999);
+  state.level = clamp(Math.floor(Number(state.level) || 1), 1, 20);
   state.actionPoints = clamp(Math.floor(Number(state.actionPoints) || 0), 0, 3);
   Object.keys(state.resources).forEach((key) => {
     const resource = key as keyof SaveState['resources'];
@@ -94,6 +108,9 @@ export function normalizeState(input: unknown): SaveState {
     state.player[mapId].x = clamp(Math.floor(Number(state.player[mapId].x) || base.player[mapId].x), 40, 920);
     state.player[mapId].y = clamp(Math.floor(Number(state.player[mapId].y) || base.player[mapId].y), 100, 680);
   });
+  if (state.scene === 'battle' && !state.battle) {
+    state.scene = 'map';
+  }
   return state;
 }
 
@@ -120,8 +137,13 @@ export function encodeSave(state: SaveState): string {
 }
 
 export function decodeSave(code: string): SaveState {
-  if (!code.startsWith(SAVE_PREFIX)) throw new Error('bad-prefix');
-  const json = decodeURIComponent(escape(atob(code.slice(SAVE_PREFIX.length))));
+  const prefix = code.startsWith(SAVE_PREFIX)
+    ? SAVE_PREFIX
+    : code.startsWith(LEGACY_SAVE_PREFIX)
+      ? LEGACY_SAVE_PREFIX
+      : '';
+  if (!prefix) throw new Error('bad-prefix');
+  const json = decodeURIComponent(escape(atob(code.slice(prefix.length))));
   return normalizeState(JSON.parse(json));
 }
 
@@ -165,8 +187,46 @@ function normalizeIssue(raw: unknown): Issue | null {
   if (!issue.label || !issue.sourceQuest) return null;
   return {
     id: String(issue.id || `${issue.sourceQuest}-${issue.label}`),
+    kind: normalizeIssueKind(issue.kind),
     label: String(issue.label),
     sourceQuest: String(issue.sourceQuest),
     severity: clamp(Math.floor(Number(issue.severity) || 1), 1, 30),
+  };
+}
+
+function normalizeIssueKind(input: unknown): IssueKind {
+  if (input === 'budget' || input === 'delivery' || input === 'sla' || input === 'compliance' || input === 'pressure') {
+    return input;
+  }
+  return 'pressure';
+}
+
+function normalizeEquipped(input: unknown): string[] {
+  const ids = Array.isArray(input) ? input.map(String) : DEFAULT_EQUIPPED;
+  const merged = [...ids, ...DEFAULT_EQUIPPED];
+  return [...new Set(merged)].slice(0, 5);
+}
+
+function normalizeBattle(input: unknown): BattleState | null {
+  if (!input || typeof input !== 'object') return null;
+  const raw = input as Partial<BattleState>;
+  if (!raw.questId) return null;
+  const client = raw.client || { anger: 30, budget: 50, scope: 40, trust: 35 };
+  return {
+    questId: String(raw.questId),
+    round: clamp(Math.floor(Number(raw.round) || 1), 1, 12),
+    phase: clamp(Math.floor(Number(raw.phase) || 1), 1, 3),
+    maxPhase: clamp(Math.floor(Number(raw.maxPhase) || 1), 1, 3),
+    client: {
+      anger: clamp(Math.floor(Number(client.anger) || 0), 0, 100),
+      budget: clamp(Math.floor(Number(client.budget) || 0), 0, 100),
+      scope: clamp(Math.floor(Number(client.scope) || 0), 0, 100),
+      trust: clamp(Math.floor(Number(client.trust) || 0), 0, 100),
+    },
+    cooldowns: raw.cooldowns && typeof raw.cooldowns === 'object' ? { ...raw.cooldowns } : {},
+    log: Array.isArray(raw.log) ? raw.log.map(String).slice(0, 8) : [],
+    outcome: raw.outcome === 'win' || raw.outcome === 'partial' || raw.outcome === 'fail' ? raw.outcome : '',
+    lastSkill: String(raw.lastSkill || ''),
+    intent: String(raw.intent || ''),
   };
 }

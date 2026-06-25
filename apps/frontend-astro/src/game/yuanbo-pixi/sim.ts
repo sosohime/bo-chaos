@@ -7,9 +7,11 @@ export function startBattle(state: SaveState, questId: string): BattleState {
   const issueHeat = state.issues.reduce((sum, issue) => sum + issue.severity, 0);
   const failedBoost = state.failed.includes(quest.id) ? 7 : 0;
   const bossBoost = quest.boss ? Math.floor(issueHeat * 0.55) : Math.floor(issueHeat * 0.18);
-  return {
+  const battle: BattleState = {
     questId,
     round: 1,
+    phase: 1,
+    maxPhase: quest.boss ? 3 : 1,
     client: {
       anger: clamp(quest.initial.anger + failedBoost + bossBoost, 0, 96),
       budget: clamp(quest.initial.budget - Math.floor(bossBoost / 2), 8, 100),
@@ -19,7 +21,11 @@ export function startBattle(state: SaveState, questId: string): BattleState {
     cooldowns: {},
     log: [`客户：${quest.brief}`],
     outcome: '',
+    lastSkill: '',
+    intent: '',
   };
+  battle.intent = nextClientIntent(battle);
+  return battle;
 }
 
 export function canStartQuest(state: SaveState, quest: Quest): string {
@@ -35,11 +41,14 @@ export function beginQuest(state: SaveState, quest: Quest): BattleState | null {
   if (reason) return null;
   if (!spendAction(state, quest.cost)) return null;
   state.scene = 'battle';
-  return startBattle(state, quest.id);
+  const battle = startBattle(state, quest.id);
+  state.battle = battle;
+  if (quest.boss && !state.flags.includes('boss-seen')) state.flags.push('boss-seen');
+  return battle;
 }
 
 export function usableSkills(state: SaveState, battle: BattleState): Skill[] {
-  return unlockedSkills(state).filter((skill) => !skillDisabled(state, battle, skill));
+  return battleSkillDeck(state, battle).filter((skill) => !skillDisabled(state, battle, skill));
 }
 
 export function skillDisabled(state: SaveState, battle: BattleState, skill: Skill): boolean {
@@ -77,12 +86,15 @@ export function applySkill(state: SaveState, battle: BattleState, skillId: strin
   });
   state.routes[skill.category] = clamp(state.routes[skill.category] + 5 + training, 0, 100);
   battle.cooldowns[skill.id] = skill.cooldown + 1;
+  battle.lastSkill = skill.id;
   battle.log.unshift(`博哥：${skill.intent}`);
-  battle.outcome = evaluateBattle(state, battle, quest);
+  battle.outcome = evaluateBattle(state, battle, quest, 'skill');
   if (!battle.outcome) clientTurn(state, battle, quest);
   tickCooldowns(battle);
-  if (!battle.outcome) battle.outcome = evaluateBattle(state, battle, quest);
+  if (!battle.outcome) battle.outcome = evaluateBattle(state, battle, quest, 'client');
   if (!battle.outcome) battle.round += 1;
+  battle.intent = nextClientIntent(battle);
+  state.battle = battle;
 }
 
 export function stabilize(state: SaveState, battle: BattleState): void {
@@ -93,10 +105,13 @@ export function stabilize(state: SaveState, battle: BattleState): void {
   battle.client.trust = clamp(battle.client.trust + 4, 0, 100);
   battle.client.anger = clamp(battle.client.anger - 4, 0, 100);
   battle.log.unshift('博哥：先稳住场面，不免费硬扛，也不把会聊死。');
+  battle.lastSkill = 'stabilize';
   clientTurn(state, battle, requiredQuest(battle.questId));
   tickCooldowns(battle);
-  battle.outcome = evaluateBattle(state, battle, requiredQuest(battle.questId));
+  battle.outcome = evaluateBattle(state, battle, requiredQuest(battle.questId), 'client');
   if (!battle.outcome) battle.round += 1;
+  battle.intent = nextClientIntent(battle);
+  state.battle = battle;
 }
 
 export function settleBattle(state: SaveState, battle: BattleState): Outcome {
@@ -106,6 +121,8 @@ export function settleBattle(state: SaveState, battle: BattleState): Outcome {
   const cashDelta = Math.round(quest.reward * rewardScale);
   const xp = outcome === 'win' ? quest.xp : outcome === 'partial' ? Math.round(quest.xp * 0.62) : 14;
   state.resources.cash = clamp(state.resources.cash + cashDelta, 0, 99999);
+  state.xp = clamp(state.xp + xp, 0, 99999);
+  state.level = clamp(1 + Math.floor(state.xp / 140), 1, 20);
   state.resources.reputation = clamp(
     state.resources.reputation + (outcome === 'win' ? 8 : outcome === 'partial' ? 2 : -7),
     0,
@@ -134,6 +151,7 @@ export function settleBattle(state: SaveState, battle: BattleState): Outcome {
     state.issues.unshift({
       id: `${quest.id}-${Date.now()}`,
       sourceQuest: quest.id,
+      kind: quest.issue.kind,
       label: quest.issue.label,
       severity: quest.issue.severity,
     });
@@ -143,6 +161,7 @@ export function settleBattle(state: SaveState, battle: BattleState): Outcome {
     state.issues.unshift({
       id: `${quest.id}-follow-${Date.now()}`,
       sourceQuest: quest.id,
+      kind: quest.issue.kind,
       label: `后续：${quest.issue.label}`,
       severity: Math.max(2, Math.floor(quest.issue.severity * 0.45)),
     });
@@ -153,6 +172,7 @@ export function settleBattle(state: SaveState, battle: BattleState): Outcome {
     state.flags.push('boss-cleared');
   }
   state.scene = 'map';
+  state.battle = null;
   addLog(
     state,
     `${outcomeLabel(outcome)}：${quest.title}。${outcome === 'win' ? quest.win : outcome === 'partial' ? quest.partial : quest.fail}`,
@@ -169,6 +189,10 @@ export function train(state: SaveState, key: keyof SaveState['training']): strin
   state.training[key] = clamp(state.training[key] + 1, 0, 5);
   state.resources.energy = clamp(state.resources.energy - 5, 0, 100);
   state.resources.patience = clamp(state.resources.patience + 6, 0, 100);
+  if (key === 'review' && state.issues.length) {
+    const issue = state.issues.shift();
+    if (issue) addLog(state, `复盘清债：${issue.label} 被拆小了。`);
+  }
   addLog(state, `训练：${key} Lv.${state.training[key]}。`);
   return '';
 }
@@ -179,9 +203,34 @@ export function prep(state: SaveState): string {
   state.resources.pressure = clamp(state.resources.pressure - 10, 0, 100);
   state.resources.boundary = clamp(state.resources.boundary + 5, 0, 100);
   state.resources.reputation = clamp(state.resources.reputation + 2, 0, 100);
-  if (state.issues.length) state.issues.pop();
+  reduceWorstIssue(state, 6);
   addLog(state, '准备：博哥把报价、验收、SLA 三张表对齐，压力下降。');
   return '';
+}
+
+export function clearIssue(state: SaveState): string {
+  if (state.actionPoints <= 0) return '今天行动点不够。';
+  if (!state.issues.length) return '现在没有遗留问题，先把客户收明白。';
+  state.actionPoints -= 1;
+  const issue = reduceWorstIssue(state, 999);
+  if (!issue) return '';
+  state.resources.pressure = clamp(state.resources.pressure - 8 - Math.floor(issue.severity / 2), 0, 100);
+  state.resources.reputation = clamp(state.resources.reputation + 2, 0, 100);
+  state.resources.boundary = clamp(state.resources.boundary + 4, 0, 100);
+  addLog(state, `清债：${issue.label} 被处理，Boss 少了一笔旧账。`);
+  return '';
+}
+
+function reduceWorstIssue(state: SaveState, amount: number): SaveState['issues'][number] | null {
+  if (!state.issues.length) return null;
+  let index = 0;
+  state.issues.forEach((issue, i) => {
+    if (issue.severity > state.issues[index].severity) index = i;
+  });
+  const issue = state.issues[index];
+  issue.severity -= amount;
+  if (issue.severity <= 0) state.issues.splice(index, 1);
+  return issue;
 }
 
 export function rest(state: SaveState): void {
@@ -200,13 +249,17 @@ export function recommendedSkillIds(state: SaveState, quest: Quest, battle?: Bat
   const unlocked = unlockedSkills(state);
   const risk = dominantRisk(battle?.client || startBattle(state, quest.id).client);
   const tactical = {
-    anger: ['fallback', 'contract', 'report', 'review'],
-    budget: ['anchor', 'report', 'shadow', 'review'],
-    scope: ['contract', 'milestone', 'fallback', 'shadow'],
-    trust: ['poc', 'milestone', 'shadow', 'report', 'review'],
+    anger: ['fallback', 'slaExplain', 'contract', 'report', 'review'],
+    budget: ['anchor', 'report', 'bundle', 'shadow', 'review'],
+    scope: ['contract', 'milestone', 'split', 'fallback', 'shadow'],
+    trust: ['poc', 'milestone', 'shadowReview', 'shadow', 'report', 'review'],
   }[risk];
   const bossPlan = quest.boss
-    ? ['shadow', 'milestone', 'contract', 'anchor', 'report', 'fallback', 'poc', 'review']
+    ? battle?.phase === 1
+      ? ['report', 'anchor', 'bundle', 'shadow', 'review']
+      : battle?.phase === 2
+        ? ['poc', 'milestone', 'split', 'review', 'shadowReview']
+        : ['contract', 'slaExplain', 'fallback', 'shadowReview', 'review', 'anchor']
     : [];
   const ids = [
     ...bossPlan,
@@ -215,6 +268,19 @@ export function recommendedSkillIds(state: SaveState, quest: Quest, battle?: Bat
     ...SKILLS.map((skill) => skill.id),
   ];
   return [...new Set(ids)].filter((id) => unlocked.some((skill) => skill.id === id)).slice(0, 5);
+}
+
+export function battleSkillDeck(state: SaveState, battle: BattleState): Skill[] {
+  const quest = requiredQuest(battle.questId);
+  const unlocked = unlockedSkills(state);
+  const byId = new Map(unlocked.map((skill) => [skill.id, skill]));
+  const ids = [
+    ...recommendedSkillIds(state, quest, battle),
+    ...state.equippedSkills,
+    ...quest.recommended,
+    ...unlocked.map((skill) => skill.id),
+  ];
+  return [...new Set(ids)].map((id) => byId.get(id)).filter(Boolean) as Skill[];
 }
 
 export function playRecommendedBattle(input: SaveState, questId: string): { state: SaveState; outcome: Outcome; actions: string[] } {
@@ -271,7 +337,7 @@ function clientTurn(state: SaveState, battle: BattleState, quest: Quest): void {
   battle.log.unshift(clientLine(risk));
 }
 
-function evaluateBattle(state: SaveState, battle: BattleState, quest: Quest): Outcome | '' {
+function evaluateBattle(state: SaveState, battle: BattleState, quest: Quest, source: 'skill' | 'client' = 'client'): Outcome | '' {
   const c = battle.client;
   const hardFail =
     state.resources.energy <= 0 ||
@@ -292,6 +358,13 @@ function evaluateBattle(state: SaveState, battle: BattleState, quest: Quest): Ou
     return 'fail';
   }
   const minWinRound = quest.boss ? 5 : quest.chapter === 1 ? 3 : 4;
+  if (quest.boss && source === 'skill' && winsQuest(state, battle, quest)) {
+    if (battle.phase < battle.maxPhase) {
+      advanceBossPhase(state, battle, quest);
+      return '';
+    }
+    if (battle.round >= minWinRound) return 'win';
+  }
   if (battle.round >= minWinRound && winsQuest(state, battle, quest)) return 'win';
   if (battle.round >= 6) {
     if (partiallyWinsQuest(state, battle, quest)) return 'partial';
@@ -309,7 +382,13 @@ function winsQuest(state: SaveState, battle: BattleState, quest: Quest): boolean
   if (quest.id === 'compliance') return c.scope <= 54 && c.budget >= 38 && boundaryOk;
   if (quest.id === 'cost') return c.budget >= 56 && c.trust >= 46 && c.scope <= 82;
   if (quest.id === 'shadow') return c.trust >= 62 && c.scope <= 62 && c.budget >= 36;
-  if (quest.boss) return c.trust >= 70 && c.budget >= 48 && c.anger <= 90 && c.scope <= 84 && state.resources.boundary >= 30;
+  if (quest.boss) {
+    if (battle.phase === 1) return c.budget >= 54 && c.trust >= 46 && c.anger <= 92;
+    if (battle.phase === 2) return c.trust >= 64 && c.scope <= 72 && c.budget >= 30;
+    return c.anger <= 82 && c.scope <= 78 && c.budget >= 32 && state.resources.boundary >= 38;
+  }
+  if (quest.id === 'meeting') return c.trust >= 62 && c.scope <= 62 && state.resources.pressure <= 86;
+  if (quest.id === 'rival') return c.budget >= 54 && c.trust >= 50 && c.anger <= 88;
   return c.trust >= 62 && c.budget >= 46 && c.anger <= 88 && c.scope <= 86;
 }
 
@@ -322,8 +401,26 @@ function partiallyWinsQuest(state: SaveState, battle: BattleState, quest: Quest)
   if (quest.id === 'compliance') return c.scope <= 86 && c.budget >= 24;
   if (quest.id === 'cost') return c.budget >= 34 || c.trust >= 42;
   if (quest.id === 'shadow') return c.trust >= 46 && c.scope <= 86;
+  if (quest.id === 'meeting') return c.trust >= 44 && c.scope <= 84;
+  if (quest.id === 'rival') return c.budget >= 34 && c.trust >= 38;
   if (quest.boss) return c.trust >= 52 && c.budget >= 24 && c.anger < 96 && c.scope < 96;
   return c.trust >= 40 && c.budget >= 26;
+}
+
+function advanceBossPhase(state: SaveState, battle: BattleState, quest: Quest): void {
+  battle.phase += 1;
+  battle.round += 1;
+  const phaseName = quest.bossPhase?.[battle.phase - 1] || `第 ${battle.phase} 阶段`;
+  const oldDebt = Math.min(14, state.issues.reduce((sum, issue) => sum + issue.severity, 0));
+  battle.client = {
+    anger: clamp(42 + oldDebt + battle.phase * 6, 0, 96),
+    budget: clamp(52 - Math.floor(oldDebt / 2), 10, 100),
+    scope: clamp(58 + oldDebt, 0, 96),
+    trust: clamp(46 + state.level * 2, 0, 100),
+  };
+  battle.cooldowns = {};
+  battle.log.unshift(`验收组翻页：进入「${phaseName}」。旧账越少，这关越好打。`);
+  battle.intent = nextClientIntent(battle);
 }
 
 function spendSkillCost(state: SaveState, skill: Skill): void {
@@ -359,6 +456,16 @@ function clientLine(risk: ReturnType<typeof dominantRisk>): string {
     budget: '客户：这块不是默认的吗，怎么还要钱？',
     scope: '客户：那顺手再接一个系统吧。',
     trust: '客户：你先证明这个方案真能落地。',
+  }[risk];
+}
+
+function nextClientIntent(battle: BattleState): string {
+  const risk = dominantRisk(battle.client);
+  return {
+    anger: '追责：下回合怒气和压力会上升',
+    budget: '砍价：下回合预算继续下滑',
+    scope: '加需求：下回合需求蔓延扩大',
+    trust: '追案例：下回合信任下降并消耗体力',
   }[risk];
 }
 

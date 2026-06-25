@@ -6,7 +6,7 @@ const { QUESTS } = jiti('./apps/frontend-astro/src/game/yuanbo-pixi/data.ts');
 const { defaultState, normalizeState, setActionPoints } = jiti(
   './apps/frontend-astro/src/game/yuanbo-pixi/state.ts',
 );
-const { playRecommendedBattle, train, prep, rest } = jiti(
+const { beginQuest, playRecommendedBattle, train, prep, rest } = jiti(
   './apps/frontend-astro/src/game/yuanbo-pixi/sim.ts',
 );
 
@@ -53,6 +53,19 @@ function preparedState(quest) {
 }
 
 const rows = [];
+assert(QUESTS.filter((quest) => !quest.boss).length >= 8, 'expected at least 8 normal customers');
+assert(QUESTS.some((quest) => quest.boss && quest.bossPhase?.length === 3), 'boss should have 3 phases');
+{
+  const state = defaultState();
+  state.mapId = 'office';
+  const gpu = QUESTS.find((quest) => quest.id === 'gpu');
+  assert(gpu, 'missing gpu quest');
+  const battle = beginQuest(state, gpu);
+  assert(battle, 'beginQuest did not create a battle');
+  const restored = normalizeState(JSON.parse(JSON.stringify(state)));
+  assert(restored.version === 2, 'save version should be v2');
+  assert(restored.scene === 'battle' && restored.battle?.questId === 'gpu', 'battle should restore from save state');
+}
 for (const quest of QUESTS) {
   assert(!PLACEHOLDER_RE.test(textOf(quest)), `${quest.id} contains placeholder text`);
   assert(quest.objective.length >= 16, `${quest.id} objective is too vague`);

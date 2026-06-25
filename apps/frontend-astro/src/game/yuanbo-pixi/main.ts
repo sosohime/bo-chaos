@@ -17,17 +17,18 @@ import {
   PLAYER_WALK_FRAME_H,
   PLAYER_WALK_FRAME_W,
   QUESTS,
-  SKILLS,
   TRAINING_LABELS,
   WORLD_H,
   WORLD_W,
+  skillById,
   openQuests,
   questById,
-  unlockedSkills,
 } from './data';
 import {
   applySkill,
+  battleSkillDeck,
   beginQuest,
+  clearIssue,
   prep,
   recommendedSkillIds,
   rest,
@@ -74,13 +75,21 @@ const PLAYER_SPEED = 268;
 interface AssetUrls {
   boWalk: string;
   boPortraits: string;
+  boActions: string;
+  npcAtlas: string;
+  officeMap: string;
+  siteMap: string;
 }
 
 export function startYuanboPixiGame(root: HTMLElement): () => void {
   const urls: AssetUrls = {
-    boWalk: root.dataset.boWalkSrc || '/codex-pets/yuanbo-source2-walk-v2.png',
+    boWalk: root.dataset.boWalkSrc || '/codex-pets/yuanbo-pixi/v1/bo-walk.png',
     boPortraits:
-      root.dataset.boPortraitsSrc || '/codex-pets/yuanbo-source2-portraits-v2.png',
+      root.dataset.boPortraitsSrc || '/codex-pets/yuanbo-pixi/v1/bo-portraits.png',
+    boActions: root.dataset.boActionsSrc || '/codex-pets/yuanbo-pixi/v1/bo-actions.png',
+    npcAtlas: root.dataset.npcAtlasSrc || '/codex-pets/yuanbo-pixi/v1/npc-atlas.png',
+    officeMap: root.dataset.officeMapSrc || '/codex-pets/yuanbo-pixi/v1/office-map.png',
+    siteMap: root.dataset.siteMapSrc || '/codex-pets/yuanbo-pixi/v1/site-map.png',
   };
   let app: Application | undefined;
   let game: YuanboPixiGame | undefined;
@@ -139,16 +148,21 @@ class YuanboPixiGame {
   private battle?: BattleState;
   private rootScene = new Container();
   private world = new Container();
+  private mapContent?: Container;
   private ui = new Container();
   private overlay?: Container;
   private modalOpenedAt = 0;
   private keys = new Set<string>();
   private virtual = { x: 0, y: 0 };
   private player?: Sprite;
-  private playerLabel?: Text;
+  private playerShadow?: Graphics;
+  private playerLabel?: Container;
   private playerDir: Direction = 'down';
-  private playerFrame = 1;
+  private playerFrame = 0;
   private frameClock = 0;
+  private lastMoveSave = 0;
+  private dirty = false;
+  private skillPage = 0;
   private walkTextures: Record<Direction, Texture[]> = {
     down: [],
     left: [],
@@ -156,6 +170,9 @@ class YuanboPixiGame {
     up: [],
   };
   private portraitTextures: Texture[] = [];
+  private actionTextures: Texture[] = [];
+  private npcTextures = new Map<string, Texture>();
+  private mapTextures: Partial<Record<MapId, Texture>> = {};
   private resizeTimer = 0;
 
   constructor(
@@ -171,30 +188,38 @@ class YuanboPixiGame {
     this.app.stage.eventMode = 'static';
     this.app.stage.on('pointertap', (event) => this.handleStageTap(event.global.x, event.global.y));
     await this.loadBoTextures();
+    this.battle = this.state.battle || undefined;
     this.bindInput();
     this.draw();
     this.app.ticker.add((ticker) => this.update(ticker.deltaMS));
-    persistState(this.state);
+    this.saveNow();
   }
 
   destroy(): void {
+    this.saveNow();
     window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('keyup', this.onKeyUp);
     window.removeEventListener('resize', this.onResize);
   }
 
   private async loadBoTextures(): Promise<void> {
-    const walk = await Assets.load<Texture>(this.urls.boWalk);
-    const portraits = await Assets.load<Texture>(this.urls.boPortraits);
+    const [walk, portraits, actions, npcAtlas, officeMap, siteMap] = await Promise.all([
+      Assets.load<Texture>(this.urls.boWalk),
+      Assets.load<Texture>(this.urls.boPortraits),
+      Assets.load<Texture>(this.urls.boActions),
+      Assets.load<Texture>(this.urls.npcAtlas),
+      Assets.load<Texture>(this.urls.officeMap),
+      Assets.load<Texture>(this.urls.siteMap),
+    ]);
     const dirs: Direction[] = ['down', 'left', 'right', 'up'];
     dirs.forEach((dir, dirIndex) => {
-      this.walkTextures[dir] = [0, 1, 2].map(
+      this.walkTextures[dir] = [0, 1, 2, 3].map(
         (i) =>
           new Texture({
             source: walk.source,
             frame: new Rectangle(
-              (dirIndex * 3 + i) * PLAYER_WALK_FRAME_W,
-              0,
+              i * PLAYER_WALK_FRAME_W,
+              dirIndex * PLAYER_WALK_FRAME_H,
               PLAYER_WALK_FRAME_W,
               PLAYER_WALK_FRAME_H,
             ),
@@ -213,6 +238,23 @@ class YuanboPixiGame {
           ),
         }),
     );
+    this.actionTextures = Array.from({ length: 12 }, (_, i) =>
+      new Texture({
+        source: actions.source,
+        frame: new Rectangle(i * PLAYER_PORTRAIT_FRAME_W, 0, PLAYER_PORTRAIT_FRAME_W, PLAYER_PORTRAIT_FRAME_H),
+      }),
+    );
+    ['gpu', 'agent', 'sla', 'compliance', 'cost', 'shadow', 'meeting', 'rival', 'boss'].forEach((id, i) => {
+      this.npcTextures.set(
+        id,
+        new Texture({
+          source: npcAtlas.source,
+          frame: new Rectangle(i * PLAYER_PORTRAIT_FRAME_W, 0, PLAYER_PORTRAIT_FRAME_W, PLAYER_PORTRAIT_FRAME_H),
+        }),
+      );
+    });
+    this.mapTextures.office = officeMap;
+    this.mapTextures.site = siteMap;
   }
 
   private bindInput(): void {
@@ -246,7 +288,9 @@ class YuanboPixiGame {
 
   private onResize = (): void => {
     window.clearTimeout(this.resizeTimer);
-    this.resizeTimer = window.setTimeout(() => this.draw(), 80);
+    this.resizeTimer = window.setTimeout(() => {
+      this.draw();
+    }, 80);
   };
 
   private update(deltaMS: number): void {
@@ -266,25 +310,50 @@ class YuanboPixiGame {
       point.x = clamp(point.x + vector.x * PLAYER_SPEED * dt, 58, WORLD_W - 58);
       point.y = clamp(point.y + vector.y * PLAYER_SPEED * dt, 128, WORLD_H - 58);
       this.frameClock += deltaMS;
-      if (this.frameClock > 120) {
-        this.playerFrame = (this.playerFrame + 1) % 3;
-        this.frameClock = 0;
+      while (this.frameClock >= 115) {
+        this.playerFrame = (this.playerFrame + 1) % 4;
+        this.frameClock -= 115;
       }
       this.updatePlayerSprite();
       this.updateCameraObjects();
-    } else if (this.playerFrame !== 1) {
-      this.playerFrame = 1;
+      this.markDirty();
+    } else if (this.playerFrame !== 0) {
+      this.playerFrame = 0;
+      this.frameClock = 0;
       this.updatePlayerSprite();
+      this.updateCameraObjects();
+      this.saveNow();
     }
     this.updateTouchLabel();
+    this.flushMoveSave();
+  }
+
+  private markDirty(): void {
+    this.dirty = true;
+  }
+
+  private flushMoveSave(): void {
+    if (!this.dirty) return;
+    const now = performance.now();
+    if (now - this.lastMoveSave < 800) return;
+    this.saveNow();
+  }
+
+  private saveNow(): void {
+    this.state.battle = this.battle || null;
     persistState(this.state);
+    this.dirty = false;
+    this.lastMoveSave = performance.now();
   }
 
   private draw(): void {
+    const currentOverlay = this.overlay && !this.overlay.destroyed ? this.overlay : undefined;
     this.world.removeChildren();
     this.ui.removeChildren();
-    this.overlay?.destroy({ children: true });
-    this.overlay = undefined;
+    this.mapContent = undefined;
+    this.player = undefined;
+    this.playerShadow = undefined;
+    this.playerLabel = undefined;
     this.app.stage.hitArea = new Rectangle(0, 0, this.w(), this.h());
     this.drawBackground();
     if (this.state.scene === 'battle' && this.battle) {
@@ -293,6 +362,11 @@ class YuanboPixiGame {
     } else {
       this.touch.removeAttribute('hidden');
       this.drawMap();
+    }
+    if (currentOverlay) {
+      this.overlay = currentOverlay;
+      this.ui.addChild(currentOverlay);
+      this.touch.setAttribute('hidden', '');
     }
     this.updateTouchLabel();
   }
@@ -313,6 +387,9 @@ class YuanboPixiGame {
     map.roundRect(layout.x, layout.y, layout.w, layout.h, this.mobile() ? 0 : 4).fill(0x1a4141);
     map.roundRect(layout.x, layout.y, layout.w, layout.h, this.mobile() ? 0 : 4).stroke({ color: GOLD, width: 2, alpha: 0.8 });
     this.world.addChild(map);
+    this.mapContent = new Container();
+    this.world.addChild(this.mapContent);
+    this.updateMapTransform(layout);
     this.drawTiles(layout);
     this.drawDecor(layout);
     HOTSPOTS.filter((spot) => spot.mapId === this.state.mapId).forEach((spot) => this.drawHotspot(layout, spot));
@@ -340,68 +417,74 @@ class YuanboPixiGame {
   }
 
   private drawTiles(layout: ReturnType<YuanboPixiGame['mapLayout']>): void {
-    const g = new Graphics();
-    const floor = this.state.mapId === 'office' ? 0xeed9b2 : 0xd6e4ec;
-    const path = this.state.mapId === 'office' ? 0xf4c574 : 0xb8ceda;
-    for (let y = 0; y < WORLD_H; y += 32) {
-      for (let x = 0; x < WORLD_W; x += 32) {
-        const screen = this.toScreen(layout, x, y);
-        const pathTile = y > 430 || (x > 280 && x < 720 && y > 240 && y < 520);
-        g.rect(screen.x, screen.y, 32 * layout.scale + 1, 32 * layout.scale + 1).fill(pathTile ? path : floor);
-        g.rect(screen.x + 7 * layout.scale, screen.y + 7 * layout.scale, 9 * layout.scale, 7 * layout.scale).fill({ color: 0xffffff, alpha: 0.13 });
-      }
+    const texture = this.mapTextures[this.state.mapId];
+    if (texture) {
+      const sprite = new Sprite(texture);
+      sprite.x = 0;
+      sprite.y = 0;
+      sprite.width = WORLD_W;
+      sprite.height = WORLD_H;
+      this.mapContent?.addChild(sprite);
+      return;
     }
-    g.stroke({ color: 0x8c6d33, alpha: 0.18, width: 1 });
-    this.world.addChild(g);
+    const fallback = new Graphics();
+    fallback.rect(0, 0, WORLD_W, WORLD_H).fill(this.state.mapId === 'office' ? 0xeed9b2 : 0xd6e4ec);
+    this.mapContent?.addChild(fallback);
   }
 
   private drawDecor(layout: ReturnType<YuanboPixiGame['mapLayout']>): void {
     HOTSPOTS.filter((spot) => spot.mapId === this.state.mapId).forEach((spot) => {
-      const p = this.toScreen(layout, spot.x, spot.y);
-      const s = layout.scale;
-      const asset = drawFacilityAsset(spot, s);
-      asset.x = p.x;
-      asset.y = p.y;
-      this.world.addChild(asset);
+      const asset = drawFacilityAsset(spot, 1);
+      asset.x = spot.x;
+      asset.y = spot.y;
+      this.mapContent?.addChild(asset);
       if (spot.kind !== 'portal') {
-        this.world.addChild(centerLabel(spot.label, p.x + (spot.w * s) / 2, p.y - 18 * s, 12, CREAM, 142));
+        this.mapContent?.addChild(centerLabel(spot.label, spot.x + spot.w / 2, spot.y - 18, 12, CREAM, 142));
       }
     });
   }
 
   private drawHotspot(layout: ReturnType<YuanboPixiGame['mapLayout']>, spot: Hotspot): void {
-    const p = this.toScreen(layout, spot.x, spot.y);
     const near = this.nearTarget()?.id === spot.id;
-    const g = rect(p.x, p.y, spot.w * layout.scale, spot.h * layout.scale, near ? GOLD : 0xffffff, near ? 0.14 : 0.001, near ? GOLD : undefined);
-    this.world.addChild(g);
+    const g = rect(spot.x, spot.y, spot.w, spot.h, near ? GOLD : 0xffffff, near ? 0.14 : 0.001, near ? GOLD : undefined);
+    this.mapContent?.addChild(g);
   }
 
   private drawNpc(layout: ReturnType<YuanboPixiGame['mapLayout']>, npc: Npc): void {
     const quest = questById(npc.questId);
     if (!quest) return;
-    const p = this.toScreen(layout, npc.x, npc.y);
-    const scale = layout.scale;
     const c = new Container();
-    c.x = p.x;
-    c.y = p.y;
-    c.addChild(drawCustomerSprite(npc, scale));
-    c.addChild(centerLabel(quest.boss ? 'BOSS' : 'NEW', 0, -58 * scale, 10, CREAM, 70, quest.boss ? 0x8e334d : BLUE));
-    c.addChild(centerLabel(npc.name, 0, 48 * scale, 11, 0x18302f, 90, 0xfff7df));
-    this.world.addChild(c);
+    c.x = npc.x;
+    c.y = npc.y;
+    const npcTexture = this.npcTextures.get(quest.id === 'boss' ? 'boss' : quest.id);
+    if (npcTexture) {
+      const sprite = new Sprite(npcTexture);
+      sprite.anchor.set(0.5, 0.77);
+      sprite.scale.set(0.48);
+      c.addChild(sprite);
+    } else {
+      c.addChild(drawCustomerSprite(npc, 1));
+    }
+    c.addChild(centerLabel(quest.boss ? 'BOSS' : `第${quest.chapter}幕`, 0, -72, 10, CREAM, 78, quest.boss ? 0x8e334d : BLUE));
+    c.addChild(centerLabel(npc.name, 0, 45, 11, 0x18302f, 90, 0xfff7df));
+    this.mapContent?.addChild(c);
   }
 
   private drawPlayer(layout: ReturnType<YuanboPixiGame['mapLayout']>): void {
-    const p = this.toScreen(layout, this.state.player[this.state.mapId].x, this.state.player[this.state.mapId].y);
-    const scale = this.mobile() ? 0.68 : 0.55;
-    this.world.addChild(new Graphics().ellipse(p.x + 3, p.y + 46 * scale, 35 * scale, 11 * scale).fill({ color: 0x000000, alpha: 0.22 }));
+    const point = this.state.player[this.state.mapId];
+    const scale = 0.5;
+    this.playerShadow = new Graphics().ellipse(0, 40, 35, 11).fill({ color: 0x000000, alpha: 0.22 });
+    this.playerShadow.x = point.x + 3;
+    this.playerShadow.y = point.y;
+    this.mapContent?.addChild(this.playerShadow);
     this.player = new Sprite(this.walkTextures[this.playerDir][this.playerFrame] || Texture.EMPTY);
     this.player.anchor.set(0.5, 0.74);
-    this.player.x = p.x;
-    this.player.y = p.y;
-    this.player.scale.set(scale * layout.scale * 1.15);
-    this.world.addChild(this.player);
-    this.playerLabel = centerLabel('博哥', p.x, p.y - 128 * scale * layout.scale, 12, CREAM, 64, BLUE);
-    this.world.addChild(this.playerLabel);
+    this.player.x = point.x;
+    this.player.y = point.y;
+    this.player.scale.set(scale);
+    this.mapContent?.addChild(this.player);
+    this.playerLabel = centerLabel('博哥', point.x, point.y - 88, 12, CREAM, 64, BLUE);
+    this.mapContent?.addChild(this.playerLabel);
   }
 
   private drawFooterHint(): void {
@@ -428,25 +511,26 @@ class YuanboPixiGame {
   private drawBattleShell(quest: Quest): void {
     this.ui.addChild(rect(0, 0, this.w(), this.h(), 0x0b1a1e, 1));
     this.ui.addChild(label(quest.title, 20, 18, this.mobile() ? 22 : 30, GOLD, this.w() - 40, '900'));
+    const phase = quest.boss && this.battle ? ` · ${quest.bossPhase?.[this.battle.phase - 1] || `第${this.battle.phase}阶段`}` : '';
     if (this.mobile()) {
-      this.ui.addChild(label(`ROUND ${this.battle?.round}/6 · ${quest.client}`, 22, 52, 12, MUTED, this.w() - 44, '900'));
-      this.ui.addChild(label(quest.risk, 22, 76, 11, MUTED, this.w() - 44, '800'));
+      this.ui.addChild(label(`ROUND ${this.battle?.round}/6 · ${quest.client}${phase}`, 22, 52, 12, MUTED, this.w() - 44, '900'));
+      this.ui.addChild(label(this.battle?.intent || quest.risk, 22, 76, 11, MUTED, this.w() - 44, '800'));
     } else {
-      this.ui.addChild(label(`ROUND ${this.battle?.round}/6 · ${quest.client} · ${quest.risk}`, 22, 60, 12, MUTED, this.w() - 44, '800'));
+      this.ui.addChild(label(`ROUND ${this.battle?.round}/6 · ${quest.client}${phase} · 意图：${this.battle?.intent || quest.risk}`, 22, 60, 12, MUTED, this.w() - 44, '800'));
     }
-    const portrait = new Sprite(this.portraitTextures[0] || Texture.EMPTY);
+    const portrait = new Sprite(this.actionTextures[battleActionIndex(this.battle?.lastSkill)] || this.portraitTextures[0] || Texture.EMPTY);
     portrait.x = this.mobile() ? 20 : 42;
-    portrait.y = this.mobile() ? 98 : 104;
-    portrait.width = this.mobile() ? 112 : 142;
-    portrait.height = this.mobile() ? 140 : 178;
-    this.ui.addChild(rect(portrait.x - 8, portrait.y - 8, portrait.width + 16, portrait.height + 16, 0xf4f4f2, 1, GOLD));
+    portrait.y = this.mobile() ? 122 : 104;
+    portrait.width = this.mobile() ? 96 : 142;
+    portrait.height = this.mobile() ? 120 : 178;
+    this.ui.addChild(rect(portrait.x - 8, portrait.y - 8, portrait.width + 16, portrait.height + 16, 0x12282d, 1, GOLD));
     this.ui.addChild(portrait);
   }
 
   private drawBattleStats(quest: Quest): void {
     if (!this.battle) return;
-    const x = this.mobile() ? 152 : 230;
-    const y = this.mobile() ? 100 : 108;
+    const x = this.mobile() ? 142 : 230;
+    const y = this.mobile() ? 128 : 108;
     this.ui.addChild(label('客户状态', x, y - 28, 15, GOLD, 220, '900'));
     const rows: Array<[string, number, number, boolean]> = [
       ['怒气', this.battle.client.anger, RED, true],
@@ -454,9 +538,9 @@ class YuanboPixiGame {
       ['蔓延', this.battle.client.scope, 0x7db0ff, true],
       ['信任', this.battle.client.trust, GREEN, false],
     ];
-    rows.forEach(([name, value, color], index) => this.ui.addChild(bar(x, y + index * 34, this.mobile() ? 202 : 260, 18, name, value, color)));
+    rows.forEach(([name, value, color], index) => this.ui.addChild(bar(x, y + index * (this.mobile() ? 28 : 34), this.mobile() ? this.w() - x - 20 : 260, this.mobile() ? 16 : 18, name, value, color)));
     const rx = this.mobile() ? 20 : 548;
-    const ry = this.mobile() ? 286 : 108;
+    const ry = this.mobile() ? 284 : 108;
     this.ui.addChild(label('博哥资源', rx, ry - 28, 15, GOLD, 220, '900'));
     const r = this.state.resources;
     [
@@ -464,25 +548,31 @@ class YuanboPixiGame {
       ['耐心', r.patience, GOLD],
       ['边界', r.boundary, 0x7db0ff],
       ['压力', r.pressure, RED],
-    ].forEach(([name, value, color], index) => this.ui.addChild(bar(rx, ry + index * 34, this.mobile() ? 330 : 260, 18, String(name), Number(value), Number(color))));
-    this.ui.addChild(label(`目标：${quest.objective}`, this.mobile() ? 20 : 548, this.mobile() ? 436 : 272, 12, CREAM, this.mobile() ? this.w() - 40 : 360, '800'));
+    ].forEach(([name, value, color], index) => this.ui.addChild(bar(rx, ry + index * (this.mobile() ? 28 : 34), this.mobile() ? this.w() - 40 : 260, this.mobile() ? 16 : 18, String(name), Number(value), Number(color))));
+    const objectiveY = this.mobile() ? Math.max(388, Math.min(this.battleSkillStartY() - 62, 392)) : 272;
+    this.ui.addChild(label(`目标：${quest.objective}`, this.mobile() ? 20 : 548, objectiveY, 12, CREAM, this.mobile() ? this.w() - 40 : 360, '800', this.mobile() ? 58 : undefined));
   }
 
   private drawBattleSkills(quest: Quest): void {
     if (!this.battle) return;
-    const skills = unlockedSkills(this.state).slice(0, this.mobile() ? 5 : 6);
+    const deck = battleSkillDeck(this.state, this.battle);
     const usable = usableSkills(this.state, this.battle).map((skill) => skill.id);
-    const startY = this.mobile() ? 488 : 356;
-    const cols = this.mobile() ? 1 : 3;
-    const bw = this.mobile() ? this.w() - 40 : 260;
-    const bh = this.mobile() ? 46 : 54;
+    const pageSize = this.mobile() ? 4 : 6;
+    const maxPage = Math.max(0, Math.ceil(deck.length / pageSize) - 1);
+    this.skillPage = clamp(this.skillPage, 0, maxPage);
+    const skills = deck.slice(this.skillPage * pageSize, this.skillPage * pageSize + pageSize);
+    const startY = this.battleSkillStartY();
+    const cols = this.mobile() ? 2 : 3;
+    const gap = this.mobile() ? 8 : 12;
+    const bw = this.mobile() ? (this.w() - 48) / 2 : 260;
+    const bh = this.mobile() ? 48 : 54;
     skills.forEach((skill, index) => {
       const col = index % cols;
       const row = Math.floor(index / cols);
-      const x = this.mobile() ? 20 : 42 + col * 286;
-      const y = startY + row * (bh + 12);
+      const x = this.mobile() ? 20 + col * (bw + gap) : 42 + col * 286;
+      const y = startY + row * (bh + gap);
       const disabled = !usable.includes(skill.id);
-      const marked = quest.recommended.includes(skill.id) ? '★' : '';
+      const marked = recommendedSkillIds(this.state, quest, this.battle).includes(skill.id) ? '★' : '';
       this.ui.addChild(
         button(
           x,
@@ -492,7 +582,7 @@ class YuanboPixiGame {
           `${marked}${skill.name}｜${shortIntent(skill)}`,
           () => {
             applySkill(this.state, this.battle!, skill.id);
-            persistState(this.state);
+            this.saveNow();
             this.draw();
           },
           disabled ? 0x44484d : 0x285d72,
@@ -501,16 +591,48 @@ class YuanboPixiGame {
         ),
       );
     });
+    if (maxPage > 0) {
+      this.ui.addChild(
+        button(
+          this.mobile() ? 20 : 42,
+          this.mobile() ? startY + 2 * (bh + gap) : startY + 2 * (bh + 12),
+          this.mobile() ? bw : 118,
+          40,
+          `上一页 ${this.skillPage + 1}/${maxPage + 1}`,
+          () => {
+            this.skillPage = this.skillPage <= 0 ? maxPage : this.skillPage - 1;
+            this.draw();
+          },
+          0x294e58,
+          11,
+        ),
+      );
+      this.ui.addChild(
+        button(
+          this.mobile() ? 20 + bw + gap : 174,
+          this.mobile() ? startY + 2 * (bh + gap) : startY + 2 * (bh + 12),
+          this.mobile() ? bw : 118,
+          40,
+          '下一页',
+          () => {
+            this.skillPage = this.skillPage >= maxPage ? 0 : this.skillPage + 1;
+            this.draw();
+          },
+          0x294e58,
+          11,
+        ),
+      );
+    }
     this.ui.addChild(
       button(
         this.mobile() ? 20 : 902 - 188,
-        this.mobile() ? startY + 5 * (bh + 12) : startY + 2 * (bh + 12),
+        this.mobile() ? startY + (maxPage > 0 ? 3 : 2) * (bh + gap) : startY + 2 * (bh + 12),
         this.mobile() ? this.w() - 40 : 188,
         44,
-        '稳住场面',
+        '缓一手回资源',
         () => {
           stabilize(this.state, this.battle!);
-          persistState(this.state);
+          this.saveNow();
           this.draw();
         },
         0x6a5422,
@@ -518,6 +640,11 @@ class YuanboPixiGame {
         Boolean(this.battle.outcome),
       ),
     );
+  }
+
+  private battleSkillStartY(): number {
+    if (!this.mobile()) return 356;
+    return this.h() < 760 ? this.h() - 186 : Math.max(430, this.h() - 230);
   }
 
   private drawBattleLog(): void {
@@ -546,7 +673,11 @@ class YuanboPixiGame {
 
   private showQuestBrief(quest: Quest): void {
     const blocked = quest.cost > this.state.actionPoints;
-    this.showPanel(quest.title, `${quest.brief}\n\n目标：${quest.objective}\n风险：${quest.risk}\n推荐打法：${quest.recommended.map((id) => SKILLS.find((skill) => skill.id === id)?.name).filter(Boolean).join(' / ')}\n消耗行动 ${quest.cost} · 奖励 ${money(quest.reward)}`, [
+    const recommended = recommendedSkillIds(this.state, quest)
+      .map((id) => skillById(id)?.name)
+      .filter(Boolean)
+      .join(' / ');
+    this.showPanel(quest.title, `${quest.brief}\n\n目标：${quest.objective}\n风险：${quest.risk}\n推荐打法：${recommended}\n消耗行动 ${quest.cost} · 奖励 ${money(quest.reward)}`, [
       {
         label: blocked ? '行动点不够' : '开始谈判',
         disabled: blocked,
@@ -554,7 +685,8 @@ class YuanboPixiGame {
           const battle = beginQuest(this.state, quest);
           if (!battle) return;
           this.battle = battle;
-          persistState(this.state);
+          this.skillPage = 0;
+          this.saveNow();
           this.closeOverlay();
           this.draw();
         },
@@ -578,7 +710,7 @@ class YuanboPixiGame {
             : 'Boss 已可打，先清遗留或直接去客户现场验收。';
     this.showPanel(
       '今日经营面板',
-      `当前目标：${next}\n\n可接客户：\n${quests || '今天没有新客户，先训练或收工。'}\n\n遗留问题：${this.state.issues.map((issue) => issue.label).join(' / ') || '暂无'}\n\n清楚一点：接客户会消耗行动点；失败不会死档，但会让 Boss 更难。`,
+      `当前目标：${next}\n\n可接客户：\n${quests || '今天没有新客户，先训练或收工。'}\n\n售后债：${debtLine(this.state)}\n\n清楚一点：接客户会消耗行动点；失败不会死档，但会让 Boss 更难。`,
       [{ label: '知道了', onClick: () => this.closeOverlay() }],
     );
   }
@@ -588,7 +720,7 @@ class YuanboPixiGame {
       label: `${item.name} Lv.${this.state.training[key as TrainingKey]} · ${money(90 + this.state.training[key as TrainingKey] * 80)}`,
       onClick: () => {
         const error = train(this.state, key as TrainingKey);
-        persistState(this.state);
+        this.saveNow();
         this.closeOverlay();
         if (error) this.toast(error);
         this.draw();
@@ -606,7 +738,24 @@ class YuanboPixiGame {
         label: '整理报价/验收/SLA',
         onClick: () => {
           const error = prep(this.state);
-          persistState(this.state);
+          this.saveNow();
+          this.closeOverlay();
+          if (error) this.toast(error);
+          this.draw();
+        },
+      },
+      { label: '离开', onClick: () => this.closeOverlay() },
+    ]);
+  }
+
+  private showDebt(): void {
+    this.showPanel('售后债板', `当前售后债：${debtLine(this.state)}\n\n清债会消耗 1 行动点，优先处理最危险的一条。Boss 会按售后债翻旧账，债越少越好打。`, [
+      {
+        label: this.state.issues.length ? '清一条最危险的债' : '暂无售后债',
+        disabled: !this.state.issues.length,
+        onClick: () => {
+          const error = clearIssue(this.state);
+          this.saveNow();
           this.closeOverlay();
           if (error) this.toast(error);
           this.draw();
@@ -622,7 +771,7 @@ class YuanboPixiGame {
         label: '确认收工',
         onClick: () => {
           rest(this.state);
-          persistState(this.state);
+          this.saveNow();
           this.closeOverlay();
           this.draw();
         },
@@ -635,14 +784,14 @@ class YuanboPixiGame {
     openSaveOverlay(this.state, {
       onImport: (state) => {
         this.state = state;
-        this.battle = undefined;
-        persistState(this.state);
+        this.battle = state.battle || undefined;
+        this.saveNow();
         this.draw();
       },
       onReset: () => {
         this.state = defaultState();
         this.battle = undefined;
-        persistState(this.state);
+        this.saveNow();
         this.draw();
       },
     });
@@ -661,7 +810,7 @@ class YuanboPixiGame {
     overlay.addChild(rect(0, 0, this.w(), this.h(), 0x000000, 0.34));
     overlay.addChild(rect(x, y, w, h, PANEL, 0.98, GOLD));
     overlay.addChild(label(title, x + 20, y + 18, mobile ? 22 : 26, GOLD, w - 40, '900'));
-    const actionArea = actions.length <= 2 ? 72 : mobile ? 220 : 164;
+    const actionArea = actions.length <= 2 ? 72 : mobile ? Math.min(h - 120, actions.length * 54 + 16) : 164;
     overlay.addChild(label(body, x + 20, y + 62, mobile ? 13 : 14, CREAM, w - 40, '800', h - actionArea - 82));
     const cols = mobile ? 1 : Math.min(3, actions.length);
     const bw = mobile ? w - 40 : (w - 40 - (cols - 1) * 12) / cols;
@@ -701,7 +850,7 @@ class YuanboPixiGame {
     if (!this.battle) return;
     settleBattle(this.state, this.battle);
     this.battle = undefined;
-    persistState(this.state);
+    this.saveNow();
     this.draw();
     if (this.state.ending) {
       this.showPanel('一周目结算', `${this.state.ending}\n\n你可以继续二周目，但公开 Alpha 的主线已经完整跑通。`, [
@@ -716,7 +865,7 @@ class YuanboPixiGame {
             this.state.ending = '';
             this.state.actionPoints = 3;
             this.state.mapId = 'office';
-            persistState(this.state);
+            this.saveNow();
             this.closeOverlay();
             this.draw();
           },
@@ -742,12 +891,13 @@ class YuanboPixiGame {
     if (target.hotspot.kind === 'board') this.showBoard();
     if (target.hotspot.kind === 'training') this.showTraining();
     if (target.hotspot.kind === 'prep') this.showPrep();
+    if (target.hotspot.kind === 'debt') this.showDebt();
     if (target.hotspot.kind === 'rest') this.showRest();
     if (target.hotspot.kind === 'save') this.showSaveMenu();
     if (target.hotspot.kind === 'portal') {
       this.state.mapId = this.state.mapId === 'office' ? 'site' : 'office';
       this.state.player[this.state.mapId] = this.state.mapId === 'office' ? { x: 820, y: 380 } : { x: 130, y: 386 };
-      persistState(this.state);
+      this.saveNow();
       this.draw();
     }
   }
@@ -815,7 +965,28 @@ class YuanboPixiGame {
   }
 
   private updateCameraObjects(): void {
-    this.draw();
+    const layout = this.mapLayout();
+    this.updateMapTransform(layout);
+    const point = this.state.player[this.state.mapId];
+    if (this.player) {
+      this.player.x = point.x;
+      this.player.y = point.y;
+    }
+    if (this.playerShadow) {
+      this.playerShadow.x = point.x + 3;
+      this.playerShadow.y = point.y;
+    }
+    if (this.playerLabel) {
+      this.playerLabel.x = point.x;
+      this.playerLabel.y = point.y - 88;
+    }
+  }
+
+  private updateMapTransform(layout: ReturnType<YuanboPixiGame['mapLayout']>): void {
+    if (!this.mapContent) return;
+    this.mapContent.x = Math.round(layout.x - layout.cameraX * layout.scale);
+    this.mapContent.y = Math.round(layout.y - layout.cameraY * layout.scale);
+    this.mapContent.scale.set(layout.scale);
   }
 
   private updateTouchLabel(): void {
@@ -1066,6 +1237,16 @@ function drawFacilityAsset(spot: Hotspot, scale: number): Container {
     return c;
   }
 
+  if (spot.id === 'debt') {
+    c.addChild(rect(u(8), 0, w - u(16), h, 0x24323b, 1, 0xffb169));
+    c.addChild(rect(u(22), u(16), w - u(44), u(10), 0xc85d45, 1));
+    c.addChild(rect(u(22), u(36), w - u(66), u(8), 0xffdf86, 1));
+    c.addChild(rect(u(22), u(54), w - u(82), u(8), 0x7db0ff, 1));
+    c.addChild(new Graphics().circle(w - u(34), u(28), u(10)).fill(0xc85d45));
+    c.addChild(new Graphics().circle(w - u(34), u(58), u(10)).fill(0xffdf86));
+    return c;
+  }
+
   if (spot.id === 'rest') {
     c.addChild(rect(u(8), u(28), w - u(16), u(38), 0x667cc2, 1, 0x3d4d85));
     c.addChild(rect(u(22), u(14), u(45), u(32), 0x8aa0e8, 1));
@@ -1228,6 +1409,45 @@ function bar(x: number, y: number, w: number, h: number, name: string, value: nu
   c.addChild(rect(x + 56, y + 2, Math.max(0, (w - 58) * clamp(value, 0, 100) / 100), h - 4, color, 0.95));
   c.addChild(label(String(Math.round(value)), x + w - 34, y + 1, 10, CREAM, 32, '900'));
   return c;
+}
+
+function battleActionIndex(skillId = ''): number {
+  return {
+    stabilize: 1,
+    anchor: 2,
+    report: 3,
+    poc: 4,
+    milestone: 5,
+    split: 5,
+    contract: 6,
+    fallback: 7,
+    slaExplain: 7,
+    review: 8,
+    shadow: 9,
+    shadowReview: 9,
+    bundle: 2,
+  }[skillId] ?? 0;
+}
+
+function debtLine(state: SaveState): string {
+  if (!state.issues.length) return '暂无';
+  const total = state.issues.reduce((sum, issue) => sum + issue.severity, 0);
+  const labels = state.issues
+    .slice()
+    .sort((a, b) => b.severity - a.severity)
+    .map((issue) => `${issueKindLabel(issue.kind)}:${issue.label}${issue.severity}`)
+    .join(' / ');
+  return `${total}：${labels}`;
+}
+
+function issueKindLabel(kind: SaveState['issues'][number]['kind']): string {
+  return {
+    budget: '预算',
+    delivery: '交付',
+    sla: 'SLA',
+    compliance: '合规',
+    pressure: '压力',
+  }[kind];
 }
 
 function fitText(text: string, width: number, size: number, maxHeight?: number): string {
