@@ -85,6 +85,7 @@ export function startYuanboPixiGame(root: HTMLElement): () => void {
   let app: Application | undefined;
   let game: YuanboPixiGame | undefined;
   let destroyed = false;
+  let appDestroyed = false;
   const touch = createTouchControls(root);
 
   root.replaceChildren(touch);
@@ -103,7 +104,7 @@ export function startYuanboPixiGame(root: HTMLElement): () => void {
       resolution: Math.max(1, Math.min(2.5, window.devicePixelRatio || 1)),
     });
     if (destroyed) {
-      app.destroy(true);
+      destroyApp();
       return;
     }
     root.prepend(app.canvas);
@@ -114,9 +115,23 @@ export function startYuanboPixiGame(root: HTMLElement): () => void {
   return () => {
     destroyed = true;
     game?.destroy();
-    app?.destroy(true);
+    destroyApp();
     touch.remove();
   };
+
+  function destroyApp(): void {
+    if (!app || appDestroyed) return;
+    appDestroyed = true;
+    try {
+      app.destroy({ removeView: true }, { children: true });
+    } catch {
+      try {
+        app.destroy();
+      } catch {
+        // The page is leaving; there is nothing useful to recover here.
+      }
+    }
+  }
 }
 
 class YuanboPixiGame {
@@ -341,25 +356,16 @@ class YuanboPixiGame {
   }
 
   private drawDecor(layout: ReturnType<YuanboPixiGame['mapLayout']>): void {
-    const items =
-      this.state.mapId === 'office'
-        ? [
-            ['任务板', 118, 92, 144, 72, 0xcfeaf0],
-            ['训练台', 724, 108, 150, 76, 0xaa7139],
-            ['售前准备桌', 382, 112, 196, 90, 0x285d72],
-            ['存档终端', 74, 486, 150, 80, 0x18706f],
-            ['收工复盘', 744, 500, 154, 78, 0x748bd0],
-          ]
-        : [
-            ['验收议程', 390, 82, 186, 72, 0xcfeaf0],
-            ['会议彩排', 640, 112, 210, 90, 0x285d72],
-            ['老板席', 342, 214, 260, 82, 0xaa7139],
-            ['会议存档', 770, 500, 142, 78, 0x18706f],
-          ];
-    items.forEach(([name, x, y, w, h, color]) => {
-      const p = this.toScreen(layout, Number(x), Number(y));
-      this.world.addChild(rect(p.x, p.y, Number(w) * layout.scale, Number(h) * layout.scale, Number(color), 0.96, 0x244a48));
-      this.world.addChild(centerLabel(String(name), p.x + (Number(w) * layout.scale) / 2, p.y - 18 * layout.scale, 12, CREAM, 138));
+    HOTSPOTS.filter((spot) => spot.mapId === this.state.mapId).forEach((spot) => {
+      const p = this.toScreen(layout, spot.x, spot.y);
+      const s = layout.scale;
+      const asset = drawFacilityAsset(spot, s);
+      asset.x = p.x;
+      asset.y = p.y;
+      this.world.addChild(asset);
+      if (spot.kind !== 'portal') {
+        this.world.addChild(centerLabel(spot.label, p.x + (spot.w * s) / 2, p.y - 18 * s, 12, CREAM, 142));
+      }
     });
   }
 
@@ -378,10 +384,7 @@ class YuanboPixiGame {
     const c = new Container();
     c.x = p.x;
     c.y = p.y;
-    c.addChild(new Graphics().ellipse(0, 30 * scale, 25 * scale, 8 * scale).fill({ color: 0x000000, alpha: 0.2 }));
-    c.addChild(new Graphics().roundRect(-14 * scale, -16 * scale, 28 * scale, 48 * scale, 4 * scale).fill(npc.color));
-    c.addChild(new Graphics().circle(0, -28 * scale, 17 * scale).fill(0xf0c78e));
-    c.addChild(new Graphics().rect(-11 * scale, -33 * scale, 22 * scale, 6 * scale).fill(0x172026));
+    c.addChild(drawCustomerSprite(npc, scale));
     c.addChild(centerLabel(quest.boss ? 'BOSS' : 'NEW', 0, -58 * scale, 10, CREAM, 70, quest.boss ? 0x8e334d : BLUE));
     c.addChild(centerLabel(npc.name, 0, 48 * scale, 11, 0x18302f, 90, 0xfff7df));
     this.world.addChild(c);
@@ -1000,6 +1003,155 @@ function renderFatal(message: string): HTMLElement {
   node.style.cssText = 'max-width:720px;padding:20px;border:2px solid #ffdf86;background:#12282d;color:#fff8dc;font:700 14px/1.6 ui-monospace,monospace;';
   node.textContent = `游戏启动失败：${message}`;
   return node;
+}
+
+function drawFacilityAsset(spot: Hotspot, scale: number): Container {
+  const c = new Container();
+  const w = spot.w * scale;
+  const h = spot.h * scale;
+  const u = (value: number) => value * scale;
+  c.addChild(new Graphics().ellipse(w / 2, h + u(8), Math.max(u(34), w * 0.42), u(11)).fill({ color: 0x000000, alpha: 0.14 }));
+
+  if (spot.id === 'board' || spot.id === 'site-board') {
+    c.addChild(rect(0, 0, w, h, 0x244b52, 1, 0x163438));
+    c.addChild(rect(u(8), u(8), w - u(16), h - u(16), 0xdff4f1, 1, 0x95c8c2));
+    c.addChild(rect(u(18), u(18), u(34), u(22), 0xffdf86, 1));
+    c.addChild(rect(u(58), u(16), u(30), u(28), 0xfff7df, 1));
+    c.addChild(rect(u(96), u(18), u(28), u(22), 0x88d6bd, 1));
+    c.addChild(rect(u(20), u(50), u(92), u(7), 0x2f6fb8, 1));
+    c.addChild(rect(u(20), u(62), u(62), u(6), 0xc85d45, 1));
+    c.addChild(new Graphics().circle(u(14), u(14), u(3)).fill(0xc85d45));
+    c.addChild(new Graphics().circle(w - u(14), u(14), u(3)).fill(0xc85d45));
+    return c;
+  }
+
+  if (spot.id === 'training') {
+    c.addChild(rect(u(8), u(28), w - u(16), h - u(18), 0x9a6232, 1, 0x603a21));
+    c.addChild(rect(u(24), u(6), u(68), u(44), 0x0d2f3a, 1, 0x7bd7e5));
+    c.addChild(rect(u(31), u(13), u(54), u(29), 0x123f56, 1));
+    c.addChild(rect(u(38), u(20), u(14), u(14), GREEN, 1));
+    c.addChild(rect(u(58), u(18), u(20), u(6), GOLD, 1));
+    c.addChild(rect(u(102), u(16), u(24), u(12), 0xf5f0d4, 1));
+    c.addChild(rect(u(104), u(34), u(34), u(10), 0x20252a, 1));
+    c.addChild(new Graphics().circle(u(112), u(58), u(5)).fill(BLUE));
+    c.addChild(new Graphics().circle(u(130), u(58), u(5)).fill(RED));
+    return c;
+  }
+
+  if (spot.id === 'prep' || spot.id === 'site-prep') {
+    c.addChild(rect(u(8), u(34), w - u(16), u(42), 0x77522e, 1, 0x4f351f));
+    c.addChild(rect(u(0), u(22), w, u(26), 0xb0733b, 1, 0x6d4225));
+    c.addChild(rect(u(30), u(5), u(52), u(34), 0x11282d, 1, 0x72b9c5));
+    c.addChild(rect(u(38), u(12), u(36), u(18), 0x1e6d82, 1));
+    c.addChild(rect(u(92), u(11), u(42), u(28), 0xfff7df, 1, 0x9e7d44));
+    c.addChild(rect(u(99), u(17), u(26), u(5), 0x2f6fb8, 1));
+    c.addChild(rect(u(99), u(27), u(20), u(4), 0xc85d45, 1));
+    c.addChild(rect(w - u(48), u(24), u(28), u(8), 0x263039, 1));
+    if (spot.id === 'site-prep') {
+      c.addChild(new Graphics().circle(w - u(84), u(20), u(7)).fill(0x263039));
+      c.addChild(rect(w - u(88), u(26), u(8), u(22), 0x263039, 1));
+    }
+    return c;
+  }
+
+  if (spot.id === 'save' || spot.id === 'site-save') {
+    c.addChild(rect(u(8), 0, w - u(16), h, 0x0f5558, 1, 0x68d9d2));
+    [12, 28, 44, 60].forEach((y, index) => {
+      c.addChild(rect(u(20), u(y), w - u(40), u(9), index % 2 ? 0x123138 : 0x173a43, 1));
+      c.addChild(new Graphics().circle(w - u(30), u(y + 4), u(3)).fill(index % 2 ? GOLD : GREEN));
+    });
+    c.addChild(rect(u(30), h - u(18), u(28), u(18), 0x102324, 1));
+    c.addChild(new Graphics().circle(w - u(52), h - u(16), u(10)).stroke({ color: 0x9cefe7, width: u(3), alpha: 0.9 }));
+    c.addChild(new Graphics().circle(w - u(36), h - u(16), u(10)).stroke({ color: 0x9cefe7, width: u(3), alpha: 0.9 }));
+    return c;
+  }
+
+  if (spot.id === 'rest') {
+    c.addChild(rect(u(8), u(28), w - u(16), u(38), 0x667cc2, 1, 0x3d4d85));
+    c.addChild(rect(u(22), u(14), u(45), u(32), 0x8aa0e8, 1));
+    c.addChild(rect(u(78), u(14), u(45), u(32), 0x8aa0e8, 1));
+    c.addChild(rect(u(18), u(62), u(18), u(20), 0x303447, 1));
+    c.addChild(rect(w - u(36), u(62), u(18), u(20), 0x303447, 1));
+    c.addChild(new Graphics().circle(u(132), u(16), u(12)).fill(GOLD));
+    c.addChild(rect(u(128), u(28), u(8), u(26), 0x5b4630, 1));
+    return c;
+  }
+
+  if (spot.kind === 'portal') {
+    c.addChild(rect(u(8), 0, w - u(16), h, 0x95d7c6, 0.82, GOLD));
+    c.addChild(rect(u(16), u(12), w - u(32), h - u(24), 0xcaf5e9, 0.72, 0x74b8aa));
+    c.addChild(rect(w / 2 - u(3), u(8), u(6), h - u(16), 0x74b8aa, 0.8));
+    c.addChild(new Graphics().circle(w / 2 + u(14), h / 2, u(5)).fill(GOLD));
+    c.addChild(centerLabel(spot.mapId === 'office' ? '客户现场' : '办公室', w / 2, -u(18), 11, CREAM, u(92), 0x173434));
+    return c;
+  }
+
+  c.addChild(rect(0, 0, w, h, 0x285d72, 1, GOLD));
+  return c;
+}
+
+function drawCustomerSprite(npc: Npc, scale: number): Container {
+  const c = new Container();
+  const s = scale;
+  const skin = 0xf0c78e;
+  const hair = npc.questId === 'shadow' ? 0x322033 : npc.questId === 'boss' ? 0x263039 : 0x182229;
+  c.addChild(new Graphics().ellipse(0, 33 * s, 26 * s, 9 * s).fill({ color: 0x000000, alpha: 0.2 }));
+
+  if (npc.questId === 'boss') {
+    [-22, 0, 22].forEach((x, index) => {
+      c.addChild(new Graphics().circle(x * s, (-28 - index * 2) * s, 13 * s).fill(skin));
+      c.addChild(new Graphics().roundRect((x - 12) * s, (-42 - index * 2) * s, 24 * s, 10 * s, 4 * s).fill(hair));
+      c.addChild(new Graphics().roundRect((x - 11) * s, (-14 + index * 2) * s, 22 * s, 36 * s, 5 * s).fill(index === 1 ? npc.color : 0x35495c));
+      c.addChild(new Graphics().rect((x - 7) * s, (-29 - index * 2) * s, 5 * s, 2 * s).fill(SHADOW));
+      c.addChild(new Graphics().rect((x + 3) * s, (-29 - index * 2) * s, 5 * s, 2 * s).fill(SHADOW));
+    });
+    c.addChild(rect(-36 * s, 14 * s, 72 * s, 14 * s, 0xaa7139, 1, 0x603a21));
+    c.addChild(rect(-24 * s, 1 * s, 48 * s, 18 * s, 0xfff7df, 1, 0x9e7d44));
+    return c;
+  }
+
+  c.addChild(new Graphics().roundRect(-9 * s, 16 * s, 8 * s, 19 * s, 3 * s).fill(0x20252a));
+  c.addChild(new Graphics().roundRect(3 * s, 16 * s, 8 * s, 19 * s, 3 * s).fill(0x20252a));
+  c.addChild(new Graphics().rect(-13 * s, 34 * s, 12 * s, 5 * s).fill(0xfff7df));
+  c.addChild(new Graphics().rect(3 * s, 34 * s, 12 * s, 5 * s).fill(0xfff7df));
+  c.addChild(new Graphics().roundRect(-18 * s, -10 * s, 36 * s, 34 * s, 8 * s).fill(npc.color));
+  c.addChild(new Graphics().roundRect(-25 * s, -4 * s, 9 * s, 25 * s, 5 * s).fill(skin));
+  c.addChild(new Graphics().roundRect(16 * s, -4 * s, 9 * s, 25 * s, 5 * s).fill(skin));
+  c.addChild(new Graphics().rect(-8 * s, -8 * s, 16 * s, 26 * s).fill({ color: 0xffffff, alpha: 0.14 }));
+  c.addChild(new Graphics().ellipse(0, -28 * s, 17 * s, 19 * s).fill(skin));
+  c.addChild(new Graphics().roundRect(-15 * s, -44 * s, 30 * s, 12 * s, 6 * s).fill(hair));
+  c.addChild(new Graphics().rect(-16 * s, -39 * s, 6 * s, 17 * s).fill(hair));
+  if (npc.questId === 'agent' || npc.questId === 'cost') c.addChild(new Graphics().rect(10 * s, -39 * s, 6 * s, 18 * s).fill(hair));
+  c.addChild(new Graphics().rect(-8 * s, -30 * s, 5 * s, 3 * s).fill(SHADOW));
+  c.addChild(new Graphics().rect(4 * s, -30 * s, 5 * s, 3 * s).fill(SHADOW));
+  c.addChild(new Graphics().rect(-5 * s, -19 * s, 10 * s, 3 * s).fill(0x8d4a3d));
+  drawNpcProp(c, npc, s);
+  return c;
+}
+
+function drawNpcProp(c: Container, npc: Npc, s: number): void {
+  if (npc.questId === 'gpu') {
+    c.addChild(rect(-35 * s, -2 * s, 18 * s, 22 * s, 0xfff7df, 1, 0x2f6fb8));
+    c.addChild(rect(-32 * s, 3 * s, 12 * s, 4 * s, 0xc85d45, 1));
+    c.addChild(rect(-32 * s, 11 * s, 9 * s, 3 * s, GOLD, 1));
+  } else if (npc.questId === 'agent') {
+    c.addChild(rect(21 * s, -12 * s, 16 * s, 20 * s, 0x102324, 1, GREEN));
+    c.addChild(new Graphics().circle(29 * s, -2 * s, 4 * s).fill(GREEN));
+  } else if (npc.questId === 'sla') {
+    c.addChild(rect(18 * s, -19 * s, 13 * s, 24 * s, 0x0d2f3a, 1, 0x7db0ff));
+    c.addChild(rect(21 * s, -14 * s, 7 * s, 4 * s, RED, 1));
+  } else if (npc.questId === 'compliance') {
+    c.addChild(rect(-34 * s, -5 * s, 20 * s, 28 * s, 0xffdf86, 1, 0x8c6d33));
+    c.addChild(rect(-30 * s, 1 * s, 12 * s, 3 * s, 0x6870b5, 1));
+  } else if (npc.questId === 'cost') {
+    c.addChild(rect(18 * s, -8 * s, 19 * s, 25 * s, 0xfff7df, 1, 0x2d8a6f));
+    c.addChild(rect(23 * s, 4 * s, 4 * s, 9 * s, GREEN, 1));
+    c.addChild(rect(29 * s, -1 * s, 4 * s, 14 * s, GOLD, 1));
+  } else if (npc.questId === 'shadow') {
+    [-1, 0, 1].forEach((offset) => {
+      c.addChild(rect((20 + offset * 8) * s, (-13 + Math.abs(offset) * 3) * s, 12 * s, 18 * s, offset ? 0xfff7df : GOLD, 1, 0x9a5fb5));
+    });
+  }
 }
 
 function rect(x: number, y: number, w: number, h: number, color: number, alpha = 1, stroke?: number): Graphics {

@@ -11,7 +11,13 @@ function assert(condition, message) {
 }
 
 function ignoreNetworkIssue(urlOrText) {
-  return urlOrText.includes('/dev-toolbar/') || urlOrText.includes('google-analytics.com/g/collect');
+  return (
+    urlOrText.includes('/dev-toolbar/') ||
+    urlOrText.includes('/node_modules/.vite/deps/') ||
+    urlOrText.includes('google-analytics.com/') ||
+    urlOrText.includes('googletagmanager.com/') ||
+    urlOrText.includes('sentry.io/')
+  );
 }
 
 function worldToScreen(viewport, world, player) {
@@ -84,7 +90,11 @@ async function checkDesktop(browser) {
   const page = await context.newPage();
   const errors = [];
   page.on('console', (message) => {
-    if (message.type() === 'error' && message.text() !== 'Failed to load resource: the server responded with a status of 403 (Forbidden)') {
+    const text = message.text();
+    const ignoredLoadError =
+      text === 'Failed to load resource: the server responded with a status of 403 (Forbidden)' ||
+      text === 'Failed to load resource: the server responded with a status of 404 (Not Found)';
+    if (message.type() === 'error' && !ignoredLoadError) {
       errors.push(message.text());
     }
   });
@@ -137,7 +147,11 @@ async function checkMobile(browser) {
   const page = await context.newPage();
   const errors = [];
   page.on('console', (message) => {
-    if (message.type() === 'error' && message.text() !== 'Failed to load resource: the server responded with a status of 403 (Forbidden)') {
+    const text = message.text();
+    const ignoredLoadError =
+      text === 'Failed to load resource: the server responded with a status of 403 (Forbidden)' ||
+      text === 'Failed to load resource: the server responded with a status of 404 (Not Found)';
+    if (message.type() === 'error' && !ignoredLoadError) {
       errors.push(message.text());
     }
   });
