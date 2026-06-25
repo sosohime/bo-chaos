@@ -47,6 +47,7 @@ import {
   encodeSave,
   loadState,
   money,
+  normalizeState,
   persistState,
 } from './state';
 import type {
@@ -71,6 +72,10 @@ const BLUE = 0x2f6fb8;
 const RED = 0xc85d45;
 const SHADOW = 0x071214;
 const PLAYER_SPEED = 268;
+const PLAYER_MAP_SCALE = 0.5;
+const PLAYER_FOOT_ANCHOR_Y = 0.93;
+const NPC_MAP_SCALE = 0.48;
+const NPC_FOOT_ANCHOR_Y = 0.93;
 
 interface AssetUrls {
   boWalk: string;
@@ -79,6 +84,101 @@ interface AssetUrls {
   npcAtlas: string;
   officeMap: string;
   siteMap: string;
+}
+
+interface QaRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface QaCamera {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  scale: number;
+  cameraX: number;
+  cameraY: number;
+}
+
+interface YuanboQaSnapshot {
+  scene: SaveState['scene'];
+  mapId: MapId;
+  canvas: { width: number; height: number; dpr: number };
+  camera: QaCamera;
+  player: {
+    world: { x: number; y: number };
+    screen: { x: number; y: number };
+    direction: Direction;
+    frame: number;
+    moving: boolean;
+    spriteBounds: QaRect;
+    footScreen: { x: number; y: number };
+    shadowBounds: QaRect;
+    shadowCenter: { x: number; y: number };
+    footToShadowY: number;
+  };
+  npcs: Array<{
+    id: string;
+    name: string;
+    world: { x: number; y: number };
+    screen: { x: number; y: number };
+    spriteBounds: QaRect;
+    footScreen: { x: number; y: number };
+    shadowCenter: { x: number; y: number };
+    footToShadowY: number;
+  }>;
+  overlay: { visible: boolean; title: string; ageMs: number };
+  battle: {
+    questId: string;
+    round: number;
+    outcome: BattleState['outcome'];
+    lastSkill: string;
+  } | null;
+  nearest: { id: string; action: string } | null;
+  counts: {
+    expectedHotspots: number;
+    renderedHotspots: number;
+    expectedNpcs: number;
+    renderedNpcs: number;
+  };
+  stateSummary: {
+    day: number;
+    actionPoints: number;
+    resources: SaveState['resources'];
+    completed: string[];
+    failed: string[];
+    issues: Array<{ id: string; kind: string; label: string; severity: number }>;
+    ending: string;
+  };
+  assets: {
+    officeMap: string;
+    siteMap: string;
+  };
+  saveOverlayVisible: boolean;
+}
+
+interface YuanboQaApi {
+  snapshot: () => YuanboQaSnapshot;
+  reset: () => YuanboQaSnapshot;
+  setState: (state: unknown) => YuanboQaSnapshot;
+  moveTo: (mapId: MapId, x: number, y: number) => YuanboQaSnapshot;
+  interact: () => YuanboQaSnapshot;
+  startQuest: (questId: string) => YuanboQaSnapshot;
+  useSkill: (skillId: string) => YuanboQaSnapshot;
+  useRecommendedSkill: () => YuanboQaSnapshot;
+  stabilize: () => YuanboQaSnapshot;
+  finishBattle: () => YuanboQaSnapshot;
+  closeOverlay: () => YuanboQaSnapshot;
+  showSaveMenu: () => YuanboQaSnapshot;
+}
+
+declare global {
+  interface Window {
+    __YUANBO_QA__?: YuanboQaApi;
+  }
 }
 
 export function startYuanboPixiGame(root: HTMLElement): () => void {
@@ -119,7 +219,8 @@ export function startYuanboPixiGame(root: HTMLElement): () => void {
       return;
     }
     root.prepend(app.canvas);
-    game = new YuanboPixiGame(root, app, touch, urls);
+    const qaEnabled = import.meta.env.DEV || new URLSearchParams(window.location.search).has('qa');
+    game = new YuanboPixiGame(root, app, touch, urls, qaEnabled);
     await game.init();
   }
 
@@ -176,12 +277,17 @@ class YuanboPixiGame {
   private npcTextures = new Map<string, Texture>();
   private mapTextures: Partial<Record<MapId, Texture>> = {};
   private resizeTimer = 0;
+  private overlayTitle = '';
+  private moving = false;
+  private renderedHotspots = 0;
+  private renderedNpcs = 0;
 
   constructor(
     private readonly root: HTMLElement,
     private readonly app: Application,
     private readonly touch: HTMLDivElement,
     private readonly urls: AssetUrls,
+    private readonly qaEnabled: boolean,
   ) {}
 
   async init(): Promise<void> {
@@ -194,6 +300,7 @@ class YuanboPixiGame {
     this.bindInput();
     this.draw();
     this.app.ticker.add((ticker) => this.update(ticker.deltaMS));
+    this.installQaApi();
     this.saveNow();
   }
 
@@ -202,6 +309,9 @@ class YuanboPixiGame {
     window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('keyup', this.onKeyUp);
     window.removeEventListener('resize', this.onResize);
+    if (window.__YUANBO_QA__?.snapshot === this.qaSnapshot) {
+      delete window.__YUANBO_QA__;
+    }
   }
 
   private async loadBoTextures(): Promise<void> {
@@ -296,7 +406,10 @@ class YuanboPixiGame {
   };
 
   private update(deltaMS: number): void {
-    if (this.state.scene !== 'map' || this.overlay) return;
+    if (this.state.scene !== 'map' || this.overlay) {
+      this.moving = false;
+      return;
+    }
     const vector = this.inputVector();
     if (Math.abs(vector.x) > Math.abs(vector.y)) {
       if (vector.x < -0.05) this.playerDir = 'left';
@@ -306,6 +419,7 @@ class YuanboPixiGame {
       if (vector.y > 0.05) this.playerDir = 'down';
     }
     const moving = Math.hypot(vector.x, vector.y) > 0.05;
+    this.moving = moving;
     const point = this.state.player[this.state.mapId];
     if (moving) {
       const dt = Math.min(deltaMS, 40) / 1000;
@@ -356,6 +470,8 @@ class YuanboPixiGame {
     this.player = undefined;
     this.playerShadow = undefined;
     this.playerLabel = undefined;
+    this.renderedHotspots = 0;
+    this.renderedNpcs = 0;
     this.app.stage.hitArea = new Rectangle(0, 0, this.w(), this.h());
     this.drawBackground();
     if (this.state.scene === 'battle' && this.battle) {
@@ -440,6 +556,7 @@ class YuanboPixiGame {
       asset.x = spot.x;
       asset.y = spot.y;
       this.mapContent?.addChild(asset);
+      this.renderedHotspots += 1;
       if (spot.kind !== 'portal') {
         this.mapContent?.addChild(centerLabel(spot.label, spot.x + spot.w / 2, spot.y - 18, 12, CREAM, 142));
       }
@@ -458,32 +575,33 @@ class YuanboPixiGame {
     const c = new Container();
     c.x = npc.x;
     c.y = npc.y;
+    c.addChild(new Graphics().ellipse(0, 3, 24, 7).fill({ color: 0x000000, alpha: 0.2 }));
     const npcTexture = this.npcTextures.get(quest.id === 'boss' ? 'boss' : quest.id);
     if (npcTexture) {
       const sprite = new Sprite(npcTexture);
-      sprite.anchor.set(0.5, 0.77);
-      sprite.scale.set(0.48);
+      sprite.anchor.set(0.5, NPC_FOOT_ANCHOR_Y);
+      sprite.scale.set(NPC_MAP_SCALE);
       c.addChild(sprite);
     } else {
       c.addChild(drawCustomerSprite(npc, 1));
     }
-    c.addChild(centerLabel(quest.boss ? 'BOSS' : `第${quest.chapter}幕`, 0, -72, 10, CREAM, 78, quest.boss ? 0x8e334d : BLUE));
+    c.addChild(centerLabel(quest.boss ? 'BOSS' : `第${quest.chapter}幕`, 0, -88, 10, CREAM, 78, quest.boss ? 0x8e334d : BLUE));
     c.addChild(centerLabel(npc.name, 0, 45, 11, 0x18302f, 90, 0xfff7df));
     this.mapContent?.addChild(c);
+    this.renderedNpcs += 1;
   }
 
   private drawPlayer(layout: ReturnType<YuanboPixiGame['mapLayout']>): void {
     const point = this.state.player[this.state.mapId];
-    const scale = 0.5;
-    this.playerShadow = new Graphics().ellipse(0, 40, 35, 11).fill({ color: 0x000000, alpha: 0.22 });
-    this.playerShadow.x = point.x + 3;
+    this.playerShadow = new Graphics().ellipse(0, 3, 27, 7).fill({ color: 0x000000, alpha: 0.24 });
+    this.playerShadow.x = point.x;
     this.playerShadow.y = point.y;
     this.mapContent?.addChild(this.playerShadow);
     this.player = new Sprite(this.walkTextures[this.playerDir][this.playerFrame] || Texture.EMPTY);
-    this.player.anchor.set(0.5, 0.74);
+    this.player.anchor.set(0.5, PLAYER_FOOT_ANCHOR_Y);
     this.player.x = point.x;
     this.player.y = point.y;
-    this.player.scale.set(scale);
+    this.player.scale.set(PLAYER_MAP_SCALE);
     this.mapContent?.addChild(this.player);
     this.playerLabel = centerLabel('博哥', point.x, point.y - 88, 12, CREAM, 64, BLUE);
     this.mapContent?.addChild(this.playerLabel);
@@ -799,8 +917,218 @@ class YuanboPixiGame {
     });
   }
 
+  private installQaApi(): void {
+    if (!this.qaEnabled) return;
+    window.__YUANBO_QA__ = {
+      snapshot: this.qaSnapshot,
+      reset: () => {
+        document.querySelector('.yrpg-save-overlay')?.remove();
+        this.closeOverlay();
+        this.state = defaultState();
+        this.battle = undefined;
+        this.playerDir = 'down';
+        this.playerFrame = 0;
+        this.frameClock = 0;
+        this.moving = false;
+        this.saveNow();
+        this.draw();
+        return this.qaSnapshot();
+      },
+      setState: (state) => {
+        document.querySelector('.yrpg-save-overlay')?.remove();
+        this.closeOverlay();
+        this.state = normalizeState(state);
+        this.battle = this.state.battle || undefined;
+        this.playerFrame = 0;
+        this.frameClock = 0;
+        this.moving = false;
+        this.saveNow();
+        this.draw();
+        return this.qaSnapshot();
+      },
+      moveTo: (mapId, x, y) => {
+        document.querySelector('.yrpg-save-overlay')?.remove();
+        this.closeOverlay();
+        this.state.scene = 'map';
+        this.state.battle = null;
+        this.battle = undefined;
+        this.state.mapId = mapId === 'site' ? 'site' : 'office';
+        this.state.player[this.state.mapId] = {
+          x: clamp(Math.floor(Number(x) || 0), 58, WORLD_W - 58),
+          y: clamp(Math.floor(Number(y) || 0), 128, WORLD_H - 58),
+        };
+        this.saveNow();
+        this.draw();
+        return this.qaSnapshot();
+      },
+      interact: () => {
+        this.interact();
+        return this.qaSnapshot();
+      },
+      startQuest: (questId) => {
+        document.querySelector('.yrpg-save-overlay')?.remove();
+        this.closeOverlay();
+        const quest = questById(questId);
+        if (!quest) throw new Error(`Unknown quest: ${questId}`);
+        this.state.scene = 'battle';
+        this.state.mapId = quest.mapId;
+        this.battle = startBattle(this.state, quest.id);
+        this.state.battle = this.battle;
+        this.skillPage = 0;
+        this.saveNow();
+        this.draw();
+        return this.qaSnapshot();
+      },
+      useSkill: (skillId) => {
+        if (!this.battle) throw new Error('No active battle.');
+        applySkill(this.state, this.battle, skillId);
+        this.saveNow();
+        this.draw();
+        return this.qaSnapshot();
+      },
+      useRecommendedSkill: () => {
+        if (!this.battle) throw new Error('No active battle.');
+        const quest = questById(this.battle.questId);
+        if (!quest) throw new Error(`Unknown quest: ${this.battle.questId}`);
+        const usable = usableSkills(this.state, this.battle);
+        const skill = recommendedSkillIds(this.state, quest, this.battle)
+          .map((id) => usable.find((item) => item.id === id))
+          .find(Boolean);
+        if (skill) {
+          applySkill(this.state, this.battle, skill.id);
+        } else {
+          stabilize(this.state, this.battle);
+        }
+        this.saveNow();
+        this.draw();
+        return this.qaSnapshot();
+      },
+      stabilize: () => {
+        if (!this.battle) throw new Error('No active battle.');
+        stabilize(this.state, this.battle);
+        this.saveNow();
+        this.draw();
+        return this.qaSnapshot();
+      },
+      finishBattle: () => {
+        this.finishBattle();
+        return this.qaSnapshot();
+      },
+      closeOverlay: () => {
+        document.querySelector('.yrpg-save-overlay')?.remove();
+        this.closeOverlay();
+        return this.qaSnapshot();
+      },
+      showSaveMenu: () => {
+        this.showSaveMenu();
+        return this.qaSnapshot();
+      },
+    };
+  }
+
+  private qaSnapshot = (): YuanboQaSnapshot => {
+    const layout = this.mapLayout();
+    const point = this.state.player[this.state.mapId];
+    const footScreen = this.toScreen(layout, point.x, point.y);
+    const shadowCenter = this.toScreen(layout, point.x, point.y + 3);
+    const playerWidth = PLAYER_WALK_FRAME_W * PLAYER_MAP_SCALE;
+    const playerHeight = PLAYER_WALK_FRAME_H * PLAYER_MAP_SCALE;
+    const visibleNpcs = NPCS.filter((npc) => npc.mapId === this.state.mapId && this.npcVisible(npc));
+    const target = this.nearTarget();
+    return {
+      scene: this.state.scene,
+      mapId: this.state.mapId,
+      canvas: { width: this.w(), height: this.h(), dpr: window.devicePixelRatio || 1 },
+      camera: { ...layout },
+      player: {
+        world: { x: point.x, y: point.y },
+        screen: this.toScreen(layout, point.x, point.y),
+        direction: this.playerDir,
+        frame: this.playerFrame,
+        moving: this.moving,
+        spriteBounds: this.worldRectToScreen(layout, point.x - playerWidth / 2, point.y - playerHeight * PLAYER_FOOT_ANCHOR_Y, playerWidth, playerHeight),
+        footScreen,
+        shadowBounds: this.worldRectToScreen(layout, point.x - 27, point.y - 4, 54, 14),
+        shadowCenter,
+        footToShadowY: footScreen.y - shadowCenter.y,
+      },
+      npcs: visibleNpcs.map((npc) => {
+        const npcWidth = PLAYER_PORTRAIT_FRAME_W * NPC_MAP_SCALE;
+        const npcHeight = PLAYER_PORTRAIT_FRAME_H * NPC_MAP_SCALE;
+        const npcFoot = this.toScreen(layout, npc.x, npc.y);
+        const npcShadow = this.toScreen(layout, npc.x, npc.y + 3);
+        return {
+          id: npc.id,
+          name: npc.name,
+          world: { x: npc.x, y: npc.y },
+          screen: this.toScreen(layout, npc.x, npc.y),
+          spriteBounds: this.worldRectToScreen(layout, npc.x - npcWidth / 2, npc.y - npcHeight * NPC_FOOT_ANCHOR_Y, npcWidth, npcHeight),
+          footScreen: npcFoot,
+          shadowCenter: npcShadow,
+          footToShadowY: npcFoot.y - npcShadow.y,
+        };
+      }),
+      overlay: {
+        visible: Boolean(this.overlay && !this.overlay.destroyed),
+        title: this.overlayTitle,
+        ageMs: this.overlay ? Math.max(0, performance.now() - this.modalOpenedAt) : 0,
+      },
+      battle: this.battle
+        ? {
+            questId: this.battle.questId,
+            round: this.battle.round,
+            outcome: this.battle.outcome,
+            lastSkill: this.battle.lastSkill,
+          }
+        : null,
+      nearest: target ? { id: target.id, action: target.action } : null,
+      counts: {
+        expectedHotspots: HOTSPOTS.filter((spot) => spot.mapId === this.state.mapId).length,
+        renderedHotspots: this.renderedHotspots,
+        expectedNpcs: visibleNpcs.length,
+        renderedNpcs: this.renderedNpcs,
+      },
+      stateSummary: {
+        day: this.state.day,
+        actionPoints: this.state.actionPoints,
+        resources: { ...this.state.resources },
+        completed: [...this.state.completed],
+        failed: [...this.state.failed],
+        issues: this.state.issues.map((issue) => ({
+          id: issue.id,
+          kind: issue.kind,
+          label: issue.label,
+          severity: issue.severity,
+        })),
+        ending: this.state.ending,
+      },
+      assets: {
+        officeMap: this.urls.officeMap,
+        siteMap: this.urls.siteMap,
+      },
+      saveOverlayVisible: Boolean(document.querySelector('.yrpg-save-overlay')),
+    };
+  };
+
+  private worldRectToScreen(
+    layout: ReturnType<YuanboPixiGame['mapLayout']>,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+  ): QaRect {
+    const topLeft = this.toScreen(layout, x, y);
+    return {
+      x: topLeft.x,
+      y: topLeft.y,
+      width: width * layout.scale,
+      height: height * layout.scale,
+    };
+  }
+
   private showPanel(title: string, body: string, actions: Array<{ label: string; onClick: () => void; disabled?: boolean }>): void {
     this.closeOverlay();
+    this.overlayTitle = title;
     const mobile = this.mobile();
     const w = Math.min(this.w() - 24, mobile ? 370 : 820);
     const h = Math.min(this.h() - 120, mobile ? 570 : 430);
@@ -845,6 +1173,7 @@ class YuanboPixiGame {
   private closeOverlay(): void {
     this.overlay?.destroy({ children: true });
     this.overlay = undefined;
+    this.overlayTitle = '';
     this.touch.removeAttribute('hidden');
   }
 
@@ -975,7 +1304,7 @@ class YuanboPixiGame {
       this.player.y = point.y;
     }
     if (this.playerShadow) {
-      this.playerShadow.x = point.x + 3;
+      this.playerShadow.x = point.x;
       this.playerShadow.y = point.y;
     }
     if (this.playerLabel) {
