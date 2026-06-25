@@ -1,0 +1,328 @@
+import type { Hotspot, Npc, Quest, SaveState, Skill, TrainingKey } from './types';
+
+export const WORLD_W = 960;
+export const WORLD_H = 720;
+export const PLAYER_WALK_FRAME_W = 128;
+export const PLAYER_WALK_FRAME_H = 160;
+export const PLAYER_PORTRAIT_FRAME_W = 128;
+export const PLAYER_PORTRAIT_FRAME_H = 160;
+export const BOSS_UNLOCK_COUNT = 4;
+
+export const TRAINING_LABELS: Record<TrainingKey, { name: string; line: string }> = {
+  pricing: {
+    name: '报价',
+    line: '把“顺手看看”拆成基础、加急、旗舰三档，先让钱有名字。',
+  },
+  delivery: {
+    name: '交付',
+    line: '把“今天上线”拆成 POC、灰度、验收，客户再急也得过表。',
+  },
+  sla: {
+    name: '边界',
+    line: '把 SLA、变更和延期写清楚，不让群聊替合同开庭。',
+  },
+  review: {
+    name: '复盘',
+    line: '把失败留下的锅拆小，明天不重复挨同一种打。',
+  },
+  shadow: {
+    name: '影流',
+    line: 'A 稳、B 快、C 旗舰，三套方案都能收钱。',
+  },
+};
+
+export const HOTSPOTS: Hotspot[] = [
+  { id: 'board', mapId: 'office', label: '任务板', kind: 'board', x: 118, y: 92, w: 144, h: 72 },
+  { id: 'training', mapId: 'office', label: '训练台', kind: 'training', x: 724, y: 108, w: 150, h: 76 },
+  { id: 'prep', mapId: 'office', label: '售前准备桌', kind: 'prep', x: 382, y: 112, w: 196, h: 90 },
+  { id: 'save', mapId: 'office', label: '存档终端', kind: 'save', x: 74, y: 486, w: 150, h: 80 },
+  { id: 'rest', mapId: 'office', label: '收工复盘', kind: 'rest', x: 744, y: 500, w: 154, h: 78 },
+  { id: 'portal-site', mapId: 'office', label: '去客户现场', kind: 'portal', x: 842, y: 300, w: 76, h: 126 },
+  { id: 'portal-office', mapId: 'site', label: '回办公室', kind: 'portal', x: 42, y: 310, w: 76, h: 126 },
+  { id: 'site-board', mapId: 'site', label: '验收议程', kind: 'board', x: 390, y: 82, w: 186, h: 72 },
+  { id: 'site-prep', mapId: 'site', label: '会议彩排', kind: 'prep', x: 640, y: 112, w: 210, h: 90 },
+  { id: 'site-save', mapId: 'site', label: '会议存档', kind: 'save', x: 770, y: 500, w: 142, h: 78 },
+];
+
+export const NPCS: Npc[] = [
+  { id: 'npc-gpu', questId: 'gpu', mapId: 'office', name: '财务姐', role: 'GPU 账单', x: 318, y: 336, color: 0x2f6fb8 },
+  { id: 'npc-agent', questId: 'agent', mapId: 'office', name: '老板姐', role: 'AI Agent', x: 512, y: 366, color: 0x2c9a72 },
+  { id: 'npc-sla', questId: 'sla', mapId: 'office', name: '体验官', role: '两秒延迟', x: 690, y: 324, color: 0xb66a45 },
+  { id: 'npc-compliance', questId: 'compliance', mapId: 'site', name: '合规姐', role: '私有化', x: 270, y: 314, color: 0x6870b5 },
+  { id: 'npc-cost', questId: 'cost', mapId: 'site', name: '运营姐', role: '日报免费', x: 466, y: 386, color: 0x2d8a6f },
+  { id: 'npc-shadow', questId: 'shadow', mapId: 'site', name: '采购姐', role: '三方案', x: 662, y: 316, color: 0x9a5fb5 },
+  { id: 'npc-boss', questId: 'boss', mapId: 'site', name: '验收组', role: 'Boss', x: 486, y: 210, color: 0xa13f56 },
+];
+
+export const SKILLS: Skill[] = [
+  {
+    id: 'anchor',
+    name: '报价锚定',
+    category: 'business',
+    training: 'pricing',
+    intent: '先说清基础包和加急包，预算不能靠情绪喊。',
+    cost: { energy: 8, patience: 4 },
+    cooldown: 1,
+    effect: { budget: 18, anger: 4 },
+    unlock: () => true,
+  },
+  {
+    id: 'report',
+    name: '成本报表',
+    category: 'business',
+    training: 'pricing',
+    intent: '把钱花在哪讲成人话，客户先别截图开喷。',
+    cost: { energy: 7, patience: 5 },
+    cooldown: 1,
+    effect: { trust: 12, budget: 10, anger: -7 },
+    unlock: () => true,
+  },
+  {
+    id: 'poc',
+    name: '先做 POC',
+    category: 'delivery',
+    training: 'delivery',
+    intent: '不把演示吹成全量上线，先用小闭环换信任。',
+    cost: { energy: 10, patience: 5 },
+    cooldown: 1,
+    effect: { trust: 20, scope: -8 },
+    unlock: () => true,
+  },
+  {
+    id: 'milestone',
+    name: '验收清单',
+    category: 'delivery',
+    training: 'delivery',
+    intent: '满意不是感觉，写进清单才算能结案。',
+    cost: { energy: 9, patience: 7 },
+    cooldown: 1,
+    effect: { trust: 12, scope: -16 },
+    unlock: (state) => state.training.delivery >= 1 || state.completed.length >= 1,
+  },
+  {
+    id: 'contract',
+    name: '合同边界',
+    category: 'boundary',
+    training: 'sla',
+    intent: '能做、不能做、加钱做，三列落表。',
+    cost: { patience: 9, boundary: 5 },
+    cooldown: 1,
+    effect: { scope: -22, anger: -6, trust: 6 },
+    unlock: () => true,
+  },
+  {
+    id: 'fallback',
+    name: '降级预案',
+    category: 'boundary',
+    training: 'sla',
+    intent: '先保核心链路，别让两秒延迟变群聊开庭。',
+    cost: { energy: 7, boundary: 4 },
+    cooldown: 1,
+    effect: { anger: -18, scope: -8 },
+    self: { pressure: -4 },
+    unlock: (state) => state.training.sla >= 1 || state.completed.length >= 1,
+  },
+  {
+    id: 'review',
+    name: '关门复盘',
+    category: 'delivery',
+    training: 'review',
+    intent: '把锅写成下一步，别让客户觉得博哥只会陪聊。',
+    cost: { patience: 6 },
+    cooldown: 2,
+    effect: { trust: 8, anger: -10 },
+    self: { energy: 5, boundary: 4 },
+    unlock: (state) => state.training.review >= 1 || state.failed.length > 0,
+  },
+  {
+    id: 'shadow',
+    name: '影流三方案',
+    category: 'shadow',
+    training: 'shadow',
+    intent: 'A 稳、B 快、C 旗舰，选择权给客户，收费权留给博哥。',
+    cost: { energy: 12, patience: 8 },
+    cooldown: 2,
+    effect: { trust: 18, budget: 8, scope: -12 },
+    self: { pressure: -5 },
+    unlock: (state) => state.training.shadow >= 1 || state.completed.length >= 3,
+  },
+];
+
+export const QUESTS: Quest[] = [
+  {
+    id: 'gpu',
+    title: 'GPU 账单爆炸',
+    client: '财务姐',
+    mapId: 'office',
+    npcId: 'npc-gpu',
+    chapter: 1,
+    route: 'business',
+    cost: 1,
+    reward: 260,
+    xp: 50,
+    recommended: ['report', 'anchor', 'contract'],
+    risk: '预算掉太快，客户会把截图当证据。',
+    brief: '财务姐把 GPU 账单拍桌上：这咋收钱啊？博哥要把“免费解释账单”改成“成本治理服务”。',
+    objective: '预算保持 45 以上、信任到 60，或 6 回合内拿到部分验收。',
+    win: '账单被拆成训练、推理和空转三列，客户终于知道钱花在哪。',
+    partial: '客户愿意先付一次成本梳理费，但月报套餐还要明天谈。',
+    fail: '截图进群，预算质疑变成遗留问题。',
+    issue: { label: '预算截图追杀', severity: 8 },
+    initial: { anger: 28, budget: 62, scope: 34, trust: 36 },
+    unlock: () => true,
+  },
+  {
+    id: 'agent',
+    title: 'AI Agent 今天上线',
+    client: '老板姐',
+    mapId: 'office',
+    npcId: 'npc-agent',
+    chapter: 1,
+    route: 'delivery',
+    cost: 1,
+    reward: 280,
+    xp: 54,
+    recommended: ['poc', 'milestone', 'contract'],
+    risk: '需求会从 Agent 长到 CRM、客服和日报。',
+    brief: '老板姐说 Agent 今天必须上线，还要顺手接三个系统。博哥要把“今天上线”拆成 POC、灰度和验收。',
+    objective: '需求蔓延压到 78 以下，并把信任拉到 62。',
+    win: 'POC、灰度、验收被拆清楚，客户终于知道今天不是许愿池。',
+    partial: 'POC 先过，客户还惦记全量上线。',
+    fail: '顺手变全量，交付质疑留下来了。',
+    issue: { label: 'POC 变全量', severity: 8 },
+    initial: { anger: 24, budget: 58, scope: 48, trust: 34 },
+    unlock: () => true,
+  },
+  {
+    id: 'sla',
+    title: '两秒延迟也算事故',
+    client: '体验官',
+    mapId: 'office',
+    npcId: 'npc-sla',
+    chapter: 1,
+    route: 'boundary',
+    cost: 1,
+    reward: 250,
+    xp: 52,
+    recommended: ['contract', 'fallback', 'report'],
+    risk: '怒气高，别一上来硬报价。',
+    brief: '体验官把两秒延迟截图置顶，说不行姐再让你补一次说明。博哥要把说明收回 SLA 边界。',
+    objective: '怒气压到 86 以下，边界不要被打穿。',
+    win: 'SLA 表贴出来，群聊从开庭变排期。',
+    partial: '客户接受先降级，但要一份复盘。',
+    fail: '群聊替合同开庭，SLA 追责变成遗留问题。',
+    issue: { label: 'SLA 群聊开庭', severity: 9 },
+    initial: { anger: 38, budget: 58, scope: 42, trust: 36 },
+    unlock: () => true,
+  },
+  {
+    id: 'compliance',
+    title: '私有化合规全都要',
+    client: '合规姐',
+    mapId: 'site',
+    npcId: 'npc-compliance',
+    chapter: 2,
+    route: 'boundary',
+    cost: 1,
+    reward: 360,
+    xp: 70,
+    recommended: ['contract', 'milestone', 'fallback'],
+    risk: '材料会越补越多，需求蔓延是主风险。',
+    brief: '合规姐说完全离线、审计材料、权限表都要。博哥要把“全都要”拆成基础包和加钱包。',
+    objective: '需求蔓延压到 82 以下，并保住预算。',
+    win: '材料被分包，客户知道“全都要”不是免费。',
+    partial: '基础材料先签，审计扩展留到下一阶段。',
+    fail: '材料自己下崽，合规补材料成为遗留。',
+    issue: { label: '合规补材料', severity: 11 },
+    initial: { anger: 42, budget: 48, scope: 70, trust: 28 },
+    unlock: (state) => state.completed.length >= 2 || state.issues.length > 0,
+  },
+  {
+    id: 'cost',
+    title: '成本日报也要免费',
+    client: '运营姐',
+    mapId: 'site',
+    npcId: 'npc-cost',
+    chapter: 2,
+    route: 'business',
+    cost: 1,
+    reward: 340,
+    xp: 68,
+    recommended: ['anchor', 'report', 'review'],
+    risk: '预算低，客户会把日报当默认功能。',
+    brief: '运营姐要日报、预警、阈值，还问这不是默认的吗。博哥要把“默认”改成套餐。',
+    objective: '预算回到 50 以上，信任到 60。',
+    win: '日报、预警、阈值被套餐化，免费续杯被关掉。',
+    partial: '客户先买日报，预警和阈值还在砍价。',
+    fail: '报价没锚住，免费期待成为遗留。',
+    issue: { label: '免费期待', severity: 10 },
+    initial: { anger: 40, budget: 42, scope: 62, trust: 30 },
+    unlock: (state) => state.completed.includes('gpu') || state.completed.length >= 2,
+  },
+  {
+    id: 'shadow',
+    title: '影流三方案采购会',
+    client: '采购姐',
+    mapId: 'site',
+    npcId: 'npc-shadow',
+    chapter: 2,
+    route: 'shadow',
+    cost: 1,
+    reward: 380,
+    xp: 76,
+    recommended: ['shadow', 'anchor', 'contract'],
+    risk: '三方案能拉信任，也可能让客户继续问第四套。',
+    brief: '采购姐嫌一个报价太硬，想再看一版。博哥启动影流：A 稳、B 快、C 旗舰，但每套都要收钱。',
+    objective: '信任到 68，并把需求蔓延压住。',
+    win: '客户获得选择权，博哥保住收费权。',
+    partial: '客户选了 B 案，但还想把 A 的稳定性也塞进来。',
+    fail: '三案没收住，客户开始问 D。',
+    issue: { label: '方案内耗', severity: 11 },
+    initial: { anger: 34, budget: 50, scope: 72, trust: 34 },
+    unlock: (state) => state.completed.length >= 3 || state.training.shadow >= 1,
+  },
+  {
+    id: 'boss',
+    title: '云上联合验收会',
+    client: '验收组',
+    mapId: 'site',
+    npcId: 'npc-boss',
+    chapter: 3,
+    route: 'delivery',
+    cost: 2,
+    reward: 620,
+    xp: 120,
+    recommended: ['milestone', 'contract', 'shadow', 'review'],
+    risk: 'Boss 会把前面遗留问题都翻出来。',
+    brief: '所有“再补一次”“顺手一下”“这咋收钱”被合成一场联合验收。博哥要把报价表、验收表和 SLA 表合成一张路线图。',
+    objective: '信任到 74、预算到 52，同时怒气和需求不能爆表。',
+    win: '验收组盖章，博哥把免费售后改造成了可经营产品。',
+    partial: '验收组给试运行，没盖最终章。',
+    fail: '旧账被翻穿，Boss 要求明天重开会。',
+    issue: { label: '联合验收旧账', severity: 14 },
+    initial: { anger: 52, budget: 42, scope: 70, trust: 36 },
+    unlock: (state) => state.completed.filter((id) => id !== 'boss').length >= BOSS_UNLOCK_COUNT,
+    boss: true,
+  },
+];
+
+export function questById(id: string): Quest | undefined {
+  return QUESTS.find((quest) => quest.id === id);
+}
+
+export function skillById(id: string): Skill | undefined {
+  return SKILLS.find((skill) => skill.id === id);
+}
+
+export function openQuests(state: SaveState): Quest[] {
+  return QUESTS.filter(
+    (quest) =>
+      quest.unlock(state) &&
+      !state.completed.includes(quest.id) &&
+      (!quest.boss || state.completed.filter((id) => id !== 'boss').length >= BOSS_UNLOCK_COUNT),
+  );
+}
+
+export function unlockedSkills(state: SaveState): Skill[] {
+  return SKILLS.filter((skill) => skill.unlock(state));
+}

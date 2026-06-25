@@ -58,6 +58,8 @@ Default to maximum autonomy for normal engineering work:
 - Default verification: `pnpm run verify`
 - Agent harness check: `pnpm agent:lint`
 - Yuanbo game probe: `pnpm probe:yuanbo`
+- Yuanbo Pixi Alpha probe: `pnpm probe:yuanbo-pixi`
+- Yuanbo Pixi browser probe: `pnpm probe:yuanbo-pixi:browser`
 
 `pnpm test` may enter package-local watch modes. Prefer `pnpm run test:ci` for automated checks.
 

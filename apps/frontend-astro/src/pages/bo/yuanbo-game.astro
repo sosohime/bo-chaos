@@ -23,7 +23,7 @@ const boPortraitsSrc = import.meta.env.DEV
 
 <Layout
   title="袁博の极限售后"
-  description="袁博の极限售后，一个 Phaser 驱动的像素经营网页 RPG。"
+  description="袁博の极限售后，一个 PixiJS v8 驱动的经营网页 RPG。"
 >
   <main class="yrpg-page">
     <section
@@ -43,11 +43,11 @@ const boPortraitsSrc = import.meta.env.DEV
 </Layout>
 
 <script>
-  import { startYuanboGame } from '../../game/yuanbo/main';
+  import { startYuanboPixiGame } from '../../game/yuanbo-pixi/main';
 
   const root = document.querySelector('[data-yuanbo-rpg]');
   if (root instanceof HTMLElement) {
-    const destroy = startYuanboGame(root);
+    const destroy = startYuanboPixiGame(root);
     window.addEventListener('beforeunload', destroy, { once: true });
   }
 </script>
@@ -152,12 +152,11 @@ const boPortraitsSrc = import.meta.env.DEV
 
   .yrpg-stage :global(canvas) {
     display: block;
-    width: min(100vw, 960px) !important;
-    height: min(100svh, 540px) !important;
+    width: 100vw !important;
+    height: 100svh !important;
     max-width: 100vw;
     max-height: 100svh;
     image-rendering: auto;
-    box-shadow: 0 24px 80px rgb(0 0 0 / 34%);
   }
 
   @media (max-width: 720px) {

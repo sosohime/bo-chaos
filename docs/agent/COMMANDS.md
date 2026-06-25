@@ -23,6 +23,8 @@ Use exact commands from this file when validating changes.
 | Start mini app                  | `pnpm start:weapp`                  |
 | Agent harness lint              | `pnpm agent:lint`                   |
 | Yuanbo game probe               | `pnpm probe:yuanbo`                 |
+| Yuanbo Pixi Alpha probe         | `pnpm probe:yuanbo-pixi`            |
+| Yuanbo Pixi browser probe       | `pnpm probe:yuanbo-pixi:browser`    |
 | Reckful visual acceptance       | `pnpm visual:reckful`               |
 | Update Lighthouse activity data | `pnpm update:lighthouse-news`       |
 
