@@ -1,6 +1,6 @@
 {
   "sourceUrl": "https://cloud.tencent.com/product/lighthouse?Is=sdk-topnav",
-  "updatedAt": "2026-05-03T16:18:29.535Z",
+  "updatedAt": "2026-06-25T11:55:41.489Z",
   "items": [
     {
       "title": "Lighthouse独家支持Hermes Agent一键部署",
@@ -8,14 +8,19 @@
       "url": "https://cloud.tencent.com/developer/article/2653159"
     },
     {
-      "title": "云端一键部署 OpenClaw 首发支持OpenClaw（Clawdbot）接入国内四大主流 IM，一键极速部署",
-      "summary": "OpenClaw 首发支持OpenClaw（Clawdbot）接入国内四大主流 IM，一键极速部署",
-      "url": "https://cloud.tencent.com/developer/article/2624973"
-    },
-    {
       "title": "产品体验 OrcaTerm 智能终端客户端版公测",
       "summary": "OrcaTerm 智能终端客户端版公测",
       "url": "https://orcaterm.com/"
+    },
+    {
+      "title": "云端一键部署 OpenClaw 秒级部署,可视化面板配置，快速接入微信、QQ、企微、飞书等IM。",
+      "summary": "OpenClaw 秒级部署,可视化面板配置，快速接入微信、QQ、企微、飞书等IM。",
+      "url": "https://cloud.tencent.com/act/pro/openclaw"
+    },
+    {
+      "title": "Hermes云端部署指南 自主学习、持久记忆、自主进化Agent。云端秒级部署，只需3步。",
+      "summary": "",
+      "url": "https://cloud.tencent.com/act/pro/hermesagent"
     }
   ]
 }
