@@ -429,6 +429,7 @@ class WorldScene extends Phaser.Scene {
   private modal?: Phaser.GameObjects.Container;
   private modalHitZones: Phaser.GameObjects.GameObject[] = [];
   private modalDefaultAction?: () => void;
+  private modalOpenedAt = 0;
   private hud?: Phaser.GameObjects.Container;
   private hint?: Phaser.GameObjects.Text;
   private virtual = { x: 0, y: 0 };
@@ -1070,8 +1071,8 @@ class WorldScene extends Phaser.Scene {
       .sort((a, b) => a.distance - b.distance)[0];
     if (nearestNpc) return nearestNpc;
     candidates.sort((a, b) => {
-      const priorityA = a.npc ? 0 : a.hotspot?.type === 'portal' ? 2 : 1;
-      const priorityB = b.npc ? 0 : b.hotspot?.type === 'portal' ? 2 : 1;
+      const priorityA = interactionPriority(a);
+      const priorityB = interactionPriority(b);
       return a.distance + priorityA * 18 - (b.distance + priorityB * 18);
     });
     return (
@@ -2099,6 +2100,7 @@ class WorldScene extends Phaser.Scene {
     const left = mobile ? 18 : 62;
     const top = panelY - panelH / 2;
     this.modal = this.add.container(0, 0).setDepth(200).setScrollFactor(0);
+    this.modalOpenedAt = this.time.now;
     const shade = this.add.rectangle(vw / 2, vh / 2, vw, vh, 0x000000, 0.34);
     const box = this.add
       .rectangle(vw / 2, panelY, panelW, panelH, panelColor, 0.97)
@@ -2154,8 +2156,6 @@ class WorldScene extends Phaser.Scene {
       .setLineSpacing(4);
     this.modal.add([shade, box, header, copy]);
     options.forEach((option, index) => {
-      const boardHeaderAction =
-        mobile && kind === 'board' && options.length === 1;
       const columns = compactMobileOptions ? 2 : 1;
       const row = compactMobileOptions ? Math.floor(index / 2) : index;
       const col = compactMobileOptions ? index % 2 : 0;
@@ -2163,33 +2163,19 @@ class WorldScene extends Phaser.Scene {
       const mobileGap = compactMobileOptions ? 10 : 0;
       const mobileRowGap = compactMobileOptions ? 10 : 8;
       const mobileRows = Math.ceil(options.length / columns);
-      const bx = boardHeaderAction
-        ? vw - 116
-        : mobile
-          ? left + col * ((panelW - 36 + mobileGap) / columns)
-          : 708;
-      const by = boardHeaderAction
-        ? top + 14
-        : mobile
-          ? top +
-            panelH -
-            48 -
-            (mobileRows - 1 - row) * (mobileButtonH + mobileRowGap)
-          : richPanel
-            ? top + 58 + index * 32
-            : GAME_H - 176 + index * 38;
-      const bw = boardHeaderAction
-        ? 98
-        : mobile
-          ? (panelW - 36 - mobileGap) / columns
-          : 196;
-      const buttonH = boardHeaderAction
-        ? 34
-        : mobile
-          ? mobileButtonH
-          : richPanel
-            ? 29
-            : 31;
+      const bx = mobile
+        ? left + col * ((panelW - 36 + mobileGap) / columns)
+        : 708;
+      const by = mobile
+        ? top +
+          panelH -
+          48 -
+          (mobileRows - 1 - row) * (mobileButtonH + mobileRowGap)
+        : richPanel
+          ? top + 58 + index * 32
+          : GAME_H - 176 + index * 38;
+      const bw = mobile ? (panelW - 36 - mobileGap) / columns : 196;
+      const buttonH = mobile ? mobileButtonH : richPanel ? 29 : 31;
       const button = this.makeButton(
         bx,
         by,
@@ -2217,7 +2203,7 @@ class WorldScene extends Phaser.Scene {
           .setScrollFactor(0)
           .setInteractive({ useHandCursor: true })
           .on('pointerdown', () => {
-            if (hitFiring) return;
+            if (hitFiring || !this.canUseModalAction()) return;
             hitFiring = true;
             option.onClick();
             this.time.delayedCall(140, () => {
@@ -2235,16 +2221,21 @@ class WorldScene extends Phaser.Scene {
     this.modal?.destroy(true);
     this.modal = undefined;
     this.modalDefaultAction = undefined;
+    this.modalOpenedAt = 0;
     if (this.scene.isActive('WorldScene'))
       document.querySelector('.yrpg-touch-bridge')?.removeAttribute('hidden');
   }
 
   private confirmModal(): void {
-    if (this.modal && this.modalDefaultAction) {
+    if (this.modal && this.modalDefaultAction && this.canUseModalAction()) {
       this.modalDefaultAction();
       return;
     }
     if (!this.modal) this.interact();
+  }
+
+  private canUseModalAction(): boolean {
+    return !this.modal || this.time.now - this.modalOpenedAt > 180;
   }
 
   private toast(line: string): void {
@@ -4001,6 +3992,14 @@ function distanceToRect(
   const dx = Math.max(rx - x, 0, x - (rx + rw));
   const dy = Math.max(ry - y, 0, y - (ry + rh));
   return Math.hypot(dx, dy);
+}
+
+function interactionPriority(target: InteractionTarget): number {
+  if (target.npc) return 0;
+  if (!target.hotspot) return 9;
+  if (target.hotspot.type === 'field') return 3;
+  if (target.hotspot.type === 'portal') return 2;
+  return 1;
 }
 
 function hotspotActionLabel(spot: MapHotspot): string {
