@@ -1,0 +1,862 @@
+# Task Record: Yuanbo First Day Prologue
+
+- State: active
+- Mode: full
+- Started: 2026-06-26
+- Branch: codex/yuanbo-game-rpg-polish
+- Request: Rebuild Yuanbo game into a 30-minute playable single-day story prologue named First Day: 这姐咋收钱啊.
+
+## Acceptance Boundaries
+
+- Functional: Single-day story chain: wake at Bo desk -> finance bill crisis -> boss launch pressure -> customer asks for another free service -> negotiation with quote/compensate/walk-away choices -> ending.
+- Verification: Astro build, agent lint, game probe, browser visual smoke for desktop/mobile where feasible.
+- Docs Sync: Task record only unless commands/routes change materially.
+- Safety: Touch only frontend Astro game files and Yuanbo probe; preserve unrelated dirty worktree changes.
+- Archive: Archive after verified handoff or completion.
+
+## Actions
+
+- Added a new single-day Phaser entry in `apps/frontend-astro/src/game/yuanbo/prologue.ts`.
+- Switched the Astro game page to the prologue entry instead of the old broad RPG prototype.
+- Built the story chain: Bo desk wake-up -> finance bill crisis -> boss launch pressure -> customer free-service demand -> 3-phase negotiation -> branching ending.
+- Added QA runtime `window.__YUANBO_PROLOGUE_QA__` for automated story-flow control.
+- Replaced `scripts/yuanbo-probe.mjs` with a prologue story marker probe.
+- Added `scripts/yuanbo-prologue-browser-probe.mjs` and `probe:yuanbo:browser` for desktop/mobile browser story-flow verification.
+- Fixed battle/ending camera reset after mobile screenshots exposed blank ending output.
+- Tightened mobile ending layout after screenshot review showed text and buttons colliding.
+- Expanded the single day from 6 beats to 9 beats: wake, finance, finance audit, boss, boss rehearsal, customer, customer reversal, battle, ending.
+- Added authored pressure escalation scenes for finance budget ownership, boss launch rehearsal, and customer reversal.
+- Added story progress display in the HUD and QA snapshot so the player sees `序章 x/9`.
+- Strengthened browser probe to require the new middle beats and at least 6 authored decisions before battle.
+- Added speaker profiles and dialog portraits for Bo, finance, boss, customer, and case-file/system moments.
+- Replaced battle customer enlarged map sprite with a dedicated customer portrait.
+- Added CJK manual wrapping in dialog title/body after screenshot review showed long Chinese text could clip.
+- Extended browser probe screenshots to capture finance, boss, and customer dialog portrait states before choices are selected.
+- Added multi-card evidence investigation to the ledger, whiteboard, and contract hotspots so scene props become selectable case-file ammo instead of single-use decorations.
+- Added a Phaser-rendered scene director layer: per-beat spotlight, event prop, conflict card, and Bo inner-thought line for wake, finance, audit, boss, rehearsal, customer, and reversal beats.
+- Fixed evidence confirmation default flow so automated and human play can collect a card, close the file, and continue naturally.
+- Adjusted QA movement to stand beside NPCs instead of on top of them while staying inside the interaction radius.
+- Fixed mobile scene-card positioning and CJK wrapping after screenshot review showed the customer reversal card could be clipped.
+- Strengthened static and browser probes to require evidence cards plus per-beat scene cue markers.
+- Added a visible after-sales debt system: risky story choices now generate named debts such as budget blame, full-launch promise, overpromise, compensation habit, and relationship coldness.
+- Connected debt to gameplay: active debts appear in the HUD, case-file menu, battle log, and ending review, and they modify battle anger/budget/scope/trust at negotiation start.
+- Added debt cleanup paths where better-scoped choices can remove pricing limbo, full-launch, overpromise, or compensation habit before battle.
+- Added a high-pressure browser route that intentionally makes risky choices and verifies the battle starts harder with multiple named debts.
+- Reduced desktop ending review density after screenshot inspection showed the longer debt/evidence text could overlap the action buttons.
+- Added a `选择结果` pacing card after every major story decision, showing the chosen line, immediate story response, metric deltas, debt deltas, current debt list, and next objective before the next scene renders.
+- Exposed modal titles through the QA snapshot so browser probes can prove the result card exists instead of merely assuming the state changed.
+- Updated browser probe interaction helpers to screenshot and dismiss result cards while keeping the full story and high-pressure debt routes automated.
+- Added `谈判阶段突破` cards between the three negotiation phases so the battle now clearly advances from collecting money, to paid POC, to the final walk-away boundary.
+- Updated browser probe battle flow to require at least two negotiation phase-break cards and capture desktop/mobile phase screenshots.
+- Raised dialog overlay depth after mobile screenshots showed old battle skill buttons could visually bleed through the phase-break modal.
+- Adjusted ending priority so an explicit walk-away route (`customer:walkaway` / `customerReversal:walkaway-line`) can produce `clean-walkaway` when boundary is high and scope is controlled, instead of being swallowed by the paid ending.
+- Added desktop ending-route browser probes for four outcomes: paid, bounded compensation, clean walk-away, and free-burnout failure.
+- Extended the browser battle helper to support routes that end early in failure without requiring phase-break cards.
+- Added route reports to the ending screen: route title, grade, four scoring dimensions, and replay advice based on ending, metrics, debt count, and choices.
+- Compressed the mobile ending body after screenshot review showed the longer route report could collide with action buttons.
+- Added a visible story-rail HUD for every beat: act label, current conflict, stakes, next action, and 9-step progress dots.
+- Added an in-map case-chain path with numbered story nodes, a scene dimmer, and a pulsing `下一镜头` marker so the office reads as a directed story scene rather than scattered props.
+- Removed the immersion-breaking “素材仓库” line and replaced it with the in-world DAY 1 case chain.
+- Added `scripts/yuanbo-objective-audit.mjs` and `probe:yuanbo:objective` to audit single-day story, director layer, management consequences, evidence investigation, negotiation/endings, browser proof, and save migration.
+- Strengthened browser probe to require story cards with act/current conflict/stakes/next target across the story and ending.
+- Filtered the specific benign browser resource-suspend noise `net::ERR_NETWORK_IO_SUSPENDED` while keeping all other console/page errors fatal.
+- Added a single-day time budget: 6 preparation time slots shared by evidence reading and war-room preparation.
+- Added the war-room preparation table with three mutually competing prep actions: pricing rehearsal, POC demo rehearsal, and walk-away script.
+- Connected prep actions into battle start: pricing rehearsal raises budget/trust, POC demo reduces scope and raises trust, walk-away script reduces scope/anger.
+- Changed evidence cards from free collection into time-consuming case work; time exhaustion now blocks further evidence cards and explains the tradeoff.
+- Added time/prep summaries to HUD, case-file menu, battle log, ending report, save state, import/export normalization, and QA snapshots.
+- Fixed long dialog bodies overlapping action buttons by fitting dialog body text into the available space above the choice buttons.
+- Added a browser `tradeoff` route that spends prep/evidence time, exhausts the day budget, and verifies the no-time dialog.
+- Added typed customer intents in negotiation: price challenge, scope creep, and anger/walk-away pressure.
+- Reworked customer AI to choose intent from current risk state instead of only fixed phase order.
+- Added battle skill definitions with counter relationships and live skill previews for expected effect and why it works.
+- Connected battle skill effects to prep/evidence: pricing rehearsal improves quote, POC demo contains compensation scope, walk-away script softens拉倒, and contract evidence strengthens scope control.
+- Added a battle intent panel showing current customer intent, recommended counter skills, and the latest prep/evidence/debt hint.
+- Added skill counter feedback in battle logs, plus QA snapshot fields for typed intent, suggested skills, skill previews, last skill, and feedback.
+- Tightened battle log layout after screenshot review showed desktop log text could run close to the skill row.
+- Strengthened static and browser probes to require customer intent typing and non-empty skill preview effects/reasons for all five skills.
+- Added chapter milestones for the complete first-day arc: opening, act 1 finance, act 2 launch, act 3 customer, final negotiation, and ending review.
+- Connected milestones to story progression, save normalization, QA snapshots, choice-result cards, the case-file menu, and ending reports.
+- Added compact chapter summaries on the ending screen after screenshot review showed full milestone text could overcrowd the result page.
+- Added `scripts/yuanbo-duration-audit.mjs` and `probe:yuanbo:duration` as a content-volume proxy for the 25-35 minute first-play target.
+- Strengthened browser probe milestone assertions so desktop/mobile story flow must carry milestones from opening through final and ending.
+- Fixed ending layout after milestone pass: desktop and mobile ending bodies now use short chapter trails and fitted body text above the action buttons.
+- Ran two focused subagent reviews for player experience and UI/visual QA. Both called out the same root issue: too many always-visible systems made the page feel like a debug tool instead of a directed story game.
+- Rebuilt the map presentation into five staged zones: Bo desk, finance table, boss room, customer reception, and war-room preparation.
+- Changed stage visibility to be progressive: the first screen now focuses on Bo desk, current target, and next step; future zones and path nodes are dimmed instead of fully labeled.
+- Added direct pointer interaction for visible hotspots and current-beat actors so desktop users can click game objects instead of relying only on keyboard proximity.
+- Updated QA interaction helpers and browser probes to follow the new progressive rhythm: desk first, ledger during finance, whiteboard during boss, contract during customer, preparation after the customer turn.
+- Compressed mobile HUD from a large report panel into a smaller target strip, removed mobile keyboard wording, and moved the scene conflict card into a fixed non-scrolling prompt.
+- Hid the long bottom case-chain text on mobile after screenshots showed it was cropped by the narrow viewport.
+- Moved desktop scene cards away from the active character zone so the story prompt no longer sits directly over Bo and the current table.
+- Changed negotiation UI from explicit `建议/克制` wording to customer-talk clues and `话术对路` feedback so the battle reads less like a solved worksheet.
+- Reworked generated finance/boss/customer portraits toward a shared chibi style with round faces, hair, glasses, body and arms; customer no longer appears as a flat square icon.
+- Switched Phaser text styling from monospace to system Chinese sans to reduce the debug-console feeling and improve mobile readability.
+- Added `BattleState.lastImpact` so every negotiation skill can persist a readable round result with skill name, customer response, numeric deltas, counter status, phase-break status, and next intent.
+- Changed the battle log area into a round-result panel after a skill is played. It now shows customer response and visible delta chips such as anger, budget, trust, patience, and boundary changes.
+- Extended save normalization and QA snapshots to preserve and expose `lastImpact`, so refresh during battle does not erase the latest round feedback.
+- Added browser-probe assertions that every played battle skill produces `lastImpact` with title, customer response, and at least two deltas.
+- Added a dedicated debt-pressure screenshot route that plays a non-phase-break skill and captures `/tmp/yuanbo-prologue-qa/debt-battle-impact.png` as visual proof of normal round feedback.
+- Rebuilt the ending page from a report wall into a game-style settlement screen: route badge, grade, score chips, daily timeline card, advice card, and primary actions.
+- Simplified remaining hard-to-read story terms: replaced old case/debt jargon with `资料`, `遗留问题`, `今日故事线`, and `小范围试点` phrasing.
+- Added visible battle action FX: skill-specific beam/arrow, short skill line, customer reaction tag, and actor mood pulse after each negotiation skill.
+- Added actor mood badges on the map so finance/boss/customer scenes signal pressure, launch urgency, and reversal state instead of reading like static props.
+- Changed the browser probe to clear `/tmp/yuanbo-prologue-qa` before every run, preventing stale screenshots from being mistaken for current visual proof.
+- Fixed two frontend type blockers outside the prologue path: removed unsupported Phaser `resolution` config from the old prototype and gave the Astro ESLint config an explicit exported type.
+- Rebuilt `选择结果` into a story-turn card instead of a report wall: each major choice now shows Bo's line, the other side's reaction, metric/debt chips, and a short next-step note.
+- Added authored `DecisionVignette` lines for finance, finance audit, boss, boss rehearsal, customer, customer reversal, and preparation choices.
+- Tightened the result-card mobile layout after screenshot inspection showed the first version could shrink story text too aggressively near the continue button.
+- Replaced generic completed-zone text (`已推进`) with player-choice aftermath tags such as `已报价`, `失败退路`, `补试点`, and `体面拉倒`, so the office map remembers what the player actually chose.
+- Exposed `zoneOutcomes` through the QA snapshot and extended the browser probe to assert the happy path leaves visible map aftermath (`已报价`, `失败退路`, `补试点`).
+- Replaced remaining hard-to-read or tool-like copy with plainer story terms, for example `收费说法`, `失败退路`, `价格没说清`, `小范围试点`, `遗留问题`, and `报价上桌`.
+- Added `scripts/yuanbo-copy-audit.mjs` and `probe:yuanbo:copy` so confusing placeholder terms such as `售后债`, `POC`, `口径`, `预案`, `封顶`, and `素材仓库` cannot re-enter the prologue script unnoticed.
+- Connected the copy audit into the objective audit as a plain-language acceptance group.
+- Checked the current in-app browser tab at `http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1`: it renders a 960x540 canvas inside a 1280x800 viewport with no horizontal page overflow and no captured console errors.
+- Added a game-internal `镜头转场` bridge card between main story beats, covering desk -> finance, finance escalation, boss, rehearsal, customer, reversal, battle, and ending.
+- Exposed bridge cards through QA snapshots (`bridgeCard`) and updated the browser probe to assert and dismiss them, so main story progression cannot silently fall back to raw state jumps.
+- Added per-beat `SCENE_EVENTS` and `drawSceneEventBubbles` so the map carries live-feeling messages such as finance group pressure, boss launch pressure, customer reversal, and Bo's inner response instead of relying only on dialogs.
+- Exposed scene event bubbles through QA snapshots (`sceneEvents`) and updated browser assertions so every story card must carry readable event sources and lines.
+- Adjusted mobile event-bubble placement after screenshot inspection showed the first pass overlapped the `下一镜头` marker; mobile messages now sit lower as a compact feed above the touch controls.
+- Rebuilt key story choices into `ActionForecast` cards with route, gain, and risk text, so the player can distinguish quote, compensation, boundary, walk-away, stable, and risky routes before choosing.
+- Hid the mobile touch bridge whenever a game modal is open and exposed `touchBridgeHidden` in QA snapshots; this fixes the joystick/interact buttons visually covering mobile dialog choice cards.
+- Added a fixed target guide/quest compass that shows the current main target, direction arrow, distance, and whether the player is close enough to interact.
+- Exposed `targetGuide` through QA snapshots and updated browser assertions, so map snapshots must prove the player has an understandable next interaction target.
+- Adjusted mobile target-guide placement after screenshot inspection showed an early version crossed the active actor; it now sits above the event feed and below the main scene.
+- Ran three focused subagent reviews for story RPG feel, UI/visual density, and management-system readability. All three pointed to the same issue: too much route-board/debug labeling and too little first-minute player agency.
+- Removed the floor-level story-route line and numbered path nodes from the map. The office now uses `drawFloorActTrail` to spotlight the current stage instead of presenting a full process diagram.
+- Changed future stage zones to read as muted background silhouettes, while completed zones retain short aftermath tags and the active zone gets the primary visual focus.
+- Compressed the top HUD from a metrics report into a game goal: reach 16:00 while preserving at least two of money, relationship, and boundary. Detailed values stay in the data menu.
+- Rebuilt the first desk interaction into a three-way crisis choice: reply to finance, boss, or customer first. Each option now has route, gain, risk, real metric changes, and possible debt consequences.
+- Changed the choice-result card to `本幕判定` and rewrote its summary line as `终幕影响`, making each story choice feel like a gameplay ruling that changes the final negotiation.
+- Replaced the map marker text `下一镜头` with `主线` so the page reads more like a playable RPG and less like a director/debug overlay.
+- Reworked negotiation header copy from formula conditions into player-readable phase goals, and marked countering skill cards with `克制本回合`.
+- Removed the remaining floating `主线/当前目标` map labels after mobile screenshots showed they still made the scene feel annotated rather than playable.
+- Hid mobile-only stage title overlays and actor speech/name badges inside the map, leaving the top story card and bottom target guide to carry those labels.
+- Reduced always-visible scene event bubbles on mobile to one item, which keeps the active actor and prop readable.
+- Converted battle resource display from six long meter rows into four customer-state bars plus two compact Bo-resource chips, so the negotiation screen reads more like a faceoff than a debug dashboard.
+- Shortened the desktop ending footer from a long key-choice string into a compact replay summary to avoid crowding the action buttons.
+- Added explicit per-beat playable rules to every story card: current conflict, beat goal, win condition, failure cost, and final-negotiation impact.
+- Added those beat rules to the in-game data menu so the player can inspect what the current scene is asking them to do instead of guessing from scattered props.
+- Expanded action forecast cards with a `终幕` line, making each route choice show how quote, compensation, boundary, walk-away, stable, or risky play changes the final negotiation.
+- Exposed route endgame impact through QA snapshots and strengthened browser assertions so future changes cannot silently reduce choices back to plain buttons.
+- Strengthened static probes to require beat rules and route endgame text, keeping story clarity part of acceptance rather than a subjective screenshot note.
+- Reworked the first-minute opening into an in-world desk incident: the opening modal keeps the title but frames `09:17 / 工位亮屏`, then the map shows a single `工位收件箱 · 三条未读` panel with finance, boss, and customer messages.
+- Replaced the earlier overlapping wake-message tags/bubbles with one readable inbox panel, so the player sees the exact three conflicts before choosing who Bo replies to first.
+- Exposed `OPENING_INBOX` through QA snapshots and added browser/static assertions for the three opening messages, making the “from Bo desk into story conflict” requirement verifiable.
+- Rebuilt `本幕判定` into a structured RPG-style result card: Bo line, counterpart reaction, change chips, `现场变化`, `终幕影响`, and a short next step.
+- Exposed structured `outcomeCard` data through QA snapshots and added browser assertions for result title, scene change, final-negotiation impact, next action, and change chips.
+- Shortened result-card consequence copy on mobile to avoid the previous long `终幕影响/下一步` paragraph clipping inside the result panel.
+- Added an explicit one-day timeline to all 9 story beats: `09:17` Bo desk, `09:32/10:42` finance, `11:30/12:18` boss, `14:20/15:05` customer, `16:00` negotiation, and `19:40` ending.
+- Surfaced story time/place in the map HUD, story rail, data menu, battle header, and ending route badge so the prologue reads as one continuous day instead of same-room system panels.
+- Exposed beat `clock` and `place` through `storyCard` QA snapshots and strengthened browser/static probes to require readable HH:mm timing and location for every story beat.
+- Reworked the war-room preparation table into forecast cards instead of plain buttons. Each prep now shows route, gain, risk, and a final-negotiation use case.
+- Added `prepForecast` so pricing rehearsal, small-scope demo rehearsal, and walk-away script explicitly counter budget doubt, scope growth, and unsigned-scope stalemates.
+- Extended the browser probe with a `mobile-tradeoff` route so mobile preparation cards are verified in addition to desktop tradeoff coverage.
+- Reworked evidence/资料 choices into forecast cards as well. Ledger, whiteboard, and contract cards now show route, gain, risk, and `终幕` use, so gathering资料 is a visible management tradeoff rather than another flat prop click.
+- Added `evidenceForecast` coverage to the static probes, objective audit, and browser route assertions; desktop/mobile evidence panels must now prove they contain three readable forecast cards before the probe can continue.
+- Added `StoryPressure` to the final negotiation. Each customer intent now carries a concrete source from the day, such as `GPU 峰值曲线`, `财务账单没钉死`, `老板今天上线承诺`, `小范围试点`, or `拉倒先上桌`.
+- Reworked the battle intent panel from generic risk text into `客户意图 + 今日追问 + 应对`, so the final negotiation visibly references the morning finance crisis, boss launch promise, and customer free-service joke.
+- Changed battle countering to use the current story pressure line rather than only the broad intent type; skill cards and QA now agree on which action answers the current customer追问.
+- Lowered battle FX visual priority so skill effects do not cover the core intent/feedback text in the negotiation UI.
+- Added `EndingEcho` and `endingEchoes` so each ending closes the day with four role reactions: finance, boss, customer, and Bo.
+- Replaced the old ending advice paragraph with a `收工回声` card, making the ending read like the finance/boss/customer story lines have actually resolved instead of only showing a route report.
+- Added browser probe assertions for ending echoes; every automated ending route must now prove finance, boss, customer, and Bo all have readable closing lines.
+- Added a pre-battle `上桌清单` to the battle bridge. Before the final negotiation starts, the player now sees what finance, boss, and customer lines are entering the table, plus how many资料, which prep, and which遗留问题 are being carried in.
+- Exposed the battle dossier through QA snapshots and added browser/static assertions, so the final negotiation cannot silently start without a readable table-setting summary.
+- Rewrote negotiation phase goals from numeric formula copy into player-readable story goals while keeping the internal pass checks numeric.
+- Added structured `PhaseBreakCard` QA data and browser assertions so phase-break modals must explain what changed, what the next stage asks, and must not expose formula-style copy.
+- Reduced mobile opening clutter by hiding the duplicated scene-conflict card when the in-world desk inbox already shows the three unread finance/boss/customer messages.
+- Added click-to-walk map control: clicking empty map space sets a walking target, shows a short landing ring, and keyboard/joystick input cancels the target.
+- Updated desktop/player hints to mention clicking the ground, so the game can be played as a normal web RPG demo instead of requiring keyboard-only discovery.
+- Exposed click-walk state in QA snapshots and added a real browser canvas-click smoke test before the first desk interaction.
+- Changed mouse/touch interaction with actors and hotspots from instant remote activation to RPG-style approach interaction: clicking a far target makes Bo walk to the target first, then opens the dialog only when close enough.
+- Shared actor/hotspot approach points between real pointer input and QA helpers, and cleared movement velocity on redraw so reset/reload cannot inherit stale walking momentum.
+- Exposed `pendingInteraction` in QA snapshots and added browser proof that clicking a far target creates a pending walk instead of immediately opening a modal.
+- Replaced the old battle intent/log panels with a structured turn-flow panel: `客户出招 -> 博哥应对 -> 局面变化`.
+- Added `BattleTurnBeat` and `battleTurnBeat` so the visible battle flow is backed by recoverable game state rather than transient text.
+- Exposed `turnBeat` through the QA snapshot and added browser assertions that entering battle starts in `waiting` state and using a skill updates the turn to `countered`, `risk`, or `phase`.
+- Strengthened static/objective probes to require the new turn-flow UI and browser proof markers, preventing battle from regressing into a passive panel.
+- Added a `今日因果` chain that translates the player's route into plain story causality: opening reply, money handling, launch promise, customer response, and final result.
+- Replaced the ending page's generic chapter trail with the actual route causality, so settlement explains why the day ended that way instead of only showing a grade.
+- Added the same cause-effect line to the in-game data menu and exposed `causalChain` / `causalLine` through QA snapshots.
+- Strengthened static/objective/browser probes with `storyCausalChain`, `今日因果`, and `assertCausalChain`, so the prologue must keep a readable beginning-to-ending story chain.
+- Added a desktop map HUD `今日走势` strip, reusing the same cause-effect chain so route consequences are visible while walking the office, not only on the ending screen.
+- Kept the `今日走势` strip off mobile to avoid crowding the joystick, target guide, and current scene prompt.
+- Replaced fixed NPC bark copy with decision-aware actor reactions. Finance, boss, and customer map bubbles now change based on earlier choices, debts, and route state.
+- Added `activeActorBarks` / `actorBarks` to the QA snapshot and browser assertions so major NPC scenes must prove there is a readable in-world character reaction, not just a target marker.
+- Added a desktop-only Bo inner-thought bubble that follows the player sprite and changes by beat/route, making Bo feel like the current viewpoint character rather than only a portrait in dialogs.
+- Exposed `boThought` via QA snapshots and browser assertions so every story card must carry a readable Bo inner thought.
+- Repositioned Bo's thought bubble with `boThoughtPlacement`: when Bo is near an active NPC, the bubble shifts to the opposite side and stays clamped inside the map, reducing overlap with NPC speech bubbles and scene cards.
+- Exposed `boThoughtBox` via QA snapshots and added browser bounds assertions for the desktop map bubble.
+- Reduced opening-scene overlay duplication: the wake beat now relies on the in-world inbox plus Bo thought and target guide, and skips the separate scene-conflict card and `今日走势` strip until after the first choice.
+- Strengthened static probes with explicit wake-overlay guards so the opening does not regress into multiple panels explaining the same three messages.
+- Reworked the ending settlement again after review showed it still read like a report page: the closing now renders a `会议室收工` scene with账单、范围单、试点记录 on the table and four role echoes underneath.
+- Exposed `endingScene` through QA snapshots and strengthened static/objective/browser probes so every ending route must prove the closing scene and props exist instead of only showing scores.
+- Adjusted the mobile ending echo layout to two compact rows so the closing scene does not collide with the restart/export buttons.
+- Reworked the first-minute `wake` map into a dedicated `工位亮屏` vignette: the opening now renders a darker office close-up around Bo's desk, monitor glow, and the three unread finance/boss/customer messages instead of showing the full annotated office immediately.
+- Added a reduced `wake` HUD that keeps only title, time/place, and a short interaction hint; the full rules/story rail returns after the first choice.
+- Exposed `openingScene` through QA snapshots and strengthened browser/static probes so the first screen must prove it is a desk-screen scene with finance, boss, and customer messages.
+- Removed the wake-only top-right data/menu button, keeping the first minute focused on the desk screen and first choice instead of auxiliary systems.
+- Reworked the post-wake map HUD from a persistent rules board into a lightweight chapter strip. The map now shows current scene and next step; detailed win/fail/endgame rules remain in the data menu instead of sitting over every office scene.
+- Removed the mobile top story card on map scenes, leaving mobile to use the title/status line, scene card, target guide, and touch controls without an extra rules panel.
+- Exposed `mapHudMode` through QA snapshots and browser/static probes so opening, desktop map, and mobile map HUD modes are distinguishable.
+- Reworked the final negotiation copy away from system terms: the battle now presents `桌上这一问`, `客户压上来`, `博哥怎么回`, and `桌面变成这样` instead of persistent `客户意图/本回合对局` language.
+- Reworded skill cards as table-talk choices such as `先讲钱怎么收`, `先稳关系但写小范围`, `把能做不能做写清`, and `不合适就体面暂停`; numeric effects remain as supporting detail.
+- Exposed battle `sceneMode: meeting-table` through QA snapshots and browser/static probes so the final negotiation stays framed as a meeting-table scene.
+- Reworked choice feedback away from report language: result cards now read as `现场反应`, `桌上变化`, and `晚上回响`, while choice cards use `当场会怎样`, `可能埋下`, and `晚上用得上`.
+- Changed result-card metric chips from bare KPI labels like `钱 +40` into story consequences such as `钱先有名 +40`, `关系变冷 -2`, and `边界更清楚 +3`; chip colors now follow good/bad meaning instead of raw plus/minus signs.
+- Added a focused story set-piece layer for map scenes: finance now has a bill/budget wall, boss scenes have a launch/rehearsal board, and customer scenes have a pricing/scope table.
+- Suppressed duplicate old scene props and active-zone labels when a story set piece is present, reducing the feeling of scattered map annotations.
+- Exposed `storySetPiece` through QA snapshots and browser assertions, so map scenes must now prove they carry focused story-stage props rather than just an active hotspot.
+- Simplified mobile story set pieces by removing the tiny prop-label chips from narrow screens; mobile now relies on the large visual prop plus the readable scene card instead of cramped microcopy.
+
+## Iteration Log
+
+- <for visual-fast-lane tasks, record each user feedback step and browser observation here>
+
+## Deferred Verification
+
+- <checks intentionally deferred during visual-fast-lane iteration, with the final trigger>
+- 2026-06-26 ending-scene pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false` passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration` passed.
+  - `YUANBO_URL='http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1' pnpm probe:yuanbo:browser` passed and refreshed `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `/tmp/yuanbo-prologue-qa/desktop-ending.png`, `/tmp/yuanbo-prologue-qa/mobile-ending.png`, `/tmp/yuanbo-prologue-qa/route-walkaway-clean-walkaway-ending.png`, and `/tmp/yuanbo-prologue-qa/route-burnout-free-burnout-ending.png`.
+  - `pnpm -C apps/frontend-astro build` passed with existing Sentry auth-token, Browserslist, and large chunk warnings.
+  - `pnpm agent:lint` passed.
+- 2026-06-26 choice-feedback story pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false` passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration` passed.
+  - `YUANBO_URL='http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1' pnpm probe:yuanbo:browser` passed and refreshed `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `/tmp/yuanbo-prologue-qa/desktop-desk-result.png`, `/tmp/yuanbo-prologue-qa/mobile-desk-result.png`, `/tmp/yuanbo-prologue-qa/desktop-finance-dialog-result.png`, `/tmp/yuanbo-prologue-qa/mobile-finance-dialog-result.png`, `/tmp/yuanbo-prologue-qa/desktop-battle.png`, and `/tmp/yuanbo-prologue-qa/mobile-battle.png`.
+  - `pnpm -C apps/frontend-astro build` passed with existing Sentry auth-token, Browserslist, and large chunk warnings.
+  - `pnpm agent:lint` passed.
+- 2026-06-27 story-set-piece pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false` passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration` passed.
+  - `YUANBO_URL='http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1' pnpm probe:yuanbo:browser` passed and refreshed `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `/tmp/yuanbo-prologue-qa/desktop-finance-audit.png`, `/tmp/yuanbo-prologue-qa/desktop-boss-rehearsal.png`, `/tmp/yuanbo-prologue-qa/desktop-customer-reversal.png`, `/tmp/yuanbo-prologue-qa/mobile-finance-audit.png`, `/tmp/yuanbo-prologue-qa/mobile-boss-rehearsal.png`, and `/tmp/yuanbo-prologue-qa/mobile-customer-reversal.png`.
+  - `pnpm -C apps/frontend-astro build` passed with existing Sentry auth-token, Browserslist, and large chunk warnings.
+  - `pnpm agent:lint` passed.
+- 2026-06-27 mobile-set-piece-simplification:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false` passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration` passed.
+  - `YUANBO_URL='http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1' pnpm probe:yuanbo:browser` passed and refreshed `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `/tmp/yuanbo-prologue-qa/mobile-finance-audit.png`, `/tmp/yuanbo-prologue-qa/mobile-boss-rehearsal.png`, `/tmp/yuanbo-prologue-qa/mobile-customer-reversal.png`, `/tmp/yuanbo-prologue-qa/desktop-finance-audit.png`, `/tmp/yuanbo-prologue-qa/desktop-boss-rehearsal.png`, and `/tmp/yuanbo-prologue-qa/desktop-customer-reversal.png`.
+  - `pnpm -C apps/frontend-astro build` passed with existing Sentry auth-token, Browserslist, and large chunk warnings.
+  - `pnpm agent:lint` passed.
+- 2026-06-26 opening-vignette pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false` passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration` passed.
+  - `YUANBO_URL='http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1' pnpm probe:yuanbo:browser` passed and refreshed `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `/tmp/yuanbo-prologue-qa/desktop-start.png`, `/tmp/yuanbo-prologue-qa/mobile-start.png`, `/tmp/yuanbo-prologue-qa/desktop-finance-dialog.png`, and `/tmp/yuanbo-prologue-qa/desktop-finance-audit.png`.
+  - Confirmed wake screen hides the auxiliary data menu while post-wake HUD still shows it.
+  - `pnpm -C apps/frontend-astro build` passed with existing Sentry auth-token, Browserslist, and large chunk warnings.
+  - `pnpm agent:lint` passed.
+- 2026-06-26 map-hud-lightening pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false` passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration` passed.
+  - `YUANBO_URL='http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1' pnpm probe:yuanbo:browser` passed and refreshed `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `/tmp/yuanbo-prologue-qa/desktop-finance-audit.png`, `/tmp/yuanbo-prologue-qa/desktop-boss-rehearsal.png`, `/tmp/yuanbo-prologue-qa/desktop-customer-reversal.png`, `/tmp/yuanbo-prologue-qa/mobile-finance-audit.png`, and `/tmp/yuanbo-prologue-qa/desktop-start.png`.
+  - Confirmed desktop map HUD no longer shows persistent `本幕目标/赢法/失败代价` rules, and mobile map HUD no longer renders the extra top story card.
+  - `pnpm -C apps/frontend-astro build` passed with existing Sentry auth-token, Browserslist, and large chunk warnings.
+  - `pnpm agent:lint` passed.
+- 2026-06-26 battle-language pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false` passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration` passed.
+  - `YUANBO_URL='http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1' pnpm probe:yuanbo:browser` passed and refreshed `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `/tmp/yuanbo-prologue-qa/desktop-battle.png`, `/tmp/yuanbo-prologue-qa/mobile-battle.png`, `/tmp/yuanbo-prologue-qa/debt-battle-impact.png`, and `/tmp/yuanbo-prologue-qa/desktop-phase-break-1.png`.
+  - Confirmed battle main panels now use meeting-table wording (`桌上这一问`, `客户压上来`, `博哥怎么回`, `桌面变成这样`) instead of the old `客户意图/本回合对局` framing.
+  - `pnpm -C apps/frontend-astro build` passed with existing Sentry auth-token, Browserslist, and large chunk warnings.
+  - `pnpm agent:lint` passed.
+
+## Decisions and Assumptions
+
+- Decision: keep the old RPG prototype files available, but route the playable page to the new prologue entry to avoid further patching a mismatched system.
+- Decision: use a single story day with a smaller authored map, because current product risk is lack of story causality rather than lack of systems.
+- Decision: increase duration by adding mandatory authored pressure beats inside the same day, not by adding more customers or another map.
+- Decision: improve role identity with in-engine generated portraits first, because the main current gap is “NPCs feel like controls,” not a lack of more quests.
+- Decision: keep the scope at one authored day, but make the presentation far more directed. The user-visible product risk is still “is this a game at all,” so visual hierarchy and progressive interaction take priority over adding more customers.
+- Decision: keep internal QA skill-counter data, but stop exposing it verbatim as “suggested skill” UI. Players should read customer intent, not follow a highlighted answer key.
+- Decision: make round feedback persistent in state instead of a transient tween only. This keeps refresh recovery honest and lets browser probes verify the actual game state.
+- Decision: keep ending detail compact on mobile, with detailed choices only on desktop, because the mobile acceptance boundary is no overlap and clear settlement hierarchy.
+- Assumption: this is a strong directional rebuild but not yet a proven 30-minute finished prologue; the goal remains active.
+
+## Files Touched
+
+- `apps/frontend-astro/src/game/yuanbo/prologue.ts`
+- `apps/frontend-astro/src/game/yuanbo/main.ts`
+- `apps/frontend-astro/eslint.config.mjs`
+- `apps/frontend-astro/src/pages/bo/yuanbo-game.astro`
+- `scripts/yuanbo-probe.mjs`
+- `scripts/yuanbo-prologue-browser-probe.mjs`
+- `scripts/yuanbo-objective-audit.mjs`
+- `scripts/yuanbo-copy-audit.mjs`
+- `scripts/yuanbo-duration-audit.mjs`
+- `package.json`
+- `.agents/tasks/active/2026-06-26-yuanbo-first-day-prologue.md`
+
+## Verification Evidence
+
+- `pnpm probe:yuanbo`: passed.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false 2>&1 | rg "src/game/yuanbo/prologue|src/pages/bo/yuanbo-game" || true`: no prologue/page TypeScript errors.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed for desktop and mobile; screenshots in `/tmp/yuanbo-prologue-qa`.
+- Updated browser probe after expansion: desktop and mobile pass through 9 story beats and 6 pre-battle decisions; middle-beat screenshots generated for finance audit, boss rehearsal, and customer reversal.
+- Updated browser probe after portrait pass: desktop/mobile pass; dialog portrait screenshots generated for finance audit, boss rehearsal, and customer reversal.
+- Updated browser probe after evidence/director pass: desktop/mobile collect 6 evidence cards, keep at least 9 case-file clues, verify 7 per-beat scene cues, advance through battle, and reach a non-burnout ending; screenshots refreshed in `/tmp/yuanbo-prologue-qa`.
+- Updated browser probe after debt pass: desktop/mobile happy path still pass; additional desktop debt-pressure path verifies `pricing-limbo`, `budget-blame`, `full-launch`, `overpromise`, and `compensation-habit` consequences and captures `/tmp/yuanbo-prologue-qa/debt-debt-battle.png`.
+- Updated browser probe after result-card pass: desktop/mobile happy path and debt-pressure path all require `选择结果` cards for story decisions; result screenshots generated, including `/tmp/yuanbo-prologue-qa/desktop-finance-dialog-result.png` and `/tmp/yuanbo-prologue-qa/mobile-customer-reversal-dialog-result.png`.
+- Updated browser probe after phase-break pass: desktop/mobile happy path requires at least two `谈判阶段突破` cards; screenshots include `/tmp/yuanbo-prologue-qa/desktop-phase-break-1.png`, `/tmp/yuanbo-prologue-qa/desktop-phase-break-2.png`, and `/tmp/yuanbo-prologue-qa/mobile-phase-break-1.png`.
+- Updated browser probe after multi-ending pass: desktop route matrix proves `paid`, `bounded-comp`, `clean-walkaway`, and `free-burnout`; screenshots include `/tmp/yuanbo-prologue-qa/route-paid-paid-ending.png`, `/tmp/yuanbo-prologue-qa/route-bounded-bounded-comp-ending.png`, `/tmp/yuanbo-prologue-qa/route-walkaway-clean-walkaway-ending.png`, and `/tmp/yuanbo-prologue-qa/route-burnout-free-burnout-ending.png`.
+- Updated browser probe after route-report pass: desktop/mobile and multi-ending route screenshots refreshed; mobile ending inspected to confirm route title, grade, score line, advice, debt summary, and buttons do not overlap.
+- `pnpm -C apps/frontend-astro build`: passed.
+- `pnpm agent:lint`: passed.
+- `pnpm probe:yuanbo:objective`: passed after adding the story/director audit.
+- Updated browser probe after story-rail/director pass: desktop/mobile and all ending routes pass; screenshots refreshed in `/tmp/yuanbo-prologue-qa`, including `desktop-start.png`, `mobile-start.png`, `mobile-customer-reversal.png`, and `desktop-ending.png`.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false 2>&1 | rg "src/game/yuanbo/prologue|src/pages/bo/yuanbo-game|scripts/yuanbo" || true`: no prologue/page/script TypeScript errors after time/prep changes.
+- `pnpm probe:yuanbo`: passed after time/prep markers; `story markers=71`, `flow markers=18`, `choices=66`.
+- `pnpm probe:yuanbo:objective`: passed after management tradeoff audit; `7 acceptance groups`, `70 markers`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after adding the tradeoff route.
+- Visual inspection after tradeoff pass: `tradeoff-prep-pricing.png`, `tradeoff-prep-pricing-result.png`, `tradeoff-time-cap.png`, `mobile-start.png`, and `mobile-ending.png` show no obvious text/button overlap.
+- `pnpm -C apps/frontend-astro build`: passed after time/prep changes; only existing Sentry token and large chunk warnings.
+- `pnpm agent:lint`: passed after time/prep changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false 2>&1 | rg "src/game/yuanbo/prologue|src/pages/bo/yuanbo-game|scripts/yuanbo" || true`: no prologue/page/script TypeScript errors after battle-readability changes.
+- `pnpm probe:yuanbo`: passed after battle-readability markers; `story markers=79`, `flow markers=18`, `choices=71`.
+- `pnpm probe:yuanbo:objective`: passed after battle-readability audit; `7 acceptance groups`, `78 markers`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring typed intent, suggested skills, and all skill previews.
+- Visual inspection after battle-readability pass: `desktop-battle.png` and `mobile-battle.png` show intent panel, suggestions, skill previews, and no obvious log/button overlap.
+- `pnpm -C apps/frontend-astro build`: passed after battle-readability changes; only existing Sentry token and large chunk warnings.
+- `pnpm agent:lint`: passed after battle-readability changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false 2>&1 | rg "src/game/yuanbo/prologue|src/pages/bo/yuanbo-game|scripts/yuanbo" || true`: no prologue/page/script TypeScript errors after milestone/duration changes.
+- `pnpm probe:yuanbo`: passed after milestone markers; `story markers=83`, `flow markers=18`, `choices=77`.
+- `pnpm probe:yuanbo:objective`: passed after milestone audit; `7 acceptance groups`, `83 markers`.
+- `pnpm probe:yuanbo:duration`: passed; content proxy estimate `30.7min`, `beats=9`, `milestones=6`, `labels=77`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after milestone assertions.
+- Visual inspection after milestone/layout pass: `desktop-ending.png`, `mobile-ending.png`, and `mobile-customer-reversal-dialog-result.png` no longer show body text overlapping action buttons.
+- `pnpm -C apps/frontend-astro build`: passed after milestone/duration changes; only existing Sentry token and large chunk warnings.
+- `pnpm agent:lint`: passed after milestone/duration changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false 2>&1 | rg "src/game/yuanbo/prologue|src/pages/bo/yuanbo-game|scripts/yuanbo" || true`: no prologue/page/script TypeScript errors after staged-map/mobile/UI pass.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:duration`: passed after staged-map/mobile/UI pass; latest duration proxy remains `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after browser probe was updated to follow progressive evidence/prep unlocking.
+- Visual inspection after staged-map/mobile/UI pass: `desktop-start.png` shows current target and future zones dimmed; `mobile-start.png` shows Bo, current target, mobile interaction, and no cropped bottom case-chain text; `desktop-battle.png` and `mobile-battle.png` show improved customer portrait and no explicit `建议/克制` answer wording; `mobile-ending.png` keeps title, route report, and buttons visible.
+- `pnpm -C apps/frontend-astro build`: passed after staged-map/mobile/UI pass; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after staged-map/mobile/UI pass.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false 2>&1 | rg "src/game/yuanbo/prologue|src/pages/bo/yuanbo-game|scripts/yuanbo" || true`: no prologue/page/script TypeScript errors after round-feedback/ending-settlement pass.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:duration`: passed after round-feedback/ending-settlement pass; latest static counts `story markers=94`, `objective markers=92`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring `lastImpact` for battle skill plays and after adding the non-phase-break impact screenshot.
+- Visual inspection after round-feedback/ending-settlement pass: `/tmp/yuanbo-prologue-qa/debt-battle-impact.png` shows normal round result delta chips; `desktop-ending.png` and `mobile-ending.png` show route badge, score chips, timeline, advice card, and buttons without obvious overlap.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after beat-rule/action-card changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after beat-rule/action-card changes; latest counts `story markers=142`, `objective markers=144`, duration proxy `estimate=30.7min`.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after battle turn-flow changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after battle turn-flow changes; latest counts `story markers=215`, `objective markers=228`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring `turnBeat` on battle entry and after every skill play; screenshots refreshed in `/tmp/yuanbo-prologue-qa`.
+- Visual inspection after battle turn-flow pass: `desktop-battle.png`, `mobile-battle.png`, `debt-battle-impact.png`, `route-paid-battle-impact.png`, `desktop-ending.png`, and `mobile-ending.png` show readable turn flow, visible actor portraits, and no obvious text/button overlap.
+- `pnpm -C apps/frontend-astro build`: passed after battle turn-flow changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after battle turn-flow changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after `今日因果` changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after `今日因果` changes; latest counts `story markers=223`, `objective markers=237`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring `causalChain` on story cards and ending.
+- Visual inspection after `今日因果` pass: `desktop-ending.png`, `mobile-ending.png`, and `route-paid-paid-ending.png` show the actual route chain, score chips, ending echoes, and action buttons without obvious overlap.
+- `pnpm -C apps/frontend-astro build`: passed after `今日因果` changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after `今日因果` changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after map `今日走势` HUD changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after map `今日走势` HUD changes; latest counts `story markers=225`, `objective markers=239`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after map `今日走势` HUD changes.
+- Visual inspection after map `今日走势` pass: `desktop-start.png` and `desktop-customer-reversal.png` show the route chain while walking; `mobile-start.png` remains free of the extra strip and keeps the target guide/joystick readable.
+- `pnpm -C apps/frontend-astro build`: passed after map `今日走势` HUD changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after map `今日走势` HUD changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after NPC dynamic reaction changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after NPC dynamic reaction changes; latest counts `story markers=230`, `objective markers=245`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring actor barks in finance/boss/customer story cards.
+- Visual inspection after NPC dynamic reaction pass: `desktop-finance-audit.png`, `desktop-boss-rehearsal.png`, and `desktop-customer-reversal.png` show NPC bubbles reacting to the current route, while mobile keeps actor bubbles hidden to avoid crowding.
+- `pnpm -C apps/frontend-astro build`: passed after NPC dynamic reaction changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after NPC dynamic reaction changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after Bo inner-thought bubble changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after Bo inner-thought bubble changes; latest counts `story markers=234`, `objective markers=250`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring `boThought` across story cards.
+- Visual inspection after Bo inner-thought pass: `desktop-start.png`, `desktop-finance-dialog.png`, and `desktop-customer-reversal.png` show Bo's route-aware thought bubble on desktop; `mobile-start.png` stays uncluttered because the bubble is hidden on mobile.
+- `pnpm -C apps/frontend-astro build`: passed after Bo inner-thought bubble changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after Bo inner-thought bubble changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after Bo thought-bubble placement changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after Bo thought-bubble placement changes; latest counts `story markers=236`, `objective markers=252`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring `boThoughtBox` bounds on desktop map states.
+- Visual inspection after Bo thought-bubble placement pass: `desktop-start.png`, `desktop-finance-audit.png`, and `desktop-customer-reversal.png` show Bo's thought bubble shifted away from the active NPC; `mobile-start.png` remains uncluttered.
+- `pnpm -C apps/frontend-astro build`: passed after Bo thought-bubble placement changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after Bo thought-bubble placement changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after opening-overlay reduction.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after opening-overlay reduction; latest counts `story markers=238`, `objective markers=254`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after opening-overlay reduction.
+- Visual inspection after opening-overlay reduction: `desktop-start.png` no longer shows both the wake scene-conflict card and `今日走势`; it keeps the in-world inbox, Bo thought, and target guide. `desktop-finance-audit.png` still shows the later story feedback layers, and `mobile-start.png` remains uncluttered.
+- `pnpm -C apps/frontend-astro build`: passed after opening-overlay reduction; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after opening-overlay reduction.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring story-card goal/win/fail/endgame and action-card endgame impact.
+- Visual inspection after beat-rule/action-card pass: `/tmp/yuanbo-prologue-qa/mobile-desk.png` and `/tmp/yuanbo-prologue-qa/mobile-customer-reversal-dialog.png` show complete route/gain/risk/endgame cards; `/tmp/yuanbo-prologue-qa/mobile-battle.png` and `/tmp/yuanbo-prologue-qa/desktop-ending.png` show no obvious overflow.
+- `pnpm -C apps/frontend-astro build`: passed after beat-rule/action-card changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after beat-rule/action-card changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after opening inbox changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after opening inbox changes; latest counts `story markers=148`, `objective markers=151`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after adding opening-inbox assertions.
+- Visual inspection after opening inbox pass: `/tmp/yuanbo-prologue-qa/mobile-start.png` and `/tmp/yuanbo-prologue-qa/desktop-start.png` show one readable desk inbox instead of overlapping notification cards; `/tmp/yuanbo-prologue-qa/mobile-desk.png` and `/tmp/yuanbo-prologue-qa/desktop-desk.png` keep the first choice modal readable.
+- `pnpm -C apps/frontend-astro build`: passed after opening inbox changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after opening inbox changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after structured result-card changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after structured result-card changes; latest counts `story markers=153`, `objective markers=157`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after adding `outcomeCard` assertions.
+- Visual inspection after structured result-card pass: `/tmp/yuanbo-prologue-qa/mobile-finance-dialog-result.png`, `/tmp/yuanbo-prologue-qa/mobile-boss-rehearsal-dialog-result.png`, `/tmp/yuanbo-prologue-qa/mobile-customer-reversal-dialog-result.png`, and `/tmp/yuanbo-prologue-qa/desktop-finance-dialog-result.png` show readable scene-change/final-impact sections without obvious overflow.
+- `pnpm -C apps/frontend-astro build`: passed after structured result-card changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after structured result-card changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after story-time/place changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after story-time/place changes; latest counts `story markers=166`, `objective markers=170`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after adding clock/place assertions.
+- Visual inspection after story-time/place pass: `/tmp/yuanbo-prologue-qa/mobile-start.png`, `/tmp/yuanbo-prologue-qa/mobile-customer-reversal.png`, `/tmp/yuanbo-prologue-qa/mobile-battle.png`, and `/tmp/yuanbo-prologue-qa/desktop-ending.png` show readable time/place without obvious overflow.
+- `pnpm -C apps/frontend-astro build`: passed after story-time/place changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after story-time/place changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after preparation forecast-card changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after preparation forecast-card changes; latest counts `story markers=170`, `objective markers=175`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after adding desktop and mobile preparation forecast assertions.
+- Visual inspection after preparation forecast-card pass: `/tmp/yuanbo-prologue-qa/tradeoff-prep-pricing.png`, `/tmp/yuanbo-prologue-qa/tradeoff-prep-poc.png`, `/tmp/yuanbo-prologue-qa/mobile-tradeoff-prep-pricing.png`, `/tmp/yuanbo-prologue-qa/mobile-tradeoff-prep-poc.png`, and `/tmp/yuanbo-prologue-qa/mobile-tradeoff-time-cap.png` show readable prep route/gain/risk/final-use copy without obvious overflow.
+- `pnpm -C apps/frontend-astro build`: passed after preparation forecast-card changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after preparation forecast-card changes.
+- `pnpm -C apps/frontend-astro build`: passed after round-feedback/ending-settlement pass; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after round-feedback/ending-settlement pass.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after terminology/battle-FX pass and frontend type-blocker cleanup.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:duration`: passed after terminology/battle-FX pass; duration proxy remains `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after clearing stale screenshots at probe start.
+- Visual inspection after terminology/battle-FX pass: `desktop-start.png` has visible story target/current conflict, `route-paid-battle-impact.png` and `debt-battle-impact.png` show skill FX plus round deltas, `mobile-battle.png` and `mobile-ending.png` do not show obvious horizontal overflow or button/text collision.
+- `pnpm -C apps/frontend-astro build`: passed after terminology/battle-FX pass; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after terminology/battle-FX pass.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after result-card rebuild.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:duration`: passed after adding result-card markers; latest static counts `story markers=100`, `objective markers=97`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after result-card rebuild and mobile layout tightening.
+- Visual inspection after result-card pass: `desktop-finance-dialog-result.png`, `mobile-finance-dialog-result.png`, `mobile-customer-reversal-dialog-result.png`, and `tradeoff-prep-poc-result.png` show Bo line, counterpart reaction, chips, and continue button without obvious overlap.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after map-aftermath tags.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:duration`: passed after map-aftermath markers; latest static counts `story markers=104`, `objective markers=101`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after adding `zoneOutcomes` assertions.
+- Visual inspection after map-aftermath pass: `desktop-boss-rehearsal.png` shows finance outcome `已报价`; `desktop-customer-reversal.png` shows finance `已报价`, boss `失败退路`, and customer progress without label overflow.
+- `pnpm probe:yuanbo:copy`: passed after plain-language copy pass; `banned=14`, `plainTerms=6`.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false && pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after copy-audit integration; latest static counts `story markers=104`, `objective groups=8`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after plain-language replacements; screenshots refreshed in `/tmp/yuanbo-prologue-qa`.
+- Visual inspection after plain-language pass: `desktop-start.png`, `mobile-start.png`, `desktop-battle.png`, `mobile-battle.png`, `desktop-ending.png`, `mobile-ending.png`, and `tradeoff-time-cap.png` show no obvious Bo flying issue, horizontal overflow, or text/button collision; the Bo portrait quality remains a product risk rather than final art.
+- `pnpm -C apps/frontend-astro build`: passed after copy-audit integration; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after copy-audit integration.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false && pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:duration`: passed after bridge-card integration; static markers now include `BeatBridge`, `BEAT_BRIDGES`, `showBeatBridge`, `镜头转场`, and `bridgeCard`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after bridge-card integration and QA helper fix; screenshots include `/tmp/yuanbo-prologue-qa/desktop-desk-bridge.png`, `/tmp/yuanbo-prologue-qa/mobile-customer-reversal-dialog-bridge.png`, and `/tmp/yuanbo-prologue-qa/mobile-ending-bridge.png`.
+- Visual inspection after bridge-card pass: desktop bridge reads as a story transition instead of a system report; mobile bridge and mobile ending do not show obvious button/text collision or horizontal overflow.
+- `pnpm -C apps/frontend-astro build && pnpm agent:lint`: passed after bridge-card integration; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false && pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after scene-event bubble integration; static markers now include `SCENE_EVENTS`, `SceneEventBubble`, `drawSceneEventBubbles`, `sceneEvents`, `财务群`, and `客户语音`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after scene-event bubble integration; browser probe asserts event source/line/tone for story snapshots.
+- Visual inspection after scene-event pass: `mobile-start.png` and `mobile-customer-reversal.png` show the compact message feed below the active map area without covering the next marker, main actor, or touch controls; `desktop-boss-rehearsal.png` shows desktop messages near the active scene without touching the HUD.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false && pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after action-forecast integration; static markers now include `ActionForecast`, `makeChoiceCard`, `choiceForecasts`, `touchBridgeHidden`, and `setTouchBridgeHidden`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after action-forecast integration; browser probe asserts forecast route/gain/risk and asserts touch controls are hidden while modals are open.
+- Visual inspection after action-forecast pass: `mobile-finance-dialog.png` and `mobile-customer-reversal-dialog.png` show action cards without joystick overlap; `desktop-customer-reversal-dialog.png` shows route/gain/risk cards for quote, compensation, and walk-away routes.
+- `pnpm -C apps/frontend-astro build && pnpm agent:lint`: passed after action-forecast integration; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false && pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after target-guide integration; static markers now include `GuideTarget`, `currentGuideTarget`, `directionArrow`, `targetGuide`, and `updateTargetGuide`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after target-guide integration; browser probe asserts guide label/action/distance/direction on map story snapshots.
+- Visual inspection after target-guide pass: first mobile placement overlapped the scene card/actor, then was moved down; latest `mobile-start.png`, `mobile-customer-reversal.png`, and `desktop-start.png` show the guide without covering the main story card, actor, or event feed.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after first-minute agency and stage-focus changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after replacing the floor route with stage focus and adding opening-choice markers; latest static counts `story markers=140`, `flow markers=19`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after opening three-choice flow, `本幕判定`, and negotiation readability changes.
+- Visual inspection after this pass: `desktop-start.png`/`mobile-start.png` no longer show the old route-line process diagram; `desktop-desk.png`/`mobile-desk.png` show three opening action cards; `desktop-battle.png`/`mobile-battle.png` show human-readable phase goals and `克制本回合` skill cards.
+- `pnpm -C apps/frontend-astro build`: passed after this pass; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after this pass.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after mobile label-reduction and battle-meter compaction.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after mobile label-reduction and battle-meter compaction; latest static counts `story markers=140`, `flow markers=19`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after mobile label-reduction and battle-meter compaction.
+- Visual inspection after label-reduction pass: `mobile-start.png` and `mobile-customer-reversal.png` no longer show the old floating target/stage title over the actor; `mobile-battle.png` and `desktop-battle.png` show four customer bars plus Bo resource chips; `desktop-ending.png` shows a compact replay summary above the buttons.
+- `pnpm -C apps/frontend-astro build`: passed after label-reduction pass; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after label-reduction pass.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after evidence forecast-card changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after evidence forecast-card changes; latest static counts `story markers=175`, `objective markers=180`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring ledger/whiteboard/contract forecast cards in desktop, mobile, and mobile-tradeoff routes.
+- Visual inspection after evidence forecast-card pass: `/tmp/yuanbo-prologue-qa/mobile-ledger-card-1.png`, `/tmp/yuanbo-prologue-qa/mobile-contract-card-1.png`, `/tmp/yuanbo-prologue-qa/desktop-contract-card-1.png`, and `/tmp/yuanbo-prologue-qa/mobile-battle.png` show readable cards/battle controls without obvious overflow or touch-control overlap.
+- `pnpm -C apps/frontend-astro build`: passed after evidence forecast-card changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after evidence forecast-card changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after final-negotiation story-pressure changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after final-negotiation story-pressure changes; latest static counts `story markers=182`, `objective markers=188`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after browser assertions were strengthened to require battle `storyPressure` source, line, reply hint, and counter skills.
+- Visual inspection after final-negotiation story-pressure pass: `/tmp/yuanbo-prologue-qa/mobile-battle.png`, `/tmp/yuanbo-prologue-qa/desktop-battle.png`, `/tmp/yuanbo-prologue-qa/debt-debt-battle.png`, and `/tmp/yuanbo-prologue-qa/route-walkaway-battle-impact.png` show readable `今日追问` lines tied to prior story choices without obvious text/button overflow.
+- `pnpm -C apps/frontend-astro build`: passed after final-negotiation story-pressure changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after final-negotiation story-pressure changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after ending-echo changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after ending-echo changes; latest static counts `story markers=189`, `objective markers=196`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring four role ending echoes in every automated ending route.
+- Visual inspection after ending-echo pass: `/tmp/yuanbo-prologue-qa/mobile-ending.png`, `/tmp/yuanbo-prologue-qa/desktop-ending.png`, `/tmp/yuanbo-prologue-qa/route-burnout-free-burnout-ending.png`, and `/tmp/yuanbo-prologue-qa/route-walkaway-clean-walkaway-ending.png` show the `收工回声` card without obvious overflow or button collision.
+- `pnpm -C apps/frontend-astro build`: passed after ending-echo changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after ending-echo changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after pre-battle dossier changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after pre-battle dossier changes; latest static counts `story markers=191`, `objective markers=199`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after requiring battle bridge dossier lines for finance, boss, customer, and资料.
+- Visual inspection after pre-battle dossier pass: `/tmp/yuanbo-prologue-qa/desktop-customer-reversal-dialog-bridge.png`, `/tmp/yuanbo-prologue-qa/mobile-customer-reversal-dialog-bridge.png`, `/tmp/yuanbo-prologue-qa/debt-customer-quote-table-bridge.png`, and `/tmp/yuanbo-prologue-qa/route-walkaway-customer-reversal-bridge.png` show the `上桌清单` without obvious overflow or button collision.
+- `pnpm -C apps/frontend-astro build`: passed after pre-battle dossier changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after pre-battle dossier changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after phase-break story-goal and mobile-opening reduction changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after the same changes; latest static counts `story markers=197`, `objective markers=205`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after adding structured phase-break assertions and refreshed screenshots.
+- Visual inspection after this pass: `/tmp/yuanbo-prologue-qa/mobile-start.png` now focuses on the desk inbox and current interaction instead of duplicating the same conflict in two map cards; `/tmp/yuanbo-prologue-qa/mobile-phase-break-1.png` and `/tmp/yuanbo-prologue-qa/desktop-phase-break-1.png` show story-language phase progress instead of `>=`/`<=` formula goals.
+- `pnpm -C apps/frontend-astro build`: passed after phase-break/mobile-opening changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after phase-break/mobile-opening changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after click-to-walk input changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after click-to-walk markers and browser proof hooks; latest static counts `story markers=201`, `objective markers=211`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after the browser script performed a real canvas click and verified Bo moved more than 20px without opening a modal.
+- Visual inspection after click-to-walk pass: `/tmp/yuanbo-prologue-qa/desktop-start.png` shows the updated `点击地面移动` hint, while `/tmp/yuanbo-prologue-qa/mobile-start.png`, `/tmp/yuanbo-prologue-qa/mobile-battle.png`, and `/tmp/yuanbo-prologue-qa/desktop-battle.png` still show no obvious overflow or control collision.
+- `pnpm -C apps/frontend-astro build`: passed after click-to-walk changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after click-to-walk changes.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after far-target approach interaction changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after adding approach-interaction markers; latest static counts `story markers=206`, `objective markers=218`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after the browser script clicked far away from the desk, clicked the desk hotspot from outside interaction range, verified `pendingInteraction.id === 'desk'` without a modal, then waited for Bo to arrive and open `博哥工位：三条未读`.
+- Visual inspection after approach-interaction pass: `/tmp/yuanbo-prologue-qa/desktop-start.png`, `/tmp/yuanbo-prologue-qa/mobile-start.png`, `/tmp/yuanbo-prologue-qa/desktop-battle.png`, and `/tmp/yuanbo-prologue-qa/mobile-battle.png` show no obvious new overflow or control collision.
+- `pnpm -C apps/frontend-astro build`: passed after approach-interaction changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after approach-interaction changes.
+- Reduced the map from an always-on system board into a current-scene tableau: inactive/completed zones are now muted silhouettes, completed zones use small dots instead of text labels, and map-level outcome labels are no longer scattered across the office.
+- Added `hotspotSceneVisible` so the player only sees current-story hotspots: desk during wake, ledger during finance, whiteboard during boss, contract during customer, and briefing only when preparation becomes relevant. QA/direct save flows can still access older logical hotspots without reintroducing visual clutter.
+- Removed always-visible desktop actor speech bubbles and reduced scene event bubbles to one live cue, leaving Bo, the current opponent, the scene card, and the target guide as the primary read.
+- Hid the desktop `今日走势` strip during map play; story causality remains in the data menu, ending review, QA snapshot, and bridge/ending cards instead of occupying the map as another overlay.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after scene-tableau visual reduction.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after adding `hotspotSceneVisible`; latest static counts `story markers=239`, `objective markers=255`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after scene-tableau reduction.
+- Visual inspection after scene-tableau reduction: `desktop-start.png`, `desktop-finance-audit.png`, and `desktop-customer-reversal.png` now keep old zones as muted background instead of visible labels; `mobile-start.png`, `mobile-customer-reversal.png`, and `mobile-battle.png` remain playable without horizontal overflow or touch-control overlap.
+- `pnpm -C apps/frontend-astro build`: passed after scene-tableau reduction; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after scene-tableau reduction.
+- Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo` after build verification.
+- Reworked the battle first read from a status-meter dashboard into a negotiation-table scene: customer line, Bo response, table stakes, and three visible tokens for money, relationship, and boundary.
+- Removed the unused old `drawBattleBars` path so the battle no longer has a fallback route that presents the negotiation as raw gauges.
+- Added `NegotiationTableLines`, `negotiationTableLines`, `negotiationTokens`, `drawNegotiationTableScene`, and `drawNegotiationTokens`, with `tableLines` / `tableTokens` exposed in QA snapshots.
+- Strengthened static and browser probes so every battle must prove the negotiation table has customer/Bo/table lines and exactly three tokens labeled money, relationship, and boundary.
+- `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed after negotiation-table battle changes.
+- `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed after negotiation-table battle changes; latest static counts `story markers=247`, `objective markers=263`, duration proxy `estimate=30.7min`.
+- `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after browser assertions were strengthened for `tableLines` and `tableTokens`.
+- Visual inspection after negotiation-table battle changes: `desktop-battle.png`, `mobile-battle.png`, `debt-battle-impact.png`, and `route-paid-battle-impact.png` show the table scene without blocking portraits, turn flow, or skill buttons.
+- `pnpm -C apps/frontend-astro build`: passed after negotiation-table battle changes; only existing Sentry auth token, Browserslist age, and large chunk warnings.
+- `pnpm agent:lint`: passed after negotiation-table battle changes.
+- Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo` after build verification.
+- User feedback after this state: still does not read as a game/demo; one-room staging and scattered/system-like components make the story feel absent despite many data markers. Acceptance focus moved from "fields exist" to "the first read feels like a short playable story".
+- Reworked map staging again:
+  - Non-wake map now uses `visibleStageZones` and `focused-act-stage` so only the current story zone, plus the required preparation table during customer reversal, is visible instead of every office element being staged at once.
+  - Added beat-colored backdrops through `stageBackdropColor` so finance, boss, customer, and briefing scenes no longer share the same flat office floor.
+  - Added a compact act spine to show story progression without scattering completed labels across the map.
+  - Added opening pressure staging: desktop shows finance/boss/customer pressure cards connected to Bo's desk; mobile uses a dedicated small banner to avoid clipped offscreen panels.
+- Rebuilt ending priority:
+  - `drawEnding` now presents `会议室收工` first as the main story scene, then the route badge and causal line. Scores are no longer the dominant desktop element.
+  - `drawEndingClosingScene` now renders four role echoes as readable vertical dialogue rows instead of tiny 2x2 tiles; mobile uses `mobile-echo-stack`, desktop uses `desktop-echo-stack`.
+  - QA snapshot now exposes `mapStage` and ending `layout` / `echoCount`.
+- Strengthened `scripts/yuanbo-prologue-browser-probe.mjs`:
+  - `assertMapStage` now rejects cluttered all-zone map layouts and requires `opening-pressure-stage` / `focused-act-stage`.
+  - `assertEndingScene` now requires an echo-stack layout and four role echoes, not just a closing line.
+- Verification after focused-stage / ending-stack pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=271`, `objective markers=288`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+- Visual inspection after focused-stage / ending-stack pass:
+  - `mobile-start.png` no longer shows a clipped right-side pressure panel; the opening banner, inbox, Bo desk, joystick, and interaction button are all visible.
+  - `desktop-start.png` shows the pressure cards and Bo desk without the old empty/right-side flatness; the title is still intentionally subtle behind the current desk focus, not a separate UI card.
+  - `desktop-customer-reversal.png` and `mobile-customer-reversal.png` show only the active customer reversal table and required contract/briefing cues, not all zones.
+  - `desktop-ending.png` and `mobile-ending.png` now read as a closing meeting-room scene with four role echoes; no obvious button collision or old 2x2 tiny text overflow.
+- Final cleanup after screenshot review:
+  - Removed the dim desktop opening title from the pressure panel. The first read now relies on the lit desk, three unread messages, and the three pressure cards, avoiding a low-contrast line that looked like broken UI.
+  - Moved opening pressure staging after the scene mask so desktop/mobile use the intended layer order.
+- Final verification after cleanup:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=271`, `objective markers=288`, duration proxy `estimate=30.7min`.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing warnings for missing Sentry auth token/source map upload, old Browserslist data, and the large `yuanbo-game` chunk.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Reworked decision cards to feel less like system configuration:
+  - Added `choiceSpeechLine` and changed `makeChoiceCard` so forecast actions start with `博哥说：...` instead of only route/gain/risk labels.
+  - Renamed choice card system labels from `当场会怎样` / `可能埋下` to `当场变化` / `代价`, keeping consequence information while making the first read a character line.
+  - Reduced forecast modal height for two-choice mobile scenes, removing the large blank gap in `mobile-finance-dialog.png`.
+  - QA snapshot now includes `choiceForecasts[].speech`.
+- Strengthened probes for decision feel:
+  - Static probes now require `choiceSpeechLine`, `博哥说`, `当场变化`, and `代价`.
+  - Browser probe now asserts each forecast choice includes a playable Bo speech line and does not use the old system forecast copy as the speech line.
+- Verification after decision-card pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=275`, `objective markers=290`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visual inspection after decision-card pass: `desktop-desk.png`, `mobile-desk.png`, `desktop-finance-dialog.png`, `mobile-finance-dialog.png`, and `mobile-customer-reversal-dialog.png` show choices as Bo speech lines with readable immediate change / cost / evening impact text; the two-choice mobile finance dialog is tighter.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Reworked final negotiation skill buttons into RPG-style battle command cards:
+  - Added `BattleCommand`, `battleCommandCards`, `battleSkillSpeechLine`, `battleSkillRiskLine`, and `battleSkillCounterLine`.
+  - Replaced generic `makeButton` skill rendering with `drawBattleCommandCard`, so each command shows the skill label, a Bo speech line, whether it counters the current pressure, the risk, and the effect.
+  - Increased desktop battle command height and moved the row slightly upward so command text is readable without colliding with the turn-flow panel.
+  - QA snapshot now exposes `battle.skillCommands`.
+- Strengthened probes for battle command readability:
+  - Static probes now require `BattleCommand`, `battleCommandCards`, `drawBattleCommandCard`, `battleSkillSpeechLine`, `battleSkillRiskLine`, and `skillCommands`.
+  - Browser probe now requires exactly five battle command cards, at least one countering command, and readable label/speech/counter/risk/effect text for each command.
+- Verification after battle-command pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visual inspection after command-card pass: `desktop-battle.png`, `mobile-battle.png`, `debt-battle-impact.png`, and `route-paid-battle-impact.png` show bottom battle commands as Bo lines with counter/risk/effect text instead of generic centered buttons; desktop cards are taller and do not overlap the turn flow.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=281`, `objective markers=297`, duration proxy `estimate=30.7min`.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Reworked the preparation/evidence economy after review showed the demo still risked reading as choices on a panel rather than day-management:
+  - Added `ManagementHint`, `dialogManagementHint`, `managementGapLine`, and `choiceManagementRecommendation`.
+  - Forecast modals now show a compact `今日账本` strip with remaining actions,资料 count, preparation count,遗留 count, current strategic gap, and a recommended first read.
+  - Forecast choice cards now show explicit action cost such as `报价 · 1行动`, and QA snapshots expose `choiceForecasts[].cost` plus `choiceForecasts[].recommendation`.
+  - Unified player-facing resource copy from mixed `时间/行动` wording to `行动` for资料 cards, preparation cards, and no-action states.
+- Strengthened probes for management readability:
+  - Static probes now require `ManagementHint`, `makeManagementHintCard`, `dialogManagementHint`, `managementGapLine`, `actionForecastCost`, `今日账本`, and `当前缺口`.
+  - Browser probe now requires every forecast modal to expose a management hint, action budget, current strategic gap, recommendation, final-table carry-in, and per-choice action cost.
+- Verification after management-ledger pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=291`, `objective markers=307`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visual inspection after management-ledger pass: `desktop-ledger-card-1.png`, `mobile-ledger-card-1.png`, and `mobile-tradeoff-prep-pricing.png` show `今日账本`, `当前缺口`, recommendation, and `1行动` chips without button overlap; `desktop-start.png` still reads as an in-world desk incident and `desktop-ending.png` closes with role echoes.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Reduced system feel in story choices:
+  - Added `shouldShowManagementHint` so `今日账本` only appears on real management actions such as资料 and preparation, not on pure story choices like the opening three unread messages.
+  - Forecast cards now hide the `0行动` chip visually for pure story choices while still exposing cost in QA snapshots; `1行动` remains visible for management choices.
+  - Browser probe now asserts pure story choices do not show the management ledger, while costed management choices still must show it.
+- Rebuilt beat transitions from empty report panels into three storyboard cards:
+  - Added `BridgeStoryboardPanel`, `bridgeStoryboardPanels`, and `drawBridgeStoryboard`.
+  - Every `镜头转场` now shows `刚才留下的余波`, `博哥心里过一遍`, and either `下一幕压力` or `上桌前清单`.
+  - QA snapshots expose `bridgeCard.storyboard`, and browser probes require exactly three readable storyboard panels.
+- Verification after story-first transition pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=298`, `objective markers=316`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visual inspection after this pass: `mobile-desk.png` and `desktop-desk.png` no longer show `今日账本` on the opening story choice; `mobile-ledger-card-1.png` still shows the management ledger for资料. `mobile-desk-bridge.png`, `desktop-desk-bridge.png`, and `mobile-customer-reversal-dialog-bridge.png` now show three filled storyboard panels instead of an empty center panel.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Removed editor-like map hotspot styling:
+  - Read clue hotspots no longer draw yellow target frames or `已读` badges over the active stage. They remain clickable through a transparent interaction zone.
+  - Unread clue hotspots use only a small floating `资料` marker; prepared/briefing hotspots keep their status because they are actual current management actions.
+  - Added `hotspotVisualSnapshots` to QA snapshots so browser probes can verify clue hotspots blend into the scene after reading.
+  - Browser probes now run `assertHotspotVisuals`, rejecting any `已读` badge and requiring read clue hotspots to use the `hidden-clue-zone` visual state.
+- Verification after hotspot-visual pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=302`, `objective markers=322`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visual inspection after hotspot-visual pass: `mobile-boss-rehearsal.png` and `mobile-customer-reversal.png` no longer show the old yellow clue box or `已读` badge; active actors and story set pieces remain readable. `mobile-finance-audit.png` still has a clear stage and bottom target guide.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Reworked negotiation phase-breaks:
+  - Replaced the old text-wall phase-break body that exposed `当前局面：怒气/预算/需求/信任` with a custom scene card.
+  - Added `PhaseBreakPanel`, `phaseBreakPanels`, `phaseBreakChips`, and `drawPhaseBreakChips`.
+  - Every phase break now renders three story panels: `客户让步`, `桌面变化`, and `下一问`, plus compact state chips below the panels.
+  - Browser probes now require three story panels, compact chips, and reject `当前局面` report-style copy.
+- Verification after phase-break pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=309`, `objective markers=331`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visual inspection after phase-break pass: `mobile-phase-break-1.png` now shows three compact story panels and readable chips with much less empty space; `desktop-phase-break-1.png` no longer has hidden chips under the action button.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Tightened opening and final-table staging after the user called out that the demo still felt like a loose scene with scattered elements:
+  - Removed the old wake-screen floating finance/boss/customer pressure cards, leaving a single in-world `工位收件箱` panel as the opening incident source.
+  - Enlarged and repositioned the desktop opening inbox beside Bo's desk, with the headline `今天三方同时进门` and the three unread finance/boss/customer messages inside one readable prop.
+  - Added `BattleTableProp`, `battleTableProps`, and `drawBattleTableProps` so the final negotiation table visibly carries three story props: `账单`, `上线`, and `再梳一次`.
+  - The table props now show short state lines, not only labels, so the battle opening references the morning bill, launch promise, and free-service joke.
+  - QA snapshots expose `battle.tableProps`; browser probes require exactly three story props and readable context lines.
+- Verification after opening/table-staging pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=313`, `objective markers=337`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visual inspection after this pass: `desktop-start.png` and `mobile-start.png` focus on Bo's desk and a single unread-inbox prop instead of multiple floating message cards; `desktop-battle.png` and `mobile-battle.png` show the final table props without overlap.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Reworked desktop canvas presentation after screenshot review showed the game still read as a small embedded card:
+  - Changed `yuanbo-game.astro` canvas sizing from a hard 960x540 cap to a 16:9 viewport-fit size capped at 1280px wide.
+  - Removed the decorative radial background behind the canvas so the surrounding page does not compete with the game stage.
+  - Measured the before state at 1280x800: canvas was 960x540, left 240px, top 195px.
+  - Measured the final state at 1280x800: canvas is 1280x720, left 0px, top 60px, with a 1.33 CSS/display scale from the 960 logical canvas.
+  - Browser probe now runs `assertCanvasPresentation`, requiring desktop canvas width/height coverage, rejecting a floating top offset, and rejecting over-stretch above 1.35x; mobile must still fill viewport width and height.
+  - A stricter intermediate 1200px cap failed the browser probe because the top offset remained 93.5px, so it was replaced with the 1280px cap.
+- Verification after canvas-presentation pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=313`, `objective markers=342`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visual inspection after this pass: `desktop-start.png`, `desktop-battle.png`, and `desktop-customer-reversal.png` use the larger stage instead of the old centered 960x540 card; `mobile-start.png` keeps the existing full-height mobile layout.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Reworked stage direction and critical robustness after latest review:
+  - Added `StageComposition` and `stageComposition` so each map beat exposes antagonist, conflict, evidence, player task, previous-act residue, next step, and tone.
+  - Added `drawStageComposition` for desktop story scenes and simplified mobile so it does not stack an extra composition panel above the active vignette.
+  - Rebuilt the wake screen as a larger `三条事故同时进门` incident board connected to Bo's desk, and suppressed the older duplicate opening inbox overlay.
+  - Drew the `StorySetPiece.subtitle` on-screen and shifted story props down so each beat explains why the scene exists instead of only showing labels.
+  - Reduced map overlay duplication when a focused story set piece is present: old conflict cards and event bubbles no longer pile on top of the main stage.
+  - Added visible scene-memory residue (`上午账单`, `上线说法`, `客户边界`) so later beats visibly carry prior choices rather than only showing state in menus.
+  - Added blocking modal protection so pressing Escape on outcome, bridge, or phase-break cards advances safely instead of closing the modal after state has already changed.
+  - Destroyed the previous modal before showing choice-result cards, preventing visually stale dialogs from remaining underneath new blocking cards.
+  - Fixed the zero-action core-clue leak: fresh clue hotspots now refuse to mutate clues or metrics when `timeLeft` is already 0.
+  - Capped final negotiation opening pressure into a recoverable range so a bad no-evidence/no-prep route can be very hard but does not start already at terminal anger/scope/budget thresholds.
+  - Added browser regressions for Escape safety and fresh no-time clue attempts.
+- Verification after stage-direction/robustness pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=327`, `objective markers=358`, duration proxy `estimate=30.7min`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed, including the new `escape` and `no-time-fresh-clue` routes, screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `desktop-start.png`, `desktop-customer-reversal.png`, `mobile-customer-reversal.png`, and `mobile-battle.png`; opening duplicate overlay is removed and mobile customer reversal no longer has the old hotspot/read-badge clutter, though mobile stage composition still needs a deeper art/layout pass before this can be called a polished game.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+- Re-anchored the latest pass around player experience after the user correctly called out that effort volume was not translating into a game-quality demo:
+  - Pulled three sub-agent reviews for narrative/game-feel, UI/responsive QA, and gameplay QA. The shared diagnosis was that the prologue had content, but still read too much like a state-machine/manual with dense panels and hidden consequences.
+  - Tightened the wake-screen mobile layout with `OpeningStageLayout`, so the desk, incident board, callout, and clickable message rows are computed from the current portrait canvas instead of hard-coded desktop coordinates.
+  - Forced Chinese wrapping on the mobile opening setup and message rows, and added browser assertions that each opening message target stays inside the current canvas bounds.
+  - Added mobile-only finance/boss/customer pressure source cards around Bo's desk to make the first screen read as an incident scene; removed the extra desktop pressure cards after visual inspection showed they made the desktop scene busier.
+  - Added `battleReadinessSummary` and a real `上桌前还缺东西` gate. If the player reaches the customer reversal with no evidence and no preparation, the game now stays on the map, recommends returning to the preparation table, and only enters the final negotiation if the player explicitly chooses `强行上桌`.
+  - Updated guide targeting so an unready customer-reversal state points to `战前准备桌`, not back into the same customer interaction loop.
+  - Exposed `battleReadiness` in QA snapshots.
+  - Added browser coverage for the no-material quick path and the forced high-risk path, including `desktop-no-material-no-material-gate.png`, `mobile-no-material-no-material-gate.png`, and `debt-forced-battle-gate.png`.
+- Verification after experience-gate/mobile-opening pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=332`, `objective markers=363`, duration proxy `estimate=30.7min`, labels `90`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after adding no-material and forced-battle paths; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `mobile-start.png`, `desktop-start.png`, `mobile-no-material-no-material-gate.png`, `desktop-no-material-no-material-gate.png`, `debt-forced-battle-bridge.png`, `mobile-battle.png`, and `debt-debt-battle.png`.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Current residual risk: mobile battle and modal UI are still dense and report-like; this pass fixes a soft player-experience failure but does not make the game polished.
+- Reworked the first finance evidence interaction from a pure card menu into a small bill-sorting action:
+  - Added `LedgerSortItem` and `LEDGER_SORT_ITEMS` for the three bill pieces: GPU peak, trial quota, and compensation cap.
+  - First interaction with `账单白板` now opens `账单拆包：把截图贴到正确格子`; the player must place the three bill pieces into `加急服务包`, `基础服务包`, and `免费额度线`.
+  - Completing the sort spends one action, adds `成本三列表` and `GPU 峰值曲线`, improves cash/boundary/pressure, clears `pricing-limbo`, and shows a normal `现场反应` result card without replaying a story bridge.
+  - Later ledger interactions still open the remaining evidence cards, preserving the management tradeoff and time pressure.
+  - QA snapshots now expose `ledgerSorting.complete`, `ledgerSorting.done`, and `ledgerSorting.remaining`.
+  - Browser probe now has `completeLedgerSorting`, captures `desktop-ledger-ledger-sort-start.png`, `desktop-ledger-ledger-sort-result.png`, `mobile-ledger-ledger-sort-start.png`, and `mobile-ledger-ledger-sort-result.png`, and requires the sort to complete before the normal ledger card path.
+  - Static/objective probes now require `LedgerSortItem`, `LEDGER_SORT_ITEMS`, `账单拆包：把截图贴到正确格子`, and `ledgerSorting`.
+- Verification after ledger-sorting pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=337`, `objective markers=368`, duration proxy `estimate=30.7min`, labels `93`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `desktop-ledger-ledger-sort-start.png`, `desktop-ledger-ledger-sort-result.png`, `mobile-ledger-ledger-sort-start.png`, and `mobile-ledger-ledger-sort-result.png`.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Current residual risk: this is a better scene action than a card menu, but it is still choice-card driven rather than a true drag/drop or spatial puzzle.
+- Reworked the final negotiation turn surface so it reads less like a dashboard:
+  - Added `BattleDuelFocus` and `battleDuelFocus` to derive the current customer line, Bo's immediate reply hint, table consequence, and recommended skills from the actual battle state.
+  - Replaced the old turn-flow/status-report block with a single `本回合对峙` panel on desktop and mobile.
+  - Simplified mobile skill cards so they show one clear line, one short tag, and the recommendation state instead of stacking multiple effect/risk paragraphs.
+  - QA snapshots now expose `battle.duelFocus`, and browser probes reject battles that do not provide a readable title, customer line, Bo hint, table consequence, and at least one recommended skill.
+  - Static/objective probes now require `BattleDuelFocus`, `battleDuelFocus`, `duelFocus`, `本回合对峙`, and the new `drawBattleDuelFocus` path.
+- Verification after battle-duel-focus pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=340`, `objective markers=371`, duration proxy `estimate=30.7min`, labels `93`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `mobile-battle.png`, `desktop-battle.png`, `debt-battle-impact.png`, and `mobile-phase-break-1.png`; mobile battle shows the new duel panel and simplified skill cards without horizontal overflow, desktop keeps the table/portraits readable, and phase-break still renders correctly.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+  - Current residual risk: battle flow is clearer, but the demo still needs deeper systemic/game-feel work before it should be called a polished game.
+- Added explicit final-table closing goals so the player can read how choices move toward an ending:
+  - Added `BattleClosingGoal` and `battleClosingGoals`, derived from the same battle state used by phase and ending checks.
+  - The battle screen now shows three plain-language goals: `收钱`, `补一次`, and `体面拉倒`.
+  - Each goal exposes a status, next need, progress value, color, and done boolean; examples include `还悬着`, `小范围`, `差台阶`, and next needs like `再把服务费说到桌面上`.
+  - Desktop renders the goals under the customer portrait as `收桌目标`; mobile renders a compact three-chip strip above the portraits so it does not collide with the skill bar.
+  - QA snapshots now expose `battle.closingGoals`.
+  - Browser probes now require exactly three closing goals, readable status/next-need copy, `0..1` progress, and a `done` boolean.
+  - Static/objective probes now require `BattleClosingGoal`, `battleClosingGoals`, `drawBattleClosingGoals`, `收桌目标`, and `closingGoals`.
+- Verification after battle-closing-goals pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=346`, `objective markers=378`, duration proxy `estimate=30.7min`, labels `96`.
+  - First browser run failed because one closing-goal next-need line was too short; copy was expanded, then the full run passed.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `mobile-battle.png`, `desktop-battle.png`, `debt-battle-impact.png`, `route-paid-paid-ending.png`, `route-bounded-bounded-comp-ending.png`, `route-walkaway-clean-walkaway-ending.png`, and `mobile-ending.png`.
+  - The desktop goal strip is readable in the right column; the mobile strip fits without overlapping portraits, table, duel panel, or skill buttons, though the compact mobile copy remains a polish risk.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+  - Current residual risk: final-table intent is clearer, but the mobile battle screen is still dense and needs a later visual simplification pass.
+- Rebuilt the first finance bill interaction from a generic choice list into a ticket-slot board:
+  - Added `LedgerSortSlot` and `ledgerSortSlots`.
+  - Replaced the `账单拆包` `showDialog` implementation with a custom Phaser modal: three destination slots (`加急服务包`, `基础服务包`, `免费额度线`) and three ticket cards (`GPU 峰值`, `试用额度`, `补偿上限`).
+  - Clicking a ticket now pins it into its matching slot; keyboard/QA `choose(0)` still works so automated routes can complete the board.
+  - QA snapshots now expose `ledgerSorting.boardMode = ticket-slot-board` and `ledgerSorting.slots`.
+  - Browser probes now assert that the ledger interaction is a board, has three slots, tracks placed ticket count, and has no generic forecast buttons.
+  - Static/objective probes now require `LedgerSortSlot`, `ticket-slot-board`, `drawLedgerSortSlots`, `drawLedgerSortTickets`, and the new browser assertion.
+- Verification after ticket-slot ledger board pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=350`, `objective markers=384`, duration proxy `estimate=30.7min`, labels `96`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `desktop-ledger-ledger-sort-start.png`, `desktop-ledger-ledger-sort-result.png`, `mobile-ledger-ledger-sort-start.png`, `mobile-ledger-ledger-sort-result.png`, `tradeoff-ledger-ledger-sort-start.png`, and `mobile-tradeoff-ledger-ledger-sort-start.png`.
+  - The bill interaction now visually reads as a sorting board instead of a flat button list; mobile remains dense but no horizontal overflow or modal collision appeared in the screenshots.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+  - Current residual risk: the board is click-to-place rather than true drag/drop, but it is a concrete gameplay improvement over the earlier generic choice cards.
+- Rebuilt the core customer joke beat into a voice-fragment board:
+  - Added `CustomerJokeFragment`, `CUSTOMER_JOKE_FRAGMENTS`, `CustomerJokeRoute`, and `CUSTOMER_JOKE_ROUTES`.
+  - Replaced the initial `customerScene()` forecast dialog with a custom `客户语音拆句：报价、补偿、拉倒` Phaser board.
+  - The board now shows three joke fragments (`这姐咋收钱啊？`, `再给你梳一次`, `不行拉倒吧`) and maps them to `报价`, `补一次`, and `拉倒`.
+  - The player then chooses one of three Bo reply routes; those routes still reuse the existing `customer:quote`, `customer:compensate`, and `customer:walkaway` consequences, so downstream reversal, battle, and endings remain connected.
+  - QA snapshots now expose `customerJokeBoard.boardMode = voice-fragment-board`, fragments, and response routes.
+  - Browser probes now assert that the customer beat is a voice-fragment board, includes all three joke fragments and all three response routes, and is not generic forecast cards.
+  - Static/objective probes now require the new customer joke board structures and browser assertion.
+  - After screenshot inspection showed the first mobile layout was too cramped, the mobile board height and response card area were expanded.
+- Verification after customer-joke-board pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=359`, `objective markers=395`, duration proxy `estimate=30.7min`, labels `96`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `desktop-customer-dialog.png`, `mobile-customer-dialog.png`, `debt-customer-compensate.png`, `mobile-customer-reversal-dialog.png`, `mobile-tradeoff-customer.png`, and `route-walkaway-customer.png`.
+  - The desktop customer board clearly shows the three joke fragments and three response routes; mobile is still dense but no longer visibly crushes the route text after the layout expansion.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - `pnpm agent:lint`: passed.
+  - Removed generated `apps/frontend-astro/tsconfig.tsbuildinfo`.
+  - Current residual risk: this is still click-to-choose rather than a true drag/drop parser, but the core joke is now an explicit gameplay board instead of passive dialogue.
+- Rebuilt the first boss/manager launch beat into an上线 pressure board:
+  - Added `BossLaunchPressure`, `BOSS_LAUNCH_PRESSURES`, `BossLaunchRoute`, and `BOSS_LAUNCH_ROUTES`.
+  - Replaced the first `bossScene()` generic forecast dialog with a custom `老板上线拆板：今天上线怎么说` Phaser board.
+  - The board now splits the manager pressure into three readable pieces: `客户下午来`, `Agent 今天上线`, and `话要能播`.
+  - The player chooses one of three Bo response routes: `先定验收说法`, `只承诺小范围试点`, or `硬接全部上线`; these still feed the existing `boss:scope`, `boss:poc`, and `boss:hard` consequences.
+  - QA snapshots now expose `bossLaunchBoard.boardMode = launch-pressure-board`, pressure pieces, and response routes.
+  - Browser probes now assert that the first boss beat is a launch-pressure board and not generic forecast cards, while the later rehearsal beat remains a normal forecast choice.
+  - Static/objective probes now require the new boss launch board structures and browser assertion.
+  - After screenshot inspection showed the first mobile layout was too cramped, the mobile boss board height and pressure/route regions were expanded and verified again.
+- Verification after boss-launch-board pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=368`, `objective markers=406`, duration proxy `estimate=30.7min`, labels `99`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed twice; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `desktop-boss-dialog.png`, `mobile-boss-dialog.png`, `debt-boss-hard.png`, and `mobile-customer-dialog.png`.
+  - `pnpm -C apps/frontend-astro build`: passed; only existing Sentry auth token/source map upload, old Browserslist data, and large `yuanbo-game` chunk warnings.
+  - Current residual risk: finance, boss, and customer key beats now have dedicated boards, but they are still click-selection boards rather than deeper spatial/action puzzles.
+- Rebuilt the battle-prep/training entry into a rehearsal workbench:
+  - Added `PrepWorkbenchCard` and `prepWorkbenchCards`.
+  - Replaced the main `showPrepMenu()` branch with a custom `战前准备桌：台词彩排工作台` modal instead of generic forecast cards.
+  - The workbench shows today tradeoffs (`行动`, `资料`, `准备`, `遗留`) beside rehearsal cards for pricing, bounded compensation, and walkaway wording.
+  - After one prep is chosen, the next workbench render removes the prepared card and keeps the remaining choices aligned with `state.preps`.
+  - QA snapshots now expose `prepWorkbench.boardMode = rehearsal-workbench`, remaining action time, prepared preps, and card route/gain/risk data.
+  - Browser probes now assert that prep uses the rehearsal workbench and is not generic forecast cards.
+  - Static/objective probes now require the prep workbench structures and browser assertion.
+  - Initial screenshot inspection showed desktop card text was still pressed into card bottoms; the desktop workbench was expanded and rehearsal lines were shortened, then browser screenshots were regenerated.
+- Verification after prep-workbench pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=375`, `objective markers=415`, duration proxy `estimate=30.7min`, labels `99`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after the prep layout adjustment; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `tradeoff-prep-pricing.png`, `mobile-tradeoff-prep-pricing.png`, and `tradeoff-prep-poc.png`; desktop no longer has bottom text pressed outside cards, mobile remains readable.
+  - Current residual risk: the workbench is still click-to-choose, but the training/management entry now reads as a game surface rather than a generic menu.
+- Rebuilt the opening desk interaction into a proper unread-ticket board:
+  - Added `OpeningInboxChoice` and `OPENING_INBOX_CHOICES`.
+  - Replaced the first desk `showDialog()` with `showOpeningInboxBoard()`, rendering `博哥工位：三条未读工单`.
+  - The board shows the three inciting messages (`财务群/GPU 账单`, `老板/今天上线`, `客户语音/再梳一次`) and routes them to the existing `opening:finance`, `opening:boss`, and `opening:customer` consequences.
+  - Clicking the wake-scene message targets still works; walking to the desk and pressing interact now opens the same authored board instead of generic forecast cards.
+  - QA snapshots now expose `openingInboxBoard.boardMode = opening-inbox-board`.
+  - Browser probes now assert the desk interaction is an opening inbox board, including the click-target auto-walk path and Escape flow.
+  - Visual inspection covered `desktop-desk.png` and `mobile-desk.png`; both were readable without text overflow.
+- Rebuilt the customer reversal beat into a final-table pressure board:
+  - Added `CustomerReversalPressure`, `CUSTOMER_REVERSAL_PRESSURES`, `CustomerReversalRoute`, and `CUSTOMER_REVERSAL_ROUTES`.
+  - Replaced the `客户姐反悔：免费可以，全部上线也要` generic choice dialog with `客户反悔拆板：免费、上线、拉倒`.
+  - The board now splits the upgrade into `免费口子`, `顺手上线`, and `退场威胁`, then routes the player into quote/compensation/walkaway battle openings.
+  - QA snapshots now expose `customerReversalBoard.boardMode = reversal-pressure-board`.
+  - Browser probes now assert that the reversal beat is not generic forecast cards, including no-material and forced-battle routes.
+  - Initial mobile screenshot showed the three pressure cards were too cramped; mobile height and vertical spacing were increased, then browser screenshots were regenerated.
+- Verification after opening/reversal-board pass:
+  - `pnpm -C apps/frontend-astro exec tsc --noEmit --pretty false`: passed.
+  - `pnpm probe:yuanbo && pnpm probe:yuanbo:objective && pnpm probe:yuanbo:copy && pnpm probe:yuanbo:duration`: passed; latest static counts `story markers=390`, `objective markers=434`, duration proxy `estimate=30.7min`, labels `102`.
+  - `YUANBO_URL=http://127.0.0.1:4321/retire/bo/yuanbo-game/?qa=1 pnpm probe:yuanbo:browser`: passed after updating old title expectations and the mobile reversal layout; screenshots refreshed under `/tmp/yuanbo-prologue-qa`.
+  - Visually inspected `desktop-desk.png`, `mobile-desk.png`, `desktop-customer-reversal-dialog.png`, `mobile-customer-reversal-dialog.png`, and `debt-forced-battle-gate.png`.
+  - Current residual risk: key story beats now use dedicated game boards, but secondary evidence cards and some result/bridge screens remain text-heavy.
+
+## Handoff / Archive Notes
+
+- Final state: complete
+- Archive path: `.agents/tasks/archive/<filename>`

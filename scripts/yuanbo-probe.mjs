@@ -1,322 +1,455 @@
 #!/usr/bin/env node
-import { createJiti } from 'jiti';
+import { readFileSync } from 'node:fs';
 
-const jiti = createJiti(`${process.cwd()}/`);
-const { QUESTS, SKILLS } = jiti('./apps/frontend-astro/src/game/yuanbo/data.ts');
-const { clamp, defaultState, levelUp } = jiti(
-  './apps/frontend-astro/src/game/yuanbo/state.ts',
+const prologue = readFileSync(
+  'apps/frontend-astro/src/game/yuanbo/prologue.ts',
+  'utf8',
+);
+const page = readFileSync(
+  'apps/frontend-astro/src/pages/bo/yuanbo-game.astro',
+  'utf8',
 );
 
-const MAX_ACTIONS = 12;
+const requiredStrings = [
+  '第一天：这姐咋收钱啊',
+  '财务姐：GPU 账单爆炸',
+  '财务姐追问：谁批的预算',
+  '老板上线拆板：今天上线怎么说',
+  '上线彩排：别把小范围试点吹成全部上线',
+  '客户姐：再给我梳一次',
+  '客户反悔拆板：免费、上线、拉倒',
+  '收费谈判：这姐咋收钱啊',
+  '报价上桌',
+  '补一次',
+  '签范围',
+  '体面拉倒',
+  '先回财务：钱不能糊',
+  '先回老板：上线别吹满',
+  '先回客户：我先听你说',
+  'opening:finance',
+  'opening:boss',
+  'opening:customer',
+  '结局：收到钱',
+  '结局：补一次',
+  '结局：体面拉倒',
+  '结局：免费干崩',
+  'SpeakerProfile',
+  'speaker-finance',
+  'speaker-boss',
+  'speaker-customer',
+  'EvidenceOption',
+  'evidenceForecast',
+  '终幕报价时预算更稳',
+  '终幕补一次时',
+  '终幕需求变多时',
+  '终幕拉倒时更体面',
+  'PrepOption',
+  'PrepWorkbenchCard',
+  'STARTING_TIME',
+  'timeLeft',
+  'timeLog',
+  'showPrepMenu',
+  'showPrepWorkbench',
+  'prepWorkbenchCards',
+  'rehearsal-workbench',
+  'drawPrepWorkbenchStatus',
+  'drawPrepWorkbenchCards',
+  'prepWorkbench',
+  'spendTime',
+  '战前准备',
+  '演练收费说法',
+  '跑一遍小范围试点演示',
+  '写拉倒台阶',
+  'prepForecast',
+  '克制预算质疑',
+  '克制顺手加范围',
+  '克制不签范围的僵局',
+  'prepSummary',
+  'timeSpendSummary',
+  'SCENE_CUES',
+  'SCENE_EVENTS',
+  'StorySetPiece',
+  'StageComposition',
+  'stageComposition',
+  'drawStageComposition',
+  'stageComposition:',
+  '三条事故同时进门',
+  '玩家不是在逛办公室',
+  '博哥要做：',
+  'SceneMemoryProp',
+  'drawStorySetPiece',
+  'drawSceneMemoryProps',
+  'storySetPieceForBeat',
+  'sceneMemoryProps',
+  'storySetPiece',
+  'sceneMemoryProps',
+  '上午账单',
+  '上线说法',
+  '客户边界',
+  '财务账单墙',
+  '上线玻璃房',
+  '客户收费桌',
+  'SceneEventBubble',
+  'sceneEvents',
+  'activeActorBarks',
+  'actorBarks',
+  'boThoughtLine',
+  'boThoughtPlacement',
+  'boThought',
+  'boThoughtBox',
+  '先别回可以。',
+  '补一次别补全世界。',
+  '先回客户，钱谁认？',
+  '试点上线，能播。',
+  '全部上线怎么算钱？',
+  'OPENING_INBOX',
+  'OPENING_INBOX_CHOICES',
+  'OpeningInboxChoice',
+  'OpeningInboxItem',
+  'OpeningMessageTarget',
+  'openingMessageTargets',
+  'chooseOpeningMessage',
+  'showOpeningInboxBoard',
+  'drawOpeningInboxBoardCards',
+  'opening-inbox-board',
+  'openingInboxBoard',
+  'openingTargets',
+  '点击回复',
+  'drawOpeningInbox',
+  'drawWakeOffice',
+  'drawWakeHud',
+  'openingInbox',
+  'openingScene',
+  '工位亮屏',
+  "cue.prop === 'messages') return",
+  "state.beat === 'wake'",
+  '09:17 / 工位亮屏',
+  '博哥工位：三条未读',
+  'LedgerSortItem',
+  'LedgerSortSlot',
+  'LEDGER_SORT_ITEMS',
+  '账单拆包：把截图贴到正确格子',
+  'ticket-slot-board',
+  'drawLedgerSortSlots',
+  'drawLedgerSortTickets',
+  'ledgerSorting',
+  'completeLedgerSorting',
+  'BattleDuelFocus',
+  'battleDuelFocus',
+  'duelFocus',
+  '本回合对峙',
+  'BattleClosingGoal',
+  'battleClosingGoals',
+  'drawBattleClosingGoals',
+  '收桌目标',
+  'closingGoals',
+  '体面拉倒',
+  'CustomerJokeFragment',
+  'CUSTOMER_JOKE_FRAGMENTS',
+  'CustomerJokeRoute',
+  'CUSTOMER_JOKE_ROUTES',
+  '客户语音拆句：报价、补偿、拉倒',
+  'voice-fragment-board',
+  'drawCustomerJokeFragments',
+  'drawCustomerJokeRoutes',
+  'customerJokeBoard',
+  'CustomerReversalPressure',
+  'CUSTOMER_REVERSAL_PRESSURES',
+  'CustomerReversalRoute',
+  'CUSTOMER_REVERSAL_ROUTES',
+  '客户反悔拆板：免费、上线、拉倒',
+  'reversal-pressure-board',
+  'drawCustomerReversalPressures',
+  'drawCustomerReversalRoutes',
+  'customerReversalBoard',
+  'BossLaunchPressure',
+  'BOSS_LAUNCH_PRESSURES',
+  'BossLaunchRoute',
+  'BOSS_LAUNCH_ROUTES',
+  '老板上线拆板：今天上线怎么说',
+  'launch-pressure-board',
+  'drawBossLaunchPressures',
+  'drawBossLaunchRoutes',
+  'bossLaunchBoard',
+  'drawSceneEventBubbles',
+  'sceneEventColor',
+  'hotspotSceneVisible',
+  'hotspotVisualSnapshots',
+  'hidden-clue-zone',
+  'readClue',
+  'visualTarget',
+  'GuideTarget',
+  'currentGuideTarget',
+  'directionArrow',
+  'targetGuide',
+  'updateTargetGuide',
+  'setClickTarget',
+  'clearClickTarget',
+  'clickMoveActive',
+  'pendingInteraction',
+  'approachActor',
+  'approachHotspot',
+  'tryPendingInteraction',
+  'actorApproachOffset',
+  '点击地面或 WASD 移动',
+  '目标：',
+  '财务群',
+  '客户语音',
+  '现场冲突',
+  '三群同时炸',
+  '账单拍桌',
+  '顺手全部上线',
+  'DebtId',
+  '遗留问题生成',
+  '遗留问题带入',
+  'budget-blame',
+  'full-launch',
+  'debtSummary',
+  '现场反应',
+  'ChoiceOutcomeCard',
+  'outcomeCard',
+  'outcomeSceneChange',
+  'outcomeFinalImpact',
+  '桌上变化',
+  'DecisionVignette',
+  'decisionVignette',
+  'ActionForecast',
+  'ManagementHint',
+  'dialogManagementHint',
+  'shouldShowManagementHint',
+  'managementGapLine',
+  'choiceManagementRecommendation',
+  'actionForecastCost',
+  'forecast',
+  'makeChoiceCard',
+  'makeManagementHintCard',
+  'choiceForecasts',
+  'managementHint',
+  '今日账本：',
+  '当前缺口：',
+  '建议：',
+  'touchBridgeHidden',
+  'setTouchBridgeHidden',
+  '当场变化：',
+  '代价：',
+  '晚上用得上：',
+  'routeEndgameLine',
+  'drawOutcomeQuote',
+  'drawOutcomeChips',
+  '晚上回响',
+  '复盘：',
+  '谈判阶段突破',
+  'showBattlePhaseBreak',
+  'PhaseBreakCard',
+  'PhaseBreakPanel',
+  'phaseBreakPanels',
+  'phaseBreakChips',
+  'drawPhaseBreakChips',
+  '客户让步',
+  '桌面变化',
+  '下一问',
+  'phaseBreakCard',
+  'phaseBreakStory',
+  'phaseBreakNextGoal',
+  '赢法：',
+  '把“再梳一次”写成小范围试点',
+  'ClientIntentType',
+  'BATTLE_SKILLS',
+  'skillPreview',
+  'nextClientIntent',
+  'suggestedSkillsForIntent',
+  'battlePhaseLine',
+  'skillTableLine',
+  'BattleCommand',
+  'battleCommandCards',
+  'drawBattleCommandCard',
+  'battleSkillSpeechLine',
+  'battleSkillRiskLine',
+  'skillCommands',
+  '本回合对峙',
+  '克制：',
+  'BattleTurnBeat',
+  'BattleTableProp',
+  'NegotiationTableLines',
+  'drawNegotiationTableScene',
+  'drawBattleTableProps',
+  'drawNegotiationTokens',
+  'negotiationTableLines',
+  'negotiationTokens',
+  'battleTableProps',
+  '谈判桌',
+  'tableLines',
+  'tableTokens',
+  'tableProps',
+  'sceneMode',
+  'meeting-table',
+  'drawBattleDuelFocus',
+  'battleTurnBeat',
+  '客户压上来',
+  '博哥先想',
+  'choiceSpeechLine',
+  '博哥说',
+  '当场变化',
+  '代价：',
+  '客户压上来',
+  'turnBeat',
+  'StoryPressure',
+  'storyPressureFor',
+  '今日追问',
+  '财务账单没钉死',
+  '老板今天上线承诺',
+  '拉倒先上桌',
+  'battleCounterSkills',
+  '说法对路',
+  '博哥还没回',
+  'skillPreviews',
+  'lastImpact',
+  'battleImpact',
+  'battleDeltaSummary',
+  '路线徽章',
+  'drawEndingScoreChips',
+  "state.decisions.includes('customerReversal:walkaway-line')",
+  'battle.client.scope <= 42',
+  'routeReport',
+  '路线称号',
+  'EndingEcho',
+  'endingEchoes',
+  'drawEndingClosingScene',
+  'endingClosingSceneLine',
+  'endingScene',
+  '会议室收工',
+  '账单',
+  '范围单',
+  '试点记录',
+  "speaker: 'finance'",
+  "speaker: 'boss'",
+  "speaker: 'customer'",
+  '报价上桌型售后王',
+  '边界合同人',
+  '免费售后受害者',
+  'metricDeltaParts',
+  '钱先有名',
+  '关系变冷',
+  '边界更清楚',
+  'debtDiffSummary',
+  '遗留问题变化',
+  'GPU 峰值曲线',
+  '小范围试点验收句',
+  '拉倒留证据',
+  'evidenceSummary',
+  'exportCode',
+  'importCode',
+  'storageKey',
+  'encodeSave',
+  'decodeSave',
+  'StoryBeatCard',
+  'clock:',
+  'place:',
+  'STORY_BEATS',
+  '09:17',
+  '09:32',
+  '10:42',
+  '11:30',
+  '12:18',
+  '14:20',
+  '15:05',
+  '16:00',
+  '19:40',
+  '时间地点：',
+  '剩余行动：',
+  'MilestoneId',
+  'MILESTONES',
+  'milestoneSummary',
+  'storyCausalChain',
+  'storyCausalLine',
+  '今日因果',
+  'causalChain',
+  'causalLine',
+  '钱：报价上桌',
+  '上线：只承诺小范围试点',
+  '客户：补一次锁进小范围试点',
+  '章节推进',
+  'drawFloorActTrail',
+  'drawSceneMask',
+  'drawHudStoryRail',
+  'mapHudMode',
+  'chapter-strip',
+  'compact-map',
+  'drawHudCausalStrip',
+  '今日走势',
+  'storyCard',
+  'BeatBridge',
+  'BEAT_BRIDGES',
+  '镜头转场',
+  '上桌前清单',
+  'battleDossierLines',
+  'storyboard',
+  '博哥心声',
+  'showBeatBridge',
+  'BridgeStoryboardPanel',
+  'bridgeStoryboardPanels',
+  'drawBridgeStoryboard',
+  '刚才留下的余波',
+  '博哥心里过一遍',
+  '下一幕压力',
+  'bridgeCard',
+  '现场冲突',
+  'zoneOutcomeLabel',
+  'zoneOutcomes',
+  '试点上线',
+  '体面拉倒',
+  '当前冲突',
+  '__YUANBO_PROLOGUE_QA__',
+  'bo-chaos:yuanbo-first-day-prologue:v1',
+];
 
-function skillSlots(state) {
-  if (state.level >= 5 || state.cycle >= 2) return 6;
-  if (state.level >= 3) return 5;
-  return 4;
-}
+const requiredFlow = [
+  "beat: 'wake'",
+  "beat: 'finance'",
+  "beat: 'financeAudit'",
+  "beat: 'boss'",
+  "beat: 'bossRehearsal'",
+  "beat: 'customer'",
+  "beat: 'customerReversal'",
+  "state.beat = 'battle'",
+  "state.beat = 'ending'",
+  "state.beat = nextBeat",
+  "decision: 'opening:finance'",
+  "this.applyStoryChoice(choice.decision, 'finance')",
+  "this.applyStoryChoice('finance:quote', 'financeAudit')",
+  "this.applyStoryChoice('financeAudit:paid-pilot', 'boss')",
+  "decision: 'boss:poc'",
+  "this.applyStoryChoice(route.decision, 'bossRehearsal')",
+  "this.applyStoryChoice('bossRehearsal:poc-script', 'customer')",
+  "this.applyStoryChoice(route.decision, 'customerReversal')",
+  "this.chooseCustomerReversal(",
+  "'customerReversal:poc-only'",
+  "state.mode = 'ending'",
+];
 
-function skillUnlocked(state, skill) {
-  if (skill.unlockLevel <= state.level) return true;
-  if (!skill.training) return false;
-  return state.training[skill.training] >= Math.max(1, skill.unlockLevel - 1);
-}
-
-function sortedUnlockedSkills(state, quest) {
-  return SKILLS.filter((skill) => skillUnlocked(state, skill)).sort((a, b) => {
-    const score = (skill) => {
-      let value = 0;
-      if (quest?.preferred?.includes(skill.training)) value += 40;
-      if (skill.category === quest?.route) value += 18;
-      if (skill.training) value += state.training[skill.training] * 4;
-      value += skill.unlockLevel;
-      return value;
-    };
-    return score(b) - score(a);
-  });
-}
-
-function battleSkills(state, quest) {
-  return sortedUnlockedSkills(state, quest).slice(0, skillSlots(state));
-}
-
-function makePreparedState(quest) {
-  const state = defaultState();
-  state.storyIntroSeen = true;
-  state.level = Math.max(1, quest.recommendedLevel);
-  state.stats.cash = 760;
-  state.stats.reputation = 48;
-  state.stats.energy = 94;
-  state.stats.patience = 92;
-  state.stats.boundary = 62;
-  state.stats.pressure = quest.chapter >= 3 ? 34 : 18;
-  Object.keys(state.training).forEach((key) => {
-    state.training[key] = quest.chapter >= 3 ? 2 : quest.chapter >= 2 ? 1 : 0;
-  });
-  if (quest.boss) {
-    state.level = 4;
-    state.completed = QUESTS.filter((item) => !item.boss)
-      .slice(0, 6)
-      .map((item) => item.id);
-    state.routes.business = 45;
-    state.routes.delivery = 38;
-    state.routes.boundary = 42;
-    state.routes.shadow = 28;
-  }
-  return state;
-}
-
-function initBattle(state, quest) {
-  const issueHeat = state.issues.reduce((sum, issue) => sum + issue.severity, 0);
-  const failedBoost = state.failed.includes(quest.id) ? 8 : 0;
-  const cycleBoost = Math.max(0, state.cycle - 1) * 5;
-  const bossBoost = quest.boss
-    ? Math.floor(issueHeat * 0.48)
-    : Math.floor(issueHeat * 0.18);
-  return {
-    questId: quest.id,
-    round: 1,
-    client: {
-      anger: clamp(quest.enemy.anger + failedBoost + bossBoost + cycleBoost, 0, 96),
-      budget: clamp(
-        quest.enemy.budget - Math.floor(bossBoost / 2) - cycleBoost,
-        8,
-        100,
-      ),
-      scope: clamp(quest.enemy.scope + failedBoost + bossBoost + cycleBoost, 0, 96),
-      trust: clamp(quest.enemy.trust - failedBoost, 0, 100),
-    },
-    cooldowns: {},
-    flags: [],
-    log: [],
-  };
-}
-
-function skillDisabled(state, battle, skill) {
-  if (!skillUnlocked(state, skill)) return true;
-  if ((battle.cooldowns[skill.id] || 0) > 0) return true;
-  if (state.stats.energy < skill.energy || state.stats.patience < skill.patience)
-    return true;
-  if (skill.boundary && state.stats.boundary < skill.boundary) return true;
-  if (
-    skill.category === 'shadow' &&
-    state.training.shadow <= 0 &&
-    state.level < skill.unlockLevel
-  )
-    return true;
-  return false;
-}
-
-function usableSkills(state, battle, quest) {
-  return battleSkills(state, quest).filter((skill) => !skillDisabled(state, battle, skill));
-}
-
-function applySkill(state, battle, quest, skill) {
-  state.stats.energy = clamp(state.stats.energy - skill.energy, 0, 100);
-  state.stats.patience = clamp(state.stats.patience - skill.patience, 0, 100);
-  if (skill.boundary)
-    state.stats.boundary = clamp(state.stats.boundary - skill.boundary, 0, 100);
-  const trainingBonus = skill.training ? state.training[skill.training] : 0;
-  Object.entries(skill.effect).forEach(([key, amount]) => {
-    const direction = amount > 0 ? 1 : -1;
-    const preferredBonus = skill.training && quest.preferred?.includes(skill.training) ? 3 : 0;
-    const resistance = quest.resistance?.[key] || 0;
-    battle.client[key] = clamp(
-      battle.client[key] + amount + direction * (trainingBonus * 3 + preferredBonus - resistance),
-      0,
-      100,
-    );
-  });
-  Object.entries(skill.self || {}).forEach(([key, amount]) => {
-    state.stats[key] = clamp(state.stats[key] + amount, 0, key === 'cash' ? 99999 : 100);
-  });
-  state.routes[skill.category] = clamp(state.routes[skill.category] + 4 + trainingBonus, 0, 100);
-  battle.cooldowns[skill.id] = skill.cooldown + 1;
-}
-
-function clientTurn(state, battle, quest) {
-  const c = battle.client;
-  const highest = Object.entries({
-    anger: c.anger,
-    budget: 100 - c.budget,
-    scope: c.scope,
-    trust: 100 - c.trust,
-  }).sort((a, b) => b[1] - a[1])[0][0];
-  const issueBonus = Math.min(9, state.issues.reduce((sum, issue) => sum + issue.severity, 0) / 6);
-  const earlyProtection =
-    quest.chapter === 1 && state.completed.filter((id) => id !== 'boss').length < 2
-      ? 0.55
-      : quest.chapter === 1
-        ? 0.75
-        : 1;
-  const s = (value) => Math.ceil(value * earlyProtection);
-  const effects = {
-    anger: { client: { anger: s(10 + issueBonus), trust: -6 }, self: { patience: -s(7) } },
-    budget: { client: { budget: -s(12 + issueBonus), anger: 5 }, self: { energy: -s(5) } },
-    scope: { client: { scope: s(13 + issueBonus), trust: -4 }, self: { patience: -s(5) } },
-    trust: { client: { trust: -s(9), scope: s(6) }, self: { energy: -s(5), pressure: s(4) } },
-  }[highest];
-  Object.entries(effects.client).forEach(([key, amount]) => {
-    c[key] = clamp(c[key] + amount, 0, 100);
-  });
-  Object.entries(effects.self).forEach(([key, amount]) => {
-    state.stats[key] = clamp(state.stats[key] + amount, 0, 100);
-  });
-}
-
-function stabilize(state, battle) {
-  state.stats.energy = clamp(state.stats.energy + 7, 0, 100);
-  state.stats.patience = clamp(state.stats.patience + 7, 0, 100);
-  state.stats.boundary = clamp(state.stats.boundary + 4, 0, 100);
-  state.stats.pressure = clamp(state.stats.pressure - 2, 0, 100);
-  battle.client.trust = clamp(battle.client.trust + 3, 0, 100);
-  battle.client.anger = clamp(battle.client.anger - 3, 0, 100);
-  battle.client.budget = clamp(battle.client.budget - 3, 0, 100);
-}
-
-function evaluate(state, battle, quest) {
-  const c = battle.client;
-  const hardFail =
-    state.stats.energy <= 0 ||
-    state.stats.patience <= 0 ||
-    c.anger >= 100 ||
-    c.scope >= 100 ||
-    c.budget <= 0;
-  if (hardFail) {
-    const earlyCompleted = state.completed.filter((id) => id !== 'boss').length;
-    if (
-      quest.chapter === 1 &&
-      earlyCompleted < 2 &&
-      battle.round < 4 &&
-      !battle.flags.includes('tutorial-buffer')
-    ) {
-      battle.flags.push('tutorial-buffer');
-      state.stats.energy = Math.max(state.stats.energy, 18);
-      state.stats.patience = Math.max(state.stats.patience, 18);
-      c.anger = Math.min(c.anger, 88);
-      c.scope = Math.min(c.scope, 88);
-      c.budget = Math.max(c.budget, 18);
-      return '';
-    }
-    return 'fail';
-  }
-  if (c.trust >= 70 && c.budget >= 50 && c.anger <= 88 && c.scope <= 84)
-    return 'win';
-  if (battle.round >= 6) {
-    if (c.trust >= 44 && c.budget >= 30 && c.anger < 100) return 'partial';
-    return 'fail';
-  }
-  return '';
-}
-
-function settle(state, quest, outcome) {
-  if (outcome === 'win' || outcome === 'partial') {
-    if (!quest.boss || outcome === 'win') state.completed.push(quest.id);
-    state.failed = state.failed.filter((id) => id !== quest.id);
-  } else if (!state.failed.includes(quest.id)) {
-    state.failed.push(quest.id);
-  }
-  state.xp += outcome === 'win' ? quest.xp : outcome === 'partial' ? Math.floor(quest.xp * 0.62) : 12;
-  state.stats.cash = Math.max(
-    0,
-    state.stats.cash +
-      (outcome === 'win' ? quest.reward : outcome === 'partial' ? Math.floor(quest.reward * 0.58) : -80),
-  );
-  if (!quest.boss)
-    state.routes[quest.route] = clamp(
-      state.routes[quest.route] + (outcome === 'win' ? 14 : outcome === 'partial' ? 8 : 2),
-      0,
-      100,
-    );
-  levelUp(state);
-}
-
-function pickSkill(strategy, state, battle, quest, actionIndex) {
-  const usable = usableSkills(state, battle, quest);
-  if (!usable.length) return null;
-  if (strategy === 'bad') return usable[usable.length - 1];
-  if (strategy === 'drain') return [...usable].sort((a, b) => b.energy + b.patience - (a.energy + a.patience))[0];
-  if (strategy === 'first') return usable[0];
-  const byPlan = quest.preferred
-    ? usable.find((skill) => quest.preferred.includes(skill.training))
-    : undefined;
-  return byPlan || usable[actionIndex % usable.length];
-}
-
-function runBattle(quest, strategy) {
-  const state = makePreparedState(quest);
-  const battle = initBattle(state, quest);
-  let fallbackCount = 0;
-  for (let i = 0; i < MAX_ACTIONS; i += 1) {
-    const before = evaluate(state, battle, quest);
-    if (before) {
-      settle(state, quest, before);
-      return { outcome: before, actions: i, fallbackCount };
-    }
-    const skill = pickSkill(strategy, state, battle, quest, i);
-    if (skill) applySkill(state, battle, quest, skill);
-    else {
-      fallbackCount += 1;
-      stabilize(state, battle);
-    }
-    const early = evaluate(state, battle, quest);
-    if (early) {
-      settle(state, quest, early);
-      return { outcome: early, actions: i + 1, fallbackCount };
-    }
-    clientTurn(state, battle, quest);
-    Object.keys(battle.cooldowns).forEach((id) => {
-      battle.cooldowns[id] = Math.max(0, battle.cooldowns[id] - 1);
-    });
-    battle.round += 1;
-    const after = evaluate(state, battle, quest);
-    if (after) {
-      settle(state, quest, after);
-      return { outcome: after, actions: i + 1, fallbackCount };
-    }
-  }
-  throw new Error(`${quest.id}/${strategy} did not settle in ${MAX_ACTIONS} actions`);
-}
-
-function runCampaign() {
-  const state = defaultState();
-  const order = ['gpu', 'agent', 'sla', 'private', 'cost', 'shadow', 'boss'];
-  for (const id of order) {
-    const quest = QUESTS.find((item) => item.id === id);
-    if (!quest) throw new Error(`missing campaign quest ${id}`);
-    if (!quest.unlock(state)) {
-      state.level = Math.max(state.level, quest.recommendedLevel);
-      Object.keys(state.training).forEach((key) => {
-        state.training[key] = Math.max(state.training[key], quest.chapter >= 2 ? 1 : 0);
-      });
-      state.routes[quest.route] = Math.max(state.routes[quest.route], quest.chapter >= 3 ? 45 : 18);
-    }
-    const result = runBattle(quest, 'recommended');
-    settle(state, quest, result.outcome);
-  }
-  if (!state.completed.includes('boss')) throw new Error('campaign did not complete boss');
-}
-
-const failures = [];
-const strategies = ['recommended', 'bad', 'drain', 'first'];
-for (const quest of QUESTS) {
-  for (const strategy of strategies) {
-    try {
-      const result = runBattle(quest, strategy);
-      console.log(`${quest.id.padEnd(10)} ${strategy.padEnd(11)} -> ${result.outcome} in ${result.actions} actions fallback=${result.fallbackCount}`);
-    } catch (error) {
-      failures.push(error instanceof Error ? error.message : String(error));
-    }
-  }
-}
-try {
-  runCampaign();
-  console.log('campaign   recommended -> boss completed');
-} catch (error) {
-  failures.push(error instanceof Error ? error.message : String(error));
-}
-
-if (failures.length) {
-  console.error('\nYuanbo probe failed:');
-  failures.forEach((failure) => console.error(`- ${failure}`));
+const missing = [...requiredStrings, ...requiredFlow].filter(
+  (needle) => !prologue.includes(needle),
+);
+if (missing.length) {
+  console.error('yuanbo prologue probe failed: missing story markers');
+  missing.forEach((item) => console.error(`- ${item}`));
   process.exit(1);
 }
+
+if (!page.includes("../../game/yuanbo/prologue")) {
+  console.error('yuanbo prologue probe failed: Astro page is not using prologue entry');
+  process.exit(1);
+}
+
+const choiceCount = (prologue.match(/label: '/g) || []).length;
+const endingCount = (prologue.match(/Ending/g) || []).length;
+if (choiceCount < 27 || endingCount < 3) {
+  console.error(
+    `yuanbo prologue probe failed: weak branching surface choices=${choiceCount} endingRefs=${endingCount}`,
+  );
+  process.exit(1);
+}
+
+console.log(
+  `yuanbo prologue probe passed: story markers=${requiredStrings.length}, flow markers=${requiredFlow.length}, choices=${choiceCount}`,
+);

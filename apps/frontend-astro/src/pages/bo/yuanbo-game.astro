@@ -14,28 +14,16 @@ const boHeadPatchSrc = import.meta.env.DEV
   ? '/codex-pets/expertbo-map-cutout.png'
   : sitePath('/codex-pets/expertbo-map-cutout.png');
 const boWalkSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-pixi/v1/bo-walk.png'
-  : sitePath('/codex-pets/yuanbo-pixi/v1/bo-walk.png');
+  ? '/codex-pets/yuanbo-source2-walk-v2.png'
+  : sitePath('/codex-pets/yuanbo-source2-walk-v2.png');
 const boPortraitsSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-pixi/v1/bo-portraits.png'
-  : sitePath('/codex-pets/yuanbo-pixi/v1/bo-portraits.png');
-const boActionsSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-pixi/v1/bo-actions.png'
-  : sitePath('/codex-pets/yuanbo-pixi/v1/bo-actions.png');
-const npcAtlasSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-pixi/v1/npc-atlas.png'
-  : sitePath('/codex-pets/yuanbo-pixi/v1/npc-atlas.png');
-const officeMapSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-pixi/v1/office-map-floor-v2.png'
-  : sitePath('/codex-pets/yuanbo-pixi/v1/office-map-floor-v2.png');
-const siteMapSrc = import.meta.env.DEV
-  ? '/codex-pets/yuanbo-pixi/v1/site-map-floor-v2.png'
-  : sitePath('/codex-pets/yuanbo-pixi/v1/site-map-floor-v2.png');
+  ? '/codex-pets/yuanbo-source2-portraits-v2.png'
+  : sitePath('/codex-pets/yuanbo-source2-portraits-v2.png');
 ---
 
 <Layout
   title="袁博の极限售后"
-  description="袁博の极限售后，一个 PixiJS v8 驱动的经营网页 RPG。"
+  description="袁博の极限售后：第一天，这姐咋收钱啊。"
 >
   <main class="yrpg-page">
     <section
@@ -47,10 +35,6 @@ const siteMapSrc = import.meta.env.DEV
       data-bo-head-patch-src={boHeadPatchSrc}
       data-bo-walk-src={boWalkSrc}
       data-bo-portraits-src={boPortraitsSrc}
-      data-bo-actions-src={boActionsSrc}
-      data-npc-atlas-src={npcAtlasSrc}
-      data-office-map-src={officeMapSrc}
-      data-site-map-src={siteMapSrc}
       aria-label="袁博の极限售后游戏画面"
     >
       <noscript>需要启用 JavaScript 才能游玩《袁博の极限售后》。</noscript>
@@ -59,11 +43,11 @@ const siteMapSrc = import.meta.env.DEV
 </Layout>
 
 <script>
-  import { startYuanboPixiGame } from '../../game/yuanbo-pixi/main';
+  import { startYuanboGame } from '../../game/yuanbo/prologue';
 
   const root = document.querySelector('[data-yuanbo-rpg]');
   if (root instanceof HTMLElement) {
-    const destroy = startYuanboPixiGame(root);
+    const destroy = startYuanboGame(root);
     window.addEventListener('beforeunload', destroy, { once: true });
   }
 </script>
@@ -74,17 +58,7 @@ const siteMapSrc = import.meta.env.DEV
     inset: 0;
     min-height: 100svh;
     overflow: hidden;
-    background: linear-gradient(
-        135deg,
-        rgb(18 45 47 / 92%),
-        rgb(12 24 31 / 96%)
-      ),
-      radial-gradient(
-        circle at 25% 20%,
-        rgb(248 215 106 / 22%),
-        transparent 28%
-      ),
-      radial-gradient(circle at 78% 84%, rgb(48 160 120 / 16%), transparent 32%);
+    background: linear-gradient(135deg, rgb(18 45 47 / 92%), rgb(12 24 31 / 96%));
     color: #fff8dc;
   }
 
@@ -114,8 +88,7 @@ const siteMapSrc = import.meta.env.DEV
   }
 
   .yrpg-stage :global(.yrpg-touch-bridge__stick),
-  .yrpg-stage :global(.yrpg-touch-bridge__interact),
-  .yrpg-stage :global(.yrpg-touch-bridge__menu) {
+  .yrpg-stage :global(.yrpg-touch-bridge__interact) {
     pointer-events: auto;
     position: absolute;
     border: 1px solid rgb(255 248 220 / 34%);
@@ -157,22 +130,15 @@ const siteMapSrc = import.meta.env.DEV
     font-size: 1rem;
   }
 
-  .yrpg-stage :global(.yrpg-touch-bridge__menu) {
-    display: grid;
-    place-items: center;
-    width: 4.1rem;
-    height: 2.8rem;
-    border-radius: 0;
-    font-size: 0.9rem;
-  }
-
   .yrpg-stage :global(canvas) {
     display: block;
-    width: 100vw !important;
-    height: 100svh !important;
+    width: min(100vw, 1280px, calc(100svh * 16 / 9)) !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9;
     max-width: 100vw;
     max-height: 100svh;
     image-rendering: auto;
+    box-shadow: 0 24px 80px rgb(0 0 0 / 34%);
   }
 
   @media (max-width: 720px) {
@@ -198,12 +164,6 @@ const siteMapSrc = import.meta.env.DEV
       width: 4.7rem;
       height: 3.25rem;
       background: rgb(140 90 35 / 82%);
-    }
-
-    .yrpg-stage :global(.yrpg-touch-bridge__menu) {
-      top: max(0.45rem, env(safe-area-inset-top));
-      right: 0.6rem;
-      background: rgb(41 78 88 / 82%);
     }
   }
 </style>

@@ -23,6 +23,10 @@ Use exact commands from this file when validating changes.
 | Start mini app                  | `pnpm start:weapp`                  |
 | Agent harness lint              | `pnpm agent:lint`                   |
 | Yuanbo game probe               | `pnpm probe:yuanbo`                 |
+| Yuanbo prologue objective audit | `pnpm probe:yuanbo:objective`       |
+| Yuanbo prologue copy audit      | `pnpm probe:yuanbo:copy`            |
+| Yuanbo prologue duration audit  | `pnpm probe:yuanbo:duration`        |
+| Yuanbo prologue browser probe   | `pnpm probe:yuanbo:browser`         |
 | Yuanbo Pixi Alpha probe         | `pnpm probe:yuanbo-pixi`            |
 | Yuanbo Pixi browser probe       | `pnpm probe:yuanbo-pixi:browser`    |
 | Reckful visual acceptance       | `pnpm visual:reckful`               |
