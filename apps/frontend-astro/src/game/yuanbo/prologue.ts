@@ -5694,13 +5694,75 @@ class PrologueScene extends Phaser.Scene {
   }
 
   private drawMobileBattle(state: PrologueState, battle: BattleState): void {
-    this.drawBattleClosingGoals(28, 96, this.scale.width - 56, 34, state, battle, true);
-    addBoPortrait(this, 28, 136, 122, 144, 'talk');
-    this.drawCustomerPortrait(this.scale.width - 144, 138, 118, 138);
-    this.drawBattleActionFx(150, 256, this.scale.width - 144, 256, battle, true);
-    this.drawNegotiationTableScene(28, 284, this.scale.width - 56, 146, state, battle, true);
-    this.drawBattleDuelFocus(28, 446, this.scale.width - 56, 168, state, battle, true);
-    this.drawSkillButtons(26, this.scale.height - 214, this.scale.width - 52, 184, state, battle);
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cramped = h < 780;
+    const side = 26;
+    const goalsY = cramped ? 94 : 96;
+    const portraitY = cramped ? 132 : 136;
+    const portraitW = cramped ? 108 : 122;
+    const portraitH = cramped ? 128 : 144;
+    const customerW = cramped ? 104 : 118;
+    const customerH = cramped ? 122 : 138;
+    const tableY = cramped ? 266 : 284;
+    const tableH = cramped ? 132 : 146;
+    const skillPanelH = cramped ? 170 : 184;
+    const skillY = h - skillPanelH - (cramped ? 28 : 34);
+    const focusY = tableY + tableH + 10;
+    const focusH = Math.max(54, Math.min(168, skillY - focusY - 10));
+
+    this.drawBattleClosingGoals(side + 2, goalsY, w - side * 2 - 4, cramped ? 32 : 34, state, battle, true);
+    addBoPortrait(this, side + 2, portraitY, portraitW, portraitH, 'talk');
+    this.drawCustomerPortrait(w - side - customerW, portraitY + 2, customerW, customerH);
+    this.drawBattleActionFx(side + portraitW + 6, portraitY + portraitH - 26, w - side - customerW, portraitY + customerH - 28, battle, true);
+    this.drawNegotiationTableScene(side + 2, tableY, w - side * 2 - 4, tableH, state, battle, true);
+    if (cramped) {
+      this.drawMobileBattleCompactFocus(side + 2, focusY, w - side * 2 - 4, focusH, state, battle);
+    } else {
+      this.drawBattleDuelFocus(side + 2, focusY, w - side * 2 - 4, focusH, state, battle, true);
+    }
+    this.drawSkillButtons(side, skillY, w - side * 2, skillPanelH, state, battle);
+  }
+
+  private drawMobileBattleCompactFocus(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    state: PrologueState,
+    battle: BattleState,
+  ): void {
+    const focus = battleDuelFocus(state, battle);
+    const accent =
+      battle.lastImpact?.phaseBreak
+        ? 0xffdf86
+        : battle.lastImpact?.countered
+          ? 0x7be0c6
+          : intentColor(battle.intentType);
+    this.add
+      .rectangle(x, y, w, h, 0x0d2528, 0.98)
+      .setOrigin(0, 0)
+      .setStrokeStyle(2, accent, 0.82);
+    this.add.rectangle(x, y, 7, h, accent, 0.92).setOrigin(0, 0);
+    const title = this.add
+      .text(
+        x + 16,
+        y + 7,
+        `本回合：${focus.title}`,
+        textStyle(10, '#ffe6a8', '950'),
+      )
+      .setWordWrapWidth(w - 32);
+    fitText(title, w - 32, 13, 10, 8);
+    const body = this.add
+      .text(
+        x + 16,
+        y + 24,
+        wrapCjk(`${focus.customerLine} / 推荐：${focus.recommended.join('、') || '先稳住'}`, 24),
+        textStyle(9, '#f4f1d9', '850'),
+      )
+      .setLineSpacing(2)
+      .setWordWrapWidth(w - 32);
+    fitText(body, w - 32, h - 30, 9, 7);
   }
 
   private drawNegotiationTableScene(
@@ -5749,6 +5811,26 @@ class PrologueScene extends Phaser.Scene {
       compact,
     );
 
+    if (compact && h <= 136) {
+      this.drawMobileNegotiationBrief(
+        x + 12,
+        y + 58,
+        w - 24,
+        36,
+        lines,
+        battle,
+      );
+      this.drawNegotiationTokens(
+        x + 18,
+        y + h - 29,
+        w - 36,
+        state,
+        battle,
+        compact,
+      );
+      return;
+    }
+
     this.drawTalkBubble(
       x + (compact ? 12 : 20),
       y + (compact ? 59 : 68),
@@ -5771,12 +5853,41 @@ class PrologueScene extends Phaser.Scene {
     );
     this.drawNegotiationTokens(
       x + (compact ? 18 : 24),
-      y + h - (compact ? 33 : 36),
+      y + h - (compact ? 27 : 36),
       w - (compact ? 36 : 48),
       state,
       battle,
       compact,
     );
+  }
+
+  private drawMobileNegotiationBrief(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    lines: NegotiationTableLines,
+    battle: BattleState,
+  ): void {
+    const color = intentColor(battle.intentType);
+    this.add
+      .rectangle(x, y, w, h, 0x102b2e, 0.98)
+      .setOrigin(0, 0)
+      .setStrokeStyle(1, color, 0.78);
+    this.add.rectangle(x, y, 5, h, color, 0.92).setOrigin(0, 0);
+    this.add
+      .text(x + 12, y + 6, '对话', textStyle(9, '#ffe6a8', '950'))
+      .setWordWrapWidth(40);
+    const body = this.add
+      .text(
+        x + 58,
+        y + 6,
+        wrapCjk(`${lines.customer} / ${lines.bo}`, 28),
+        textStyle(9, '#f4f1d9', '850'),
+      )
+      .setLineSpacing(2)
+      .setWordWrapWidth(w - 70);
+    fitText(body, w - 70, h - 10, 9, 7);
   }
 
   private drawBattleTableProps(
@@ -6129,8 +6240,12 @@ class PrologueScene extends Phaser.Scene {
     const cols = mobile ? 2 : 5;
     const gap = mobile ? 10 : 8;
     const bw = (w - gap * (cols - 1)) / cols;
-    const bh = mobile ? 52 : h;
-    battleCommandCards(state, battle).forEach((command, index) => {
+    const commands = battleCommandCards(state, battle);
+    const rows = Math.ceil(commands.length / cols);
+    const bh = mobile
+      ? Math.max(48, Math.min(52, (h - gap * (rows - 1)) / rows))
+      : h;
+    commands.forEach((command, index) => {
       const col = index % cols;
       const row = Math.floor(index / cols);
       this.drawBattleCommandCard(
@@ -6633,21 +6748,27 @@ class PrologueScene extends Phaser.Scene {
       );
       const x = 28;
       const width = w - 56;
+      const buttonGap = 10;
+      const buttonY = h - 76;
+      const buttonW = (width - buttonGap) / 2;
+      const timelineH = h < 760 ? 64 : 78;
+      const timelineY = Math.min(buttonY - timelineH - 14, 538);
+      const closingY = 238;
+      const closingH = clamp(timelineY - closingY - 14, 204, 286);
       this.add
         .text(152, 42, wrapCjk(endingTitle(state.ending), 10), textStyle(21, '#ffe6a8', '950'))
         .setLineSpacing(5)
         .setWordWrapWidth(w - 180);
       this.drawEndingBadge(x, 178, width, report, state);
-      this.drawEndingClosingScene(x, 238, width, 286, state, report, true);
-      this.drawEndingTimeline(x, 538, width, state, true);
-      if (626 + 68 < h - 156) this.drawEndingScoreChips(x, 626, width, report.scores, true);
+      this.drawEndingClosingScene(x, closingY, width, closingH, state, report, true);
+      this.drawEndingTimeline(x, timelineY, width, state, true);
       makeButton(
         this,
         x,
-        h - 148,
-        width,
-        48,
-        '重新开始第一天',
+        buttonY,
+        buttonW,
+        46,
+        '重开第一天',
         () => {
           this.setState(defaultState());
           this.redraw();
@@ -6658,11 +6779,11 @@ class PrologueScene extends Phaser.Scene {
       );
       makeButton(
         this,
-        x,
-        h - 88,
-        width,
-        48,
-        '导出存档码',
+        x + buttonW + buttonGap,
+        buttonY,
+        buttonW,
+        46,
+        '导出存档',
         () => this.showExportCode(),
         0x6e5428,
         13,
@@ -6805,7 +6926,7 @@ class PrologueScene extends Phaser.Scene {
     report: RouteReport,
     mobile: boolean,
   ): void {
-    const echoes = endingEchoes(state).slice(0, 4);
+    const echoes = endingEchoes(state).slice(0, mobile && h < 250 ? 3 : 4);
     const line = endingClosingSceneLine(state, report);
     this.add
       .rectangle(x, y, w, h, 0x102b2e, 0.96)
