@@ -3,7 +3,6 @@ import lighthouseActivities from '../../../data/lighthouse-activities.json';
 import { sitePath } from '../../../lib/site-paths';
 
 const activities = lighthouseActivities.items.slice(0, 4);
-const activityMeta = ['[ AI Agent ]', '[ IM 接入 ]', '[ 公测 ]', '[ 产品 ]'];
 ---
 
 <div
@@ -42,8 +41,22 @@ const activityMeta = ['[ AI Agent ]', '[ IM 接入 ]', '[ 公测 ]', '[ 产品 ]
 
         <div class="relative">
           <h1 id="bo-countdown-title" class="text-xl font-medium sm:text-2xl">
-            距离博哥退休还有
+            袁博退休倒计时
           </h1>
+          <p
+            class="mx-auto mt-2 max-w-2xl text-xs leading-5 text-neutral-500 sm:text-sm"
+          >
+            腾讯云博哥退休进度与博Fans整活入口。想了解公开职业资料，可先看
+            <a
+              class="text-[#0052D9] underline underline-offset-4"
+              href={sitePath('/yuanbo/')}
+            >
+              袁博公开资料
+            </a>，最新内容见<a
+              class="text-[#0052D9] underline underline-offset-4"
+              href="/">博新闻</a
+            >。
+          </p>
           <div class="mt-4">
             <slot />
           </div>
@@ -69,7 +82,7 @@ const activityMeta = ['[ AI Agent ]', '[ IM 接入 ]', '[ 公测 ]', '[ 产品 ]
 
           <ul class="mt-3 space-y-2.5">
             {
-              activities.map((activity, index) => (
+              activities.map((activity) => (
                 <li>
                   <a
                     class="group grid grid-cols-[auto_1fr_auto] items-start gap-3 text-sm leading-5 text-neutral-800 underline-offset-4 hover:text-neutral-950 hover:underline"
@@ -80,7 +93,7 @@ const activityMeta = ['[ AI Agent ]', '[ IM 接入 ]', '[ 公测 ]', '[ 产品 ]
                     <span class="font-mono text-xs text-[#0052D9]">›</span>
                     <span>{activity.summary || activity.title}</span>
                     <span class="hidden font-mono text-[11px] text-neutral-500 transition-colors group-hover:text-[#0052D9] sm:inline">
-                      {activityMeta[index] ?? '[ 动态 ]'}
+                      [ {activity.category} ]
                     </span>
                   </a>
                 </li>

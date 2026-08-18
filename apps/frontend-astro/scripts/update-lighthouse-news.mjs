@@ -1,4 +1,4 @@
-import { mkdir, rename, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -16,6 +16,7 @@ const SIGNAL_KEYWORDS = [
   'OrcaTerm',
   'AI',
   '公测',
+  '内测',
   '体验',
   '首发',
   '一键部署',
@@ -62,10 +63,10 @@ const EXCLUDE_TITLES = new Set([
 ]);
 
 const CTA_PATTERN =
-  /(立即购买|立即前往|即刻上手|立即领取|查看教程|查看部署教程|了解更多|前往控制台|活动规则>>|教程指南合集>>)\s*$/;
+  /(立即购买|立即前往|即刻上手|立即领取|限时内测|查看教程|查看部署教程|了解更多|前往控制台|活动规则>>|教程指南合集>>)\s*$/;
 
 const CTA_ONLY_PATTERN =
-  /^(立即购买|立即前往|即刻上手|立即领取|查看教程|查看部署教程|了解更多|前往控制台|开始使用)$/;
+  /^(立即购买|立即前往|即刻上手|立即领取|限时内测|查看教程|查看部署教程|了解更多|前往控制台|开始使用)$/;
 
 function decodeEntities(value) {
   return value
@@ -87,7 +88,9 @@ function cleanText(value) {
 }
 
 function getAttribute(source, name) {
-  const match = source.match(new RegExp(`${name}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i'));
+  const match = source.match(
+    new RegExp(`${name}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i'),
+  );
   return match?.[2] ?? match?.[3] ?? match?.[4] ?? '';
 }
 
@@ -118,12 +121,30 @@ function buildSummary(title) {
   return summary === title ? '' : summary;
 }
 
+function buildCategory(title) {
+  if (/公测|产品体验/.test(title)) {
+    return '产品体验';
+  }
+
+  if (/Agent|OpenClaw|Hermes|AI/.test(title)) {
+    return 'AI Agent';
+  }
+
+  if (/教程|最佳实践|5分钟/.test(title)) {
+    return '最佳实践';
+  }
+
+  return '产品动态';
+}
+
 function buildContextTitle(html, anchorIndex, rawText) {
   if (!CTA_ONLY_PATTERN.test(rawText)) {
     return rawText;
   }
 
-  const prefix = cleanText(html.slice(Math.max(0, anchorIndex - 320), anchorIndex));
+  const prefix = cleanText(
+    html.slice(Math.max(0, anchorIndex - 320), anchorIndex),
+  );
   const context = prefix
     .replace(/^.*(?:相关产品|最新活动|搜索)\s*/, '')
     .replace(/\s*[|｜]\s*$/, '')
@@ -185,12 +206,19 @@ function isSignalCandidate(item) {
     item.url.includes('/act/') ||
     item.url.includes('/developer/article/') ||
     item.url.includes('/document/') ||
+    item.url.includes('lightvela.com') ||
     item.url.includes('orcaterm.com') ||
     item.url.includes('console.cloud.tencent.com');
-  const hasSignal = SIGNAL_KEYWORDS.some((keyword) => haystack.includes(keyword));
-  const hasSalesOnly = SALES_KEYWORDS.some((keyword) => haystack.includes(keyword));
+  const hasSignal = SIGNAL_KEYWORDS.some((keyword) =>
+    haystack.includes(keyword),
+  );
+  const hasSalesOnly = SALES_KEYWORDS.some((keyword) =>
+    haystack.includes(keyword),
+  );
 
-  return hasUsefulUrl && hasSignal && (!hasSalesOnly || getSignalScore(item) > 0);
+  return (
+    hasUsefulUrl && hasSignal && (!hasSalesOnly || getSignalScore(item) > 0)
+  );
 }
 
 function parseActivities(html) {
@@ -220,6 +248,7 @@ function parseActivities(html) {
     const item = {
       title,
       summary: buildSummary(title),
+      category: buildCategory(title),
       url,
       score: 0,
     };
@@ -252,14 +281,37 @@ async function main() {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch Lighthouse page: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch Lighthouse page: ${response.status} ${response.statusText}`,
+    );
   }
 
   const html = await response.text();
   const items = parseActivities(html);
 
   if (items.length === 0) {
-    throw new Error('No Lighthouse activity links were found; leaving existing data untouched.');
+    throw new Error(
+      'No Lighthouse activity links were found; leaving existing data untouched.',
+    );
+  }
+
+  let existingPayload = null;
+  try {
+    existingPayload = JSON.parse(await readFile(OUTPUT_PATH, 'utf8'));
+  } catch (error) {
+    if (error?.code !== 'ENOENT') {
+      throw error;
+    }
+  }
+
+  if (
+    existingPayload?.sourceUrl === SOURCE_URL &&
+    JSON.stringify(existingPayload.items) === JSON.stringify(items)
+  ) {
+    console.log(
+      `Lighthouse activity links are unchanged; kept ${OUTPUT_PATH} untouched`,
+    );
+    return;
   }
 
   const payload = {
@@ -269,10 +321,15 @@ async function main() {
   };
 
   await mkdir(dirname(OUTPUT_PATH), { recursive: true });
-  await writeFile(`${OUTPUT_PATH}.tmp`, `${JSON.stringify(payload, null, 2)}\n`);
+  await writeFile(
+    `${OUTPUT_PATH}.tmp`,
+    `${JSON.stringify(payload, null, 2)}\n`,
+  );
   await rename(`${OUTPUT_PATH}.tmp`, OUTPUT_PATH);
 
-  console.log(`Wrote ${items.length} Lighthouse activity links to ${OUTPUT_PATH}`);
+  console.log(
+    `Wrote ${items.length} Lighthouse activity links to ${OUTPUT_PATH}`,
+  );
 }
 
 await main();

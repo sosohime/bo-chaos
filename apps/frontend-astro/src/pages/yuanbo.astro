@@ -1,0 +1,457 @@
+---
+import '@mono/config-tailwind/global.css';
+import Layout from '../layouts/Layout.astro';
+import { SITE_ORIGIN, siteUrl } from '../lib/site-paths';
+
+const title = '袁博｜腾讯云 Lighthouse 产品经理与云计算公开资料';
+const description =
+  '袁博公开资料页：整理腾讯云官方页面与公开报道中有关袁博、Lighthouse、企业上云和 AI 智能体的职业信息，并附原始来源。';
+const canonicalUrl = siteUrl('/yuanbo/');
+const personId = `${canonicalUrl}#person`;
+const contentUpdated = '2026-08-18';
+
+const profileFacts = [
+  {
+    label: '跨境电商与 AI Agent',
+    detail:
+      '2026 年 7 月公开演示资料的封面标注袁博为腾讯云轻量应用服务器产品经理，内容介绍 Lighthouse 支持跨境电商出海与 AI Agent 部署的场景。',
+    source: '发现报告收录的公开演示资料',
+    url: 'https://www.fxbaogao.com/detail/5518348',
+  },
+  {
+    label: '腾讯云经历',
+    detail:
+      '腾讯云公开讲师资料显示，袁博于 2013 年加入腾讯云，长期从事云计算产品服务与策划，目前聚焦 Lighthouse 产品策划。',
+    source: '腾讯云开发者学习中心',
+    url: 'https://cloud.tencent.cn/developer/learning',
+  },
+  {
+    label: 'Lighthouse',
+    detail:
+      '腾讯云沙龙讲师页将袁博列为轻量云高级产品经理，负责轻量应用服务器的产品经理及运营工作。',
+    source: '腾讯云开发者社区',
+    url: 'https://cloud.tencent.com/developer/salon/speakers?initial=Y&page=1',
+  },
+  {
+    label: '企业上云',
+    detail:
+      '腾讯云公开实践文章注明，企业信息化系统上云与安全管理架构由袁博提出，涉及上云路径规划和跨 VPC IT 资产统一纳管。',
+    source: '腾讯云开发者社区',
+    url: 'https://cloud.tencent.com/developer/article/2679014',
+  },
+  {
+    label: 'AI 智能体',
+    detail:
+      '公开报道中，袁博以资深 OPC 专家身份讨论 Token 与 DAA：前者反映使用强度，后者体现智能体使用广度。',
+    source: '华夏时报公开转载',
+    url: 'https://wap.eastmoney.com/a/202605163739376785.html',
+  },
+] as const;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_ORIGIN}/#website`,
+      url: `${SITE_ORIGIN}/`,
+      name: '博新闻',
+      alternateName: ['博Fans', 'BoFans'],
+      inLanguage: 'zh-CN',
+    },
+    {
+      '@type': 'ProfilePage',
+      '@id': `${canonicalUrl}#webpage`,
+      url: canonicalUrl,
+      name: title,
+      description,
+      inLanguage: 'zh-CN',
+      dateModified: contentUpdated,
+      isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      mainEntity: { '@id': personId },
+    },
+    {
+      '@type': 'Person',
+      '@id': personId,
+      url: canonicalUrl,
+      name: '袁博',
+      alternateName: ['腾讯云袁博'],
+      jobTitle: ['腾讯云 Lighthouse 产品经理', '腾讯云认证讲师'],
+      worksFor: {
+        '@type': 'Organization',
+        name: '腾讯云',
+        url: 'https://cloud.tencent.com/',
+      },
+      knowsAbout: [
+        '腾讯云 Lighthouse',
+        '云计算',
+        '企业上云',
+        '云上 IT 资产管理',
+        'AI 智能体',
+        'OPC',
+      ],
+      sameAs: [
+        'https://cloud.tencent.cn/developer/learning',
+        'https://cloud.tencent.com/developer/salon/speakers?initial=Y&page=1',
+      ],
+      subjectOf: [
+        {
+          '@type': 'DigitalDocument',
+          headline: 'Lighthouse 赋能跨境电商 AI 新增长',
+          url: 'https://www.fxbaogao.com/detail/5518348',
+          datePublished: '2026-07-07',
+        },
+        {
+          '@type': 'Article',
+          headline: '腾讯云企业信息化系统上云与安全管理重构实践',
+          url: 'https://cloud.tencent.com/developer/article/2679014',
+          datePublished: '2026-05-31',
+        },
+        {
+          '@type': 'NewsArticle',
+          headline: '百“虾”混战升级，百度押注超级个体，OPC生态卡位战火正酣',
+          url: 'https://wap.eastmoney.com/a/202605163739376785.html',
+          datePublished: '2026-05-16',
+        },
+      ],
+    },
+  ],
+};
+---
+
+<Layout {title} {description} siteName="博新闻" {canonicalUrl} {structuredData}>
+  <div class="profile-page">
+    <header class="site-header">
+      <a class="brand" href="/">博新闻</a>
+      <nav aria-label="人物页导航">
+        <a href="#profile">人物资料</a>
+        <a href="#sources">公开来源</a>
+        <a href="/">返回首页</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="profile" class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">腾讯云与云计算公开资料</p>
+        <h1 id="page-title">袁博</h1>
+        <p class="summary">
+          腾讯云 Lighthouse
+          产品经理、腾讯云认证讲师。公开资料显示，他长期从事云计算产品服务与策划，并参与企业上云与
+          AI 智能体相关实践。
+        </p>
+        <p class="disclaimer">
+          本页由博Fans依据公开来源独立整理，不是袁博个人主页，也不代表腾讯云官方立场。
+        </p>
+      </section>
+
+      <section id="sources" class="facts-section" aria-labelledby="facts-title">
+        <h2 id="facts-title">公开职业资料</h2>
+        <p class="section-copy">
+          以下信息仅保留原始页面能够支持的表述。来源之间存在差异时，以各自公开页面为准。
+        </p>
+
+        <div class="fact-list">
+          {
+            profileFacts.map((fact) => (
+              <article class="fact-item">
+                <p class="fact-label">{fact.label}</p>
+                <div>
+                  <p class="fact-detail">{fact.detail}</p>
+                  <a href={fact.url} target="_blank" rel="noopener noreferrer">
+                    {fact.source}
+                    <span class="sr-only">：{fact.label}</span>
+                  </a>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="related-section" aria-labelledby="related-title">
+        <h2 id="related-title">相关内容</h2>
+        <p>
+          <a href="/">博新闻</a>
+          持续整理腾讯云袁博与 Lighthouse、企业上云和 AI 智能体有关的公开动态。
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        公开资料更新于 <time datetime={contentUpdated}>{contentUpdated}</time>
+      </p>
+      <a
+        href="https://beian.miit.gov.cn/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        京ICP备2020046580号
+      </a>
+    </footer>
+  </div>
+</Layout>
+
+<style>
+  :global(html) {
+    scroll-behavior: smooth;
+  }
+
+  :global(body) {
+    background: #f6f8fb;
+  }
+
+  .profile-page {
+    --page-bg: #f6f8fb;
+    --text: #172033;
+    --muted: #5e6879;
+    --line: #d9e0ea;
+    --accent: #1f5fbf;
+    min-height: 100dvh;
+    background: var(--page-bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+      'Microsoft YaHei', sans-serif;
+  }
+
+  .site-header,
+  main,
+  .site-footer {
+    width: min(880px, calc(100% - 40px));
+    margin-inline: auto;
+  }
+
+  .site-header {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+
+  .brand {
+    color: var(--text);
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  nav,
+  .site-footer {
+    display: flex;
+    align-items: center;
+  }
+
+  nav {
+    gap: 22px;
+  }
+
+  nav a,
+  .site-footer a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: var(--accent);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  .intro {
+    padding-block: clamp(64px, 9vw, 96px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .eyebrow {
+    margin: 0 0 22px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  h1,
+  h2,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    font-size: clamp(50px, 7vw, 72px);
+    font-weight: 650;
+    line-height: 1;
+    letter-spacing: -0.055em;
+  }
+
+  .summary {
+    max-width: 680px;
+    margin-bottom: 18px;
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.8;
+  }
+
+  .disclaimer,
+  .section-copy,
+  .related-section p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .disclaimer {
+    max-width: 680px;
+    margin-bottom: 0;
+  }
+
+  .facts-section,
+  .related-section {
+    padding-block: clamp(56px, 7vw, 76px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  h2 {
+    margin-bottom: 14px;
+    font-size: clamp(26px, 3vw, 32px);
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .section-copy {
+    max-width: 650px;
+    margin-bottom: 34px;
+  }
+
+  .fact-list {
+    border-top: 1px solid var(--line);
+  }
+
+  .fact-item {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 34px;
+    padding-block: 28px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fact-label {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .fact-detail {
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .fact-item a,
+  .related-section a {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 650;
+    text-underline-offset: 4px;
+  }
+
+  .related-section p {
+    max-width: 680px;
+    margin-bottom: 0;
+    font-size: 15px;
+  }
+
+  .site-footer {
+    min-height: 86px;
+    justify-content: space-between;
+    gap: 24px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .site-footer p {
+    margin-bottom: 0;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 680px) {
+    .site-header,
+    main,
+    .site-footer {
+      width: min(100% - 28px, 600px);
+    }
+
+    .site-header {
+      min-height: 58px;
+    }
+
+    nav {
+      gap: 14px;
+      font-size: 12px;
+    }
+
+    nav a:nth-child(2) {
+      display: none;
+    }
+
+    .intro {
+      padding-block: 68px;
+    }
+
+    h1 {
+      font-size: clamp(48px, 16vw, 64px);
+    }
+
+    .summary {
+      font-size: 17px;
+    }
+
+    .fact-item {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .site-footer {
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(body) {
+      background: #111722;
+    }
+
+    .profile-page {
+      --page-bg: #111722;
+      --text: #edf2f8;
+      --muted: #aab5c4;
+      --line: #303b4b;
+      --accent: #7ba8ef;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html) {
+      scroll-behavior: auto;
+    }
+  }
+</style>

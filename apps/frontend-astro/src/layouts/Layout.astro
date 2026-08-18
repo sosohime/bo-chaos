@@ -1,12 +1,33 @@
 ---
 import background from '../assets/background.svg';
-import { sitePath } from '../lib/site-paths';
+import { sitePath, siteUrl } from '../lib/site-paths';
 
+interface Props {
+  title: string;
+  description: string;
+  siteName?: string;
+  canonicalUrl?: string;
+  structuredData?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description,
+  siteName = '博Fans',
+  canonicalUrl,
+  structuredData,
+} = Astro.props;
 const faviconPath = import.meta.env.DEV ? '/bo.ico' : sitePath('/bo.ico');
+const sourceRoute = Astro.url.pathname.replace(/^\/retire(?=\/|$)/, '') || '/';
+const canonicalRoute = sourceRoute.endsWith('/')
+  ? sourceRoute
+  : `${sourceRoute}/`;
+const resolvedCanonicalUrl =
+  canonicalUrl ?? siteUrl(canonicalRoute as `/${string}`);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEB8YFKSCR"
@@ -42,8 +63,30 @@ const faviconPath = import.meta.env.DEV ? '/bo.ico' : sitePath('/bo.ico');
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href={faviconPath} />
     <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={Astro.props.description} />
-    <title>{Astro.props.title}</title>
+    <meta name="description" content={description} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="canonical" href={resolvedCanonicalUrl} />
+    <meta property="og:url" content={resolvedCanonicalUrl} />
+    {
+      structuredData && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(structuredData)}
+        />
+      )
+    }
+    <title>{title}</title>
   </head>
   <body>
     <div id="background" style={`background-image: url(${background.src});`}>

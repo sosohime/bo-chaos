@@ -1,0 +1,537 @@
+---
+import '@mono/config-tailwind/global.css';
+import Layout from '../layouts/Layout.astro';
+import lighthouseActivities from '../data/lighthouse-activities.json';
+import { SITE_ORIGIN, sitePath, siteUrl } from '../lib/site-paths';
+
+const title = '博新闻｜腾讯云袁博的 Lighthouse 与云计算公开动态';
+const description =
+  '博Fans 从粉丝视角整理腾讯云袁博与 Lighthouse、企业上云和 AI 智能体有关的公开动态，所有职业信息均附原始出处。';
+const canonicalUrl = `${SITE_ORIGIN}/`;
+const profilePath = sitePath('/yuanbo/');
+const profileUrl = siteUrl('/yuanbo/');
+const personId = `${profileUrl}#person`;
+const contentUpdated = lighthouseActivities.updatedAt.slice(0, 10);
+
+const sources = [
+  {
+    source: '公开演示资料（发现报告收录）',
+    title: 'Lighthouse 赋能跨境电商 AI 新增长',
+    detail:
+      '2026 年 7 月公开演示资料的封面标注袁博为腾讯云轻量应用服务器产品经理，内容围绕 Lighthouse 支持跨境电商出海与 AI Agent 场景。',
+    url: 'https://www.fxbaogao.com/detail/5518348',
+    meta: '2026-07-07',
+  },
+  ...lighthouseActivities.items.map((item) => ({
+    source: '腾讯云 Lighthouse 产品页',
+    title: item.title,
+    detail: item.summary
+      ? `腾讯云 Lighthouse 产品页当前展示：${item.summary.replace(/[。.]$/, '')}。`
+      : '腾讯云 Lighthouse 产品页当前展示的产品动态。',
+    url: item.url,
+    meta: `${item.category} · ${contentUpdated}`,
+  })),
+  {
+    source: '腾讯云开发者社区',
+    title: '企业信息化系统上云实践架构',
+    detail:
+      '公开实践文章注明，其企业信息化系统上云与安全管理架构由袁博提出，涉及上云路径规划和跨 VPC IT 资产统一纳管。',
+    url: 'https://cloud.tencent.com/developer/article/2679014',
+    meta: '2026-05-31',
+  },
+  {
+    source: '华夏时报公开转载',
+    title: '智能体时代的 Token 与 DAA',
+    detail:
+      '袁博以资深 OPC 专家身份受访，提出 DAA 体现智能体使用广度，Token 体现使用强度，二者结合更适合观察生态健康度。',
+    url: 'https://wap.eastmoney.com/a/202605163739376785.html',
+    meta: '2026-05-16',
+  },
+  {
+    source: '腾讯云开发者学习中心',
+    title: '腾讯云认证讲师与 Lighthouse 产品经理',
+    detail:
+      '腾讯云公开资料显示，袁博于 2013 年加入腾讯云，长期从事云计算产品服务与策划，目前聚焦 Lighthouse 产品策划。',
+    url: 'https://cloud.tencent.cn/developer/learning',
+    meta: '官方讲师资料',
+  },
+  {
+    source: '腾讯云开发者社区',
+    title: '轻量云高级产品经理，10 年以上云计算经验',
+    detail:
+      '腾讯云沙龙讲师页将袁博列为轻量云高级产品经理，负责轻量应用服务器产品经理及运营工作，并介绍其企业上云经验。',
+    url: 'https://cloud.tencent.com/developer/salon/speakers?initial=Y&page=1',
+    meta: '官方讲师档案',
+  },
+] as const;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_ORIGIN}/#website`,
+      url: `${SITE_ORIGIN}/`,
+      name: '博新闻',
+      alternateName: ['博Fans', 'BoFans'],
+      inLanguage: 'zh-CN',
+    },
+    {
+      '@type': 'Person',
+      '@id': personId,
+      url: profileUrl,
+      name: '袁博',
+      alternateName: ['腾讯云袁博'],
+      jobTitle: ['腾讯云 Lighthouse 产品经理', '腾讯云认证讲师'],
+      worksFor: {
+        '@type': 'Organization',
+        name: '腾讯云',
+        url: 'https://cloud.tencent.com/',
+      },
+      knowsAbout: [
+        '腾讯云 Lighthouse',
+        '云计算',
+        '企业上云',
+        '云上 IT 资产管理',
+        'AI 智能体',
+        'OPC',
+      ],
+      sameAs: [
+        'https://cloud.tencent.cn/developer/learning',
+        'https://cloud.tencent.com/developer/salon/speakers?initial=Y&page=1',
+      ],
+      subjectOf: [
+        {
+          '@type': 'DigitalDocument',
+          headline: 'Lighthouse 赋能跨境电商 AI 新增长',
+          url: 'https://www.fxbaogao.com/detail/5518348',
+          datePublished: '2026-07-07',
+        },
+        {
+          '@type': 'Article',
+          headline: '腾讯云企业信息化系统上云与安全管理重构实践',
+          url: 'https://cloud.tencent.com/developer/article/2679014',
+          datePublished: '2026-05-31',
+        },
+        {
+          '@type': 'NewsArticle',
+          headline: '百“虾”混战升级，百度押注超级个体，OPC生态卡位战火正酣',
+          url: 'https://wap.eastmoney.com/a/202605163739376785.html',
+          datePublished: '2026-05-16',
+        },
+      ],
+    },
+    {
+      '@type': 'CollectionPage',
+      '@id': `${SITE_ORIGIN}/#sources`,
+      url: `${SITE_ORIGIN}/`,
+      name: title,
+      description,
+      inLanguage: 'zh-CN',
+      isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      about: { '@id': personId },
+      dateModified: contentUpdated,
+    },
+  ],
+};
+---
+
+<Layout {title} {description} siteName="博新闻" {canonicalUrl} {structuredData}>
+  <div class="source-index">
+    <header class="site-header">
+      <a class="brand" href="/">博新闻</a>
+      <nav aria-label="主导航">
+        <a href={profilePath}>袁博</a>
+        <a href="#public-sources">公开动态</a>
+        <a href="#about">关于</a>
+        <a href="#site-content">博Fans</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="notice">博Fans 独立维护</p>
+        <h1 id="page-title">博新闻</h1>
+        <p class="summary">
+          从粉丝视角记录腾讯云袁博与 Lighthouse、企业上云和 AI
+          智能体有关的公开动态。
+        </p>
+        <div class="intro-links">
+          <a class="jump-link" href={profilePath}>查看袁博公开资料</a>
+          <a class="jump-link" href="#public-sources">浏览公开动态</a>
+        </div>
+      </section>
+
+      <section id="public-sources" class="sources-section">
+        <h2>公开动态与资料</h2>
+        <p class="section-copy">
+          只整理可复查的官方页面、公开报道与演示资料，每条内容均附原始链接。
+        </p>
+
+        <div class="source-list">
+          {
+            sources.map((item) => (
+              <article class="source-item">
+                <div class="source-label">
+                  <span>{item.source}</span>
+                  <small>{item.meta}</small>
+                </div>
+                <div class="source-content">
+                  <h3>{item.title}</h3>
+                  <p>{item.detail}</p>
+                  <a href={item.url} target="_blank" rel="noopener noreferrer">
+                    查看来源<span class="sr-only">：{item.title}</span>
+                  </a>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section id="about" class="about-section">
+        <h2>关于博新闻</h2>
+        <div class="about-copy">
+          <p>
+            博新闻是 yuanbo.online
+            的粉丝栏目，不是袁博个人网站，也不代表腾讯云官方立场。
+          </p>
+          <p>
+            <a href={profilePath}>袁博公开资料页</a>
+            汇总可由腾讯云官方页面和公开报道复查的职业信息。
+          </p>
+          <p>
+            页面保留来源之间的差异，不把粉丝评价写成职业事实。后续有新的公开内容时，再按来源更新。
+          </p>
+        </div>
+      </section>
+
+      <section id="site-content" class="site-content-section">
+        <h2>更多博Fans</h2>
+        <p class="section-copy">
+          站内其他页面属于朋友间的粉丝创作，与腾讯云官方无关。
+        </p>
+        <div class="site-links">
+          <a href={sitePath('/bo/')}>退休倒计时</a>
+          <a href={sitePath('/bo/yuanbo-game/')}>小游戏</a>
+          <a href={sitePath('/bo/codex-pet/')}>桌宠资源</a>
+          <a href={sitePath('/bo/boge-skill/')}>博说 Skill</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        公开资料更新于 <time datetime={contentUpdated}>{contentUpdated}</time>
+      </p>
+      <a
+        href="https://beian.miit.gov.cn/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        京ICP备2020046580号
+      </a>
+    </footer>
+  </div>
+</Layout>
+
+<style>
+  :global(html) {
+    scroll-behavior: smooth;
+  }
+
+  :global(body) {
+    background: #f6f8fb;
+  }
+
+  .source-index {
+    --page-bg: #f6f8fb;
+    --surface: #fbfcfe;
+    --text: #172033;
+    --muted: #5e6879;
+    --line: #d9e0ea;
+    --accent: #1f5fbf;
+    min-height: 100dvh;
+    background: var(--page-bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+      'Microsoft YaHei', sans-serif;
+  }
+
+  .site-header,
+  main,
+  .site-footer {
+    width: min(880px, calc(100% - 40px));
+    margin-inline: auto;
+  }
+
+  .site-header {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+
+  .brand {
+    color: var(--text);
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+
+  nav a,
+  .site-footer a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: var(--accent);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  .intro {
+    padding-block: clamp(56px, 8vw, 80px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .notice {
+    margin: 0 0 24px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 760px;
+    margin-bottom: 18px;
+    font-size: clamp(38px, 5vw, 56px);
+    font-weight: 650;
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+
+  .summary {
+    max-width: 650px;
+    margin-bottom: 24px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  .jump-link,
+  .source-content a {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 650;
+    text-underline-offset: 4px;
+  }
+
+  .intro-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+
+  .sources-section,
+  .about-section,
+  .site-content-section {
+    padding-block: clamp(56px, 7vw, 76px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  h2 {
+    margin-bottom: 14px;
+    font-size: clamp(26px, 3vw, 32px);
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .section-copy {
+    max-width: 660px;
+    margin-bottom: 34px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .source-list {
+    border-top: 1px solid var(--line);
+  }
+
+  .source-item {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 34px;
+    padding-block: 28px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .source-label {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .source-label small {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+  }
+
+  .source-content h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 1.45;
+  }
+
+  .source-content p {
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .about-copy {
+    max-width: 680px;
+    margin-top: 30px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .about-copy p {
+    margin-bottom: 14px;
+  }
+
+  .about-copy a {
+    color: var(--accent);
+    font-weight: 650;
+    text-underline-offset: 4px;
+  }
+
+  .site-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+
+  .site-links a {
+    color: var(--text);
+    font-size: 14px;
+    text-underline-offset: 4px;
+  }
+
+  .site-footer {
+    min-height: 86px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .site-footer p {
+    margin-bottom: 0;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 680px) {
+    .site-header,
+    main,
+    .site-footer {
+      width: min(100% - 28px, 600px);
+    }
+
+    .site-header {
+      min-height: 58px;
+    }
+
+    nav {
+      gap: 14px;
+      font-size: 12px;
+    }
+
+    nav a:last-child {
+      display: none;
+    }
+
+    .intro {
+      padding-block: 64px;
+    }
+
+    h1 {
+      font-size: clamp(36px, 11vw, 48px);
+    }
+
+    .summary {
+      font-size: 16px;
+    }
+
+    .source-item {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .site-footer {
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(body) {
+      background: #111722;
+    }
+
+    .source-index {
+      --page-bg: #111722;
+      --surface: #171f2c;
+      --text: #edf2f8;
+      --muted: #aab5c4;
+      --line: #303b4b;
+      --accent: #7ba8ef;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html) {
+      scroll-behavior: auto;
+    }
+  }
+</style>

@@ -53,10 +53,16 @@ Follow existing code first. These conventions document current patterns and guar
 - Prefer Astro components for static route shells, layout, and link sections.
 - Keep React components as narrow client islands for stateful interactions such as countdowns and copy buttons.
 - Do not wrap a React client island inside a static React parent when an Astro wrapper can own the structure.
+- The public entity homepage source is `apps/frontend-astro/src/pages/index.astro`. Its generated `dist/index.html` is deployed to the Nginx document root at `/`, while its assets continue to resolve under `/retire` through `sitePath()`.
+- Frame the root homepage as the independently maintained `博新闻` fan-news column, not a personal homepage or promotional profile. The visible H1 may use the column name; retain the precise subject phrase in the page title, description, introduction, cited summaries, and structured data. Use only attributable public professional facts, avoid real-person likenesses without approval, and include a clear non-official disclaimer.
+- Keep the root homepage site-name signals consistent: pass `siteName="博新闻"` to `Layout` and use `博新闻` as the structured `WebSite.name`. Other Astro pages retain the layout default `博Fans` unless their own public identity requires an explicit override.
+- Keep the source-backed Yuanbo person profile at `/retire/yuanbo/`, with an exact `袁博` H1, a visible fan-maintained disclaimer, and one shared canonical Person `@id` referenced by both the profile page and the root `博新闻` homepage.
 - Public site routes are deployed under `/retire`. Build internal links and public asset URLs with `sitePath('/...')` from `apps/frontend-astro/src/lib/site-paths.ts`; do not hard-code `/retire` in page/component source.
+- Build absolute canonical and sitemap URLs with `siteUrl('/...')`; keep the preferred public route under `/retire` even when local compatibility routes render the same page. The root entity homepage is the explicit exception and uses `${SITE_ORIGIN}/` as its canonical URL.
 - Place public assets relative to the deploy root, such as `apps/frontend-astro/public/codex-pets/example.png`, not under `apps/frontend-astro/public/retire/`.
 - Retirement countdown pages use `src/components/tuixiu/countdown.astro` with a small browser script instead of React hooks, avoiding stale Vite React chunks in Chrome.
 - Keep countdown constants in shared packages when they apply across apps.
+- Keep Bo retirement target, canonical retirement cycle, and derived progress baseline in `@mono/const`; apps should not hard-code local retirement dates, progress starts, or expose internal cycle math in UI copy.
 - For mockup-driven Astro pages, translate the reference into explicit desktop and mobile layout structures up front. Do not rely on shrinking a desktop composition after implementation.
 - Keep sensitive or specific personal role details out of public retirement page copy unless the user explicitly asks to publish them; use visual motifs and generic status language instead.
 

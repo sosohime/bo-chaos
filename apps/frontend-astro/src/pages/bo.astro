@@ -4,12 +4,55 @@ import { tuixiu } from '@mono/const';
 import Layout from '../layouts/Layout.astro';
 import Tuixiu from '../components/tuixiu/bo/index.astro';
 import Countdown from '../components/tuixiu/countdown.astro';
+import lighthouseActivities from '../data/lighthouse-activities.json';
+import { SITE_ORIGIN, siteUrl } from '../lib/site-paths';
+
+const title = '袁博退休倒计时｜腾讯云博哥与博Fans';
+const description =
+  '腾讯云博哥袁博退休倒计时，汇集 Lighthouse 与 DNSPod 相关动态、袁博小游戏、桌宠和博Fans粉丝内容。';
+const canonicalUrl = siteUrl('/bo/');
+const profileUrl = siteUrl('/yuanbo/');
+const personId = `${profileUrl}#person`;
+const contentUpdated = lighthouseActivities.updatedAt.slice(0, 10);
+const retirementDate = tuixiu.boTuiXiuDay.format('YYYY 年 M 月 D 日');
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_ORIGIN}/#website`,
+      url: `${SITE_ORIGIN}/`,
+      name: '博新闻',
+      alternateName: ['博Fans', 'BoFans'],
+      inLanguage: 'zh-CN',
+    },
+    {
+      '@type': 'Person',
+      '@id': personId,
+      url: profileUrl,
+      name: '袁博',
+      alternateName: ['腾讯云袁博'],
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${canonicalUrl}#webpage`,
+      url: canonicalUrl,
+      name: title,
+      description,
+      inLanguage: 'zh-CN',
+      dateModified: contentUpdated,
+      isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      about: [
+        { '@id': personId },
+        { '@type': 'Thing', name: '腾讯云 Lighthouse' },
+        { '@type': 'Thing', name: 'DNSPod' },
+      ],
+    },
+  ],
+};
 ---
 
-<Layout
-  title="袁博退休倒计时 - 博Fans"
-  description="距离腾讯云核心产品经理袁博（boyuan）退休还有多少时间？腾讯云lighthouse和DNSPod又该何去何从，让我们拭目以待。"
->
+<Layout {title} {description} {canonicalUrl} {structuredData}>
   <Tuixiu>
     <Countdown
       targetMs={tuixiu.boTuiXiuDay.valueOf()}
@@ -18,5 +61,12 @@ import Countdown from '../components/tuixiu/countdown.astro';
       footerRightText="智启新局"
       variant="command"
     />
+    <p
+      class="mt-3 text-center font-mono text-[10px] text-neutral-400 sm:text-xs"
+    >
+      目标日期：{retirementDate} · 动态核对日期：<time datetime={contentUpdated}
+        >{contentUpdated}</time
+      >
+    </p>
   </Tuixiu>
 </Layout>
