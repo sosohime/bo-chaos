@@ -3,6 +3,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SOURCE_URL = 'https://cloud.tencent.com/product/lighthouse?Is=sdk-topnav';
+const FETCH_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 750;
 const OUTPUT_PATH = resolve(
   dirname(fileURLToPath(import.meta.url)),
   '../src/data/lighthouse-activities.json',
@@ -63,7 +65,7 @@ const EXCLUDE_TITLES = new Set([
 ]);
 
 const CTA_PATTERN =
-  /(立即购买|立即前往|即刻上手|立即领取|限时内测|查看教程|查看部署教程|了解更多|前往控制台|活动规则>>|教程指南合集>>)\s*$/;
+  /(立即购买|立即前往|即刻上手|立即领取|免费试用|限时内测|查看教程|查看部署教程|了解更多|前往控制台|活动规则>>|教程指南合集>>)\s*$/;
 
 const CTA_ONLY_PATTERN =
   /^(立即购买|立即前往|即刻上手|立即领取|限时内测|查看教程|查看部署教程|了解更多|前往控制台|开始使用)$/;
@@ -114,6 +116,7 @@ function buildSummary(title) {
   const summary = title
     .replace(/^Lighthouse独家支持\s*/, '')
     .replace(/^云端一键部署\s*/, '')
+    .replace(/^云端托管个人 AI Agent\s*/, '')
     .replace(/^产品体验\s*/, '')
     .replace(/^最佳实践\s*/, '')
     .trim();
@@ -273,20 +276,45 @@ function parseActivities(html) {
     .map(({ score: _score, ...item }) => item);
 }
 
-async function main() {
-  const response = await fetch(SOURCE_URL, {
-    headers: {
-      'user-agent': 'bo-chaos-lighthouse-news/1.0',
-    },
-  });
+async function fetchSourceHtml() {
+  let lastError;
 
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch Lighthouse page: ${response.status} ${response.statusText}`,
-    );
+  for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch(SOURCE_URL, {
+        headers: {
+          'user-agent': 'bo-chaos-lighthouse-news/1.0',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch Lighthouse page: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      return await response.text();
+    } catch (error) {
+      lastError = error;
+
+      if (attempt === FETCH_ATTEMPTS) {
+        break;
+      }
+
+      console.warn(
+        `Lighthouse fetch attempt ${attempt} failed; retrying in ${RETRY_DELAY_MS * attempt}ms`,
+      );
+      await new Promise((resolveDelay) =>
+        setTimeout(resolveDelay, RETRY_DELAY_MS * attempt),
+      );
+    }
   }
 
-  const html = await response.text();
+  throw lastError;
+}
+
+async function main() {
+  const html = await fetchSourceHtml();
   const items = parseActivities(html);
 
   if (items.length === 0) {
