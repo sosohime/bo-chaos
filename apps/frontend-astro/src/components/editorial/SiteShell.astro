@@ -1,0 +1,92 @@
+---
+import { sitePath } from '../../lib/site-paths';
+import '../../styles/editorial.css';
+interface Props {
+  active?: 'news' | 'retire' | 'profile';
+  updated?: string;
+}
+const { active = 'news', updated } = Astro.props;
+---
+
+<div class="editorial">
+  <a class="skip" href="#main-content">跳到正文</a>
+  <header class="masthead">
+    <div class="wrap header-inner">
+      <a class="wordmark" href="/"
+        ><span class="brand-square" aria-hidden="true">博</span>博新闻</a
+      >
+      <nav class="main-nav" aria-label="主导航">
+        <a href="/" aria-current={active === 'news' ? 'page' : undefined}
+          >博新闻</a
+        >
+        <a
+          href={sitePath('/bo/')}
+          aria-current={active === 'retire' ? 'page' : undefined}>博退休</a
+        >
+        <a
+          class="profile-nav"
+          href={sitePath('/yuanbo/')}
+          aria-current={active === 'profile' ? 'page' : undefined}>袁博</a
+        >
+        <a class="secondary-nav" href="/#public-sources">公开动态</a>
+        <a class="secondary-nav" href="/#site-content">博Fans</a>
+        <a class="secondary-nav" href="/#about">关于</a>
+      </nav>
+      <div class="theme-control" data-theme-control hidden>
+        <label for="site-theme" class="sr-only">外观主题</label>
+        <select id="site-theme" aria-label="外观主题">
+          <option value="system">跟随系统</option><option value="light"
+            >浅色</option
+          ><option value="dark">深色</option>
+        </select>
+      </div>
+    </div>
+  </header>
+  <main id="main-content" class="wrap" tabindex="-1"><slot /></main>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <p><strong>博新闻 / 博退休</strong> &nbsp; 博Fans 独立维护</p>
+      <div class="footer-links">
+        <a href={sitePath('/yuanbo/')}>袁博公开资料</a><a
+          href={sitePath('/rss.xml')}>RSS 订阅</a
+        ><a href="/#about">关于</a>
+      </div>
+      <p class="legal">
+        博新闻是 yuanbo.online
+        的粉丝栏目，不是袁博个人网站，也不代表腾讯云官方立场。站内其他页面属于朋友间的粉丝创作，与腾讯云官方无关。
+      </p>
+      <p>
+        {
+          updated && (
+            <>
+              资料核对 <time datetime={updated}>{updated}</time>
+            </>
+          )
+        }
+      </p>
+      <a
+        href="https://beian.miit.gov.cn/"
+        target="_blank"
+        rel="noopener noreferrer">京ICP备2020046580号</a
+      >
+    </div>
+  </footer>
+</div>
+<script>
+  const control = document.querySelector<HTMLElement>('[data-theme-control]');
+  const select = document.querySelector<HTMLSelectElement>('#site-theme');
+  if (control && select) {
+    control.hidden = false;
+    select.value = document.documentElement.dataset.theme || 'system';
+    select.addEventListener('change', () => {
+      const theme = select.value;
+      if (theme === 'system') delete document.documentElement.dataset.theme;
+      else document.documentElement.dataset.theme = theme;
+      try {
+        localStorage.setItem('bo-appearance', theme);
+      } catch {
+        /* This page still switches when storage is unavailable. */
+      }
+    });
+  }
+</script>

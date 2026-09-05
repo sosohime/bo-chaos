@@ -23,6 +23,8 @@ Use this file to locate the right code area before broad search.
 
 ## Routing Rules
 
+- Bo news, source records, RSS and public editorial redesign: start in `apps/frontend-astro/src/data/news.ts`, `src/components/editorial/`, and `src/pages/news/[slug].astro`. Bo countdown behavior lives in `src/lib/retirement.ts` and `src/components/editorial/RetirementClock.astro`; other countdown pages retain their existing component.
+
 - Prefer the narrow app/package from the table before running wide searches.
 - If changing an API, inspect both caller and server endpoint.
 - If changing a model or enum-like string, search all apps for consumers.

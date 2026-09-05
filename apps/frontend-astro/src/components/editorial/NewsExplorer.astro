@@ -1,0 +1,346 @@
+---
+import { ArrowRight, ArrowUpRight, Search } from 'lucide-react';
+import {
+  newsRecords,
+  categories,
+  recordHref,
+  recordDate,
+  dateLabel,
+} from '../../data/news';
+---
+
+<section
+  id="public-sources"
+  class="section explorer"
+  aria-labelledby="news-title"
+  data-news-explorer
+>
+  <h2 class="section-title" id="news-title">公开动态与资料</h2>
+  <p class="section-intro">
+    人物的公开记录，产品的最新动向。每条内容都能找到出处。
+  </p>
+  <div class="explorer-controls" data-search-controls hidden>
+    <div class="filters" role="group" aria-label="内容分类">
+      {
+        ['全部', ...categories].map((category) => (
+          <button
+            type="button"
+            data-category={category}
+            aria-pressed={category === '全部'}
+          >
+            {category}
+          </button>
+        ))
+      }
+    </div>
+    <div class="search-field">
+      <label for="news-search" class="sr-only">搜索公开动态与资料</label>
+      <Search size={16} strokeWidth={1.6} aria-hidden="true" />
+      <input
+        id="news-search"
+        type="search"
+        placeholder="搜索主题、人物或来源"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+  <noscript
+    ><p class="section-intro">
+      以下展示全部资料。启用 JavaScript 后可使用搜索与分类。
+    </p></noscript
+  >
+  <p
+    class="result-count meta"
+    aria-live="polite"
+    aria-atomic="true"
+    data-result-count
+  >
+    共 {newsRecords.length} 条记录
+  </p>
+  <div class="news-grid">
+    {
+      newsRecords.map((record) => (
+        <article
+          class="news-card"
+          data-news-record
+          data-category={record.category}
+          data-search={`${record.title} ${record.summary} ${record.source} ${record.sourceType} ${record.category}`}
+        >
+          <div class="article-meta">
+            <>
+              <span class="topic">{record.category}</span>
+              <span>{record.sourceType}</span>
+            </>
+          </div>
+          <h3>
+            <a
+              href={recordHref(record)}
+              target={record.paragraphs ? undefined : '_blank'}
+              rel={record.paragraphs ? undefined : 'noopener noreferrer'}
+            >
+              {record.title}
+            </a>
+          </h3>
+          <p class="card-summary">{record.summary}</p>
+          <div class="card-bottom">
+            <div class="meta">
+              <>
+                <p>{record.source}</p>
+                <p>
+                  {dateLabel(record)}{' '}
+                  <time datetime={recordDate(record)}>
+                    {recordDate(record)}
+                  </time>
+                </p>
+              </>
+            </div>
+            <a
+              class="card-arrow"
+              href={recordHref(record)}
+              aria-label={`${record.paragraphs ? '阅读记录' : '查看原文'}：${record.title}`}
+              target={record.paragraphs ? undefined : '_blank'}
+              rel={record.paragraphs ? undefined : 'noopener noreferrer'}
+            >
+              {record.paragraphs ? (
+                <ArrowRight size={18} strokeWidth={1.6} />
+              ) : (
+                <ArrowUpRight size={18} strokeWidth={1.6} />
+              )}
+            </a>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+  <div class="empty-state" data-empty hidden>
+    <h3>没有找到相关记录</h3><p>
+      试试其他关键词，或清除筛选查看全部内容。
+    </p><button type="button" class="button secondary" data-clear
+      >清除筛选</button
+    >
+  </div>
+</section>
+<style>
+  .explorer-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .filters button {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    padding: 10px 13px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .filters button[aria-pressed='true'] {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--muted);
+  }
+  .search-field input {
+    background: transparent;
+    border: 0;
+    color: var(--ink);
+    font-size: 12px;
+    width: 190px;
+    min-width: 0;
+  }
+  .search-field input::placeholder {
+    color: var(--muted);
+  }
+  .search-field:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .search-field input:focus-visible {
+    outline: 0;
+  }
+  .result-count {
+    margin-block: 18px;
+  }
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .news-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 26px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    transition: border-color 0.16s;
+  }
+  .news-card:hover {
+    border-color: var(--accent);
+  }
+  h3 {
+    font-size: 20px;
+    font-weight: 650;
+    letter-spacing: -0.025em;
+    line-height: 1.55;
+    margin-top: 16px;
+  }
+  .card-summary {
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+  .card-bottom {
+    margin-top: auto;
+    padding-top: 24px;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .card-arrow {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .empty-state {
+    border: 1px dashed var(--line);
+    padding: 50px 24px;
+    text-align: center;
+    border-radius: 12px;
+  }
+  .empty-state p {
+    color: var(--muted);
+    margin: 14px 0 24px;
+    font-size: 14px;
+  }
+  @media (max-width: 1023px) {
+    .explorer-controls {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .search-field input {
+      width: 100%;
+    }
+  }
+  @media (max-width: 767px) {
+    .news-grid {
+      grid-template-columns: 1fr;
+    }
+    .news-card {
+      padding: 22px;
+    }
+    .filters {
+      gap: 2px;
+    }
+    .filters button {
+      padding: 10px;
+      font-size: 12px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+  }
+</style>
+<script>
+  const root = document.querySelector<HTMLElement>('[data-news-explorer]');
+  if (root) {
+    const input = root.querySelector<HTMLInputElement>('#news-search')!;
+    const buttons = [
+      ...root.querySelectorAll<HTMLButtonElement>('button[data-category]'),
+    ];
+    const records = [
+      ...root.querySelectorAll<HTMLElement>('[data-news-record]'),
+    ];
+    const count = root.querySelector<HTMLElement>('[data-result-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    let category = '全部';
+    let debounce: ReturnType<typeof setTimeout>;
+    const normalize = (text: string) =>
+      text.normalize('NFKC').toLocaleLowerCase().trim();
+    function render() {
+      const terms = normalize(input.value).split(/\s+/).filter(Boolean);
+      let visible = 0;
+      for (const record of records) {
+        const match =
+          (category === '全部' || record.dataset.category === category) &&
+          terms.every((term) =>
+            normalize(record.dataset.search || '').includes(term),
+          );
+        record.hidden = !match;
+        if (match) visible++;
+      }
+      for (const button of buttons)
+        button.setAttribute(
+          'aria-pressed',
+          String(button.dataset.category === category),
+        );
+      count.textContent = `显示 ${visible} / ${records.length} 条记录`;
+      empty.hidden = visible > 0;
+    }
+    function save() {
+      const url = new URL(location.href);
+      if (input.value.trim()) url.searchParams.set('q', input.value.trim());
+      else url.searchParams.delete('q');
+      if (category !== '全部') url.searchParams.set('category', category);
+      else url.searchParams.delete('category');
+      url.hash = 'public-sources';
+      if (url.href !== location.href) history.pushState(null, '', url);
+    }
+    function restore() {
+      clearTimeout(debounce);
+      const params = new URLSearchParams(location.search);
+      input.value = params.get('q') || '';
+      const requested = params.get('category');
+      category = buttons.some((button) => button.dataset.category === requested)
+        ? requested!
+        : '全部';
+      render();
+    }
+    root.querySelector<HTMLElement>('[data-search-controls]')!.hidden = false;
+    input.addEventListener('input', () => {
+      render();
+      clearTimeout(debounce);
+      debounce = setTimeout(save, 450);
+    });
+    for (const button of buttons)
+      button.addEventListener('click', () => {
+        clearTimeout(debounce);
+        category = button.dataset.category!;
+        render();
+        save();
+      });
+    root.querySelector('[data-clear]')?.addEventListener('click', () => {
+      clearTimeout(debounce);
+      input.value = '';
+      category = '全部';
+      render();
+      save();
+      input.focus();
+    });
+    window.addEventListener('popstate', restore);
+    restore();
+  }
+</script>

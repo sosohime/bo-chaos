@@ -1,9 +1,10 @@
 import { SITE_ORIGIN, siteUrl } from '../lib/site-paths';
 import lighthouseActivities from '../data/lighthouse-activities.json';
+import { editorialRecords } from '../data/news';
 
 const lighthouseUpdated = lighthouseActivities.updatedAt.slice(0, 10);
 
-const publicUrls = [
+const publicUrls: { url: string; lastModified?: string }[] = [
   { url: `${SITE_ORIGIN}/`, lastModified: lighthouseUpdated },
   { url: siteUrl('/yuanbo/'), lastModified: '2026-08-18' },
   { url: siteUrl('/bo/'), lastModified: lighthouseUpdated },
@@ -12,7 +13,11 @@ const publicUrls = [
   { url: siteUrl('/bo/boge-skill/') },
   { url: siteUrl('/fans/') },
   { url: siteUrl('/reckful/') },
-] as const;
+  ...editorialRecords.map((record) => ({
+    url: siteUrl(`/news/${record.id}/`),
+    lastModified: '2026-09-05',
+  })),
+];
 
 export function GET() {
   const urls = publicUrls

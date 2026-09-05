@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "preview:production": "node scripts/preview-production.mjs",
     "astro": "astro",
     "update:lighthouse-news": "node scripts/update-lighthouse-news.mjs",
     "prettier": "prettier --write ."

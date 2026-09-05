@@ -1,0 +1,101 @@
+---
+import { ArrowUpRight } from 'lucide-react';
+import { sitePath } from '../../lib/site-paths';
+const works = [
+  {
+    title: '袁博の极限售后',
+    detail: '在 AI 云服务的世界里，体验一次售后谈判。',
+    href: sitePath('/bo/yuanbo-game/'),
+    type: '小游戏',
+  },
+  {
+    title: '博哥桌宠',
+    detail: '让 ExpertBo 和影流Bo 陪你工作。',
+    href: sitePath('/bo/codex-pet/'),
+    type: '桌宠资源',
+  },
+  {
+    title: '博说 Skill',
+    detail: '把熟悉的博哥口吻带进你的编程助手。',
+    href: sitePath('/bo/boge-skill/'),
+    type: '创作工具',
+  },
+  {
+    title: '合成大鸽子',
+    detail: '从一只小鸽子开始，合成你的大鸽皇。',
+    href: 'https://yuanbo.online/dagezi',
+    type: '小游戏',
+  },
+];
+---
+
+<section id="site-content" class="section" aria-labelledby="bo-peripherals">
+  <h2 class="section-title" id="bo-peripherals">博Fans 作品</h2>
+  <p class="section-intro">工作之外，也给快乐留一点位置。</p>
+  <div class="works-grid">
+    {
+      works.map((work) => (
+        <a class="work" href={work.href}>
+          <>
+            <span class="meta">{work.type}</span>
+            <h3>
+              {work.title}
+              <ArrowUpRight size={18} strokeWidth={1.6} aria-hidden="true" />
+            </h3>
+            <p>{work.detail}</p>
+          </>
+        </a>
+      ))
+    }
+  </div>
+  <p class="friends meta" id="bo-fans">
+    朋友们 <a href={sitePath('/fans/')}>姚金龟</a><a
+      href={sitePath('/reckful/')}>Reckful</a
+    >
+  </p>
+</section>
+<style>
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px;
+    margin-top: 28px;
+  }
+  .work {
+    display: block;
+    padding-top: 18px;
+    border-top: 2px solid var(--line);
+  }
+  .work:hover {
+    border-color: var(--accent);
+  }
+  h3 {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 650;
+  }
+  .work p {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .friends {
+    margin-top: 28px;
+    display: flex;
+    gap: 18px;
+  }
+  @media (max-width: 767px) {
+    .works-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+    h3 {
+      font-size: 14px;
+    }
+  }
+</style>

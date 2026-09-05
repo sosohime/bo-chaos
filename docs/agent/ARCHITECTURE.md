@@ -51,6 +51,9 @@ Astro:
 
 - Pages live under `apps/frontend-astro/src/pages/`.
 - React islands live under `apps/frontend-astro/src/components/`.
+- `src/components/editorial/` and `src/styles/editorial.css` own the shared Bo news, retirement, profile and record-detail shell. Interactions are small Astro browser scripts; these pages do not hydrate React.
+- `src/data/news.ts` combines permanent curated records with the public Lighthouse snapshot. It feeds the news explorer, `/news/[slug]`, profile records, RSS and sitemap. Volatile product banners link outward and never create disposable indexed detail pages.
+- `src/lib/retirement.ts` owns pure countdown/progress calculations; `RetirementClock.astro` reads shared calendar constants, pins them to UTC+8 and pauses second-resolution updates while hidden.
 
 ## Data Flow
 

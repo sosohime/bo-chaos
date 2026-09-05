@@ -8,6 +8,8 @@ interface Props {
   siteName?: string;
   canonicalUrl?: string;
   structuredData?: Record<string, unknown>;
+  editorial?: boolean;
+  image?: string;
 }
 
 const {
@@ -16,6 +18,8 @@ const {
   siteName = '博Fans',
   canonicalUrl,
   structuredData,
+  editorial = false,
+  image,
 } = Astro.props;
 const faviconPath = import.meta.env.DEV ? '/bo.ico' : sitePath('/bo.ico');
 const sourceRoute = Astro.url.pathname.replace(/^\/retire(?=\/|$)/, '') || '/';
@@ -29,6 +33,14 @@ const resolvedCanonicalUrl =
 <!doctype html>
 <html lang="zh-CN">
   <head>
+    {
+      editorial && (
+        <script
+          is:inline
+          set:html={`try { const theme = localStorage.getItem('bo-appearance'); if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme; } catch {}`}
+        />
+      )
+    }
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEB8YFKSCR"
     ></script>
@@ -73,7 +85,31 @@ const resolvedCanonicalUrl =
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:card"
+      content={image ? 'summary_large_image' : 'summary'}
+    />
+    {
+      image && (
+        <>
+          <>
+            <meta property="og:image" content={image} />
+            <meta name="twitter:image" content={image} />
+            <meta property="og:image:alt" content="博Fans 蓝色主题概念插画" />
+          </>
+        </>
+      )
+    }
+    {
+      editorial && (
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="博新闻"
+          href={siteUrl('/rss.xml')}
+        />
+      )
+    }
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <link rel="canonical" href={resolvedCanonicalUrl} />
@@ -89,8 +125,14 @@ const resolvedCanonicalUrl =
     <title>{title}</title>
   </head>
   <body>
-    <div id="background" style={`background-image: url(${background.src});`}>
-    </div>
+    {
+      !editorial && (
+        <div
+          id="background"
+          style={`background-image: url(${background.src});`}
+        />
+      )
+    }
     <slot />
   </body>
 </html>

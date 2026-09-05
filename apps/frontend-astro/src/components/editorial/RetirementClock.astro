@@ -1,0 +1,535 @@
+---
+import { tuixiu } from '@mono/const';
+import { Copy, Expand } from 'lucide-react';
+import { DAY_MS, shanghaiDate } from '../../lib/retirement';
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+// Constants represent calendar dates. Pin their midnight to UTC+8 on every host.
+const target = Date.parse(
+  `${tuixiu.boTuiXiuDay.format('YYYY-MM-DD')}T00:00:00+08:00`,
+);
+const start = Date.parse(
+  `${tuixiu.boTuiXiuStartDay.format('YYYY-MM-DD')}T00:00:00+08:00`,
+);
+const milestones = [365, 100, 30, 0].map((days) => ({
+  days,
+  at: target - days * DAY_MS,
+  date: shanghaiDate(target - days * DAY_MS),
+}));
+---
+
+<div
+  class:list={['retirement-clock', { compact }]}
+  data-bo-clock
+  data-target={target}
+  data-start={start}
+>
+  {
+    !compact && (
+      <p class="target-date meta">
+        目标日{' '}
+        <>
+          <time datetime={shanghaiDate(target)} class="mono">
+            {shanghaiDate(target).replaceAll('-', '.')}
+          </time>
+          <span>北京时间</span>
+        </>
+      </p>
+    )
+  }
+  <div
+    class="clock-readout"
+    role="timer"
+    aria-label="距离社区设定目标日的时间"
+    aria-live="off"
+  >
+    <div class="days-part">
+      <span class="days mono" data-days>···</span><span class="day-unit"
+        >天</span
+      >
+    </div>
+    {
+      !compact && (
+        <div class="time-part mono">
+          <>
+            <div>
+              <>
+                <span data-hours>00</span>
+                <small>时</small>
+              </>
+            </div>
+            <span class="colon" aria-hidden="true">
+              :
+            </span>
+            <div>
+              <>
+                <span data-minutes>00</span>
+                <small>分</small>
+              </>
+            </div>
+            <span class="colon" aria-hidden="true">
+              :
+            </span>
+            <div>
+              <>
+                <span data-seconds>00</span>
+                <small>秒</small>
+              </>
+            </div>
+          </>
+        </div>
+      )
+    }
+  </div>
+  <noscript
+    ><p class="meta">
+      目标日期：{shanghaiDate(target)}。启用 JavaScript 可查看实时倒计时。
+    </p></noscript
+  >
+  <p class="reached-note" data-reached hidden>
+    约定的日子到了。接下来的每一天，也值得期待。
+  </p>
+  {
+    !compact && (
+      <>
+        <div class="progress-info">
+          <>
+            <span>时间进度</span>
+            <span class="mono" data-percent>
+              计算中
+            </span>
+          </>
+        </div>
+        <progress
+          max="100"
+          value="0"
+          aria-label="社区倒计时时间进度"
+          data-progress
+        >
+          0%
+        </progress>
+        <div class="clock-action-slot">
+          <div class="clock-actions" data-clock-actions hidden>
+            <button class="button" type="button" data-copy-clock>
+              <Copy size={16} strokeWidth={1.6} aria-hidden="true" />
+              复制倒计时
+            </button>
+            <button
+              class="button secondary"
+              type="button"
+              data-focus-clock
+              aria-pressed="false"
+            >
+              <>
+                <Expand size={16} strokeWidth={1.6} aria-hidden="true" />
+                <span data-focus-label>专注模式</span>
+              </>
+            </button>
+          </div>
+        </div>
+        <p
+          class="copy-status meta"
+          role="status"
+          aria-live="polite"
+          data-copy-status
+        />
+        <div class="copy-fallback" data-copy-fallback hidden>
+          <>
+            <label for="countdown-share-text">也可以手动复制这段文字</label>
+            <textarea
+              id="countdown-share-text"
+              rows="3"
+              readonly
+              data-share-text
+            />
+          </>
+        </div>
+        <details class="countdown-note">
+          <>
+            <summary>关于这个倒计时</summary>
+            <p>
+              目标日期由博Fans社区设定，用于朋友间的期待与记录，不代表袁博本人或腾讯云公布的退休安排。进度按本站设定的起止日期计算。
+            </p>
+          </>
+        </details>
+        <div class="milestones" aria-label="接下来的时间节点">
+          {milestones.map((milestone) => (
+            <div data-milestone={milestone.at}>
+              <span class="milestone-label">
+                {milestone.days ? `剩余 ${milestone.days} 天` : '目标日'}
+              </span>
+              <time class="mono" datetime={milestone.date}>
+                {milestone.date.replaceAll('-', '.')}
+              </time>
+              <span class="milestone-state" data-milestone-state>
+                待到来
+              </span>
+            </div>
+          ))}
+        </div>
+      </>
+    )
+  }
+</div>
+<style>
+  .retirement-clock {
+    min-width: 0;
+  }
+  .target-date {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .target-date time {
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .target-date > span {
+    font-size: 10px;
+    margin-left: auto;
+  }
+  .clock-readout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 20px;
+    min-height: 116px;
+  }
+  .days-part {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .days {
+    font-size: clamp(78px, 8.8vw, 118px);
+    letter-spacing: -0.07em;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .day-unit {
+    color: var(--muted);
+    font-size: 18px;
+  }
+  .time-part {
+    display: flex;
+    align-items: start;
+    gap: 6px;
+    font-size: clamp(20px, 2.5vw, 29px);
+    line-height: 1;
+  }
+  .time-part > div {
+    display: grid;
+    gap: 9px;
+    text-align: center;
+    min-width: 2ch;
+  }
+  .time-part small {
+    font-size: 10px;
+    font-family: var(--font);
+    color: var(--muted);
+  }
+  .colon {
+    color: var(--muted);
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 24px;
+  }
+  progress {
+    display: block;
+    margin-top: 12px;
+    width: 100%;
+    height: 3px;
+    border: 0;
+    appearance: none;
+    background: var(--line);
+    color: var(--accent);
+  }
+  progress::-webkit-progress-bar {
+    background: var(--line);
+  }
+  progress::-webkit-progress-value {
+    background: var(--accent);
+  }
+  progress::-moz-progress-bar {
+    background: var(--accent);
+  }
+  .clock-action-slot {
+    min-height: 42px;
+    margin-top: 28px;
+  }
+  .clock-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .copy-status {
+    min-height: 19px;
+    margin-top: 10px;
+    color: var(--accent);
+  }
+  .copy-fallback {
+    margin-top: 12px;
+    font-size: 12px;
+  }
+  textarea {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    font: inherit;
+    line-height: 1.7;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 6px;
+  }
+  .countdown-note {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.9;
+  }
+  summary {
+    cursor: pointer;
+    width: fit-content;
+  }
+  .countdown-note p {
+    padding-top: 9px;
+    max-width: 60ch;
+  }
+  .milestones {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 30px;
+    gap: 16px;
+  }
+  .milestones > div {
+    padding-top: 12px;
+    border-top: 2px solid var(--line);
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  .milestones > [data-state='next'] {
+    border-color: var(--accent);
+  }
+  .milestone-label {
+    font-size: 11px;
+    color: var(--ink);
+  }
+  .milestones time {
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .milestone-state {
+    font-size: 10px;
+    color: var(--muted);
+  }
+  [data-state='next'] .milestone-state {
+    color: var(--accent);
+  }
+  .reached-note {
+    margin-top: 12px;
+    color: var(--accent);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .compact .clock-readout {
+    min-height: 0;
+    margin: 12px 0;
+  }
+  .compact .days {
+    font-size: 54px;
+    letter-spacing: -0.055em;
+  }
+  .compact .day-unit {
+    font-size: 13px;
+  }
+  @media (max-width: 767px) {
+    .clock-readout {
+      gap: 20px;
+      min-height: 92px;
+    }
+    .days {
+      font-size: 82px;
+    }
+    .time-part {
+      font-size: 24px;
+      gap: 5px;
+    }
+    .day-unit {
+      font-size: 14px;
+    }
+    .milestones {
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .milestones > div {
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+    .milestone-state {
+      grid-column: 1/-1;
+    }
+  }
+  @media (max-width: 380px) {
+    .days {
+      font-size: 70px;
+    }
+    .time-part {
+      font-size: 21px;
+    }
+    .clock-readout {
+      gap: 14px;
+    }
+  }
+</style>
+<script>
+  import {
+    retirementSnapshot,
+    countdownText,
+    shanghaiDate,
+  } from '../../lib/retirement';
+  import { copyText } from '../../lib/clipboard';
+  import { siteUrl } from '../../lib/site-paths';
+
+  for (const root of document.querySelectorAll<HTMLElement>(
+    '[data-bo-clock]',
+  )) {
+    const target = Number(root.dataset.target);
+    const start = Number(root.dataset.start);
+    const nodes = Object.fromEntries(
+      ['days', 'hours', 'minutes', 'seconds'].map((key) => [
+        key,
+        root.querySelector<HTMLElement>(`[data-${key}]`),
+      ]),
+    );
+    const progress = root.querySelector<HTMLProgressElement>('[data-progress]');
+    const percent = root.querySelector<HTMLElement>('[data-percent]');
+    const milestones = [
+      ...root.querySelectorAll<HTMLElement>('[data-milestone]'),
+    ];
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    function setText(node: HTMLElement | null | undefined, value: string) {
+      if (node && node.textContent !== value) node.textContent = value;
+    }
+    function render() {
+      const now = Date.now();
+      const value = retirementSnapshot(target, start, now);
+      setText(nodes.days, String(value.days));
+      for (const key of ['hours', 'minutes', 'seconds'] as const)
+        setText(nodes[key], String(value[key]).padStart(2, '0'));
+      if (progress) {
+        progress.value = value.progress;
+        progress.textContent = `${value.progress.toFixed(1)}%`;
+      }
+      setText(percent, `${value.progress.toFixed(1)}%`);
+      root.querySelector<HTMLElement>('[data-reached]')!.hidden =
+        !value.reached;
+      let foundNext = false;
+      for (const milestone of milestones) {
+        const reached = now >= Number(milestone.dataset.milestone);
+        const next = !reached && !foundNext;
+        if (next) foundNext = true;
+        milestone.dataset.state = reached
+          ? 'reached'
+          : next
+            ? 'next'
+            : 'future';
+        setText(
+          milestone.querySelector('[data-milestone-state]'),
+          reached ? '已到达' : next ? '下一站' : '待到来',
+        );
+      }
+      return value;
+    }
+    function schedule() {
+      clearTimeout(timer);
+      if (document.hidden) return;
+      const value = render();
+      if (!value.reached)
+        timer = setTimeout(schedule, 1000 - (Date.now() % 1000) + 8);
+    }
+    document.addEventListener('visibilitychange', schedule);
+    window.addEventListener('pagehide', () => clearTimeout(timer));
+    window.addEventListener('pageshow', schedule);
+    schedule();
+    root
+      .querySelector<HTMLElement>('[data-clock-actions]')
+      ?.removeAttribute('hidden');
+    const copy = root.querySelector<HTMLButtonElement>('[data-copy-clock]');
+    copy?.addEventListener('click', async () => {
+      const current = render();
+      const text = current.reached
+        ? `博Fans约定的目标日到了，祝博哥往后的每一天都开心。${siteUrl('/bo/')}`
+        : `距离博Fans设定的 ${shanghaiDate(target)} 目标日，还有 ${countdownText(current)}。陪博哥一起期待。${siteUrl('/bo/')}`;
+      copy.disabled = true;
+      const status = root.querySelector<HTMLElement>('[data-copy-status]')!;
+      const fallback = root.querySelector<HTMLElement>('[data-copy-fallback]')!;
+      fallback.hidden = true;
+      try {
+        await copyText(text);
+        status.textContent = '已复制，发给一起期待的人。';
+      } catch {
+        status.textContent = '浏览器暂不支持复制，可在下方选中文字。';
+        fallback.hidden = false;
+        const field =
+          root.querySelector<HTMLTextAreaElement>('[data-share-text]')!;
+        field.value = text;
+        field.focus();
+        field.select();
+      } finally {
+        copy.disabled = false;
+      }
+    });
+    const focus = root.querySelector<HTMLButtonElement>('[data-focus-clock]');
+    const panel = root.closest<HTMLElement>('[data-retirement-panel]');
+    const shell = root.closest<HTMLElement>('.editorial');
+    const main = shell?.querySelector('main');
+    const background =
+      shell && main
+        ? ([...shell.children, ...main.children].filter(
+            (node) =>
+              node instanceof HTMLElement && node !== main && node !== panel,
+          ) as HTMLElement[])
+        : [];
+    let previousOverflow = '';
+    const previousInert = new Map<HTMLElement, boolean>();
+    function setFocus(enabled: boolean) {
+      if (!panel || !focus) return;
+      if (enabled) {
+        previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+      } else document.body.style.overflow = previousOverflow;
+      for (const node of background) {
+        if (enabled) {
+          previousInert.set(node, node.inert);
+          node.inert = true;
+        } else node.inert = previousInert.get(node) ?? false;
+      }
+      panel.classList.toggle('is-focused', enabled);
+      focus.setAttribute('aria-pressed', String(enabled));
+      setText(
+        focus.querySelector('[data-focus-label]'),
+        enabled ? '退出专注' : '专注模式',
+      );
+      focus.focus({ preventScroll: true });
+    }
+    focus?.addEventListener('click', () =>
+      setFocus(focus.getAttribute('aria-pressed') !== 'true'),
+    );
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && panel?.classList.contains('is-focused'))
+        setFocus(false);
+    });
+  }
+</script>

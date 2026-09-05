@@ -31,6 +31,15 @@ Local frontend debugging is autonomous work. Do not ask the user before starting
 - The refresh script must leave the JSON and its `updatedAt` unchanged when the selected activity items have not changed; page and sitemap freshness signals derive from that timestamp.
 - Astro dev/preview responses set `Cache-Control: no-store` to avoid stale Vite chunks in external Chrome during iterative UI work.
 
+## Bo Editorial Verification
+
+- Local routes: `/`, `/bo/`, `/yuanbo/`, `/news/lighthouse-cross-border-ai/`, `/rss.xml`. Production links and canonicals stay under `/retire`, except the homepage at `/`.
+- Run `pnpm exec vitest run apps/frontend-astro/src/lib/retirement.test.ts apps/frontend-astro/src/data/news.test.ts` for UTC+8 rollover, leap-year milestones, terminal countdown/progress states, stable source IDs, and RSS date/escaping contracts.
+- Check news category/search intersection, no-results reset, URL reload/back/forward, and readable static content without JavaScript.
+- Check second-resolution countdown, instant copy success/failure, manual-copy fallback, focus entry/exit via button and Escape, inert background restoration and visibility-resume behavior.
+- Inspect 390px and 1440px layouts in both themes; include 320px and tablet overflow checks. Theme selection must survive navigation without changing system settings.
+- Parse generated JSON-LD, preserve the shared Person ID, verify old and new canonical links, and ensure RSS item count/source dates match the source model. Concept images are not evidence and should be described as illustrations.
+
 ## Admin Production API Hazard
 
 `apps/front-next-admin/next.config.ts` currently rewrites `/api/:path*` to:

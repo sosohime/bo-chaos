@@ -1,0 +1,219 @@
+---
+import { ArrowLeft, ArrowRight, ArrowUpRight, Link } from 'lucide-react';
+import Layout from '../../layouts/Layout.astro';
+import SiteShell from '../../components/editorial/SiteShell.astro';
+import {
+  editorialRecords,
+  recordDate,
+  dateLabel,
+  recordHref,
+  type NewsRecord,
+} from '../../data/news';
+import { SITE_ORIGIN, sitePath, siteUrl } from '../../lib/site-paths';
+
+export function getStaticPaths() {
+  return editorialRecords.map((record) => ({
+    params: { slug: record.id },
+    props: { record },
+  }));
+}
+interface Props {
+  record: NewsRecord;
+}
+const { record } = Astro.props;
+const title = `${record.title}｜博新闻`;
+const canonicalUrl = siteUrl(`/news/${record.id}/`);
+const related = editorialRecords
+  .filter((item) => item.id !== record.id)
+  .sort(
+    (a, b) =>
+      Number(b.category === record.category) -
+      Number(a.category === record.category),
+  )
+  .slice(0, 2);
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${canonicalUrl}#webpage`,
+  url: canonicalUrl,
+  name: title,
+  description: record.summary,
+  inLanguage: 'zh-CN',
+  isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+  about: { '@id': `${siteUrl('/yuanbo/')}#person` },
+  citation: {
+    '@type': 'CreativeWork',
+    name: record.title,
+    url: record.url,
+    ...(record.publishedAt ? { datePublished: record.publishedAt } : {}),
+  },
+};
+---
+
+<Layout
+  {title}
+  description={record.summary}
+  {canonicalUrl}
+  {structuredData}
+  editorial
+  siteName="博新闻"
+  image={siteUrl('/editorial/lighthouse.webp')}
+>
+  <SiteShell active="news">
+    <header class="reading-head">
+      <a class="text-link" href="/#public-sources"
+        ><ArrowLeft size={16} strokeWidth={1.6} aria-hidden="true" />全部动态</a
+      >
+      <h1>{record.title}</h1>
+      <p class="lead">{record.summary}</p>
+      <div class="article-meta detail-meta">
+        <span class="topic">{record.category}</span><span>{record.source}</span
+        ><span
+          >{dateLabel(record)}
+          <time datetime={recordDate(record)}>{recordDate(record)}</time></span
+        >
+      </div>
+    </header>
+    <div class="reading-layout">
+      <article class="prose">
+        <h2 class="section-title">记录摘要</h2><div class="article-body">
+          {record.paragraphs?.map((paragraph) => <p>{paragraph}</p>)}
+        </div><p class="editor-note">
+          本页由博Fans按公开来源整理。产品动态、来源观点与人物事实分别标注；完整内容请查看原始出处。
+        </p><div class="detail-actions">
+          <a
+            class="button"
+            href={record.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            >查看原文 <ArrowUpRight
+              size={16}
+              strokeWidth={1.6}
+              aria-hidden="true"
+            /></a
+          ><button
+            class="button secondary"
+            type="button"
+            data-copy-record
+            data-url={canonicalUrl}
+            hidden
+            ><Link
+              size={16}
+              strokeWidth={1.6}
+              aria-hidden="true"
+            />复制链接</button
+          >
+        </div><p class="meta" role="status" data-link-status></p>
+      </article>
+      <aside class="source-note">
+        <h2>这条记录的出处</h2><p>
+          <strong>{record.source}</strong><br />{record.sourceType}
+        </p><p>{record.context}</p><a
+          class="text-link"
+          href={sitePath('/yuanbo/')}
+          >袁博公开资料 <ArrowRight
+            size={16}
+            strokeWidth={1.6}
+            aria-hidden="true"
+          /></a
+        >
+      </aside>
+    </div>
+    <section class="section">
+      <h2 class="section-title">继续阅读</h2><div class="related-grid">
+        {
+          related.map((item) => (
+            <a href={recordHref(item)}>
+              <>
+                <span class="meta topic">{item.category}</span>
+                <h3>
+                  {item.title}
+                  <ArrowRight size={18} strokeWidth={1.6} aria-hidden="true" />
+                </h3>
+                <p>{item.summary}</p>
+              </>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </SiteShell>
+</Layout>
+<style>
+  .detail-meta {
+    margin-top: 24px;
+  }
+  .article-body {
+    margin-top: 24px;
+  }
+  .editor-note {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-block: 24px 12px;
+  }
+  .detail-actions a {
+    text-decoration: none;
+    color: var(--accent-ink);
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 24px;
+  }
+  .related-grid > a {
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  h3 {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 18px;
+    line-height: 1.6;
+    font-weight: 650;
+  }
+  h3 :global(svg) {
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .related-grid p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-top: 12px;
+  }
+  @media (max-width: 767px) {
+    .related-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+</style>
+<script>
+  import { copyText } from '../../lib/clipboard';
+  const button =
+    document.querySelector<HTMLButtonElement>('[data-copy-record]');
+  if (button) {
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      const status = document.querySelector<HTMLElement>('[data-link-status]')!;
+      try {
+        await copyText(button.dataset.url!);
+        status.textContent = '链接已复制。';
+      } catch {
+        status.textContent = `暂时无法复制。页面链接：${button.dataset.url}`;
+      }
+    });
+  }
+</script>
