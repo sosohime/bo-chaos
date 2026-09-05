@@ -10,6 +10,7 @@ Use this file to choose checks for a change. Prefer narrow checks that prove the
 - Maintain a task record for non-trivial work using `docs/agent/WORKFLOW.md`.
 - Run `pnpm agent:lint` before finishing non-trivial work.
 - Report what changed, what ran, and what remains unverified.
+- Before releasing from an isolated worktree, run `pnpm install --frozen-lockfile` and `pnpm run verify` in that worktree. Do not symlink `node_modules` from another checkout: workspace package links can resolve to different source/exports and mask missing committed dependencies.
 
 ## Change Type Matrix
 
@@ -23,7 +24,7 @@ Use this file to choose checks for a change. Prefer narrow checks that prove the
 | Admin UI                   | `pnpm -C apps/front-next-admin build` when feasible            | Browser Use / Playwright local verification                             |
 | Taro mini app              | `pnpm -C apps/miniapp-taro build:weapp` when feasible          | manual WeChat devtools verification noted as not run                    |
 | Shared API DTOs            | backend build/test plus affected frontend type/build checks    | full `pnpm run verify` when response shapes cross apps                  |
-| Astro UI                   | `pnpm -C apps/frontend-astro build`                            | browser verification                                                    |
+| Astro UI                   | `pnpm test:astro` and `pnpm -C apps/frontend-astro build`       | browser verification and clean-worktree release verification             |
 | Visual Fast Lane UI polish | during iteration: Browser Use plus console inspection          | final acceptance: relevant build plus `pnpm agent:lint`                 |
 | VS Code extension          | `pnpm -C apps/bo-retire-vsc-extension compile`                 | extension tests if environment supports them                            |
 

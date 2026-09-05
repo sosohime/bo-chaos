@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { tuixiu } from '@mono/const';
 import {
   DAY_MS,
   countdownText,
@@ -7,6 +8,16 @@ import {
 } from './retirement';
 
 describe('community retirement calendar', () => {
+  it('exports the target and derived start used by the Astro component', () => {
+    expect(tuixiu.boTuiXiuStartDay).toBeDefined();
+    expect(tuixiu.tencentRetireYears).toBe(15);
+    expect(tuixiu.boTuiXiuDay.format('YYYY-MM-DD')).toBe('2028-07-06');
+    expect(tuixiu.boTuiXiuStartDay.format('YYYY-MM-DD')).toBe(
+      tuixiu.boTuiXiuDay
+        .subtract(tuixiu.tencentRetireYears, 'year')
+        .format('YYYY-MM-DD'),
+    );
+  });
   const target = Date.parse('2028-07-06T00:00:00+08:00');
   const start = Date.parse('2013-07-06T00:00:00+08:00');
   it('converts complete seconds, keeping rollover boundaries exact', () => {

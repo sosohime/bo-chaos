@@ -17,6 +17,7 @@ Use exact commands from this file when validating changes.
 | Build shared packages           | `pnpm build`                        |
 | Test shared packages            | `pnpm test`                         |
 | Build Astro                     | `pnpm build:astro`                  |
+| Test Astro contracts            | `pnpm test:astro`                   |
 | Start backend                   | `pnpm start:nest`                   |
 | Start admin                     | `pnpm start:admin`                  |
 | Start Astro                     | `pnpm start:astro`                  |
@@ -48,7 +49,7 @@ Use exact commands from this file when validating changes.
 | Backend Nest          | `pnpm -C apps/backend-nest start:dev` | `pnpm -C apps/backend-nest build`                    | `pnpm -C apps/backend-nest test`            |
 | Admin Next            | `pnpm -C apps/front-next-admin dev`   | `pnpm -C apps/front-next-admin build`                | no dedicated test script                    |
 | Miniapp Taro          | `pnpm -C apps/miniapp-taro dev:weapp` | `pnpm -C apps/miniapp-taro build:weapp`              | no dedicated test script                    |
-| Astro                 | `pnpm -C apps/frontend-astro dev`     | `pnpm -C apps/frontend-astro build`                  | no dedicated test script                    |
+| Astro                 | `pnpm -C apps/frontend-astro dev`     | `pnpm -C apps/frontend-astro build`                  | `pnpm test:astro`                            |
 | Astro Lighthouse news | none                                  | `pnpm -C apps/frontend-astro update:lighthouse-news` | no dedicated test script                    |
 | Utils package         | none                                  | `pnpm -C packages/utils build`                       | `pnpm -C packages/utils test`               |
 | Const package         | none                                  | `pnpm -C packages/const build`                       | none                                        |
@@ -57,6 +58,7 @@ Use exact commands from this file when validating changes.
 
 ## Ports and URLs
 
+- `pnpm test:ci` includes Astro source/RSS and shared retirement-calendar contracts. Install dependencies (which builds shared packages), or run `pnpm build:packages` after changing shared exports, before testing package consumers.
 - Backend listens on `process.env.PORT ?? 3000`.
 - Admin dev script uses Next on port `3001`.
 - Astro default dev port is `4321`.
