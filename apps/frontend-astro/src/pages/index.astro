@@ -133,7 +133,7 @@ const structuredData = {
         <section class="product-brief">
           <div class="brief-head">
             <h2>产品观察</h2><span class="meta">核对于 {contentUpdated}</span>
-          </div><p class="brief-note">来自 Lighthouse 产品页</p><div
+          </div><p class="brief-note">来自腾讯云产品页与开发者目录</p><div
             class="brief-list"
           >
             {
@@ -163,12 +163,18 @@ const structuredData = {
         </section>
         <section class="retire-teaser">
           <div class="brief-head">
-            <h2>博退休</h2><a href={sitePath('/bo/')} aria-label="查看博退休"
-              ><ArrowUpRight size={19} strokeWidth={1.6} /></a
-            >
+            <h2>博退休</h2>
           </div><p class="meta">距离约定的那一天</p><RetirementClock
             compact
-          /><p class="meta">社区设定的倒计时，陪博哥一起期待。</p>
+          /><p class="meta">社区设定的倒计时，陪博哥一起期待。</p><a
+            class="text-link"
+            href={sitePath('/bo/')}
+            >查看袁博退休倒计时 <ArrowUpRight
+              size={16}
+              strokeWidth={1.6}
+              aria-hidden="true"
+            /></a
+          >
         </section>
       </aside>
     </div>

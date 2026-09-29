@@ -1,13 +1,10 @@
 import { SITE_ORIGIN, siteUrl } from '../lib/site-paths';
-import lighthouseActivities from '../data/lighthouse-activities.json';
-import { editorialRecords } from '../data/news';
-
-const lighthouseUpdated = lighthouseActivities.updatedAt.slice(0, 10);
+import { contentUpdated, editorialRecords } from '../data/news';
 
 const publicUrls: { url: string; lastModified?: string }[] = [
-  { url: `${SITE_ORIGIN}/`, lastModified: lighthouseUpdated },
+  { url: `${SITE_ORIGIN}/`, lastModified: contentUpdated },
   { url: siteUrl('/yuanbo/'), lastModified: '2026-08-18' },
-  { url: siteUrl('/bo/'), lastModified: lighthouseUpdated },
+  { url: siteUrl('/bo/'), lastModified: contentUpdated },
   { url: siteUrl('/bo/yuanbo-game/') },
   { url: siteUrl('/bo/codex-pet/') },
   { url: siteUrl('/bo/boge-skill/') },
@@ -15,7 +12,7 @@ const publicUrls: { url: string; lastModified?: string }[] = [
   { url: siteUrl('/reckful/') },
   ...editorialRecords.map((record) => ({
     url: siteUrl(`/news/${record.id}/`),
-    lastModified: '2026-09-05',
+    lastModified: record.observedAt ?? '2026-09-05',
   })),
 ];
 

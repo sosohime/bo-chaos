@@ -16,7 +16,13 @@ export interface NewsRecord {
   context?: string;
 }
 
-export const contentUpdated = activities.updatedAt.slice(0, 10);
+const mcpDirectoryObservedAt = '2026-09-28';
+export const contentUpdated = [
+  activities.updatedAt.slice(0, 10),
+  mcpDirectoryObservedAt,
+]
+  .sort()
+  .at(-1)!;
 export const categories: NewsCategory[] = [
   '产品动态',
   '公开分享',
@@ -124,16 +130,44 @@ function productTitle(item: (typeof activities.items)[number]) {
   return item.summary || item.title;
 }
 
-export const productRecords: NewsRecord[] = activities.items.map((item) => ({
-  id: item.url,
-  title: productTitle(item),
-  summary: item.summary || item.title,
-  category: '产品动态',
-  source: '腾讯云 Lighthouse 产品页',
-  sourceType: item.category,
-  url: item.url,
-  observedAt: contentUpdated,
-}));
+const currentProductObservations: NewsRecord[] = [
+  {
+    id: 'lighthouse-agent-management',
+    title: 'Lighthouse Agent 焕新：统一管理多个智能体',
+    summary:
+      '腾讯轻量云团队 2026 年 7 月的升级介绍涵盖 Agent 群聊、定时任务、独立配置、云桌面操作及 Token 与会话管理。',
+    category: '产品动态',
+    source: '腾讯云开发者社区·腾讯轻量云',
+    sourceType: '官方文章（2026-07-27）·资料核对',
+    url: 'https://cloud.tencent.com/developer/article/2710300',
+    observedAt: mcpDirectoryObservedAt,
+  },
+  {
+    id: 'lighthouse-mcp-server',
+    title: '腾讯云 Lighthouse MCP Server',
+    summary:
+      '腾讯云 Lighthouse 官方目录列出 MCP Server，支持查询与管理轻量云实例、查看监控数据及处理防火墙规则。',
+    category: '产品动态',
+    source: '腾讯云开发者平台',
+    sourceType: '官方 MCP Server 目录·资料核对',
+    url: 'https://developer.cloud.tencent.com/mcp/server/11473',
+    observedAt: mcpDirectoryObservedAt,
+  },
+];
+
+export const productRecords: NewsRecord[] = [
+  ...currentProductObservations,
+  ...activities.items.map((item) => ({
+    id: item.url,
+    title: productTitle(item),
+    summary: item.summary || item.title,
+    category: '产品动态' as const,
+    source: '腾讯云 Lighthouse 产品页',
+    sourceType: item.category,
+    url: item.url,
+    observedAt: activities.updatedAt.slice(0, 10),
+  })),
+];
 
 export const newsRecords = [...productRecords, ...editorialRecords];
 export const featuredRecord = editorialRecords[0];
