@@ -1,0 +1,52 @@
+@use "./entry-fields";
+
+.proxy-sheet .entry-choose .text-action {
+  max-width: 100%;
+  white-space: normal;
+  word-break: break-all;
+}
+.proxy-person .text-action {
+  flex: none;
+  margin-left: 12px;
+  padding-right: 0;
+}
+.proxy-history {
+  margin-top: 28px;
+}
+.proxy-history .section-title {
+  margin: 0;
+  font-size: 14px;
+}
+.proxy-history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.proxy-history-row > view:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.proxy-history-row > view + view {
+  margin-left: 8px;
+}
+.proxy-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.proxy-history-actions {
+  display: flex;
+  flex: none;
+}
+.proxy-history .entry-note {
+  margin: 4px 0 12px;
+}
+.proxy-sheet .proxy-person { margin: 0 0 12px; }
+.proxy-sheet .entry-field { margin-bottom: 12px; }
+.proxy-sheet .entry-choose { margin: -5px 0 7px; }
+.proxy-sheet .proxy-history { margin-top: 8px; }
+.proxy-history-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44Px; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 13px; }

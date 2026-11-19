@@ -88,3 +88,7 @@ These actions are part of normal verification and should be recorded in task evi
 - Prefer narrow tests first, then broader checks when the blast radius grows.
 - `update:lighthouse-news` only reads the public Tencent Cloud Lighthouse page and rewrites local static JSON.
 - Confirm before deploys, pushes, PR creation, destructive file/data operations, secrets or credential handling, auth/CORS/security policy changes, paid operations, or browser actions that submit/write to real external services.
+
+## Independent group notebook
+
+Use `pnpm -C apps/group-rank-miniapp typecheck`, `pnpm exec vitest run apps/group-rank-miniapp/src`, and `pnpm -C apps/group-rank-miniapp build:weapp`. For local PostgreSQL integration run `python3 scripts/test-group-rank-database.py` after generating Prisma. Service configuration and deployment are in `deploy/group-rank/README.md`.

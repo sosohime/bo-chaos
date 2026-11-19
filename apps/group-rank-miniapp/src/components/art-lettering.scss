@@ -1,0 +1,8 @@
+/* Same glyph aspect roles as title-art-renderer.ts. Width is reserved before
+   painting, so the decorative transform cannot run into neighbouring content. */
+.art-lettering {--glyph-width:78.125%;--glyph-stretch:1.28;--glyph-lean:-6deg;display:grid;grid-template-areas:"ink";width:100%;font-family:var(--art-font);font-weight:400;font-style:normal;line-height:1.12;overflow-wrap:anywhere;word-break:break-all;}
+.art-lettering-board {--glyph-width:55.555556%;--glyph-stretch:1.8;--glyph-lean:0deg;}
+.art-lettering-face {grid-area:ink;width:var(--glyph-width);transform:skewX(var(--glyph-lean)) scaleX(var(--glyph-stretch));transform-origin:left top;}
+
+.art-lettering-face {position:relative;color:#fff;text-shadow:0 -1px #fff,0 1px #a2b4bc,0 2px #15272f;-webkit-text-fill-color:currentColor;}
+.art-lettering-plain .art-lettering-face {color:inherit;text-shadow:none;background:none;-webkit-text-fill-color:currentColor;}

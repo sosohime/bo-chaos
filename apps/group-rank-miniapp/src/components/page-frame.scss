@@ -1,0 +1,53 @@
+.page-frame-status {
+  position: sticky;
+  top: 0;
+  z-index: 42;
+  height: var(--page-status-height, 0px);
+  background: var(--chrome-bg, #11171b);
+
+}
+.page-frame-header {
+  position: sticky;
+  top: var(--page-status-height, 0px);
+  z-index: 41;
+  background: var(--chrome-bg, #11171b);
+
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--page-header-height, 54px);
+  width: 100%;
+  margin: 0;
+  padding: 0 var(--page-header-gutter, 16px);
+  padding-right: calc(var(--page-header-gutter, 16px) + var(--page-capsule-clearance, 0px));
+}
+.page-frame-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 2 * var(--page-capsule-clearance, 0px));
+  font-family: var(--display-font);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.page-frame-header > view {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Freeze the actual page subtree as well as page-meta; root portals stay outside it. */
+.page-frame-locked { position: fixed; left: 0; right: 0; top: 0; bottom: 0; overflow: hidden; }
+.page-frame {
+  width: 100%;
+  max-width: var(--canvas-width, 100%);
+  margin: 0 auto;
+}
+
+/* Freezing the document resets the host scroll origin. Keep sticky layers at
+   their observed viewport position while ordinary content retains its offset. */
+.page-frame-locked .page-sticky {transform:translateY(var(--page-locked-offset,0Px));}

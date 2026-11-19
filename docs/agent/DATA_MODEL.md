@@ -68,3 +68,7 @@ User vote on a photo.
 - If a Prisma model changes, update this file in the same change.
 - If a response shape changes, update affected frontend API wrappers.
 - Treat string statuses and systems as API contracts even when the database stores them as strings.
+
+## Group notebook
+
+The six GroupRank migrations create independent app-scoped identities, group spaces and memberships, board rule snapshots, score revisions, draft rules, proxy claims, reports, themes and backgrounds. GroupRank records do not reuse BoFans users or scores. The accepted contract is in `openspec/specs/group-ranking/spec.md`.

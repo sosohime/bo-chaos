@@ -1,0 +1,8 @@
+{
+  "family": "LXGW WenKai Lite Medium",
+  "fontSource": "https://github.com/lxgw/LxgwWenKai-Lite/releases/tag/v1.530",
+  "fontFile": "LXGWWenKaiLite-Medium.ttf",
+  "licenseFile": "LXGWWenKaiLite-OFL.txt",
+  "fontSha256": "9282063131640c9558a102560cf6d6f8ecc4bb441e74f2bcff032ce4786238d0",
+  "renderer": "Fontkit outline paths + Sharp, no system-font fallback"
+}

@@ -68,3 +68,7 @@ Astro:
 - API behavior changes usually touch backend controller/service, shared DTOs in `packages/types`, frontend API wrappers, and `docs/agent/ROUTING.md`.
 - Schema changes touch Prisma schema, generated client workflow, backend services, shared DTOs, frontend type use, and `docs/agent/DATA_MODEL.md`.
 - UI changes should follow the existing component library and the frontend debug workflow.
+
+## Independent group notebook
+
+The miniapp at `apps/group-rank-miniapp` uses the standalone Nest entry in `apps/backend-nest/src/group-rank/main.ts` and a separate database. A verified WeChat group determines the current space; the shared card only suggests a board to open. See `openspec/specs/group-ranking/spec.md` and `deploy/group-rank/README.md`.

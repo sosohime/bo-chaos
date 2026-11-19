@@ -1,0 +1,72 @@
+@use "../../components/entry-fields";
+@use "../../components/book-binding" as book;
+
+.create-screen { --page-header-gutter: 12px; min-height: 100vh; background: var(--page-bg); }
+.create-back { display: flex; align-items: center; min-width: 36Px; min-height: 44Px; font-size: 27px; line-height: 1; }
+.create-page { padding: 0 12px calc(88Px + var(--create-keyboard-inset,0px) + env(safe-area-inset-bottom)); }
+.create-editor { @include book.binding; padding: 14px 15px 8px; }
+.create-scope { display: block; margin: 0 0 16px; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+.definition-fields { display: grid; grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr); align-items: start; gap: 12px; }
+.definition-fields .entry-field { margin: 0; }
+.definition-fields .entry-label { margin: 0 0 5px; color: var(--text-primary); font-size: 13px; font-weight: 600; }
+.definition-fields .entry-control { height: 44Px; padding: 6px 9px; border: 1px solid #4c5a60; border-radius: 5px; background: #151e23; font-size: 15px; }
+.definition-rules { margin-top: 14px; border-top: 1px solid var(--border); }
+.rules-toggle, .appearance-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 54Px;
+  padding: 9px 0;
+  text-align: left;
+}
+.rules-heading, .appearance-entry-copy { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.create-setting-label, .appearance-entry-copy > text:first-child { color: var(--text-primary); font-weight: 700; font-size: 14px; }
+.rules-summary, .appearance-entry-hint { color: var(--text-secondary); font-size: 12px; line-height: 1.45; }
+.create-chevron, .appearance-current > text { flex: none; color: var(--text-secondary); font-size: 20px; line-height: 1; }
+.rules-content { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 12px; }
+.rules-content .note { margin: 0; }
+.rule-setting { display: flex; align-items: center; gap: 8px; }
+.rule-setting-label { flex: none; width: 58px; color: var(--text-secondary); font-size: 12px; }
+.rule-options { flex: 1; min-width: 0; display: flex; gap: 5px; }
+.rule-option { flex: 1; min-width: 0; min-height: 44Px; display: flex; align-items: center; justify-content: center; padding: 4px 3px; border: 1px solid #46545a; border-radius: 5px; background: #192227; color: #e6ecee; font-size: 12px; text-align: center; line-height: 1.3; }
+.rule-option.chosen { border-color: var(--accent-readable,var(--accent)); color: var(--accent-readable,var(--accent)); background: var(--accent-soft); font-weight: 700; }
+.rule-option[disabled] { opacity: .65; }
+.appearance-options { border-top: 1px solid var(--border); }
+.appearance-current { display: flex; align-items: center; gap: 9px; flex: none; }
+.appearance-thumbnail { position: relative; width: 33px; height: 33px; border-radius: 4px; overflow: hidden; }
+.create-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  padding: 11px 0 5px;
+  border-top: 1px solid var(--border);
+  background: #1c262b;
+}
+.create-dock .action { margin: 0; min-height: 44Px; font-size: 15px; border-radius: 5px; }
+.create-keyboard-open .create-dock {
+  position: fixed;
+  left: calc(var(--frame-left,0Px) + 12px);
+  right: calc(var(--frame-left,0Px) + 12px);
+  bottom: var(--create-keyboard-inset,0px);
+  padding: 8Px 12px;
+  border: 1px solid #37464a;
+  border-radius: 0 0 6px 3px;
+}
+#create-background-editor { padding: 2px 0 12px; }
+
+.share-ready-page { padding: 0 12px calc(16Px + env(safe-area-inset-bottom)); }
+.share-ready-page-sheet { @include book.binding; padding: 20px 16px 14px; }
+.share-ready-title, .share-ready-name, .share-ready-tip, .share-ready-expiry { display: block; }
+.share-ready-title { color: var(--text-primary); font-size: 24px; font-weight: 800; line-height: 1.2; }
+.share-ready-name { margin-top: 5px; color: var(--text-secondary); font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.share-ready-card { display: flex; align-items: center; justify-content: space-between; gap: 11px; margin-top: 16px; padding: 9px; border: 1px solid var(--border); border-radius: 6px; background: #151e23; }
+.share-ready-card-copy { display: flex; flex: 1; flex-direction: column; gap: 5px; min-width: 0; }
+.share-ready-card-label { color: var(--text-secondary); font-size: 12px; }
+.share-ready-card-title { color: var(--text-primary); font-size: 15px; font-weight: 700; line-height: 1.3; }
+.share-ready-card-image { display: block; flex: none; width: 100px; height: 80px; border-radius: 3px; overflow: hidden; }
+.share-ready-tip { margin: 12px 0; font-size: 13px; line-height: 1.5; color: var(--text-primary); }
+.share-ready-page-sheet .share-ready-send { min-height: 44Px; margin: 0; border-radius: 5px; font-size: 15px; }
+.share-ready-edit { display: flex; width: 100%; min-height: 44Px; align-items: center; justify-content: center; color: var(--text-primary); font-size: 13px; }
+.share-ready-expiry { color: var(--text-secondary); font-size: 12px; line-height: 1.3; text-align: center; }

@@ -1,0 +1,26 @@
+<wxs src="./fold.wxs" module="paper" />
+<view class="sheet" change:leaf="{{paper.replace}}" leaf="{{leafkey}}"
+  change:availability="{{paper.available}}" availability="{{disabled}}"
+  change:turnpulse="{{paper.request}}" turnpulse="{{turnpulse}}"
+  data-locked="{{disabled}}" data-cannext="{{label !== ''}}" data-canback="{{backlabel !== ''}}"
+  data-ready="{{ready}}" data-backready="{{backready}}"
+  data-width="{{width}}" data-height="{{height}}" data-nextheight="{{nextHeight}}" data-backheight="{{previousHeight}}">
+  <view class="sheet-next {{ready ? '' : 'sheet-target-placeholder'}}" aria-hidden="true"><slot name="next" /></view>
+  <view class="sheet-previous {{backready ? '' : 'sheet-target-placeholder'}}" aria-hidden="true"><slot name="previous" /></view>
+  <view class="sheet-shadow" aria-hidden="true" />
+  <view class="sheet-front"
+    bindtouchstart="{{paper.start}}" bindtouchmove="{{paper.move}}"
+    bindtouchend="{{paper.end}}" bindtouchcancel="{{paper.cancel}}"><slot /></view>
+  <view class="sheet-back" aria-hidden="true" />
+  <button wx:if="{{backlabel}}" class="corner-hit corner-previous {{disabled ? 'corner-disabled' : ''}}"
+    aria-label="{{backlabel}}" aria-disabled="{{disabled}}" hover-class="none" data-direction="-1"
+    catchtouchstart="{{paper.start}}" catchtouchmove="{{paper.move}}"
+    catchtouchend="{{paper.end}}" catchtouchcancel="{{paper.cancel}}" catchtap="tap">
+  </button>
+  <button wx:if="{{label}}" class="corner-hit corner-next {{disabled ? 'corner-disabled' : ''}}"
+    aria-label="{{label}}" aria-disabled="{{disabled}}" hover-class="none" data-direction="1"
+    catchtouchstart="{{paper.start}}" catchtouchmove="{{paper.move}}"
+    catchtouchend="{{paper.end}}" catchtouchcancel="{{paper.cancel}}" catchtap="tap">
+    <view class="corner-lip" aria-hidden="true" />
+  </button>
+</view>

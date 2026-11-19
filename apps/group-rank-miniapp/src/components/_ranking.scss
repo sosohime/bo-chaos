@@ -1,0 +1,51 @@
+.ranking-row {
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+  padding: 12px 0;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--border);
+}
+.ranking-row > view + view,
+.ranking-row > button + button,
+.ranking-row > text + text {
+  margin-left: 12px;
+}
+
+.rank-position {
+  flex: none;
+  width: 24px;
+  color: var(--text-tertiary);
+  font-size: 16px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.rank-name {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+.rank-value {
+  flex: none;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.score-unit {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+}
+.ranking-row.mine .rank-name,
+.ranking-row.mine .rank-value {
+  color: var(--text-primary);
+}
+.ranking-row.mine .rank-name {
+  font-weight: 500;
+}
+.ranking-row:last-child {
+  border-bottom: 0;
+}
