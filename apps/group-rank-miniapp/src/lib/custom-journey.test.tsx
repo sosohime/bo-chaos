@@ -1085,7 +1085,8 @@ it("hides proxy maintenance from ordinary participants and requires identity to 
     ranking: [proxyRow],
   });
   expect(container.textContent).not.toContain("帮群友记");
-  expect(container.textContent).toContain("待认领");
+  expect(container.querySelector(".rank-claim-chip")?.textContent).toContain("这是我");
+  expect(container.querySelector(".rank-proxy-badge")?.textContent).toBe("代填");
   await click("这是我");
   expect(container.textContent).toContain("保存并继续认领");
   expect(state.claim).not.toHaveBeenCalled();
@@ -1116,7 +1117,7 @@ it("shows one's pending claim without offering another request", async () => {
     ],
     ranking: [proxyRow],
   });
-  expect(container.textContent).toContain("待确认");
+  expect(container.textContent).toContain("等创建者确认");
   expect(container.textContent).not.toContain("这是我");
   expect(state.claim).not.toHaveBeenCalled();
 });
@@ -1128,6 +1129,7 @@ it("exposes names without current-period scores so they remain claimable", async
     ranking: [],
   });
   expect(container.textContent).toContain("待认领名单");
+  expect(container.querySelector(".proxy-names .rank-proxy-badge")?.textContent).toBe("代填");
   expect(container.textContent).toContain("这是我");
 });
 it.each([true, false])(
@@ -1142,6 +1144,7 @@ it.each([true, false])(
     });
     state.showModal.mockResolvedValue({ confirm: true });
     state.reviewClaim.mockResolvedValue({ reviewed: true });
+    await click("待确认");
     await click(approve ? "确认本人" : "驳回");
     expect(state.reviewClaim).toHaveBeenCalledWith(
       "custom-board",
@@ -1151,6 +1154,66 @@ it.each([true, false])(
     );
   },
 );
+it("keeps a review entry visible before requests arrive and preserves the board on a refresh failure", async () => {
+  await mountBoard({ proxyParticipants: [proxyPerson], ranking: [proxyRow] });
+  const initial = await state.board.mock.results[0].value;
+  state.board.mockRejectedValueOnce(new Error("网络中断"));
+  await click("认领申请");
+  expect(container.querySelector(".claim-sheet")?.textContent).toContain("没能刷新申请，请重试");
+  expect(container.querySelector(".rank-line")).not.toBeNull();
+  state.board.mockResolvedValueOnce({
+    ...initial,
+    proxyParticipants: [{ ...proxyPerson, claimantUserId: "claimant-A", claimantName: "阿林" }],
+  });
+  await click("刷新申请");
+  expect(container.querySelector(".rank-claims-action")?.textContent).toBe("待确认1");
+  expect(container.querySelector(".claim-sheet")?.textContent).toContain("确认本人");
+  expect(container.querySelector(".claim-sheet")?.textContent).not.toContain("没能刷新");
+});
+
+it("updates the pending claim count in place while the creator stays on the board", async () => {
+  vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+  try {
+    await mountBoard({ proxyParticipants: [proxyPerson], ranking: [proxyRow] });
+    const initial = await state.board.mock.results[0].value;
+    const row = container.querySelector(".rank-line");
+    state.board.mockResolvedValueOnce({
+      ...initial,
+      proxyParticipants: [{ ...proxyPerson, claimantUserId: "claimant-A", claimantName: "阿林" }],
+    });
+    await act(async () => vi.advanceTimersByTime(30000));
+    expect(container.querySelector(".rank-claims-action")?.textContent).toBe("待确认1");
+    expect(container.querySelector(".rank-line")).toBe(row);
+    expect(container.querySelector(".board-refreshing")).toBeNull();
+    await act(async () => state.hide());
+    const reads = state.board.mock.calls.length;
+    await act(async () => vi.advanceTimersByTime(30000));
+    expect(state.board).toHaveBeenCalledTimes(reads);
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+it("explains the single-entry rule without promising a merge", async () => {
+  await mountBoard({
+    creatorId: "owner",
+    myProfile: completeProfile,
+    proxyParticipants: [proxyPerson],
+    ranking: [proxyRow],
+    template: { entryMode: "single", name: "测试榜", period: "all_time" },
+  });
+  state.showModal.mockResolvedValue({ confirm: true });
+  state.claim.mockRejectedValue(new Error("同一期只能记一笔，已有成绩与认领记录冲突。"));
+  await click("这是我");
+  expect(state.showModal).toHaveBeenCalledWith(expect.objectContaining({
+    content: expect.stringContaining("同一期已经记过成绩"),
+  }));
+  expect(state.showToast).toHaveBeenCalledWith(expect.objectContaining({
+    title: expect.stringContaining("认领记录冲突"),
+  }));
+  expect(container.querySelector(".rank-claim-chip")).not.toBeNull();
+});
+
 it("preserves recorded-by attribution on claimed entries without proxy maintenance controls", async () => {
   await mountBoard({
     creatorId: "owner",
@@ -1225,14 +1288,15 @@ it("keeps claim-review refusals recoverable without merging local records", asyn
   });
   state.showModal.mockResolvedValue({ confirm: true });
   state.reviewClaim.mockRejectedValue(new Error("申请已变化，请刷新"));
+  await click("待确认");
   await click("确认本人");
   expect(state.showToast).toHaveBeenCalledWith({
     title: "申请已变化，请刷新",
     icon: "none",
   });
-  expect(container.textContent).toContain("阿林申请认领");
+  expect(container.querySelector(".claim-request")?.textContent).toContain("阿林申请认领");
   expect(container.textContent).toContain("刷新申请");
-  expect(state.board).toHaveBeenCalledTimes(1);
+  expect(state.board).toHaveBeenCalledTimes(2);
 });
 it("leaves paused proxy history readable but prevents adding and editing", async () => {
   state.proxyEntries.mockResolvedValue([
@@ -1262,6 +1326,7 @@ it("does not send a displayed claim-review to a newer group generation", async (
         finish = resolve;
       }),
   );
+  await click("待确认");
   await click("确认本人");
   state.generation += 1;
   await act(async () => finish({ confirm: true }));
@@ -1615,7 +1680,7 @@ it("keeps the three featured identities in server order without duplicating them
     ranking: [1, 2, 3, 4].map((rank) => podiumRow(String(rank), rank)),
   });
   expect(
-    [...container.querySelectorAll(".rank-person > span:first-child")].map(
+    [...container.querySelectorAll(".rank-person-name")].map(
       (node) => node.textContent,
     ),
   ).toEqual(["选手1", "选手2", "选手3", "选手4"]);
@@ -1899,8 +1964,8 @@ it("locks page scrolling for score, management and theme sheets and releases it 
 
 it("opens an explicit proxy-management action above the page with scrolling locked",async()=>{
   await mountBoard({proxyParticipants:[proxyPerson],ranking:[proxyRow],myProfile:completeProfile});
-  expect(container.querySelector(".rank-person-action")?.textContent).toBe("代填记录 ›");
-  await click("代填记录");
+  expect(container.querySelector(".rank-person-action")?.textContent).toBe("查看记录 ›");
+  await click("查看记录");
   expect(container.querySelector(".proxy-sheet")?.textContent).toContain("小林");
   expect(container.querySelector(".proxy-sheet .section-title")?.textContent).toBe("代填记录");
   expect(container.querySelectorAll(".profile-mask")).toHaveLength(1);
@@ -2050,7 +2115,7 @@ it("keeps proxy maintenance reachable on a rank row after the featured three", a
   });
   const row = container.querySelector("button.rank-line");
   expect(row?.textContent).toContain("04");
-  expect(row?.textContent).toContain("代填记录");
+  expect(row?.textContent).toContain("查看记录");
   expect(row?.querySelector("button")).toBeNull();
   await act(async () => (row as HTMLButtonElement).click());
   expect(container.querySelector(".proxy-sheet")?.textContent).toContain("小林");
@@ -2064,9 +2129,9 @@ it("keeps a pending rank row read-only while the current participant waits for c
     proxyParticipants: [{...proxyPerson, claimantUserId: "me"}],
   });
   const row = container.querySelector(".rank-line:last-child");
-  expect(row?.textContent).toContain("待确认");
+  expect(row?.textContent).toContain("等创建者确认");
   expect(row?.tagName).not.toBe("BUTTON");
-  expect(row?.textContent).not.toContain("代填记录");
+  expect(row?.textContent).not.toContain("查看记录");
   expect(row?.textContent).not.toContain("这是我");
 });
 
@@ -2215,7 +2280,7 @@ it("keeps score failures above the keyboard and retries the same request with th
 
 it("leaves tall identities in natural flow so a narrow viewport can reach the remaining ranking", async () => {
   await mountBoard({ranking:[1,2,3,4].map(i=>({...podiumRow(String(i),i),displayName:"超长群友名称用于检查完整姓名的显示效果"}))});
-  const rows = [...container.querySelectorAll(".rank-person > span:first-child")];
+  const rows = [...container.querySelectorAll(".rank-person-name")];
   expect(rows).toHaveLength(4);
   expect(rows.every(row => row.textContent === "超长群友名称用于检查完整姓名的显示效果")).toBe(true);
 });

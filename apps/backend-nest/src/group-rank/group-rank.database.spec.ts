@@ -137,13 +137,14 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
       proxy.submit(a,board.id,{participantId:person.participantId,value:'7',requestId:'extra-b'}),
     ]);
     expect(extra.every(r=>r.status==='rejected')).toBe(true);
-    await proxy.claim(a,board.id,person.participantId);
-    await expect(proxy.review(a,board.id,person.participantId,true,a.userId)).rejects.toThrow('认领记录冲突');
+    await expect(proxy.claim(a,board.id,person.participantId)).rejects.toThrow('认领记录冲突');
+    expect((await service.detail(a, board.id)).proxyParticipants![0].claimantUserId).toBeNull();
     expect((await proxy.entries(a,board.id,person.participantId))).toHaveLength(1);
-    await expect(proxy.claim(a2,board.id,person.participantId)).rejects.toThrow('已有群友申请认领');
-    // Rejection leaves the existing claimant intact; decline then transfer to a different member.
-    await proxy.review(a,board.id,person.participantId,false,a.userId);
     await proxy.claim(a2,board.id,person.participantId);
+    const late = await service.submit(a2, board.id, '15', 'after-request');
+    await expect(proxy.review(a,board.id,person.participantId,true,a2.userId)).rejects.toThrow('认领记录冲突');
+    expect((await service.detail(a, board.id)).proxyParticipants![0].claimantUserId).toBe(a2.userId);
+    await service.remove(a2, board.id, late.id);
     await proxy.review(a,board.id,person.participantId,true,a2.userId);
     await expect(service.submit(a2,board.id,'15','after-claim')).rejects.toThrow('每人一笔');
     const claimed = (await service.detail(a2,board.id)).myEntries[0];

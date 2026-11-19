@@ -54,9 +54,22 @@
 .rank-avatar-crowned .person-avatar { position: absolute; left: 10%; top: 19%; width: 80%; height: 80%; }
 .rank-crown { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .rank-person { flex: 1; min-width: 0; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; word-break: break-word; }
-.rank-person-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rank-person-identity { display: flex; align-items: flex-start; gap: 5px; }
+.rank-person-name { min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rank-proxy-badge {
+  flex: none;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: #f2c77f;
+  color: #382713;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.4;
+  white-space: nowrap;
+}
 .rank-person-action { display: block; margin-top: 2px; font-size: 11px; font-weight: 400; color: var(--text-secondary); }
 .rank-person-link { color: var(--accent-readable,var(--accent)); }
+.rank-claim-chip { display: inline-block; margin-top: 4px; padding: 2px 7px; border: 1px solid currentColor; border-radius: 4px; color: var(--accent-readable,var(--accent)); font-size: 12px; font-weight: 700; white-space: nowrap; }
 .rank-result {
   display: flex;
   align-items: baseline;
@@ -79,6 +92,10 @@
 .rank-unit { max-width: 100%; font-size: 11px; color: var(--text-secondary); overflow-wrap: anywhere; }
 .rank-empty { padding: 17px 3px 12px; font-size: 15px; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
 
-.rank-shortcuts { display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border); }
+.rank-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 0 4px; border-bottom: 1px solid var(--border); }
 .rank-shortcuts .rank-cover-action { padding: 0 10px; font-size: 13px; }
 .rank-shortcuts .rank-share-action { color: var(--accent-readable,var(--accent)); font-weight: 750; }
+
+.rank-shortcuts .rank-claims-action { gap: 5px; margin-left: auto; }
+.rank-shortcuts .rank-claims-action.has-requests { color: var(--accent-readable,var(--accent)); font-weight: 750; }
+.rank-claims-count { padding: 1px 5px; border: 1px solid currentColor; border-radius: 4px; font: 700 11px monospace; }

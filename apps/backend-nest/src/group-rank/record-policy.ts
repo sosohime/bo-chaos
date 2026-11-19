@@ -13,7 +13,7 @@ export function assertSingleClaim(template: GroupRankTemplate, entries: { create
   const periods = new Set<string>();
   for (const entry of entries) {
     const key = periodStart(template, entry.createdAt)?.toISOString() || 'all';
-    if (periods.has(key)) throw new ConflictException('此榜每人一笔，已有成绩与认领记录冲突，请先核对并删除重复记录');
+    if (periods.has(key)) throw new ConflictException('同一期只能记一笔，已有成绩与认领记录冲突。请先核对要保留哪一笔。');
     periods.add(key);
   }
 }

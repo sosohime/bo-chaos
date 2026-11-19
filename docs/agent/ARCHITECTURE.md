@@ -72,3 +72,5 @@ Astro:
 ## Independent group notebook
 
 The miniapp at `apps/group-rank-miniapp` uses the standalone Nest entry in `apps/backend-nest/src/group-rank/main.ts` and a separate database. A verified WeChat group determines the current space; the shared card only suggests a board to open. See `openspec/specs/group-ranking/spec.md` and `deploy/group-rank/README.md`.
+
+The proxy-claim service validates the per-period single-entry rule inside the group board transaction at application and again at approval. Approval transfers original submission times and recorder attribution to the claimant's records. Existing custom rules stay in the board snapshot.

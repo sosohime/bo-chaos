@@ -52,23 +52,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
-.claim-head .label {
-  margin: 0;
-}
-.claim-request {
-  padding: 12px 0;
-  border-top: 1px solid var(--border);
-  font-size: 14px;
-  line-height: 1.6;
-}
-.claim-request > view {
-  display: flex;
-  justify-content: flex-end;
-}
-.claim-request > view > button + button {
-  margin-left: 8px;
-}
+.claim-summary, .claim-hint { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+.claim-hint { display: block; }
+.claim-request { padding: 12px 0 8px; border-top: 1px solid var(--border); }
+.claim-person { display: block; overflow-wrap: anywhere; font-size: 16px; font-weight: 700; }
+.claim-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.claim-actions .text-action, .claim-head .text-action, .claim-name-cta { min-height: 44Px; }
+.claim-actions .claim-confirm, .claim-name-cta { color: var(--accent-readable,var(--accent)); font-weight: 700; }
 .history-row {
   display: flex;
   align-items: center;
@@ -100,8 +92,8 @@
   width: 100%;
 }
 
-.proxy-names, .claim-requests { margin: 24px 20px 0; padding: 0; border: 0; background: transparent; }
-.proxy-names .label, .claim-head .label { font-size: 16px; }
+.proxy-names { margin: 24px 20px 0; padding: 0; border: 0; background: transparent; }
+.proxy-names .label { font-size: 16px; }
 .proxy-names > .note { margin-bottom: 8px; }
 .proxy-name-row { border-bottom: 1px solid var(--border); font-size: 14px; }
 .history-sheet .history-panel { margin: 0; padding: 0; border: 0; }

@@ -8,9 +8,9 @@ import { useViewport } from "../lib/viewport";
 
 const rowLabels = {
   pending: "待认领",
-  proxy: "代填记录",
-  waiting: "待确认",
-  claim: "待认领 · 这是我",
+  proxy: "查看记录",
+  waiting: "等创建者确认",
+  claim: "这是我",
 };
 
 export function rankRowState(detail: GroupRankBoardDetail, row: GroupRankRow) {
@@ -27,6 +27,7 @@ type PaperActions = {
   onMore: () => void;
   onShare: () => void;
   onProxy?: () => void;
+  onClaims?: () => void;
   onHistory: () => void;
   onProfile: () => void;
   onRankAction: (row: GroupRankRow) => (() => void) | undefined;
@@ -57,6 +58,7 @@ export default function BoardPaper({ detail, actions, busy = false }: {
         return {
           label: state ? rowLabels[state] : "",
           actionable: state === "proxy" || state === "claim",
+          claim: state === "claim",
           run: actions?.onRankAction(row),
         };
       }}
@@ -64,6 +66,7 @@ export default function BoardPaper({ detail, actions, busy = false }: {
       onMore={actions?.onMore}
       onShare={actions?.onShare}
       onProxy={actions?.onProxy}
+      onClaims={actions?.onClaims}
     />
     <View className="notebook-own">
       {showHistory && <Button

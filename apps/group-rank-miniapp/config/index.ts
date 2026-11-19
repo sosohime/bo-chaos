@@ -34,9 +34,7 @@ export default defineConfig({
         "footprints",
         "trophy",
         "pencil",
-        "users",
         "chevron-right",
-        "message-circle",
         "group-chat",
       ].map((name) => ({
         from: `src/assets/notebook/icon-${name}.png`,

@@ -9,7 +9,7 @@ import { crownForRank } from "../lib/theme";
 import { arenaLayout } from "../lib/arena-layout";
 import "./board-ranking.scss";
 
-export type RankInteraction = { label: string; actionable?: boolean; run?: () => void };
+export type RankInteraction = { label: string; actionable?: boolean; claim?: boolean; run?: () => void };
 
 export default function BoardRanking({
   detail,
@@ -21,6 +21,7 @@ export default function BoardRanking({
   onMore,
   onShare,
   onProxy,
+  onClaims,
 }: {
   detail: GroupRankBoardDetail;
   width: number;
@@ -31,9 +32,11 @@ export default function BoardRanking({
   onMore?: () => void;
   onShare?: () => void;
   onProxy?: () => void;
+  onClaims?: () => void;
 }) {
   const layout = arenaLayout(detail.template.name, width);
   const unit = detail.template.unit;
+  const pendingCount = detail.proxyParticipants?.filter(person => person.claimantUserId).length ?? 0;
   return (
     <>
       <View className="rank-cover">
@@ -67,6 +70,12 @@ export default function BoardRanking({
       {onShare && <View className="rank-shortcuts">
         <Button className="rank-cover-action rank-share-action" onClick={onShare} disabled={busy}>分享</Button>
         {onProxy && <Button className="rank-cover-action" onClick={onProxy} disabled={busy}>{detail.status === "open" ? "帮群友记" : "查看代填历史"}</Button>}
+        {onClaims && (
+          <Button className={`rank-cover-action rank-claims-action${pendingCount ? " has-requests" : ""}`} onClick={onClaims} disabled={busy}>
+            <Text>{pendingCount ? "待确认" : "认领申请"}</Text>
+            {pendingCount > 0 && <Text className="rank-claims-count">{pendingCount}</Text>}
+          </Button>
+        )}
       </View>}
       {detail.ranking.length ? (
         <View className="rank-lines">
@@ -87,8 +96,15 @@ export default function BoardRanking({
                   {crown && <Image className="rank-crown" src={`/assets/arena/crown-${row.rank === 1 ? "gold" : row.rank === 2 ? "silver" : "bronze"}-v1.png`} mode="aspectFit" />}
                 </View>
                 <View className="rank-person">
-                  <Text className="rank-person-name">{row.displayName}</Text>
-                  {action.label && <Text className={`rank-person-action${action.actionable ? " rank-person-link" : ""}`}>{action.label}{action.actionable ? " ›" : ""}</Text>}
+                  <View className="rank-person-identity">
+                    <Text className="rank-person-name">{row.displayName}</Text>
+                    {row.pendingClaim && <Text className="rank-proxy-badge">代填</Text>}
+                  </View>
+                  {action.claim ? (
+                    <Text className="rank-claim-chip">{action.label} ›</Text>
+                  ) : action.label && (
+                    <Text className={`rank-person-action${action.actionable ? " rank-person-link" : ""}`}>{action.label}{action.actionable ? " ›" : ""}</Text>
+                  )}
                 </View>
                 <View className="rank-result">
                   <Text className="rank-score">{score}</Text>

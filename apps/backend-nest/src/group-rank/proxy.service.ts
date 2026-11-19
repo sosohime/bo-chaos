@@ -248,17 +248,41 @@ export class GroupRankProxyService {
       return { deleted: true };
     });
   }
+  private async assertClaimFits(
+    tx: Prisma.TransactionClient,
+    boardId: string,
+    userId: string,
+    template: GroupRankTemplate,
+    proxyEntries: { createdAt: Date }[],
+  ) {
+    if (template.entryMode !== 'single' || !proxyEntries.length) return;
+    const own = await tx.groupRankEntry.findMany({
+      where: { boardId, userId, deletedAt: null },
+      select: { createdAt: true },
+    });
+    assertSingleClaim(template, [...own, ...proxyEntries]);
+  }
+
   async claim(
     identity: GroupRankIdentity,
     boardId: string,
     participantId: string,
   ) {
     return this.locked(identity, boardId, async (tx) => {
-      await this.board(tx, identity, boardId, false);
+      const board = await this.board(tx, identity, boardId, false);
       await this.profile(tx, identity.userId);
       const person = await this.participant(tx, boardId, participantId);
       if (person.claimantUserId && person.claimantUserId !== identity.userId)
         throw new ConflictException('已有群友申请认领，请联系创建者核对');
+      if (person.claimantUserId === identity.userId) return { requested: true };
+      const template = board.templateSnapshot as unknown as GroupRankTemplate;
+      if (template.entryMode === 'single') {
+        const entries = await tx.groupRankProxyEntry.findMany({
+          where: { participantId, boardId, deletedAt: null },
+          select: { createdAt: true },
+        });
+        await this.assertClaimFits(tx, boardId, identity.userId, template, entries);
+      }
       await tx.groupRankProxyParticipant.update({
         where: { id: person.id },
         data: { claimantUserId: identity.userId },
@@ -302,13 +326,7 @@ export class GroupRankProxyService {
         orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
       });
       const template = board.templateSnapshot as unknown as GroupRankTemplate;
-      if (template.entryMode === 'single' && entries.length) {
-        const own = await tx.groupRankEntry.findMany({
-          where: { boardId, userId: claimantUserId, deletedAt: null },
-          select: { createdAt: true },
-        });
-        assertSingleClaim(template, [...own, ...entries]);
-      }
+      await this.assertClaimFits(tx, boardId, claimantUserId, template, entries);
       // One transaction transfers original values/times and recorder; retries cannot copy them twice.
       if (entries.length)
         await tx.groupRankEntry.createMany({
