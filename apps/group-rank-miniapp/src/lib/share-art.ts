@@ -1,7 +1,30 @@
 import Taro from "@tarojs/taro";
+import { newRequestId } from "./api";
 
 const width = 500;
 const height = 400;
+const shareImagePrefix = "notebook-share-v2-";
+const retainedShareImages = 24;
+
+function saveShareImage(directory: string, content: string) {
+  const fs = Taro.getFileSystemManager();
+  const name = `${shareImagePrefix}${newRequestId()}.png`;
+  const path = `${directory}/${name}`;
+
+  // WeChat can read the file after the share handler returns. Each share needs its own snapshot.
+  fs.writeFileSync(path, content, "base64");
+  try {
+    const previous = fs.readdirSync(directory)
+      .filter(file => file !== name && file.startsWith(shareImagePrefix) && file.endsWith(".png"))
+      .sort();
+    for (const stale of previous.slice(0, -(retainedShareImages - 1))) {
+      fs.unlinkSync(`${directory}/${stale}`);
+    }
+  } catch {
+    // A cleanup error does not invalidate the newly exported image.
+  }
+  return path;
+}
 
 function label(ctx: CanvasRenderingContext2D, text: string, size: number, x: number, y: number, max = 410) {
   ctx.font = `bold ${size}px sans-serif`;
@@ -42,7 +65,7 @@ function draw(ctx: CanvasRenderingContext2D, title: string, rank?: number, score
   ctx.fillStyle = accent;
   ctx.fillRect(18, 29, 4, 62);
   ctx.textBaseline = "middle";
-  label(ctx, rank ? "原群排名" : "本群榜单", 27, 44, 67);
+  label(ctx, rank ? "我的排名" : "本群榜单", 27, 44, 67);
   ctx.fillStyle = "#f8f4e9";
   if (rank) {
     ctx.fillStyle = accent;
@@ -72,9 +95,7 @@ export function prepareShareArt(title: string, rank?: number, score?: string) {
     const data = (canvas as unknown as HTMLCanvasElement).toDataURL("image/png");
     const content = data.split(",")[1];
     if (!content || !Taro.env?.USER_DATA_PATH) throw new Error("No local export");
-    const path = `${Taro.env.USER_DATA_PATH}/notebook-share-${score ? "score" : rank ? "rank" : "board"}.png`;
-    Taro.getFileSystemManager().writeFileSync(path, content, "base64");
-    return path;
+    return saveShareImage(Taro.env.USER_DATA_PATH, content);
   } catch {
     return Taro.canvasToTempFilePath({
       canvas: canvas as unknown as Taro.Canvas, width, height, destWidth: width, destHeight: height, fileType: "png",

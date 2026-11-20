@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-vi.mock("@tarojs/taro", () => ({ default: {} }));
+const runtime = vi.hoisted(() => ({ wx: {} as Record<string, unknown> }));
+vi.mock("@tarojs/taro", () => ({ default: runtime.wx }));
 import type { GroupRankBoardDetail, GroupRankTemplate } from "@mono/types";
 import { boardShareCard, notebookShareCard, rulesShareCard, ownRankShareTitle, shareSelection, RANK_SHARE_KIND, SCORE_SHARE_KIND, boardShareWithArt } from "./share";
 
@@ -43,4 +44,52 @@ describe("share cards", () => {
     expect(ownRankShareTitle({ ...board, ranking: [ranking[0], { ...ranking[1], pendingClaim: true }] })).toBeUndefined();
     expect(boardShareCard({ ...board, ranking: [ranking[0]] }, RANK_SHARE_KIND).title).toBe("尿酸王｜本群榜单");
   });
+});
+
+it("keeps two different boards' share images separate when they are exported back to back", () => {
+  const unrelated = "/test/avatar.png";
+  const oldest = "/test/notebook-share-v2-100-0.png";
+  const files = new Map<string, string>([[unrelated, "keep"]]);
+  for (let index = 0; index < 23; index++) {
+    files.set(`/test/notebook-share-v2-100-${index}.png`, "older share");
+  }
+  const noop = () => {};
+  const fs = {
+    writeFileSync: (path: string, payload: string) => { files.set(path, payload); },
+    readdirSync: () => [...files.keys()].map(path => path.slice("/test/".length)),
+    unlinkSync: (path: string) => { files.delete(path); },
+  };
+  Object.assign(runtime.wx, {
+    env: { USER_DATA_PATH: "/test" },
+    createOffscreenCanvas: () => {
+      const labels: string[] = [];
+      return {
+        getContext: () => ({
+          createLinearGradient: () => ({ addColorStop: noop }),
+          fillRect: noop, beginPath: noop, moveTo: noop, lineTo: noop, stroke: noop, strokeRect: noop,
+          fillText: (label: string) => { labels.push(label); },
+          measureText: (value: string) => ({ width: value.length * 50 }),
+        }),
+        toDataURL: () => `data:image/png;base64,${Buffer.from(labels.join(" ")).toString("base64")}`,
+      };
+    },
+    getFileSystemManager: () => fs,
+  });
+  try {
+    const first = boardShareWithArt(board);
+    const next = boardShareWithArt({
+      ...board,
+      id: "other-group-board",
+      template: { ...template, name: "清微股东排行榜" },
+    });
+    expect(first.imageUrl).not.toBe(next.imageUrl);
+    expect(Buffer.from(files.get(first.imageUrl)!, "base64").toString()).toContain("尿酸王");
+    expect(Buffer.from(files.get(next.imageUrl)!, "base64").toString()).toContain("清微股东排行榜");
+    expect(query(next.path).board).toBe("other-group-board");
+    expect(files.get(unrelated)).toBe("keep");
+    expect(files.has(oldest)).toBe(false);
+    expect(files.size).toBe(25);
+  } finally {
+    for (const key of Object.keys(runtime.wx)) delete runtime.wx[key];
+  }
 });
