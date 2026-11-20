@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  contentUpdated,
   editorialRecords,
   newsRecords,
   productRecords,
@@ -30,6 +31,16 @@ describe('source-backed publication', () => {
       expect(record.paragraphs).toBeUndefined();
       expect(recordDate(record)).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     }
+  });
+  it('orders the feed by source date while freshness includes later source reviews', () => {
+    const dates = newsRecords.map((record) => recordDate(record)!);
+    expect(dates).toEqual([...dates].sort().reverse());
+    const reviewedDates = newsRecords.flatMap((record) =>
+      [record.publishedAt, record.observedAt].filter(
+        (date): date is string => !!date,
+      ),
+    );
+    expect(contentUpdated).toBe([...reviewedDates].sort().at(-1));
   });
   it('keeps production canonicals independent from the dev navigation prefix', () => {
     expect(siteUrl('/news/token-and-daa/')).toBe(

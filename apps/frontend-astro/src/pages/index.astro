@@ -111,7 +111,7 @@ const structuredData = {
         >
         <div class="lead-copy">
           <div class="article-meta">
-            <span class="topic">公开分享</span><span
+            <span class="topic">{featuredRecord.category}</span><span
               >来源发布 <time datetime={featuredRecord.publishedAt}
                 >{featuredRecord.publishedAt}</time
               ></span
@@ -133,9 +133,9 @@ const structuredData = {
         <section class="product-brief">
           <div class="brief-head">
             <h2>产品观察</h2><span class="meta">核对于 {contentUpdated}</span>
-          </div><p class="brief-note">来自腾讯云产品页与开发者目录</p><div
-            class="brief-list"
-          >
+          </div><p class="brief-note">
+            来自官方更新日志、产品页与开发者目录
+          </p><div class="brief-list">
             {
               productRecords.slice(0, 3).map((record) => (
                 <a href={record.url} target="_blank" rel="noopener noreferrer">

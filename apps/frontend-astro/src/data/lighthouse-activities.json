@@ -1,18 +1,12 @@
 {
   "sourceUrl": "https://cloud.tencent.com/product/lighthouse?Is=sdk-topnav",
-  "updatedAt": "2026-09-04T07:34:15.140Z",
+  "updatedAt": "2026-11-20T13:51:52.212Z",
   "items": [
     {
       "title": "产品体验 OrcaTerm 智能终端客户端版公测",
       "summary": "OrcaTerm 智能终端客户端版公测",
       "category": "产品体验",
       "url": "https://orcaterm.com/"
-    },
-    {
-      "title": "云端一键部署 OpenClaw 秒级部署，可视化面板配置，快速接入微信、QQ、企微、飞书等IM。",
-      "summary": "OpenClaw 秒级部署，可视化面板配置，快速接入微信、QQ、企微、飞书等IM。",
-      "category": "AI Agent",
-      "url": "https://cloud.tencent.com/act/pro/openclaw"
     },
     {
       "title": "云端托管个人 AI Agent 无需配置服务器即可上手试用，模型、工具、人设都由你决定。",

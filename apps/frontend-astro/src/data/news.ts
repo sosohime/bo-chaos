@@ -17,12 +17,7 @@ export interface NewsRecord {
 }
 
 const mcpDirectoryObservedAt = '2026-09-28';
-export const contentUpdated = [
-  activities.updatedAt.slice(0, 10),
-  mcpDirectoryObservedAt,
-]
-  .sort()
-  .at(-1)!;
+const novemberReviewDate = '2026-11-20';
 export const categories: NewsCategory[] = [
   '产品动态',
   '公开分享',
@@ -33,6 +28,24 @@ export const categories: NewsCategory[] = [
 // These curated records have permanent detail URLs. Product-page banners below
 // stay outbound so removing a banner cannot silently remove an indexed article.
 export const editorialRecords: NewsRecord[] = [
+  {
+    id: 'lighthouse-loopforge-quickstart',
+    title: 'LoopForge 上云：把编程 Agent 接进交付流程',
+    summary:
+      '腾讯轻量云发布 LoopForge 入门教程，介绍通过 Lighthouse 应用镜像部署平台，并用两个案例演示工作流程。',
+    category: '产品动态',
+    source: '腾讯云开发者社区·腾讯轻量云',
+    sourceType: '官方入门教程',
+    url: 'https://cloud.tencent.com/developer/article/2788300',
+    publishedAt: '2026-11-19',
+    observedAt: novemberReviewDate,
+    paragraphs: [
+      '腾讯轻量云在 11 月 19 日的教程中介绍了开源项目 LoopForge。根据文章概述，它来自 SkillHub 的研发实践，尝试让编程 Agent 与团队已有的操作流程共同完成交付。',
+      '教程介绍了 Lighthouse 的 LoopForge 应用镜像，并以两个上手案例说明部署后的使用方式。读者可以沿着原文了解如何把自动执行环节和需要人工确认的环节接起来。',
+    ],
+    context:
+      '本条是腾讯轻量云官方教程的摘要，不是本站部署实测，也不据此判断袁博个人参与了该项目。具体配置、运行条件与案例步骤请查看原文。',
+  },
   {
     id: 'lighthouse-cross-border-ai',
     title: 'Lighthouse 赋能跨境电商 AI 新增长',
@@ -132,6 +145,17 @@ function productTitle(item: (typeof activities.items)[number]) {
 
 const currentProductObservations: NewsRecord[] = [
   {
+    id: 'lightvela-november-updates',
+    title: 'LightVela 11 月更新：应用连接器与文件侧边预览',
+    summary:
+      '官方 11 月日志列出腾讯会议、腾讯文档、ima 等应用连接器，以及技能快捷选择、文件侧边预览和带后端的网站应用 Beta；10 月还新增了语音通话与云电脑。',
+    category: '产品动态',
+    source: 'LightVela 官方更新日志',
+    sourceType: '官方月度日志（2026 年 11 月）·资料核对',
+    url: 'https://lightvela.com/changelog',
+    observedAt: novemberReviewDate,
+  },
+  {
     id: 'lighthouse-agent-management',
     title: 'Lighthouse Agent 焕新：统一管理多个智能体',
     summary:
@@ -167,9 +191,24 @@ export const productRecords: NewsRecord[] = [
     url: item.url,
     observedAt: activities.updatedAt.slice(0, 10),
   })),
-];
+].sort((a, b) => (b.observedAt ?? '').localeCompare(a.observedAt ?? ''));
 
-export const newsRecords = [...productRecords, ...editorialRecords];
+export const newsRecords = [...productRecords, ...editorialRecords].sort(
+  (a, b) =>
+    (b.publishedAt ?? b.observedAt ?? '').localeCompare(
+      a.publishedAt ?? a.observedAt ?? '',
+    ),
+);
+export const contentUpdated = [
+  activities.updatedAt.slice(0, 10),
+  ...newsRecords.flatMap((record) =>
+    [record.publishedAt, record.observedAt].filter(
+      (date): date is string => !!date,
+    ),
+  ),
+]
+  .sort()
+  .at(-1)!;
 export const featuredRecord = editorialRecords[0];
 export const sourceCount = new Set(newsRecords.map((record) => record.url))
   .size;
