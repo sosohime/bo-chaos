@@ -199,8 +199,6 @@ if (search.get("case") === "proxy") {
     .map((row) => ({
       id: row.participantId!,
       displayName: row.displayName,
-      claimantUserId: null,
-      claimantName: null,
     }));
   detail.myEntries = [
     {
@@ -421,8 +419,28 @@ export const groupApi = {
   proxyEntries: async () => search.get("proxyHistory") === "long" ? Array.from({length:20},(_,i)=>({id:`proxy-entry-${i}`,value:String(668-i),revision:1,createdAt:"2026-11-11T08:00:00Z"})) : [],
   proxyEdit: async () => {},
   proxyRemove: async () => {},
-  claim: async () => {},
-  reviewClaim: async () => {},
+  claim: async (_boardId: string, participantId: string) => {
+    const row = detail.ranking.find(item => item.participantId === participantId);
+    if (!row) throw new Error("这条代填已被认领，请刷新榜单");
+    detail.proxyParticipants = detail.proxyParticipants?.filter(person => person.id !== participantId);
+    detail.myEntries = [{
+      id: participantId,
+      value: row.score,
+      revision: 1,
+      recordedById: detail.creatorId,
+      createdAt: "2026-11-05T04:00:00Z",
+    }, ...detail.myEntries];
+    detail.ranking = detail.ranking.filter(item => item.userId !== detail.myUserId).map(item =>
+      item === row ? {
+        rank: row.rank,
+        userId: detail.myUserId,
+        displayName: detail.myProfile?.nickname || row.displayName,
+        avatarVersion: detail.myProfile?.avatarVersion || null,
+        score: row.score,
+      } : item,
+    ).map((item, index) => ({ ...item, rank: index + 1 }));
+    return { claimed: true };
+  },
   saveProfile: async () => detail.myProfile,
   removeAvatar: async () => detail.myProfile,
 };

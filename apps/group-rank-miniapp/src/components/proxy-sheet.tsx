@@ -3,19 +3,12 @@ import BottomSheet, { SheetInput } from "./bottom-sheet";
 import { useEffect, useRef, useState } from "react";
 import { Button, Picker, Text, View } from "@tarojs/components";
 import Taro, { useDidHide } from "@tarojs/taro";
-import type { GroupRankEntryDto, GroupRankTemplate } from "@mono/types";
+import type { GroupRankEntryDto, GroupRankProxyParticipantDto, GroupRankTemplate } from "@mono/types";
 import { currentGroupGeneration, groupApi, newRequestId } from "../lib/api";
 import { singleRecord } from "../lib/record-policy";
 import { formatSubmittedAt } from "../lib/format";
 import Avatar from "./avatar";
 import "./proxy.scss";
-
-export interface ProxyParticipant {
-  id: string;
-  displayName: string;
-  claimantUserId?: string | null;
-  claimantName?: string | null;
-}
 
 export default function ProxySheet({
   boardId,
@@ -27,7 +20,7 @@ export default function ProxySheet({
   onChanged,
 }: {
   boardId: string;
-  participants: ProxyParticipant[];
+  participants: GroupRankProxyParticipantDto[];
   initialId?: string;
   template: GroupRankTemplate;
   writable: boolean;

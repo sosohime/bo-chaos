@@ -40,7 +40,7 @@
 
 ## 当前边界
 
-当前支持经审核的短名称/单位自定义规则、latest/max/sum、主动选择头像昵称及创建者代填/确认认领。暂不开放公开模板投稿、长文/评论、任意封面、完整多字段编辑器、Min/Count/Average 或复合计算；没有平台审核管理台。
+当前支持经审核的短名称/单位自定义规则、latest/max/sum、主动选择头像昵称及创建者代填与群友直接认领。暂不开放公开模板投稿、长文/评论、任意封面、完整多字段编辑器、Min/Count/Average 或复合计算；没有平台审核管理台。
 
 数值与官方文案不代表完整平台治理已就绪。正式发布前仍需完成隐私申报与同意/撤回/账户删除、运营举报处置、服务频控/资源预算、主体类目和内容安全接入评估、实际数据库迁移与回滚验证、目标 AppID 的两群转发和真机交互验证。不得用编译或模拟测试替代这些验收。
 
@@ -88,7 +88,7 @@ pnpm agent:lint
 
 本人贡献/修改必须头像昵称完整，chooseAvatar/nickname为主动选择，不保证等于微信原资料；浏览和删除不强制。头像重新编码并审核（昵称另行审核），只能凭本群会话读取本群成员头像，不公开文件路径。举报按榜单/举报人去重，创建者可移除并清空本人/代填分数。
 
-仅创建者可代填：新增审核后的名字或选已有待认领者，不创建伪微信身份，不自动按同名合并。未打开小程序者不要求资料，创建者代填也不要求本人资料，群友名字不写入创建者昵称。榜上明确标待认领与代填；其他群友以真实群会话申请认领，创建者核对并确认预期申请人。确认在同一榜单锁/事务中转移原始记录和时间，保留记录人，按规则合并本人既有记录，之后本人改删，创建者不再代改。拒绝后可重新申请，竞争/旧申请不能误确认。入群依旧无审批，认领确认仅解决数据归属。
+仅创建者可代填，可以登记审核通过的名字或在已有名字下续记。登记不要求群友已打开小程序，也不修改创建者的头像和昵称。榜上用「代填」标记尚未认领的成绩。已验证身份的同群群友点击「这是我」并确认后立即认领。服务在同一榜单事务中校验单笔规则，转移原成绩、原记录时间及代填者来源。认领者可以在「我的记录」管理成绩。同一人重复认领返回原结果，其他人收到已认领提示。
 
 手机已确认自定义创建、头像选择、昵称候选可用。新版必填资料、代填及跨账号认领/两群隔离真机验收为pending，自动化证据仅覆盖模拟微信与真实临时PostgreSQL；预览不等于提审或发布。
 
@@ -136,12 +136,12 @@ v5目标已接受，首次代码候选还原度被否定，当前替换候选待
 
 - 详情采用小榜名与群/单位/规则信息行，前三为按服务端顺序的短横排记录；只展示实际存在的人，冠色依实际rank。第四名开始为更多排名。
 - 上滑后以浅摘要层保留实际前三和真实榜名；文档布局不随scroll改高度，阈值来自实际展开/收拢高度差，回程有迟滞，不每像素重渲染。
-- 前三待认领记录整行可操作，创建者管理代填，其他成员可申请认领或查看待确认；保留原身份/确认流程。长名/数值/单位完整展示，不借裁切隐藏重要事实。
+- 前三待认领记录整行可操作，创建者管理代填，其他成员点击「这是我」并确认后直接认领。长名/数值/单位完整展示，不借裁切隐藏重要事实。
 - 从收拢状态删除最后排名后，空榜和规则入口必须恢复；保存等待权威刷新，不以本地猜测排名代替返回结果。
 
 ## Detail composition invariants (2026-11-12 rebuild)
 
-- Featured and paper-ranked participants use one column owner, including proxy actions. Pending rows remain fully actionable without nested buttons; current claimant awaiting review has a read-only status.
+- Featured and paper-ranked participants use one column owner, including proxy actions. Unclaimed rows are actionable without nested buttons.
 - The cover and compact shelf retain stable document geometry. A paper remainder region fills the available reading viewport, so a four-person long-content board can reach the measured handoff; short lists do not invent entries or padding solely to force a collapse.
 - Full names and score values remain available in expanded rows; compact names may ellipsize in the shallow shelf while scores remain intact. The actual board name remains in collapsed navigation.
 - Proxy, profile, score and management sheets use the existing shared portal, keyboard and scroll-lock owners.

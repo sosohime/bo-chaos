@@ -137,6 +137,4 @@ export interface GroupRankProfile {
 export interface GroupRankProxyParticipantDto {
   id: string;
   displayName: string;
-  claimantUserId: string | null;
-  claimantName: string | null;
 }

@@ -75,7 +75,6 @@ export function NotebookReader({
 }) {
   const [page, setPage] = useState<ReaderPage | null>(initialPage ?? null);
   const [turning, setTurning] = useState(false);
-  const [foreground, setForeground] = useState(true);
   const [previousDetail, setPreviousDetail] = useState<GroupRankBoardDetail | null>(null);
   const [nextDetail, setNextDetail] = useState<GroupRankBoardDetail | null>(null);
   const [warmup] = useState(() => createBoardWarmup(groupApi.board, currentGroupGeneration));
@@ -132,7 +131,6 @@ export function NotebookReader({
   }
 
   useDidShow(() => {
-    setForeground(true);
     if (initialPage) return;
     if (currentEntry().kind === "lobby" || needsEntryNavigation()) {
       clearReader();
@@ -143,7 +141,6 @@ export function NotebookReader({
     void read();
   });
   useDidHide(() => {
-    setForeground(false);
     if (!initialPage && !nativeMediaInProgress()) clearReader();
     else warmup.clear();
   });
@@ -193,7 +190,7 @@ export function NotebookReader({
   }
 
   return (
-    <BoardLeaf page={page} nextDetail={nextDetail} previousDetail={previousDetail} directoryPaper={directoryPaper} turning={turning} foreground={foreground} onDirectory={onDirectory} onProfileChange={warmup.clear} onBoardChange={onBoardChange} onMenuScoreChange={onMenuScoreChange} onTurn={(direction) => {
+    <BoardLeaf page={page} nextDetail={nextDetail} previousDetail={previousDetail} directoryPaper={directoryPaper} turning={turning} onDirectory={onDirectory} onProfileChange={warmup.clear} onBoardChange={onBoardChange} onMenuScoreChange={onMenuScoreChange} onTurn={(direction) => {
       const next = page.index + direction;
       if (next === -1) void turnToDirectory();
       else if (next < page.directory.length) void read(page.directory, next, direction);
@@ -201,13 +198,12 @@ export function NotebookReader({
   );
 }
 
-function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, foreground, onDirectory, onProfileChange, onBoardChange, onMenuScoreChange, onTurn }: {
+function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, onDirectory, onProfileChange, onBoardChange, onMenuScoreChange, onTurn }: {
   page: ReaderPage;
   nextDetail: GroupRankBoardDetail | null;
   previousDetail: GroupRankBoardDetail | null;
   directoryPaper?: ReactNode;
   turning: boolean;
-  foreground: boolean;
   onDirectory: () => void | Promise<unknown>;
   onProfileChange: () => void;
   onBoardChange: (board: GroupRankBoardDetail | null) => void;
@@ -262,14 +258,6 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
   const existingSingle = detail ? singleRecord(detail.template, detail.myEntries) : null;
   const [proxyOpen, setProxyOpen] = useState(false);
   const [proxyInitialId, setProxyInitialId] = useState("");
-  const [claimsOpen, setClaimsOpen] = useState(false);
-  const [claimsLoading, setClaimsLoading] = useState(false);
-  const [claimsError, setClaimsError] = useState("");
-  const claimRead = useRef(0);
-  const proxyPeople = detail?.proxyParticipants ?? [];
-  const canReviewClaims = !!detail && detail.creatorId === detail.myUserId;
-  const pendingClaims = canReviewClaims ? proxyPeople.filter(person => person.claimantUserId) : [];
-  const watchClaims = proxyPeople.some(person => canReviewClaims || person.claimantUserId === detail?.myUserId);
   const [profileSubmitLabel, setProfileSubmitLabel] =
     useState("保存并提交成绩");
   const profileContinuation = useRef<
@@ -285,7 +273,6 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
     !!detail &&
     (scoreOpen ||
       proxyOpen ||
-      claimsOpen ||
       profileOpen ||
       themeOpen ||
       manageOpen ||
@@ -316,50 +303,12 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
       if (sequence.current === current) setRefreshing(false);
     }
   }
-  async function refreshClaims(manual = false, active = () => true) {
-    if (lock.current || claimDialog.current || turning) return;
-    const read = ++claimRead.current;
-    const current = sequence.current;
-    const generation = currentGroupGeneration();
-    const stillHere = () => active() && read === claimRead.current && current === sequence.current && generation === currentGroupGeneration();
-    if (manual) {
-      setClaimsLoading(true);
-      setClaimsError("");
-    }
-    try {
-      const updated = await groupApi.board(boardId);
-      if (!stillHere() || updated.id !== boardId || lock.current || claimDialog.current) return;
-      if (!manual && JSON.stringify(updated.proxyParticipants) === JSON.stringify(detail?.proxyParticipants)) return;
-      setDetail(updated);
-      onBoardChange(updated);
-    } catch {
-      if (manual && stillHere()) setClaimsError("没能刷新申请，请重试");
-    } finally {
-      if (manual && stillHere()) setClaimsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!watchClaims || !foreground || turning || refreshing || busy || claimsLoading) return;
-    let active = true;
-    const timer = setInterval(() => {
-      if (!sheetShowing.current || claimsOpen) void refreshClaims(false, () => active);
-    }, 30000);
-    return () => {
-      active = false;
-      clearInterval(timer);
-    };
-  }, [watchClaims, page.detail, localDetail, foreground, turning, refreshing, busy, claimsOpen, claimsLoading]);
-
   useEffect(() => {
     setError("");
     setValue("");
     setEditing(null);
     setScoreError("");
     setMenuScore(undefined);
-    setClaimsOpen(false);
-    setClaimsLoading(false);
-    setClaimsError("");
     historyScrollTop.current = 0;
     submission.current = null;
     return () => {
@@ -452,7 +401,7 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
     const person = detail.proxyParticipants?.find(
       (item) => item.id === participantId,
     );
-    if (!person || person.claimantUserId === detail.myUserId) return;
+    if (!person) return;
     const profile = savedProfile || detail.myProfile;
     if (!profile?.nickname?.trim() || !profile.avatarVersion) {
       profileContinuation.current = (updated) => {
@@ -470,16 +419,16 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
       const answer = await Taro.showModal({
         title: `认领“${person.displayName}”？`,
         content: detail.template.entryMode === "single"
-          ? "需要榜单创建者确认。若同一期已经记过成绩，请先核对要保留哪一笔。"
-          : "需要榜单创建者确认。确认后，这些记录会合并到你在本榜已有的记录中，并由你维护。请只认领自己的成绩。",
-        confirmText: "申请认领",
+          ? "认领后，这些成绩会进入「我的记录」。同一期只能保留一笔。"
+          : "认领后，这些成绩会合并到你的「我的记录」。请只认领自己的成绩。",
+        confirmText: "确认认领",
       });
       if (
         answer.confirm &&
         current === sequence.current &&
         generation === currentGroupGeneration()
       )
-        await act(() => groupApi.claim(boardId, participantId), false, "已申请，等创建者确认");
+        await act(() => groupApi.claim(boardId, participantId), false, "已认领");
     } catch (reason) {
       if (current === sequence.current)
         Taro.showToast({
@@ -493,48 +442,6 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
       claimDialog.current = false;
     }
   }
-  async function reviewClaim(participantId: string, approve: boolean) {
-    if (!detail || turning || lock.current || claimDialog.current) return;
-    const person = detail.proxyParticipants?.find(
-      (item) => item.id === participantId,
-    );
-    if (!person?.claimantUserId) return;
-    const claimantUserId = person.claimantUserId;
-    const current = sequence.current;
-    const generation = currentGroupGeneration();
-    claimDialog.current = true;
-    try {
-      const answer = await Taro.showModal({
-        title: approve ? "确认是本人？" : "驳回这次认领？",
-        content: approve
-          ? `“${person.claimantName || "申请人"}”申请认领“${person.displayName}”。确认后，代填记录将合并到对方在本榜已有的记录中，由本人维护，你将不能再代改。`
-          : `驳回“${person.claimantName || "申请人"}”对“${person.displayName}”的认领，原成绩不会删除。`,
-        confirmText: approve ? "确认认领" : "驳回",
-      });
-      if (
-        answer.confirm &&
-        current === sequence.current &&
-        generation === currentGroupGeneration()
-      )
-        await act(
-          () => groupApi.reviewClaim(boardId, participantId, approve, claimantUserId),
-          false,
-          approve ? "已确认认领" : "已驳回申请",
-        );
-    } catch (reason) {
-      if (current === sequence.current)
-        Taro.showToast({
-          title:
-            reason instanceof Error
-              ? reason.message
-              : "暂时无法打开确认，请重试",
-          icon: "none",
-        });
-    } finally {
-      claimDialog.current = false;
-    }
-  }
-
   async function remove(entry: GroupRankEntryDto) {
     const current = sequence.current;
     const result = await Taro.showModal({
@@ -787,11 +694,7 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
                   onRules: () => { if (!turning) setRulesOpen(true); },
                   onMore: () => { if (!turning) setManageOpen(true); },
                   onShare: () => setShareOpen(true),
-                  onProxy: canReviewClaims ? () => openProxy() : undefined,
-                  onClaims: canReviewClaims && proxyPeople.length ? () => {
-                    setClaimsOpen(true);
-                    void refreshClaims(true);
-                  } : undefined,
+                  onProxy: detail.creatorId === detail.myUserId ? () => openProxy() : undefined,
                   onHistory: () => setHistoryOpen(true),
                   onProfile: () => {
                     setContinueSubmit(false);
@@ -876,8 +779,6 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
                         >
                           代填记录
                         </Button>
-                      ) : person.claimantUserId === detail.myUserId ? (
-                        <Text className="proxy-row-note">等创建者确认</Text>
                       ) : (
                         <Button
                           className="text-action claim-name-cta"
@@ -890,38 +791,6 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
                     </View>
                   ))}
               </View>
-            )}
-            {claimsOpen && canReviewClaims && (
-              <BottomSheet
-                className="claim-sheet"
-                header={
-                  <View className="profile-heading">
-                    <Text className="section-title">认领申请</Text>
-                    <Button className="text-action" onClick={() => setClaimsOpen(false)}>关闭</Button>
-                  </View>
-                }
-              >
-                <View className="claim-head">
-                  <Text className="claim-summary">{pendingClaims.length ? `${pendingClaims.length} 条待确认` : "暂无待确认的申请"}</Text>
-                  <Button className="text-action" disabled={claimsLoading || busy} onClick={() => refreshClaims(true)}>
-                    {claimsLoading ? "更新中…" : "刷新申请"}
-                  </Button>
-                </View>
-                {claimsError && <Text className="entry-error">{claimsError}</Text>}
-                {!pendingClaims.length && !claimsLoading && (
-                  <Text className="claim-hint">群友在榜单里点「这是我」后，申请会出现在这里。</Text>
-                )}
-                {pendingClaims.map(person => (
-                  <View className="claim-request" key={person.id}>
-                    <Text className="claim-person">{person.claimantName || "群友"}</Text>
-                    <Text className="claim-hint">申请认领「{person.displayName}」的记录</Text>
-                    <View className="claim-actions">
-                      <Button className="text-action" disabled={busy || claimsLoading} onClick={() => reviewClaim(person.id, false)}>驳回</Button>
-                      <Button className="text-action claim-confirm" disabled={busy || claimsLoading} onClick={() => reviewClaim(person.id, true)}>确认本人</Button>
-                    </View>
-                  </View>
-                ))}
-              </BottomSheet>
             )}
             {historyOpen && !scoreOpen && !profileOpen && (
               <BottomSheet

@@ -373,21 +373,10 @@ export const groupApi = {
       "DELETE",
     ),
   claim: (boardId: string, participantId: string) =>
-    request<unknown>(
+    request<{ claimed: true }>(
       `/boards/${encodeURIComponent(boardId)}/proxy-participants/${encodeURIComponent(participantId)}/claim`,
       "POST",
       {},
-    ),
-  reviewClaim: (
-    boardId: string,
-    participantId: string,
-    approve: boolean,
-    claimantUserId: string,
-  ) =>
-    request<unknown>(
-      `/boards/${encodeURIComponent(boardId)}/proxy-participants/${encodeURIComponent(participantId)}/claim-review`,
-      "POST",
-      { approve, claimantUserId },
     ),
   avatar,
   profile: () => request<GroupRankProfile>("/profile"),

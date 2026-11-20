@@ -21,7 +21,6 @@ export default function BoardRanking({
   onMore,
   onShare,
   onProxy,
-  onClaims,
 }: {
   detail: GroupRankBoardDetail;
   width: number;
@@ -32,11 +31,9 @@ export default function BoardRanking({
   onMore?: () => void;
   onShare?: () => void;
   onProxy?: () => void;
-  onClaims?: () => void;
 }) {
   const layout = arenaLayout(detail.template.name, width);
   const unit = detail.template.unit;
-  const pendingCount = detail.proxyParticipants?.filter(person => person.claimantUserId).length ?? 0;
   return (
     <>
       <View className="rank-cover">
@@ -70,12 +67,6 @@ export default function BoardRanking({
       {onShare && <View className="rank-shortcuts">
         <Button className="rank-cover-action rank-share-action" onClick={onShare} disabled={busy}>分享</Button>
         {onProxy && <Button className="rank-cover-action" onClick={onProxy} disabled={busy}>{detail.status === "open" ? "帮群友记" : "查看代填历史"}</Button>}
-        {onClaims && (
-          <Button className={`rank-cover-action rank-claims-action${pendingCount ? " has-requests" : ""}`} onClick={onClaims} disabled={busy}>
-            <Text>{pendingCount ? "待确认" : "认领申请"}</Text>
-            {pendingCount > 0 && <Text className="rank-claims-count">{pendingCount}</Text>}
-          </Button>
-        )}
       </View>}
       {detail.ranking.length ? (
         <View className="rank-lines">

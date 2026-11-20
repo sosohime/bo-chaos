@@ -418,7 +418,7 @@ it("does not upload old-group profile data if the group changes while inspecting
   expect(wx.uploadFile).not.toHaveBeenCalled();
 });
 
-it("sends proxy writes and claimant-specific review through verified group endpoints", async () => {
+it("sends proxy writes and direct claims through verified group endpoints", async () => {
   await api.groupApi.proxySubmit("board/id", {
     name: "小林",
     value: "10",
@@ -433,12 +433,6 @@ it("sends proxy writes and claimant-specific review through verified group endpo
   await api.groupApi.proxyEdit("board/id", "entry/id", "13", 2);
   await api.groupApi.proxyRemove("board/id", "entry/id");
   await api.groupApi.claim("board/id", "participant/id");
-  await api.groupApi.reviewClaim(
-    "board/id",
-    "participant/id",
-    true,
-    "current-claimant",
-  );
   const calls = wx.request.mock.calls.map(([options]) => options);
   expect(calls).toContainEqual(
     expect.objectContaining({
@@ -478,13 +472,6 @@ it("sends proxy writes and claimant-specific review through verified group endpo
       data: {},
     }),
   );
-  expect(calls).toContainEqual(
-    expect.objectContaining({
-      url: "https://example.test/group-rank/boards/board%2Fid/proxy-participants/participant%2Fid/claim-review",
-      method: "POST",
-      data: { approve: true, claimantUserId: "current-claimant" },
-    }),
-  );
   expect(
     calls
       .filter((options) => !options.url.endsWith("/session"))
@@ -507,9 +494,6 @@ it("blocks proxy writes and claims from the lobby even with a cached token", asy
   await expect(api.groupApi.claim("old", "participant")).rejects.toBeInstanceOf(
     api.GroupContextUnavailableError,
   );
-  await expect(
-    api.groupApi.reviewClaim("old", "participant", true, "claimant"),
-  ).rejects.toBeInstanceOf(api.GroupContextUnavailableError);
   expect(wx.request).not.toHaveBeenCalled();
 });
 

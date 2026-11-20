@@ -32,7 +32,7 @@ export class GroupRankProxyService {
     });
     if (!board) throw new NotFoundException('本群没有这张榜单');
     if (creatorOnly && board.creatorId !== identity.userId)
-      throw new ForbiddenException('只有榜单创建者可以代填和确认认领');
+      throw new ForbiddenException('只有榜单创建者可以编辑代填');
     return board;
   }
   private locked<T>(
@@ -50,7 +50,7 @@ export class GroupRankProxyService {
   private async profile(tx: Prisma.TransactionClient, userId: string) {
     const user = await tx.groupRankUser.findUnique({ where: { id: userId } });
     if (!user?.nickname?.trim() || !user.avatarKey)
-      throw new ForbiddenException('请先设置头像和昵称，再代填或认领');
+      throw new ForbiddenException('请先设置头像和昵称，再认领');
     return user;
   }
   private async participant(
@@ -270,76 +270,40 @@ export class GroupRankProxyService {
   ) {
     return this.locked(identity, boardId, async (tx) => {
       const board = await this.board(tx, identity, boardId, false);
-      await this.profile(tx, identity.userId);
-      const person = await this.participant(tx, boardId, participantId);
-      if (person.claimantUserId && person.claimantUserId !== identity.userId)
-        throw new ConflictException('已有群友申请认领，请联系创建者核对');
-      if (person.claimantUserId === identity.userId) return { requested: true };
-      const template = board.templateSnapshot as unknown as GroupRankTemplate;
-      if (template.entryMode === 'single') {
-        const entries = await tx.groupRankProxyEntry.findMany({
-          where: { participantId, boardId, deletedAt: null },
-          select: { createdAt: true },
-        });
-        await this.assertClaimFits(tx, boardId, identity.userId, template, entries);
-      }
-      await tx.groupRankProxyParticipant.update({
-        where: { id: person.id },
-        data: { claimantUserId: identity.userId },
-      });
-      return { requested: true };
-    });
-  }
-  async review(
-    identity: GroupRankIdentity,
-    boardId: string,
-    participantId: string,
-    approve: boolean,
-    claimantUserId: string,
-  ) {
-    return this.locked(identity, boardId, async (tx) => {
-      const board = await this.board(tx, identity, boardId);
       const person = await tx.groupRankProxyParticipant.findFirst({
         where: { id: participantId, boardId },
+        select: { id: true, claimedUserId: true },
       });
       if (!person) throw new NotFoundException('没有找到这个待认领名字');
-      if (person.claimedUserId === claimantUserId && approve)
-        return { reviewed: true };
-      if (person.claimedUserId || person.claimantUserId !== claimantUserId)
-        throw new ConflictException('认领申请已变化，请刷新后再确认');
-      if (!approve) {
-        await tx.groupRankProxyParticipant.update({
-          where: { id: person.id },
-          data: { claimantUserId: null },
-        });
-        return { reviewed: true };
-      }
+      if (person.claimedUserId === identity.userId) return { claimed: true };
+      if (person.claimedUserId)
+        throw new ConflictException('这条代填已被认领，请刷新榜单');
       const member = await tx.groupRankMember.findUnique({
         where: {
-          spaceId_userId: { spaceId: identity.spaceId, userId: claimantUserId },
+          spaceId_userId: { spaceId: identity.spaceId, userId: identity.userId },
         },
       });
-      if (!member) throw new ForbiddenException('申请者尚未进入本群');
-      await this.profile(tx, claimantUserId);
+      if (!member) throw new ForbiddenException('请先进入本群');
+      await this.profile(tx, identity.userId);
       const entries = await tx.groupRankProxyEntry.findMany({
         where: { participantId: person.id, boardId, deletedAt: null },
         orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
       });
       const template = board.templateSnapshot as unknown as GroupRankTemplate;
-      await this.assertClaimFits(tx, boardId, claimantUserId, template, entries);
+      if (!entries.length) throw new ConflictException('这条代填已删除，请刷新榜单');
+      await this.assertClaimFits(tx, boardId, identity.userId, template, entries);
       // One transaction transfers original values/times and recorder; retries cannot copy them twice.
-      if (entries.length)
-        await tx.groupRankEntry.createMany({
-          data: entries.map((entry) => ({
-            id: entry.id,
-            boardId,
-            userId: claimantUserId,
-            requestId: `proxy:${entry.id}`,
-            value: entry.value,
-            createdAt: entry.createdAt,
-            recordedById: board.creatorId,
-          })),
-        });
+      await tx.groupRankEntry.createMany({
+        data: entries.map((entry) => ({
+          id: entry.id,
+          boardId,
+          userId: identity.userId,
+          requestId: `proxy:${entry.id}`,
+          value: entry.value,
+          createdAt: entry.createdAt,
+          recordedById: board.creatorId,
+        })),
+      });
       await tx.groupRankProxyEntry.updateMany({
         where: { participantId: person.id, deletedAt: null },
         data: {
@@ -351,12 +315,12 @@ export class GroupRankProxyService {
       await tx.groupRankProxyParticipant.update({
         where: { id: person.id },
         data: {
-          claimedUserId: claimantUserId,
+          claimedUserId: identity.userId,
           claimedAt: new Date(),
           claimantUserId: null,
         },
       });
-      return { reviewed: true };
+      return { claimed: true };
     });
   }
 }

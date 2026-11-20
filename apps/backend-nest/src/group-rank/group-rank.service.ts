@@ -201,8 +201,8 @@ export class GroupRankService {
           }));
         }
         const pending = await tx.groupRankProxyParticipant.findMany({
-          where: { boardId, claimedUserId: null },
-          include: { claimant: { select: { nickname: true } } },
+          where: { boardId, claimedUserId: null, entries: { some: { deletedAt: null } } },
+          select: { id: true, displayName: true },
           orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
         });
         const proxyWhere = { ...where, participant: { claimedUserId: null } };
@@ -283,17 +283,7 @@ export class GroupRankService {
         const visible = entries.slice(0, HISTORY_PAGE_SIZE);
         return {
           ...this.mapBoard(board),
-          proxyParticipants: pending.map((person) => {
-            const visible =
-              board.creatorId === identity.userId ||
-              person.claimantUserId === identity.userId;
-            return {
-              id: person.id,
-              displayName: person.displayName,
-              claimantUserId: visible ? person.claimantUserId : null,
-              claimantName: visible ? person.claimant?.nickname || null : null,
-            };
-          }),
+          proxyParticipants: pending,
           myUserId: identity.userId,
           ...(myProfile ? { myProfile: mapProfile(myProfile) } : {}),
           ranking: rankScores(scores, template).map((row) => ({

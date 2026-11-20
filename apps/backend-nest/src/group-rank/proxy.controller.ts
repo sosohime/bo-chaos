@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  IsBoolean,
   IsInt,
   IsOptional,
   IsString,
@@ -30,10 +29,6 @@ class ProxySubmitBody {
 class ProxyEditBody {
   @IsString() @Length(1, 16) value!: string;
   @IsInt() @Min(1) @Max(2147483646) revision!: number;
-}
-class ClaimReviewBody {
-  @IsBoolean() approve!: boolean;
-  @IsString() @Length(1, 80) claimantUserId!: string;
 }
 type Request = { groupRankIdentity: GroupRankIdentity };
 @Controller('group-rank/boards/:boardId')
@@ -93,23 +88,6 @@ export class GroupRankProxyController {
   ) {
     return ok(
       await this.service.claim(req.groupRankIdentity, boardId, participantId),
-    );
-  }
-  @Post('proxy-participants/:participantId/claim-review')
-  async review(
-    @Req() req: Request,
-    @Param('boardId') boardId: string,
-    @Param('participantId') participantId: string,
-    @Body() body: ClaimReviewBody,
-  ) {
-    return ok(
-      await this.service.review(
-        req.groupRankIdentity,
-        boardId,
-        participantId,
-        body.approve,
-        body.claimantUserId,
-      ),
     );
   }
 }

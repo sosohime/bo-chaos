@@ -13,7 +13,6 @@ describe('proxy HTTP input and identity boundaries', () => {
     edit: jest.fn(),
     remove: jest.fn(),
     claim: jest.fn(),
-    review: jest.fn(),
   };
   const auth = {
     verify: jest
@@ -48,7 +47,6 @@ describe('proxy HTTP input and identity boundaries', () => {
       ['delete', 'proxy-entries/score'],
       ['get', 'proxy-participants/name/entries'],
       ['post', 'proxy-participants/name/claim'],
-      ['post', 'proxy-participants/name/claim-review'],
     ]) {
       await request(app.getHttpServer())
         [method](`/group-rank/boards/board/${path}`)
@@ -56,7 +54,7 @@ describe('proxy HTTP input and identity boundaries', () => {
     }
     expect(service.claim).not.toHaveBeenCalled();
   });
-  it('rejects supplied owners/scopes, oversized names and stale-review bodies without an applicant', async () => {
+  it('rejects supplied owners/scopes, and oversized names', async () => {
     const url = '/group-rank/boards/board/proxy-entries';
     for (const body of [
       { name: '小王', value: '1', requestId: 'r', userId: 'victim' },
@@ -68,26 +66,23 @@ describe('proxy HTTP input and identity boundaries', () => {
         .send(body)
         .expect(400);
     }
-    await request(app.getHttpServer())
-      .post('/group-rank/boards/board/proxy-participants/name/claim-review')
-      .set('Authorization', 'Bearer token')
-      .send({ approve: true })
-      .expect(400);
     expect(service.submit).not.toHaveBeenCalled();
-    expect(service.review).not.toHaveBeenCalled();
   });
-  it('passes the token identity and expected applicant to the service', async () => {
+  it('claims directly with the group token identity and exposes no approval route', async () => {
+    service.claim.mockResolvedValue({ claimed: true });
+    const url = '/group-rank/boards/board/proxy-participants/name';
     await request(app.getHttpServer())
-      .post('/group-rank/boards/board/proxy-participants/name/claim-review')
+      .post(`${url}/claim`)
       .set('Authorization', 'Bearer token')
-      .send({ approve: true, claimantUserId: 'applicant' })
-      .expect(201);
-    expect(service.review).toHaveBeenCalledWith(
+      .expect(201, { data: { claimed: true } });
+    expect(service.claim).toHaveBeenCalledWith(
       { userId: 'actor', spaceId: 'verified-group' },
       'board',
       'name',
-      true,
-      'applicant',
     );
+    await request(app.getHttpServer())
+      .post(`${url}/claim-review`)
+      .set('Authorization', 'Bearer token')
+      .expect(404);
   });
 });

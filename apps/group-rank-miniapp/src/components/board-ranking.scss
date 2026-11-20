@@ -95,7 +95,3 @@
 .rank-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 0 4px; border-bottom: 1px solid var(--border); }
 .rank-shortcuts .rank-cover-action { padding: 0 10px; font-size: 13px; }
 .rank-shortcuts .rank-share-action { color: var(--accent-readable,var(--accent)); font-weight: 750; }
-
-.rank-shortcuts .rank-claims-action { gap: 5px; margin-left: auto; }
-.rank-shortcuts .rank-claims-action.has-requests { color: var(--accent-readable,var(--accent)); font-weight: 750; }
-.rank-claims-count { padding: 1px 5px; border: 1px solid currentColor; border-radius: 4px; font: 700 11px monospace; }

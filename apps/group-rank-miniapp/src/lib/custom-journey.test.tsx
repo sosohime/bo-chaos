@@ -49,7 +49,6 @@ const state = vi.hoisted(() => ({
   proxyRemove: vi.fn(),
   proxyEntries: vi.fn(),
   claim: vi.fn(),
-  reviewClaim: vi.fn(),
   setAppearance: vi.fn(),
   removeBoard: vi.fn(),
   report: vi.fn(),
@@ -120,7 +119,6 @@ vi.mock("./api", () => ({
     proxyRemove: state.proxyRemove,
     proxyEntries: state.proxyEntries,
     claim: state.claim,
-    reviewClaim: state.reviewClaim,
     setAppearance: state.setAppearance,
     removeBoard: state.removeBoard,
     report: state.report,
@@ -846,8 +844,6 @@ const completeProfile = {
 const proxyPerson = {
   id: "pending-person",
   displayName: "小林",
-  claimantUserId: null,
-  claimantName: null,
 };
 const proxyRow = {
   userId: "proxy:pending-person",
@@ -1091,35 +1087,29 @@ it("hides proxy maintenance from ordinary participants and requires identity to 
   expect(container.textContent).toContain("保存并继续认领");
   expect(state.claim).not.toHaveBeenCalled();
 });
-it("explains merging and owner confirmation before a group member claims", async () => {
+it("claims immediately and exposes the transferred score in my records", async () => {
   await mountBoard({
     creatorId: "owner",
     myProfile: completeProfile,
     proxyParticipants: [proxyPerson],
     ranking: [proxyRow],
   });
+  const before = await state.board.mock.results[0].value;
   state.showModal.mockResolvedValue({ confirm: true });
-  state.claim.mockResolvedValue({ requested: true });
-  await click("这是我");
-  expect(state.showModal).toHaveBeenCalledWith(
-    expect.objectContaining({
-      content: expect.stringContaining("合并到你在本榜已有的记录"),
-    }),
-  );
-  expect(state.claim).toHaveBeenCalledWith("custom-board", "pending-person");
-});
-it("shows one's pending claim without offering another request", async () => {
-  await mountBoard({
-    creatorId: "owner",
-    myProfile: completeProfile,
-    proxyParticipants: [
-      { ...proxyPerson, claimantUserId: "me", claimantName: "我的昵称" },
-    ],
-    ranking: [proxyRow],
+  state.claim.mockResolvedValue({ claimed: true });
+  state.board.mockResolvedValueOnce({
+    ...before,
+    proxyParticipants: [],
+    ranking: [{ ...podiumRow("me", 1), score: "13" }],
+    myEntries: [{ id: "claimed", value: "13", revision: 1, recordedById: "owner", createdAt: "2026-10-30T08:00:00Z" }],
   });
-  expect(container.textContent).toContain("等创建者确认");
-  expect(container.textContent).not.toContain("这是我");
-  expect(state.claim).not.toHaveBeenCalled();
+  await click("这是我");
+  expect(state.showModal).toHaveBeenCalledWith(expect.objectContaining({ confirmText: "确认认领" }));
+  expect(state.claim).toHaveBeenCalledWith("custom-board", "pending-person");
+  expect(state.showToast).toHaveBeenCalledWith({ title: "已认领", icon: "success" });
+  expect(container.querySelector(".rank-claim-chip")).toBeNull();
+  await click("我的记录");
+  expect(container.querySelector(".history-sheet")?.textContent).toMatch(/13.*创建者代填/);
 });
 it("exposes names without current-period scores so they remain claimable", async () => {
   await mountBoard({
@@ -1132,68 +1122,6 @@ it("exposes names without current-period scores so they remain claimable", async
   expect(container.querySelector(".proxy-names .rank-proxy-badge")?.textContent).toBe("代填");
   expect(container.textContent).toContain("这是我");
 });
-it.each([true, false])(
-  "sends the exact displayed claimant on creator review: approve=%s",
-  async (approve) => {
-    await mountBoard({
-      myProfile: completeProfile,
-      proxyParticipants: [
-        { ...proxyPerson, claimantUserId: "claimant-A", claimantName: "阿林" },
-      ],
-      ranking: [proxyRow],
-    });
-    state.showModal.mockResolvedValue({ confirm: true });
-    state.reviewClaim.mockResolvedValue({ reviewed: true });
-    await click("待确认");
-    await click(approve ? "确认本人" : "驳回");
-    expect(state.reviewClaim).toHaveBeenCalledWith(
-      "custom-board",
-      "pending-person",
-      approve,
-      "claimant-A",
-    );
-  },
-);
-it("keeps a review entry visible before requests arrive and preserves the board on a refresh failure", async () => {
-  await mountBoard({ proxyParticipants: [proxyPerson], ranking: [proxyRow] });
-  const initial = await state.board.mock.results[0].value;
-  state.board.mockRejectedValueOnce(new Error("网络中断"));
-  await click("认领申请");
-  expect(container.querySelector(".claim-sheet")?.textContent).toContain("没能刷新申请，请重试");
-  expect(container.querySelector(".rank-line")).not.toBeNull();
-  state.board.mockResolvedValueOnce({
-    ...initial,
-    proxyParticipants: [{ ...proxyPerson, claimantUserId: "claimant-A", claimantName: "阿林" }],
-  });
-  await click("刷新申请");
-  expect(container.querySelector(".rank-claims-action")?.textContent).toBe("待确认1");
-  expect(container.querySelector(".claim-sheet")?.textContent).toContain("确认本人");
-  expect(container.querySelector(".claim-sheet")?.textContent).not.toContain("没能刷新");
-});
-
-it("updates the pending claim count in place while the creator stays on the board", async () => {
-  vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
-  try {
-    await mountBoard({ proxyParticipants: [proxyPerson], ranking: [proxyRow] });
-    const initial = await state.board.mock.results[0].value;
-    const row = container.querySelector(".rank-line");
-    state.board.mockResolvedValueOnce({
-      ...initial,
-      proxyParticipants: [{ ...proxyPerson, claimantUserId: "claimant-A", claimantName: "阿林" }],
-    });
-    await act(async () => vi.advanceTimersByTime(30000));
-    expect(container.querySelector(".rank-claims-action")?.textContent).toBe("待确认1");
-    expect(container.querySelector(".rank-line")).toBe(row);
-    expect(container.querySelector(".board-refreshing")).toBeNull();
-    await act(async () => state.hide());
-    const reads = state.board.mock.calls.length;
-    await act(async () => vi.advanceTimersByTime(30000));
-    expect(state.board).toHaveBeenCalledTimes(reads);
-  } finally {
-    vi.useRealTimers();
-  }
-});
-
 it("explains the single-entry rule without promising a merge", async () => {
   await mountBoard({
     creatorId: "owner",
@@ -1206,7 +1134,7 @@ it("explains the single-entry rule without promising a merge", async () => {
   state.claim.mockRejectedValue(new Error("同一期只能记一笔，已有成绩与认领记录冲突。"));
   await click("这是我");
   expect(state.showModal).toHaveBeenCalledWith(expect.objectContaining({
-    content: expect.stringContaining("同一期已经记过成绩"),
+    content: expect.stringContaining("同一期只能保留一笔"),
   }));
   expect(state.showToast).toHaveBeenCalledWith(expect.objectContaining({
     title: expect.stringContaining("认领记录冲突"),
@@ -1249,7 +1177,7 @@ it("continues a claim after profile completion without submitting a personal sco
   );
   state.saveProfile.mockResolvedValue(completeProfile);
   state.showModal.mockResolvedValue({ confirm: true });
-  state.claim.mockResolvedValue({ requested: true });
+  state.claim.mockResolvedValue({ claimed: true });
   await act(async () =>
     state.form({ detail: { value: { nickname: "我的昵称" } } }),
   );
@@ -1278,26 +1206,6 @@ it("does not issue a claim when the confirmation is cancelled or a new foregroun
   await act(async () => finish({ confirm: true }));
   expect(state.claim).not.toHaveBeenCalled();
 });
-it("keeps claim-review refusals recoverable without merging local records", async () => {
-  await mountBoard({
-    myProfile: completeProfile,
-    proxyParticipants: [
-      { ...proxyPerson, claimantUserId: "claimant-A", claimantName: "阿林" },
-    ],
-    ranking: [proxyRow],
-  });
-  state.showModal.mockResolvedValue({ confirm: true });
-  state.reviewClaim.mockRejectedValue(new Error("申请已变化，请刷新"));
-  await click("待确认");
-  await click("确认本人");
-  expect(state.showToast).toHaveBeenCalledWith({
-    title: "申请已变化，请刷新",
-    icon: "none",
-  });
-  expect(container.querySelector(".claim-request")?.textContent).toContain("阿林申请认领");
-  expect(container.textContent).toContain("刷新申请");
-  expect(state.board).toHaveBeenCalledTimes(2);
-});
 it("leaves paused proxy history readable but prevents adding and editing", async () => {
   state.proxyEntries.mockResolvedValue([
     { id: "old", value: "12", revision: 1, createdAt: "2026-10-30T08:00:00Z" },
@@ -1309,28 +1217,6 @@ it("leaves paused proxy history readable but prevents adding and editing", async
   await click("修改");
   expect(state.proxySubmit).not.toHaveBeenCalled();
   expect(state.proxyEdit).not.toHaveBeenCalled();
-});
-
-it("does not send a displayed claim-review to a newer group generation", async () => {
-  await mountBoard({
-    myProfile: completeProfile,
-    proxyParticipants: [
-      { ...proxyPerson, claimantUserId: "claimant-A", claimantName: "阿林" },
-    ],
-    ranking: [proxyRow],
-  });
-  let finish: (value: unknown) => void = () => {};
-  state.showModal.mockImplementationOnce(
-    () =>
-      new Promise((resolve) => {
-        finish = resolve;
-      }),
-  );
-  await click("待确认");
-  await click("确认本人");
-  state.generation += 1;
-  await act(async () => finish({ confirm: true }));
-  expect(state.reviewClaim).not.toHaveBeenCalled();
 });
 
 it("saves personal profile once when the native form emits duplicate submit events", async () => {
@@ -2120,19 +2006,6 @@ it("keeps proxy maintenance reachable on a rank row after the featured three", a
   await act(async () => (row as HTMLButtonElement).click());
   expect(container.querySelector(".proxy-sheet")?.textContent).toContain("小林");
   expect(container.querySelector("meta[data-page-style]")?.getAttribute("data-page-style")).toContain("overflow:hidden");
-});
-
-it("keeps a pending rank row read-only while the current participant waits for claim review", async () => {
-  await mountBoard({
-    creatorId: "someone-else",
-    ranking: [podiumRow("a", 1), podiumRow("b", 2), podiumRow("c", 3), {...proxyRow, rank: 4}],
-    proxyParticipants: [{...proxyPerson, claimantUserId: "me"}],
-  });
-  const row = container.querySelector(".rank-line:last-child");
-  expect(row?.textContent).toContain("等创建者确认");
-  expect(row?.tagName).not.toBe("BUTTON");
-  expect(row?.textContent).not.toContain("查看记录");
-  expect(row?.textContent).not.toContain("这是我");
 });
 
 it("dismisses a held native keyboard when its sheet is closed", async () => {

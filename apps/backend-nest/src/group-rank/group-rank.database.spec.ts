@@ -138,14 +138,9 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
     ]);
     expect(extra.every(r=>r.status==='rejected')).toBe(true);
     await expect(proxy.claim(a,board.id,person.participantId)).rejects.toThrow('认领记录冲突');
-    expect((await service.detail(a, board.id)).proxyParticipants![0].claimantUserId).toBeNull();
+    expect((await service.detail(a, board.id)).proxyParticipants![0].id).toBe(person.participantId);
     expect((await proxy.entries(a,board.id,person.participantId))).toHaveLength(1);
-    await proxy.claim(a2,board.id,person.participantId);
-    const late = await service.submit(a2, board.id, '15', 'after-request');
-    await expect(proxy.review(a,board.id,person.participantId,true,a2.userId)).rejects.toThrow('认领记录冲突');
-    expect((await service.detail(a, board.id)).proxyParticipants![0].claimantUserId).toBe(a2.userId);
-    await service.remove(a2, board.id, late.id);
-    await proxy.review(a,board.id,person.participantId,true,a2.userId);
+    await expect(proxy.claim(a2, board.id, person.participantId)).resolves.toEqual({ claimed: true });
     await expect(service.submit(a2,board.id,'15','after-claim')).rejects.toThrow('每人一笔');
     const claimed = (await service.detail(a2,board.id)).myEntries[0];
     await service.edit(a2,board.id,claimed.id,'13',claimed.revision);
@@ -544,24 +539,8 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
     await expect(
       proxy.claim(b, board.id, entry.participantId),
     ).rejects.toBeInstanceOf(NotFoundException);
-    await proxy.claim(a2, board.id, entry.participantId);
-    await expect(
-      proxy.review(a2, board.id, entry.participantId, true, a2.userId),
-    ).rejects.toBeInstanceOf(ForbiddenException);
-    await expect(
-      proxy.review(b, board.id, entry.participantId, true, a2.userId),
-    ).rejects.toBeInstanceOf(NotFoundException);
-    await expect(
-      proxy.review(a, board.id, entry.participantId, true, a.userId),
-    ).rejects.toThrow('申请已变化');
-    await proxy.review(a, board.id, entry.participantId, false, a2.userId);
-    expect(
-      (await service.detail(a, board.id)).proxyParticipants![0].claimantUserId,
-    ).toBeNull();
-    await proxy.claim(a, board.id, entry.participantId);
-    await expect(
-      proxy.review(a, board.id, entry.participantId, true, a2.userId),
-    ).rejects.toThrow('申请已变化');
+    await expect(proxy.claim(a2, board.id, entry.participantId)).resolves.toEqual({ claimed: true });
+    await expect(proxy.claim(a, board.id, entry.participantId)).rejects.toThrow('已被认领');
   });
   it('transfers a claim exactly once with recorder, original time and values; then the owner maintains it', async () => {
     const proxy = new GroupRankProxyService(prisma, {
@@ -583,12 +562,12 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
       value: '3',
       requestId: 'claim-second',
     });
-    await proxy.claim(a2, board.id, first.participantId);
-    await Promise.all(
-      Array.from({ length: 3 }, () =>
-        proxy.review(a, board.id, first.participantId, true, a2.userId),
-      ),
-    );
+    const claims = await Promise.all([
+      proxy.claim(a2, board.id, first.participantId),
+      proxy.claim(a2, board.id, first.participantId),
+      proxy.claim(a2, board.id, first.participantId),
+    ]);
+    expect(claims).toEqual([{ claimed: true }, { claimed: true }, { claimed: true }]);
     const detail = await service.detail(a2, board.id);
     expect(detail.ranking).toHaveLength(1);
     expect(detail.ranking[0]).toMatchObject({
@@ -625,27 +604,36 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
     await service.remove(a2, board.id, first.id);
     expect((await service.detail(a2, board.id)).ranking[0].score).toBe('4.00');
   });
-  it('keeps pending claims private, serializes competing claims and honors pause/delete tombstones', async () => {
+  it('picks one winner for competing claims and keeps deleted proxy records out of the claim list', async () => {
     const proxy = new GroupRankProxyService(prisma, {
       text: jest.fn().mockResolvedValue(null),
     } as any);
     const board = await service.createBoard(a, 'game-score', 'proxy-races');
-    const row = await proxy.submit(a, board.id, {
+    const contested = await proxy.submit(a, board.id, {
       name: '小赵',
       value: '10',
       requestId: 'races',
     });
-    await proxy.claim(a2, board.id, row.participantId);
-    await expect(proxy.claim(a, board.id, row.participantId)).rejects.toThrow(
-      '已有群友',
+    // A pre-existing request does not reserve the name under direct claiming.
+    await prisma.groupRankProxyParticipant.update({
+      where: { id: contested.participantId },
+      data: { claimantUserId: a.userId },
+    });
+    const racers = [a2, a];
+    const claims = await Promise.allSettled(
+      racers.map(identity => proxy.claim(identity, board.id, contested.participantId)),
     );
-    const third = await enter('proxy-observer', 'group-a');
-    expect(
-      (await service.detail(third, board.id)).proxyParticipants![0],
-    ).toMatchObject({ claimantUserId: null, claimantName: null });
-    expect(
-      (await service.detail(a, board.id)).proxyParticipants![0].claimantUserId,
-    ).toBe(a2.userId);
+    expect(claims.filter(result => result.status === 'fulfilled')).toHaveLength(1);
+    expect(claims.filter(result => result.status === 'rejected')).toHaveLength(1);
+    const winner = racers[claims.findIndex(result => result.status === 'fulfilled')];
+    expect((await service.detail(winner, board.id)).myEntries[0].id).toBe(contested.id);
+    expect((await service.detail(a, board.id)).proxyParticipants).toEqual([]);
+
+    const row = await proxy.submit(a, board.id, {
+      name: '小孙',
+      value: '10',
+      requestId: 'deleted',
+    });
     await proxy.edit(a, board.id, row.id, '12', 1);
     await expect(proxy.edit(a, board.id, row.id, '15', 1)).rejects.toThrow(
       '已变化',
@@ -659,7 +647,8 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
       }),
     ).rejects.toThrow('暂停');
     await proxy.remove(a, board.id, row.id);
-    expect((await service.detail(a, board.id)).ranking).toEqual([]);
+    expect((await service.detail(a, board.id)).proxyParticipants).toEqual([]);
+    await expect(proxy.claim(a2, board.id, row.participantId)).rejects.toThrow('已删除');
     await service.removeBoard(a, board.id);
     await expect(
       proxy.claim(a2, board.id, row.participantId),
@@ -768,7 +757,6 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
       }),
     ).rejects.toThrow('已认领或删除');
     await proxy.claim(a2, board.id, old.participantId);
-    await proxy.review(a, board.id, old.participantId, true, a2.userId);
     expect((await service.detail(a2, board.id)).ranking[0].score).toBe('5');
   });
   it('persists controlled board themes separately from rules and denies foreign/non-creator changes', async () => {
@@ -870,7 +858,6 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
       (await service.currentGroup(b)).boards.some((row) => row.id === board.id),
     ).toBe(false);
     await proxy.claim(a2, board.id, pending.participantId);
-    await proxy.review(a, board.id, pending.participantId, true, a2.userId);
     item = (await service.currentGroup(a)).boards.find(
       (row) => row.id === board.id,
     )!;

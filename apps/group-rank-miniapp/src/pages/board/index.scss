@@ -48,19 +48,7 @@
 .proxy-name-row .proxy-row-note {
   display: inline;
 }
-.claim-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.claim-summary, .claim-hint { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
-.claim-hint { display: block; }
-.claim-request { padding: 12px 0 8px; border-top: 1px solid var(--border); }
-.claim-person { display: block; overflow-wrap: anywhere; font-size: 16px; font-weight: 700; }
-.claim-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
-.claim-actions .text-action, .claim-head .text-action, .claim-name-cta { min-height: 44Px; }
-.claim-actions .claim-confirm, .claim-name-cta { color: var(--accent-readable,var(--accent)); font-weight: 700; }
+.claim-name-cta { min-height: 44Px; color: var(--accent-readable,var(--accent)); font-weight: 700; }
 .history-row {
   display: flex;
   align-items: center;
