@@ -17,6 +17,7 @@ import type {
   GroupRankBoardDetail,
   GroupRankBoardDto,
   GroupRankEntryDto,
+  GroupRankRecommendationDefinition,
   GroupRankSpaceDto,
   GroupRankTemplate,
 } from '@mono/types';
@@ -25,9 +26,11 @@ import { getOfficialTemplate, periodStart, validateScore } from './templates';
 import { singleRecordScope } from './record-policy';
 import { rankScores } from './ranking';
 import { groupSummaries } from './summary';
-import { customTemplate, findDraft, normalizeAccentColor } from './definitions';
+import { customTemplate, findDraft, normalizeAccentColor, shortText } from './definitions';
 import { mapProfile } from './profile.service';
 import type { GroupRankDefinition } from '@mono/types';
+import { GroupRankContentService } from './content.service';
+import { isRecommendation, readRecommendations, RECOMMENDATION_LIMIT, RECOMMENDATION_TEMPLATE_ID } from './recommendations';
 
 type Board = {
   id: string;
@@ -47,6 +50,7 @@ export class GroupRankService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly backgrounds: GroupRankBackgroundService,
+    private readonly content: GroupRankContentService,
   ) {}
 
   private mapBoard(board: Board): GroupRankBoardDto {
@@ -155,6 +159,104 @@ export class GroupRankService {
     return this.mapBoard(board);
   }
 
+  private async reviewText(identity: GroupRankIdentity, text: string) {
+    const user = await this.prisma.groupRankUser.findUnique({
+      where: { id: identity.userId },
+      select: { openId: true },
+    });
+    if (!user) throw new NotFoundException('用户身份已失效，请重新进入');
+    await this.content.text(text, user.openId, 4);
+  }
+
+  async createRecommendationBoard(
+    identity: GroupRankIdentity,
+    input: GroupRankRecommendationDefinition,
+    requestId: string,
+  ): Promise<GroupRankBoardDto> {
+    const name = shortText(input.name, '榜单名称', 24);
+    const description = shortText(input.description ?? '', '简介', 120, false);
+    const template: GroupRankTemplate = {
+      ...customTemplate(RECOMMENDATION_TEMPLATE_ID, {
+        name, unit: '', aggregate: 'sum', direction: 'desc', period: 'all_time',
+      }),
+      id: RECOMMENDATION_TEMPLATE_ID,
+      kind: 'recommendation',
+      metric: '型号',
+      description,
+    };
+    const requestKey = { spaceId: identity.spaceId, creatorId: identity.userId, requestId };
+    const where = { spaceId_creatorId_requestId: requestKey };
+    let board = await this.prisma.groupRankBoard.findUnique({ where });
+    if (!board) {
+      await this.reviewText(identity, description ? `${name} ${description}` : name);
+      board = await this.prisma.groupRankBoard.upsert({
+        where,
+        create: {
+          ...requestKey,
+          templateId: template.id,
+          templateVersion: template.version,
+          templateSnapshot: template as unknown as Prisma.InputJsonValue,
+        },
+        update: { requestId },
+      });
+    }
+    const result = this.mapBoard(board);
+    if (board.deletedAt || result.template.kind !== 'recommendation' ||
+        result.template.name !== name || result.template.description !== description)
+      throw new ConflictException('这次请求已使用或榜单已移除，请重新创建');
+    return result;
+  }
+
+  private requireRecommendationBoard(board: Board) {
+    if (!isRecommendation(board.templateSnapshot))
+      throw new BadRequestException('这张榜单不支持推荐');
+  }
+
+  private requireScoreBoard(board: Board) {
+    if (isRecommendation(board.templateSnapshot))
+      throw new BadRequestException('这张榜单只接受好物推荐');
+  }
+
+  async recommend(identity: GroupRankIdentity, boardId: string, input: string) {
+    const model = shortText(input, '型号', 80).replace(/\s+/gu, ' ');
+    const modelKey = model.replace(/ /g, '').toLowerCase();
+    const board = await this.board(identity, boardId);
+    this.requireRecommendationBoard(board);
+    if (board.status !== 'open') throw new ForbiddenException('榜单已暂停或关闭，暂不能推荐');
+    const where = { boardId_modelKey: { boardId, modelKey } };
+    if (!await this.prisma.groupRankRecommendationItem.findUnique({ where, select: { id: true } }))
+      await this.reviewText(identity, model);
+
+    return this.withWritableBoard(identity, boardId, async (tx, lockedBoard) => {
+      this.requireRecommendationBoard(lockedBoard);
+      if (lockedBoard.status !== 'open') throw new ForbiddenException('榜单已暂停或关闭，暂不能推荐');
+      const userId = identity.userId;
+      const item = await tx.groupRankRecommendationItem.findUnique({ where, select: { id: true } });
+      if (item && await tx.groupRankRecommendation.findUnique({
+        where: { itemId_userId: { itemId: item.id, userId } },
+      })) return { recommended: true };
+      await this.requireParticipantProfile(tx, userId, '请先设置头像和昵称，再提交推荐');
+      const used = await tx.groupRankRecommendation.count({ where: { userId, item: { boardId } } });
+      if (used >= RECOMMENDATION_LIMIT)
+        throw new ConflictException(`每人最多推荐 ${RECOMMENDATION_LIMIT} 个型号，请先撤回一个`);
+      const { id: itemId } = item || await tx.groupRankRecommendationItem.create({
+        data: { boardId, model, modelKey }, select: { id: true },
+      });
+      await tx.groupRankRecommendation.create({ data: { itemId, userId } });
+      return { recommended: true };
+    });
+  }
+
+  async withdrawRecommendation(identity: GroupRankIdentity, boardId: string, itemId: string) {
+    return this.withWritableBoard(identity, boardId, async (tx, board) => {
+      this.requireRecommendationBoard(board);
+      await tx.groupRankRecommendation.deleteMany({
+        where: { itemId, userId: identity.userId, item: { boardId } },
+      });
+      return { withdrawn: true };
+    });
+  }
+
   async detail(
     identity: GroupRankIdentity,
     boardId: string,
@@ -163,6 +265,18 @@ export class GroupRankService {
     return this.prisma.$transaction(
       async (tx) => {
         const board = await this.board(identity, boardId, tx);
+        if (isRecommendation(board.templateSnapshot)) {
+          const [recommendations, profile] = await Promise.all([
+            readRecommendations(tx, boardId),
+            tx.groupRankUser.findUnique({ where: { id: identity.userId } }),
+          ]);
+          return {
+            ...this.mapBoard(board), myUserId: identity.userId,
+            ...(profile ? { myProfile: mapProfile(profile) } : {}),
+            recommendations, ranking: [], myEntries: [],
+            historyHasMore: false, historyNextCursor: null,
+          };
+        }
         const template = this.mapBoard(board).template;
         if (!['max', 'sum', 'latest'].includes(template.aggregate))
           throw new BadRequestException('当前版本暂不支持这张榜单的计算规则');
@@ -335,13 +449,14 @@ export class GroupRankService {
   private async requireParticipantProfile(
     tx: Prisma.TransactionClient,
     userId: string,
+    message = '请先设置头像和昵称，再提交或修改成绩',
   ) {
     const user = await tx.groupRankUser.findUnique({
       where: { id: userId },
       select: { nickname: true, avatarKey: true },
     });
     if (!user?.nickname?.trim() || !user.avatarKey)
-      throw new ForbiddenException('请先设置头像和昵称，再提交或修改成绩');
+      throw new ForbiddenException(message);
   }
 
   async submit(
@@ -351,6 +466,7 @@ export class GroupRankService {
     requestId: string,
   ): Promise<GroupRankEntryDto> {
     return this.withWritableBoard(identity, boardId, async (tx, board) => {
+      this.requireScoreBoard(board);
       if (board.status !== 'open')
         throw new ForbiddenException('榜单已暂停或关闭，暂不能提交');
       await this.requireParticipantProfile(tx, identity.userId);
@@ -391,6 +507,7 @@ export class GroupRankService {
     revision: number,
   ) {
     return this.withWritableBoard(identity, boardId, async (tx, board) => {
+      this.requireScoreBoard(board);
       if (board.status !== 'open')
         throw new ForbiddenException('榜单已暂停或关闭，暂不能修改');
       await this.requireParticipantProfile(tx, identity.userId);
@@ -421,7 +538,8 @@ export class GroupRankService {
   }
 
   async remove(identity: GroupRankIdentity, boardId: string, entryId: string) {
-    return this.withWritableBoard(identity, boardId, async (tx) => {
+    return this.withWritableBoard(identity, boardId, async (tx, board) => {
+      this.requireScoreBoard(board);
       await tx.groupRankEntry.updateMany({
         where: {
           id: entryId,
@@ -505,22 +623,26 @@ export class GroupRankService {
     return this.withWritableBoard(identity, boardId, async (tx, board) => {
       if (board.creatorId !== identity.userId)
         throw new ForbiddenException('只有创建者可以移除榜单');
-      await tx.groupRankEntry.updateMany({
-        where: { boardId, deletedAt: null },
-        data: {
-          value: null,
-          deletedAt: new Date(),
-          revision: { increment: 1 },
-        },
-      });
-      await tx.groupRankProxyEntry.updateMany({
-        where: { boardId, deletedAt: null },
-        data: {
-          value: null,
-          deletedAt: new Date(),
-          revision: { increment: 1 },
-        },
-      });
+      if (isRecommendation(board.templateSnapshot)) {
+        await tx.groupRankRecommendationItem.deleteMany({ where: { boardId } });
+      } else {
+        await tx.groupRankEntry.updateMany({
+          where: { boardId, deletedAt: null },
+          data: {
+            value: null,
+            deletedAt: new Date(),
+            revision: { increment: 1 },
+          },
+        });
+        await tx.groupRankProxyEntry.updateMany({
+          where: { boardId, deletedAt: null },
+          data: {
+            value: null,
+            deletedAt: new Date(),
+            revision: { increment: 1 },
+          },
+        });
+      }
       await tx.groupRankBoard.update({
         where: { id: boardId },
         data: { deletedAt: new Date(), status: 'closed' },

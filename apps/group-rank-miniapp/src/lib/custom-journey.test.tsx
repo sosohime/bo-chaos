@@ -282,7 +282,7 @@ it("saves lobby rules only after a name is entered and shares an opaque referenc
   expect(state.createDraftBoard).not.toHaveBeenCalled();
   expect(container.textContent).toContain("发到微信群");
   expect(state.share()).toEqual({
-    title: "打开卡片，在群里建榜单",
+    title: "书页｜在群里建榜",
     path: "/pages/index/index?draft=opaque",
     imageUrl: "/assets/share-cover.jpg",
   });

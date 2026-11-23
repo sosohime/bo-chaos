@@ -29,9 +29,6 @@ export default defineConfig({
       })),
       { from: "src/assets/share-cover.jpg", to: "dist/assets/share-cover.jpg" },
       ...[
-        "gamepad-2",
-        "dumbbell",
-        "footprints",
         "trophy",
         "pencil",
         "chevron-right",

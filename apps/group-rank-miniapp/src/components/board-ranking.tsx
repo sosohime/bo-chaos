@@ -1,6 +1,7 @@
 import { Button, Image, Text, View } from "@tarojs/components";
 import type { GroupRankBoardDetail, GroupRankRow } from "@mono/types";
 import Avatar from "./avatar";
+import { RecommendationRanking } from "./recommendation-ranking";
 import TitleArtwork from "./title-artwork";
 import ArenaBackground from "./arena-background";
 import GroupName from "./group-name";
@@ -21,6 +22,7 @@ export default function BoardRanking({
   onMore,
   onShare,
   onProxy,
+  onPeople,
 }: {
   detail: GroupRankBoardDetail;
   width: number;
@@ -31,9 +33,11 @@ export default function BoardRanking({
   onMore?: () => void;
   onShare?: () => void;
   onProxy?: () => void;
+  onPeople?: (id: string) => void;
 }) {
   const layout = arenaLayout(detail.template.name, width);
   const unit = detail.template.unit;
+  const recommendations = detail.recommendations;
   return (
     <>
       <View className="rank-cover">
@@ -47,7 +51,7 @@ export default function BoardRanking({
         />
         <View className="rank-cover-meta">
           <Text>
-            {detail.ranking.length} 人参与
+            {recommendations ? `${recommendations.items.length} 个型号` : `${detail.ranking.length} 人参与`}
             {detail.status !== "open" && (detail.status === "paused" ? " · 已暂停" : " · 已结束")}
           </Text>
         </View>
@@ -68,7 +72,8 @@ export default function BoardRanking({
         <Button className="rank-cover-action rank-share-action" onClick={onShare} disabled={busy}>分享</Button>
         {onProxy && <Button className="rank-cover-action" onClick={onProxy} disabled={busy}>{detail.status === "open" ? "帮群友记" : "查看代填历史"}</Button>}
       </View>}
-      {detail.ranking.length ? (
+      {recommendations && detail.template.description && <Text className="recommendation-description">{detail.template.description}</Text>}
+      {recommendations ? <RecommendationRanking items={recommendations.items} visibleRows={visibleRows} busy={busy} onPeople={onPeople} /> : detail.ranking.length ? (
         <View className="rank-lines">
           {detail.ranking.slice(0, visibleRows).map((row, index) => {
             const action = interaction(row);

@@ -13,6 +13,7 @@ import type {
   GroupRankThemeId,
   GroupRankDraftDto,
   GroupRankProfile,
+  GroupRankRecommendationDefinition,
   GroupRankBoardDetail,
   GroupRankBoardDto,
   GroupRankEntryDto,
@@ -399,6 +400,12 @@ export const groupApi = {
   },
   draft: (id: string) =>
     request<GroupRankDraftDto>(`/drafts/${encodeURIComponent(id)}`),
+  createRecommendationBoard: (recommendation: GroupRankRecommendationDefinition, requestId: string) =>
+    request<GroupRankBoardDto>("/boards", "POST", { recommendation, requestId }),
+  recommend: (boardId: string, model: string) =>
+    request<{ recommended: true }>(`/boards/${encodeURIComponent(boardId)}/recommendations`, "POST", { model }),
+  withdrawRecommendation: (boardId: string, itemId: string) =>
+    request<{ withdrawn: true }>(`/boards/${encodeURIComponent(boardId)}/recommendations/${encodeURIComponent(itemId)}`, "DELETE"),
   createDraftBoard: (draftId: string, requestId: string) =>
     request<GroupRankBoardDto>("/boards", "POST", { draftId, requestId }),
   report: (id: string, reason: "inappropriate" | "privacy" | "other") =>

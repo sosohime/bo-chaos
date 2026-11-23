@@ -120,6 +120,7 @@ model GroupRankUser {
   members   GroupRankMember[]
   boards    GroupRankBoard[]
   entries   GroupRankEntry[]
+  recommendations GroupRankRecommendation[]
   recordedEntries GroupRankEntry[] @relation("GroupRankRecorder")
   claimRequests GroupRankProxyParticipant[] @relation("GroupRankClaimant")
   claimedParticipants GroupRankProxyParticipant[] @relation("GroupRankClaimed")
@@ -168,6 +169,7 @@ model GroupRankBoard {
   space            GroupRankSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   creator          GroupRankUser @relation(fields: [creatorId], references: [id])
   entries          GroupRankEntry[]
+  recommendationItems GroupRankRecommendationItem[]
   draft            GroupRankDraft? @relation(fields: [draftId], references: [id])
   reports          GroupRankReport[]
   proxyParticipants GroupRankProxyParticipant[]
@@ -175,6 +177,28 @@ model GroupRankBoard {
 
   @@unique([spaceId, creatorId, requestId])
   @@index([spaceId, createdAt])
+}
+
+model GroupRankRecommendationItem {
+  id       String @id @default(cuid())
+  boardId  String
+  model    String @db.VarChar(80)
+  modelKey String
+  board    GroupRankBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  recommendations GroupRankRecommendation[]
+
+  @@unique([boardId, modelKey])
+}
+
+model GroupRankRecommendation {
+  itemId    String
+  userId    String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  item      GroupRankRecommendationItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  user      GroupRankUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, userId])
+  @@index([userId])
 }
 
 model GroupRankEntry {

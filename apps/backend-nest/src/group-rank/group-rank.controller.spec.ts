@@ -12,6 +12,9 @@ describe('group ranking HTTP boundary', () => {
   let app: INestApplication;
   const service = {
     createBoard: jest.fn(),
+    createRecommendationBoard: jest.fn().mockResolvedValue({ id: 'recommendation-board' }),
+    recommend: jest.fn().mockResolvedValue({ recommended: true }),
+    withdrawRecommendation: jest.fn().mockResolvedValue({ withdrawn: true }),
     detail: jest.fn(),
     setAppearance: jest.fn(),
   };
@@ -88,6 +91,25 @@ describe('group ranking HTTP boundary', () => {
       'board-a',
       undefined,
     );
+  });
+  it('validates recommendation boards and uses the verified scope for recommendations', async () => {
+    const identity = { userId: 'user-a', spaceId: 'space-from-token' };
+    const recommendation = { name: '鼠标推荐榜', description: '推荐用过的型号' };
+    const boards = () => request(app.getHttpServer()).post('/group-rank/boards').set('Authorization', 'Bearer token');
+    await boards().send({ recommendation: [recommendation], requestId: 'rec' }).expect(400);
+    await boards().send({ recommendation, templateId: 'game-score', requestId: 'rec' }).expect(400);
+    await boards().send({ recommendation, requestId: 'rec' }).expect(201);
+    expect(service.createRecommendationBoard).toHaveBeenCalledWith(identity, recommendation, 'rec');
+
+    const votes = '/group-rank/boards/recommendation-board/recommendations';
+    await request(app.getHttpServer()).post(votes).send({ model: 'MX Master 3S' }).expect(401);
+    await request(app.getHttpServer()).post(votes).set('Authorization', 'Bearer token')
+      .send({ model: 'MX Master 3S', userId: 'another-user' }).expect(400);
+    await request(app.getHttpServer()).post(votes).set('Authorization', 'Bearer token')
+      .send({ model: 'MX Master 3S' }).expect(201);
+    expect(service.recommend).toHaveBeenCalledWith(identity, 'recommendation-board', 'MX Master 3S');
+    await request(app.getHttpServer()).delete(`${votes}/model-a`).set('Authorization', 'Bearer token').expect(200);
+    expect(service.withdrawRecommendation).toHaveBeenCalledWith(identity, 'recommendation-board', 'model-a');
   });
   it('guards theme updates, rejects arbitrary uploads and uses the verified token scope', async () => {
     const url = '/group-rank/boards/board-a/appearance';

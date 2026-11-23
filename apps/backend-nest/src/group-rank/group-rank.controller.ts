@@ -18,6 +18,7 @@ import {
   IsIn,
   Matches,
   IsInt,
+  IsObject,
   IsOptional,
   IsString,
   Length,
@@ -38,7 +39,16 @@ class SessionBody {
   @IsString() @Length(16, 4096) encryptedData!: string;
   @IsString() @Length(16, 64) iv!: string;
 }
+class RecommendationDefinitionBody {
+  @IsString() @Length(1, 24) name!: string;
+  @IsOptional() @IsString() @Length(0, 120) description?: string;
+}
+class RecommendationBody {
+  @IsString() @Length(1, 80) model!: string;
+}
 class CreateBoardBody {
+  @IsOptional() @IsObject() @ValidateNested() @Type(() => RecommendationDefinitionBody)
+  recommendation?: RecommendationDefinitionBody;
   @IsOptional() @IsString() @Length(1, 64) templateId?: string;
   @IsOptional() @IsString() @Length(1, 80) draftId?: string;
   @IsString() @Length(1, 64) requestId!: string;
@@ -93,8 +103,10 @@ export class GroupRankController {
   }
   @Post('boards')
   async create(@Req() req: GroupRequest, @Body() body: CreateBoardBody) {
-    if (!!body.templateId === !!body.draftId)
-      throw new BadRequestException('请选择一个官方玩法或自定义草稿');
+    if ([body.templateId, body.draftId, body.recommendation].filter(Boolean).length !== 1)
+      throw new BadRequestException('请选择一种榜单玩法');
+    if (body.recommendation)
+      return ok(await this.service.createRecommendationBoard(req.groupRankIdentity, body.recommendation, body.requestId));
     if (body.draftId)
       return ok(
         await this.service.createFromDraft(
@@ -137,6 +149,22 @@ export class GroupRankController {
     return ok(
       await this.service.detail(req.groupRankIdentity, boardId, query.cursor),
     );
+  }
+  @Post('boards/:boardId/recommendations')
+  async recommend(
+    @Req() req: GroupRequest,
+    @Param('boardId') boardId: string,
+    @Body() body: RecommendationBody,
+  ) {
+    return ok(await this.service.recommend(req.groupRankIdentity, boardId, body.model));
+  }
+  @Delete('boards/:boardId/recommendations/:itemId')
+  async withdrawRecommendation(
+    @Req() req: GroupRequest,
+    @Param('boardId') boardId: string,
+    @Param('itemId') itemId: string,
+  ) {
+    return ok(await this.service.withdrawRecommendation(req.groupRankIdentity, boardId, itemId));
   }
   @Post('boards/:boardId/entries')
   async submit(

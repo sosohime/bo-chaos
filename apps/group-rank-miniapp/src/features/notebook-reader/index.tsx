@@ -18,6 +18,7 @@ import type {
   GroupRankRow,
   GroupRankEntryDto,
   GroupRankProfile,
+  GroupRankRecommendationRow,
   GroupRankThemeId,
 } from "@mono/types";
 import { currentGroupGeneration, groupApi, newRequestId } from "../../lib/api";
@@ -37,6 +38,7 @@ import { createBoardWarmup } from "../../lib/board-warmup";
 import { ProductIcon } from "../../components/activity-icon";
 import ProxySheet from "../../components/proxy-sheet";
 import ProfileSheet from "../../components/profile-sheet";
+import { myRecommendations, RecommendationSheet, RecommendersSheet } from "../../components/recommendation-ranking";
 import "../../pages/board/index.scss";
 
 export type ReaderPage = {
@@ -239,6 +241,10 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
   const [continueSubmit, setContinueSubmit] = useState(false);
   const [scoreOpen, setScoreOpen] = useState(false);
   const [scoreError, setScoreError] = useState("");
+  const [recommendationMode, setRecommendationMode] = useState<"recommend" | "manage" | null>(null);
+  const [modelQuery, setModelQuery] = useState("");
+  const [peopleItemId, setPeopleItemId] = useState("");
+  const peopleItem = detail?.recommendations?.items.find(item => item.id === peopleItemId);
   const [historyOpen, setHistoryOpen] = useState(false);
   const historyScrollTop = useRef(0);
   const [rulesOpen, setRulesOpen] = useState(false);
@@ -272,6 +278,8 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
   sheetShowing.current =
     !!detail &&
     (scoreOpen ||
+      !!recommendationMode ||
+      !!peopleItem ||
       proxyOpen ||
       profileOpen ||
       themeOpen ||
@@ -308,6 +316,9 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
     setValue("");
     setEditing(null);
     setScoreError("");
+    setRecommendationMode(null);
+    setModelQuery("");
+    setPeopleItemId("");
     setMenuScore(undefined);
     historyScrollTop.current = 0;
     submission.current = null;
@@ -322,6 +333,7 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
     operation: () => Promise<unknown>,
     contribution = false,
     successTitle = contribution ? "记下了" : "已更新",
+    onSuccess?: () => void,
   ) {
     if (lock.current) return;
     lock.current = true;
@@ -336,6 +348,7 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
       setValue("");
       setScoreOpen(false);
       setManageOpen(false);
+      onSuccess?.();
       Taro.showToast({
         title: refreshed ? successTitle : `${successTitle}，请刷新榜单`,
         icon: refreshed ? "success" : "none",
@@ -343,7 +356,7 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
     } catch (reason) {
       if (sequence.current !== current) return;
       const message = reason instanceof Error ? reason.message : "操作失败，请重试";
-      if (scoreOpen || contribution || editing) setScoreError(message);
+      if (scoreOpen || recommendationMode || contribution || editing) setScoreError(message);
       else Taro.showToast({title: message, icon: "none"});
     } finally {
       lock.current = false;
@@ -382,6 +395,31 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
       await groupApi.submit(boardId, pending.value, pending.requestId);
       submission.current = null;
     }, true);
+  }
+
+  function openRecommendations(mode: "recommend" | "manage") {
+    setScoreError("");
+    setModelQuery("");
+    setRecommendationMode(mode);
+  }
+
+  function recommendModel(model: string, savedProfile?: GroupRankProfile) {
+    if (detail?.status !== "open" || lock.current) return;
+    setScoreError("");
+    const profile = savedProfile || detail.myProfile;
+    if (!profile?.nickname?.trim() || !profile.avatarVersion) {
+      profileContinuation.current = updated => recommendModel(model, updated);
+      setProfileSubmitLabel("保存并推荐");
+      setContinueSubmit(true);
+      setProfileOpen(true);
+      return;
+    }
+    return act(() => groupApi.recommend(boardId, model), false, "已推荐", () => setRecommendationMode(null));
+  }
+
+  function withdrawRecommendation(item: GroupRankRecommendationRow) {
+    setScoreError("");
+    return act(() => groupApi.withdrawRecommendation(boardId, item.id), false, "已撤回");
   }
 
   function openProxy(participantId = "") {
@@ -626,6 +664,8 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
   }
   const hasNextPage = page.index + 1 < page.directory.length;
   const recordLabel = existingSingle ? "修改成绩" : detail?.ranking.length ? "记一笔" : "记第一笔";
+  const canRecommendMore = detail?.status === "open" && !!detail.recommendations &&
+    myRecommendations(detail).length < detail.recommendations.limit;
 
   return (
     <PageFrame
@@ -694,7 +734,9 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
                   onRules: () => { if (!turning) setRulesOpen(true); },
                   onMore: () => { if (!turning) setManageOpen(true); },
                   onShare: () => setShareOpen(true),
-                  onProxy: detail.creatorId === detail.myUserId ? () => openProxy() : undefined,
+                  onProxy: !detail.recommendations && detail.creatorId === detail.myUserId ? () => openProxy() : undefined,
+                  onPeople: detail.recommendations ? setPeopleItemId : undefined,
+                  onMyRecommendations: detail.recommendations ? () => openRecommendations("manage") : undefined,
                   onHistory: () => setHistoryOpen(true),
                   onProfile: () => {
                     setContinueSubmit(false);
@@ -719,9 +761,8 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
                   </View>
                 }
               >
-                <Text className="description">
-                  {detail.template.description}
-                </Text>
+                {detail.template.description && <Text className="description">{detail.template.description}</Text>}
+                {detail.recommendations ? <Text className="note">每人最多推荐 {detail.recommendations.limit} 个型号，同一型号每人计一次。按推荐人数排名，同票并列。你可以撤回自己的推荐。</Text> : <>
                 <Text className="note">
                   {detail.template.entryMode === "single" ? "每人一笔，可修改原记录" : "允许多笔记录"}
                 </Text>
@@ -747,6 +788,7 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
                     : `最多 ${detail.template.precision} 位小数`}
                   。同分并列。
                 </Text>
+                </>}
               </BottomSheet>
             )}
             {!!detail.proxyParticipants?.filter(
@@ -974,7 +1016,11 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
         <Button className="notebook-turn" ariaLabel="下一页"
           hoverClass="notebook-control-pressed" disabled={turnLocked || page.index === page.directory.length - 1}
           onClick={() => requestTurn(1)}>›</Button>
-        {detail?.status === "open" ? <Button className="notebook-record" hoverClass="notebook-control-pressed"
+        {detail?.recommendations ? <Button className="notebook-record"
+          disabled={turnLocked} hoverClass="notebook-control-pressed"
+          onClick={() => openRecommendations(canRecommendMore ? "recommend" : "manage")}>
+          <Text>{detail.status !== "open" ? "我的推荐" : canRecommendMore ? "推荐型号" : "管理推荐"}</Text>
+        </Button> : detail?.status === "open" ? <Button className="notebook-record" hoverClass="notebook-control-pressed"
           disabled={turnLocked || detail?.status !== "open"}
           onClick={() => {
             if (!detail || turnLocked) return;
@@ -989,6 +1035,13 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
       </View>
       {detail && (
         <>
+          {peopleItem && <RecommendersSheet item={peopleItem} onClose={() => setPeopleItemId("")} />}
+          {recommendationMode && !profileOpen && detail.recommendations && <RecommendationSheet
+            detail={detail} recommendations={detail.recommendations} manageFirst={recommendationMode === "manage"}
+            busy={busy} error={scoreError}
+            query={modelQuery} onQueryChange={value => { setModelQuery(value); setScoreError(""); }}
+            onClose={() => setRecommendationMode(null)}
+            onRecommend={recommendModel} onWithdraw={withdrawRecommendation} />}
           {scoreOpen && !profileOpen && (
             <BottomSheet
               className="score-sheet"

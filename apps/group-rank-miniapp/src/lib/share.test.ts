@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 const runtime = vi.hoisted(() => ({ wx: {} as Record<string, unknown> }));
 vi.mock("@tarojs/taro", () => ({ default: runtime.wx }));
 import type { GroupRankBoardDetail, GroupRankTemplate } from "@mono/types";
-import { boardShareCard, notebookShareCard, rulesShareCard, ownRankShareTitle, shareSelection, RANK_SHARE_KIND, SCORE_SHARE_KIND, boardShareWithArt } from "./share";
+import { boardShareCard, notebookShareCard, rulesShareCard, ownRankShareTitle, shareSelection, RANK_SHARE_KIND, SCORE_SHARE_KIND, boardShareWithArt, draftShareWithArt } from "./share";
 
 const template = { id: "run/2026", name: "尿酸王" } as GroupRankTemplate;
 const ranking = [
@@ -89,6 +89,16 @@ it("keeps two different boards' share images separate when they are exported bac
     expect(files.get(unrelated)).toBe("keep");
     expect(files.has(oldest)).toBe(false);
     expect(files.size).toBe(25);
+    const created = draftShareWithArt({
+      id: "new-draft",
+      template: { ...template, name: "新建好物榜" },
+      expiresAt: "2026-11-30",
+    });
+    expect(created.title).toBe("新建好物榜｜在群里建榜");
+    expect(created.imageUrl).not.toBe(first.imageUrl);
+    expect(created.imageUrl).not.toBe(next.imageUrl);
+    expect(Buffer.from(files.get(created.imageUrl)!, "base64").toString()).toContain("新建好物榜");
+    expect(query(created.path)).toEqual({ draft: "new-draft" });
   } finally {
     for (const key of Object.keys(runtime.wx)) delete runtime.wx[key];
   }

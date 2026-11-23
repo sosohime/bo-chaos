@@ -72,7 +72,7 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
     };
     prisma = new PrismaService({ datasources: { db: { url: databaseUrl! } } });
     await prisma.$connect();
-    service = new GroupRankService(prisma, {} as any);
+    service = new GroupRankService(prisma, {} as any, { text: jest.fn().mockResolvedValue(null) } as any);
     auth = new GroupRankAuthService(prisma);
     fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const code = new URL(String(input)).searchParams.get('js_code');
@@ -919,7 +919,7 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
     try {
       const content={image:jest.fn().mockResolvedValue(null),text:jest.fn().mockResolvedValue(null)};
       const backgrounds=new GroupRankBackgroundService(prisma,auth,content as any);
-      const boards=new GroupRankService(prisma,backgrounds);
+      const boards=new GroupRankService(prisma,backgrounds, { text: jest.fn().mockResolvedValue(null) } as any);
       const drafts=new GroupRankDraftService(prisma,auth,content as any,backgrounds);
       const asset=await backgrounds.upload('a','background-real-db',{buffer:await sharp({create:{width:400,height:900,channels:3,background:'#24f'}}).png().toBuffer()} as any);
       const background={...asset,cover:{x:.2,y:.8,zoom:1.3},card:{x:.8,y:.3,zoom:1},dim:.45};
@@ -948,7 +948,7 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
       });
       try {
         const singleBackgrounds = new GroupRankBackgroundService(single, auth, content as any);
-        const singleBoards = new GroupRankService(single, singleBackgrounds);
+        const singleBoards = new GroupRankService(single, singleBackgrounds, { text: jest.fn().mockResolvedValue(null) } as any);
         const updated = (await singleBoards.setAppearance(a, board.id, 'coral', {
           ...background, dim: .65, card: { x: .5, y: .5, zoom: 1.7 },
         })).background!;
@@ -963,6 +963,50 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
         await single.$disconnect();
       }
     } finally { delete process.env.GROUP_RANK_AVATAR_ROOT;await rm(root,{recursive:true,force:true}); }
+  });
+
+  it('ranks distinct recommenders and enforces the five-model limit under concurrent writes', async () => {
+    const definition = { name: '鼠标推荐榜', description: '分享用过的鼠标' };
+    const board = await service.createRecommendationBoard(a, definition, 'mouse-recommendations');
+    expect(await service.createRecommendationBoard(a, definition, 'mouse-recommendations')).toEqual(board);
+    expect((await service.currentGroup(a)).boards.find(item => item.id === board.id)?.template.kind).toBe('recommendation');
+    await expect(service.recommend(b, board.id, 'MX Master 3S')).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.submit(a, board.id, '3', 'numeric-on-recommendations')).rejects.toThrow('只接受好物推荐');
+
+    await Promise.all([
+      service.recommend(a, board.id, 'MX Master 3S'),
+      service.recommend(a, board.id, 'ｍｘ　ｍａｓｔｅｒ ３ｓ'),
+      service.recommend(a2, board.id, 'mxmaster3s'),
+    ]);
+    const first = (await service.detail(a, board.id)).recommendations!.items;
+    expect(first).toHaveLength(1);
+    expect(first[0].rank).toBe(1);
+    expect(first[0].recommenders.map(person => person.userId).sort()).toEqual([a.userId, a2.userId].sort());
+    expect(first[0].recommenders.every(person => person.nickname && person.avatarVersion)).toBe(true);
+
+    const writes = await Promise.allSettled(['Model A', 'Model B', 'Model C', 'Model D', 'Model E'].map(model =>
+      service.recommend(a, board.id, model),
+    ));
+    expect(writes.filter(result => result.status === 'fulfilled')).toHaveLength(4);
+    expect(writes.filter(result => result.status === 'rejected')).toHaveLength(1);
+    await expect(service.recommend(a, board.id, 'Model F')).rejects.toThrow('每人最多推荐 5 个型号');
+    await service.recommend(a, board.id, 'MX MASTER 3S');
+    const ranked = (await service.detail(a, board.id)).recommendations!.items;
+    expect(ranked.map(item => [item.rank, item.recommenders.length])).toEqual([[1, 2], [2, 1], [2, 1], [2, 1], [2, 1]]);
+
+    await service.withdrawRecommendation(a2, board.id, ranked[1].id);
+    expect((await service.detail(a, board.id)).recommendations!.items).toEqual(ranked);
+    await service.withdrawRecommendation(a, board.id, ranked[1].id);
+    expect((await service.detail(a, board.id)).recommendations!.items.some(item => item.id === ranked[1].id)).toBe(false);
+    await service.recommend(a, board.id, 'Model F');
+    await service.setStatus(a, board.id, 'paused');
+    await expect(service.recommend(a2, board.id, 'Paused model')).rejects.toBeInstanceOf(ForbiddenException);
+    await service.withdrawRecommendation(a, board.id, first[0].id);
+    expect((await service.detail(a2, board.id)).recommendations!.items.find(item => item.id === first[0].id)?.recommenders)
+      .toMatchObject([{ userId: a2.userId }]);
+    await service.removeBoard(a, board.id);
+    expect(await prisma.groupRankRecommendationItem.count({ where: { boardId: board.id } })).toBe(0);
+    await expect(service.detail(a2, board.id)).rejects.toBeInstanceOf(NotFoundException);
   });
 
 });

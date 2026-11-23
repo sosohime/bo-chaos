@@ -71,6 +71,6 @@ Astro:
 
 ## Independent group notebook
 
-The miniapp at `apps/group-rank-miniapp` uses the standalone Nest entry in `apps/backend-nest/src/group-rank/main.ts` and a separate database. A verified WeChat group determines the current space; the shared card only suggests a board to open. See `openspec/specs/group-ranking/spec.md` and `deploy/group-rank/README.md`.
+The miniapp at `apps/group-rank-miniapp` uses the standalone Nest entry in `apps/backend-nest/src/group-rank/main.ts` and a separate database. A verified WeChat group determines the current space; the shared card only suggests a board to open. Score and recommendation boards share this entry, directory, and management flow. Recommendation writes use their own endpoints and store one vote per model and group member. See `openspec/specs/group-ranking/spec.md` and `deploy/group-rank/README.md`.
 
 Group members claim proxy records directly. One board transaction validates group membership and the per-period single-entry rule, then transfers the original scores, times and recorder attribution to the member. The same member can retry the claim without duplicating records.

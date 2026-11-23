@@ -23,6 +23,8 @@ export class GroupRankHealthController {
           AND to_regclass('"GroupRankReport"') IS NOT NULL
           AND to_regclass('"GroupRankProxyParticipant"') IS NOT NULL
           AND to_regclass('"GroupRankProxyEntry"') IS NOT NULL
+          AND to_regclass('"GroupRankRecommendationItem"') IS NOT NULL
+          AND to_regclass('"GroupRankRecommendation"') IS NOT NULL
           AND (SELECT COUNT(*) = 1 FROM pg_attribute WHERE attrelid = to_regclass('"GroupRankEntry"') AND attname = 'recordedById' AND NOT attisdropped)
           AND (SELECT COUNT(*) = 2 FROM pg_attribute WHERE attrelid = to_regclass('"GroupRankUser"') AND attname IN ('nickname', 'avatarKey') AND NOT attisdropped)
           AND (SELECT COUNT(*) = 5 FROM pg_attribute WHERE attrelid = to_regclass('"GroupRankBoard"') AND attname IN ('draftId', 'deletedAt', 'themeId', 'background', 'accentColor') AND NOT attisdropped) AND to_regclass('"GroupRankBackground"') IS NOT NULL AS ready

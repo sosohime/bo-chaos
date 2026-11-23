@@ -1,6 +1,6 @@
 import { prepareShareArt } from "./share-art";
 import { formatScore } from "./format-score";
-import type { GroupRankBoardDetail, GroupRankTemplate } from "@mono/types";
+import type { GroupRankBoardDetail, GroupRankDraftDto, GroupRankTemplate } from "@mono/types";
 
 // Incoming query values are suggestions only; the public template list is authoritative.
 export function findSharedTemplate(
@@ -66,6 +66,27 @@ export function boardShareCard(board?: GroupRankBoardDetail | null, selection?: 
   return { ...card, title: row ? `我排第 ${row.rank} 名｜${name}` : name ? `${name}｜本群榜单` : card.title };
 }
 
+type ShareCard = ReturnType<typeof shareCard>;
+type ShareCardWithArt = ShareCard & { promise?: Promise<ShareCard> };
+
+function withShareArt(fallback: ShareCard, name: string, rank?: number, score?: string): ShareCardWithArt {
+  try {
+    const image = prepareShareArt(name, rank, score);
+    const withImage = (imageUrl: string) => ({ ...fallback, imageUrl });
+    return typeof image === "string"
+      ? withImage(image)
+      : { ...fallback, promise: image.then(withImage, () => fallback) };
+  } catch {
+    return fallback;
+  }
+}
+
+export function draftShareWithArt(draft: GroupRankDraftDto): ShareCardWithArt {
+  const card = rulesShareCard("draft", draft.id);
+  const name = draft.template.name?.trim();
+  return name ? withShareArt({ ...card, title: `${name}｜在群里建榜` }, name) : card;
+}
+
 export function boardShareWithArt(board?: GroupRankBoardDetail | null, selection?: PersonalShare) {
   const card = boardShareCard(board, selection);
   const name = board?.template.name?.trim();
@@ -77,13 +98,5 @@ export function boardShareWithArt(board?: GroupRankBoardDetail | null, selection
     title: score ? `${card.title} · ${score}` : card.title,
     imageUrl: row ? "/assets/arena/pixel-card-v4.jpg" : "/assets/arena/crystal-card-v3.jpg",
   };
-  try {
-    const image = prepareShareArt(name, row?.rank, score);
-    const withImage = (imageUrl: string) => ({ ...fallback, imageUrl });
-    return typeof image === "string"
-      ? withImage(image)
-      : { ...fallback, promise: image.then(withImage, () => fallback) };
-  } catch {
-    return fallback;
-  }
+  return withShareArt(fallback, name, row?.rank, score);
 }

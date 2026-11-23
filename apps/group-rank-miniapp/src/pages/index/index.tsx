@@ -16,7 +16,7 @@ import {
   groupApi,
   newRequestId,
 } from "../../lib/api";
-import { boardShareWithArt, findSharedTemplate, notebookShareCard, rulesShareCard, shareSelection } from "../../lib/share";
+import { boardShareWithArt, draftShareWithArt, findSharedTemplate, notebookShareCard, rulesShareCard, shareSelection } from "../../lib/share";
 import {
   consumeEntryNavigation,
   currentEntry,
@@ -225,7 +225,7 @@ export default function Home() {
     if (isLobby) return notebookShareCard();
     const board = readerShare.current;
     if (board) return boardShareWithArt(board, shareSelection(event, menuScoreBoard.current === board.id));
-    if (sharedDraft) return rulesShareCard("draft", sharedDraft.id);
+    if (sharedDraft) return draftShareWithArt(sharedDraft);
     if (sharedTemplate) return rulesShareCard("template", sharedTemplate.id);
     return notebookShareCard();
   });

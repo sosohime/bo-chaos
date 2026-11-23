@@ -3,7 +3,7 @@ import AppearanceEditor from "../../components/appearance-editor";
 import ArenaBackground from "../../components/arena-background";
 import type { GroupRankBackground } from "@mono/types";
 import PageFrame, { readFrameMetrics } from "../../components/page-frame";
-import { useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { Button, Image, Input, Text, View } from "@tarojs/components";
 import Taro, {
   useDidHide,
@@ -15,7 +15,7 @@ import type { GroupRankDefinition, GroupRankDraftDto } from "@mono/types";
 import { groupApi, newRequestId } from "../../lib/api";
 import { currentEntry, needsEntryNavigation } from "../../lib/entry";
 import { consumeNativeMediaReturn } from "../../lib/native-media";
-import { notebookShareCard, rulesShareCard } from "../../lib/share";
+import { draftShareWithArt, notebookShareCard } from "../../lib/share";
 import { themeId, templateTheme } from "../../lib/theme";
 import { usePageKeyboard } from "../../lib/use-page-keyboard";
 import "./index.scss";
@@ -43,6 +43,9 @@ export default function Create() {
   const [busy, setBusy] = useState(false);
   const [prefillLoading, setPrefillLoading] = useState(!!templateId);
   const [inGroup] = useState(currentEntry().kind !== "lobby");
+  const canChooseKind = inGroup && !templateId;
+  const [recommendation, setRecommendation] = useState(false);
+  const [description, setDescription] = useState("");
   const sequence = useRef(0);
   const initialized = useRef(false);
   const lock = useRef(false);
@@ -93,7 +96,19 @@ export default function Create() {
     sequence.current += 1;
     if (prefillLoading) initialized.current = false;
   });
-  useShareAppMessage(() => draft ? rulesShareCard("draft", draft.id) : notebookShareCard());
+  const [draftCover, setDraftCover] = useState<{ id: string; card: ReturnType<typeof draftShareWithArt> }>();
+  useEffect(() => {
+    if (!draft) return;
+    let current = true;
+    const card = draftShareWithArt(draft);
+    setDraftCover({ id: draft.id, card });
+    void card.promise?.then(image => {
+      if (current) setDraftCover({ id: draft.id, card: image });
+    });
+    return () => { current = false; };
+  }, [draft]);
+  const draftCard = draft && (draftCover?.id === draft.id ? draftCover.card : undefined);
+  useShareAppMessage(() => draftCard ?? notebookShareCard());
   function change<K extends keyof GroupRankDefinition>(
     key: K,
     value: GroupRankDefinition[K],
@@ -124,7 +139,8 @@ export default function Create() {
     setBusy(true);
     setError("");
     const current = sequence.current;
-    const key = JSON.stringify(data);
+    const recommendationData = { name: data.name, description: description.trim() };
+    const key = JSON.stringify(recommendation ? recommendationData : data);
     if (pending.current?.key !== key)
       pending.current = {
         key,
@@ -133,6 +149,12 @@ export default function Create() {
       };
     const operation = pending.current;
     try {
+      if (recommendation) {
+        const board = await groupApi.createRecommendationBoard(recommendationData, operation.boardRequest);
+        if (current === sequence.current)
+          await Taro.redirectTo({ url: `/pages/board/index?id=${encodeURIComponent(board.id)}` });
+        return;
+      }
       const saved =
         operation.draft ||
         (await groupApi.createDraft(data, operation.draftRequest));
@@ -171,7 +193,7 @@ export default function Create() {
   ].filter(Boolean).join(" · ");
 
   if (draft) {
-    const card = rulesShareCard("draft", draft.id);
+    const card = draftCard ?? notebookShareCard();
     const edit = () => setDraft(null);
     return (
       <PageFrame className="create-screen theme--volt" title="发到群里" header={
@@ -189,7 +211,7 @@ export default function Create() {
               <Image className="share-ready-card-image" src={card.imageUrl} mode="aspectFit" aria-hidden />
             </View>
             <Text className="share-ready-tip">回群打开这张卡片，点「在本群创建」。</Text>
-            <Button className="action share-ready-send" openType="share" hoverClass="arena-control-pressed" hoverStartTime={0} hoverStayTime={80}>
+            <Button className="action share-ready-send" disabled={!draftCard} openType="share" hoverClass="arena-control-pressed" hoverStartTime={0} hoverStayTime={80}>
               发到微信群
             </Button>
             <Button className="share-ready-edit" onClick={edit} hoverClass="directory-link-pressed" hoverStartTime={0} hoverStayTime={60}>
@@ -224,6 +246,17 @@ export default function Create() {
         {prefillLoading && <LoadStatus label="正在加载示例规则" compact />}
         <View className="create-editor">
         {inGroup && <Text className="create-scope">创建后出现在本群目录</Text>}
+        {canChooseKind && <View className="rule-options create-kind-options">
+          {([["成绩榜", false], ["好物推荐榜", true]] as const).map(([label, isRecommendation]) => {
+            const selected = recommendation === isRecommendation;
+            return <Button key={label} className={`rule-option ${selected ? "chosen" : ""}`}
+              aria-pressed={selected} disabled={busy} onClick={() => {
+                setRecommendation(isRecommendation);
+                setError("");
+                setAppearanceOpen(false);
+              }}>{label}</Button>;
+          })}
+        </View>}
         <View className="definition-fields">
           <View className="entry-field name-field">
             <Text className="entry-label">榜单名称</Text>
@@ -233,13 +266,18 @@ export default function Create() {
               holdKeyboard
               value={definition.name}
               maxlength={24}
-              placeholder="榜单名称"
+              placeholder={recommendation ? "例如：鼠标推荐榜" : "榜单名称"}
               disabled={busy || prefillLoading}
               onInput={(event) => change("name", event.detail.value)}
             />
             {nameError && <Text className="entry-error">{nameError}</Text>}
           </View>
-          <View className="unit-field entry-field">
+          {recommendation ? <View className="unit-field entry-field">
+            <Text className="entry-label">简介</Text>
+            <Input className="entry-control" cursorSpacing={96} holdKeyboard
+              value={description} maxlength={120} placeholder="选填" disabled={busy}
+              onInput={(event) => { setDescription(event.detail.value); setError(""); }} />
+          </View> : <View className="unit-field entry-field">
             <Text className="entry-label">
               单位
             </Text>
@@ -253,8 +291,9 @@ export default function Create() {
               disabled={busy || prefillLoading}
               onInput={(event) => change("unit", event.detail.value)}
             />
-          </View>
+          </View>}
         </View>
+        {recommendation ? <Text className="create-setting-label">每人最多推荐 5 个型号，按推荐人数排名，同票并列。</Text> : <>
         <View className="definition-rules">
           <Button className="rules-toggle" disabled={busy || prefillLoading} ariaLabel={rulesOpen ? "收起计分规则" : "展开计分规则"} onClick={() => setRulesOpen(!rulesOpen)}>
             <View className="rules-heading"><Text className="create-setting-label">计分规则</Text><Text className="rules-summary">{rulesSummary}</Text></View>
@@ -389,6 +428,7 @@ export default function Create() {
             /></View>
           )}
         </View>
+        </>}
         {error && <Text className="form-error">{error}</Text>}
         {!appearanceOpen && (
           <View className="create-dock">
