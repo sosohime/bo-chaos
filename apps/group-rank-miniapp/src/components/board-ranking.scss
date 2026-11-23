@@ -82,3 +82,18 @@
 .rank-shortcuts { display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border); }
 .rank-shortcuts .rank-cover-action { padding: 0 10px; font-size: 13px; }
 .rank-shortcuts .rank-share-action { color: var(--accent-readable,var(--accent)); font-weight: 750; }
+
+.recommendation-line { align-items: flex-start; padding-block: 9px; }
+.recommendation-line .rank-number { padding-top: 3px; }
+.recommendation-row-copy { min-width: 0; flex: 1; }
+.recommendation-model { display: block; font-weight: 650; overflow-wrap: anywhere; word-break: break-word; }
+.recommendation-people { display: flex; align-items: center; gap: 8px; width: fit-content; min-height: 36px; color: var(--accent-readable, var(--accent)); font-size: 12px; }
+.recommendation-avatars { display: flex; align-items: center; gap: 3px; }
+.recommendation-avatars .person-avatar, .recommendation-avatars .person-avatar-image { width: 23px; height: 23px; font-size: 11px; }
+.recommendation-more { padding-inline: 2px; color: var(--text-secondary); }
+.recommendation-description { display: block; margin: 10px 0 2px; color: var(--text-secondary); font-size: 13px; overflow-wrap: anywhere; }
+.recommendation-person, .recommendation-sheet-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.recommendation-person .person-avatar { flex: none; }
+.recommendation-sheet-row .recommendation-model { flex: 1; min-width: 0; }
+.recommendation-sheet-row .text-action { flex: none; }
+.recommendation-own-list, .recommendation-people-list { margin-top: 10px; }

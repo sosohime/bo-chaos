@@ -71,4 +71,6 @@ User vote on a photo.
 
 ## Group notebook
 
-The six GroupRank migrations create independent app-scoped identities, group spaces and memberships, board rule snapshots, score revisions, draft rules, proxy claims, reports, themes and backgrounds. GroupRank records do not reuse BoFans users or scores. The accepted contract is in `openspec/specs/group-ranking/spec.md`.
+The GroupRank migrations create independent app-scoped identities, group spaces and memberships, board rule snapshots, score revisions, draft rules, proxy claims, reports, themes and backgrounds. GroupRank records do not reuse BoFans users or scores. The accepted contract is in `openspec/specs/group-ranking/spec.md`.
+
+Recommendation boards use `templateSnapshot.kind = "recommendation"`. `GroupRankRecommendationItem` stores the first approved display name and a normalized key unique within its board. `GroupRankRecommendation` has one row per item and user. Writes serialize on the board row to enforce five active recommendations per member. Withdrawal deletes that member's recommendation, and zero-vote items are omitted from board detail. Legacy score boards have no `kind` field.

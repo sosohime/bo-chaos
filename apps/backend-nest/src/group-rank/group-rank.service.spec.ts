@@ -75,7 +75,7 @@ describe('current-group isolation and score writes', () => {
       },
     };
     prisma.$transaction = jest.fn((operation) => operation(prisma));
-    service = new GroupRankService(prisma as PrismaService, {} as any);
+    service = new GroupRankService(prisma as PrismaService, {} as any, { text: jest.fn().mockResolvedValue(null) } as any);
   });
   it('single mode rejects a second request but allows a retry and editing', async () => {
     board.templateSnapshot = {...board.templateSnapshot, entryMode:'single'};

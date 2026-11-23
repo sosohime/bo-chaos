@@ -12,6 +12,7 @@ import type { GroupRankTemplate } from '@mono/types';
 import { GroupRankContentService } from './content.service';
 import { shortText } from './definitions';
 import { validateScore } from './templates';
+import { isRecommendation } from './recommendations';
 import { assertSingleClaim, singleRecordScope } from './record-policy';
 
 @Injectable()
@@ -31,6 +32,8 @@ export class GroupRankProxyService {
       where: { id: boardId, spaceId: identity.spaceId, deletedAt: null },
     });
     if (!board) throw new NotFoundException('本群没有这张榜单');
+    if (isRecommendation(board.templateSnapshot))
+      throw new BadRequestException('这张榜单只接受本人推荐');
     if (creatorOnly && board.creatorId !== identity.userId)
       throw new ForbiddenException('只有榜单创建者可以代填和确认认领');
     return board;

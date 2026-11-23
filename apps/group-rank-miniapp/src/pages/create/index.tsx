@@ -43,6 +43,9 @@ export default function Create() {
   const [busy, setBusy] = useState(false);
   const [prefillLoading, setPrefillLoading] = useState(!!templateId);
   const [inGroup] = useState(currentEntry().kind !== "lobby");
+  const canChooseKind = inGroup && !templateId;
+  const [recommendation, setRecommendation] = useState(false);
+  const [description, setDescription] = useState("");
   const sequence = useRef(0);
   const initialized = useRef(false);
   const lock = useRef(false);
@@ -124,7 +127,8 @@ export default function Create() {
     setBusy(true);
     setError("");
     const current = sequence.current;
-    const key = JSON.stringify(data);
+    const recommendationData = { name: data.name, description: description.trim() };
+    const key = JSON.stringify(recommendation ? recommendationData : data);
     if (pending.current?.key !== key)
       pending.current = {
         key,
@@ -133,6 +137,12 @@ export default function Create() {
       };
     const operation = pending.current;
     try {
+      if (recommendation) {
+        const board = await groupApi.createRecommendationBoard(recommendationData, operation.boardRequest);
+        if (current === sequence.current)
+          await Taro.redirectTo({ url: `/pages/board/index?id=${encodeURIComponent(board.id)}` });
+        return;
+      }
       const saved =
         operation.draft ||
         (await groupApi.createDraft(data, operation.draftRequest));
@@ -224,6 +234,17 @@ export default function Create() {
         {prefillLoading && <LoadStatus label="正在加载示例规则" compact />}
         <View className="create-editor">
         {inGroup && <Text className="create-scope">创建后出现在本群目录</Text>}
+        {canChooseKind && <View className="rule-options create-kind-options">
+          {([["成绩榜", false], ["好物推荐榜", true]] as const).map(([label, isRecommendation]) => {
+            const selected = recommendation === isRecommendation;
+            return <Button key={label} className={`rule-option ${selected ? "chosen" : ""}`}
+              aria-pressed={selected} disabled={busy} onClick={() => {
+                setRecommendation(isRecommendation);
+                setError("");
+                setAppearanceOpen(false);
+              }}>{label}</Button>;
+          })}
+        </View>}
         <View className="definition-fields">
           <View className="entry-field name-field">
             <Text className="entry-label">榜单名称</Text>
@@ -233,13 +254,18 @@ export default function Create() {
               holdKeyboard
               value={definition.name}
               maxlength={24}
-              placeholder="榜单名称"
+              placeholder={recommendation ? "例如：鼠标推荐榜" : "榜单名称"}
               disabled={busy || prefillLoading}
               onInput={(event) => change("name", event.detail.value)}
             />
             {nameError && <Text className="entry-error">{nameError}</Text>}
           </View>
-          <View className="unit-field entry-field">
+          {recommendation ? <View className="unit-field entry-field">
+            <Text className="entry-label">简介</Text>
+            <Input className="entry-control" cursorSpacing={96} holdKeyboard
+              value={description} maxlength={120} placeholder="选填" disabled={busy}
+              onInput={(event) => { setDescription(event.detail.value); setError(""); }} />
+          </View> : <View className="unit-field entry-field">
             <Text className="entry-label">
               单位
             </Text>
@@ -253,8 +279,9 @@ export default function Create() {
               disabled={busy || prefillLoading}
               onInput={(event) => change("unit", event.detail.value)}
             />
-          </View>
+          </View>}
         </View>
+        {recommendation ? <Text className="create-setting-label">每人最多推荐 5 个型号，按推荐人数排名，同票并列。</Text> : <>
         <View className="definition-rules">
           <Button className="rules-toggle" disabled={busy || prefillLoading} ariaLabel={rulesOpen ? "收起计分规则" : "展开计分规则"} onClick={() => setRulesOpen(!rulesOpen)}>
             <View className="rules-heading"><Text className="create-setting-label">计分规则</Text><Text className="rules-summary">{rulesSummary}</Text></View>
@@ -389,6 +416,7 @@ export default function Create() {
             /></View>
           )}
         </View>
+        </>}
         {error && <Text className="form-error">{error}</Text>}
         {!appearanceOpen && (
           <View className="create-dock">

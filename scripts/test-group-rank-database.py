@@ -31,7 +31,7 @@ def main():
             run(["pg_ctl", "-D", str(data), "-l", str(cluster_root / "server.log"), "-o", f"-h '' -k {cluster_root} -p {port}", "-w", "start"], check=True)
             started = True
             run(["createdb", "-h", str(cluster_root), "-p", port, "group_rank_test"], check=True)
-            for migration_name in ["20261026000000_group_rank_direct_entry", "20261030000000_group_rank_custom_profile", "20261030010000_group_rank_proxy", "20261030020000_group_rank_theme", "20261114000000_group_rank_background", "20261116000000_group_rank_color"]:
+            for migration_name in ["20261026000000_group_rank_direct_entry", "20261030000000_group_rank_custom_profile", "20261030010000_group_rank_proxy", "20261030020000_group_rank_theme", "20261114000000_group_rank_background", "20261116000000_group_rank_color", "20261123000000_group_rank_recommendations"]:
                 migration = repo / "packages/prisma-client/prisma/migrations" / migration_name / "migration.sql"
                 run(["psql", "-h", str(cluster_root), "-p", port, "-d", "group_rank_test", "-v", "ON_ERROR_STOP=1", "-f", str(migration)], check=True)
             test_env = os.environ.copy()

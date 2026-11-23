@@ -4,6 +4,8 @@ import type {
   GroupRankTemplate,
   GroupRankSpaceDto,
   GroupRankThemeId,
+  GroupRankRecommendationDefinition,
+  GroupRankRecommendationRow,
 } from "@mono/types";
 // Design-only fixtures. This harness is excluded from the WeChat build and calls no service.
 const search = new URLSearchParams(location.search);
@@ -353,6 +355,53 @@ const wait = async (kind: string) => {
  if (delay) await new Promise(resolve => setTimeout(resolve, delay));
  if (search.get("fail") === kind) throw new Error("网络暂时不可用，请重试");
 };
+const recommendationLimit = 5;
+const recommendationStorage = "group-rank-preview-recommendations";
+const removedRecommendationStorage = "group-rank-preview-removed-recommendations";
+const recommendationKey = (model: string) => model.normalize("NFKC").replace(/\s+/gu, "").toLowerCase();
+const previewProfile = (userId: string) => ({
+  userId,
+  nickname: people.find(([id]) => id === userId)?.[1] || detail.myProfile?.nickname || "群友",
+  avatarVersion: "preview",
+});
+function newRecommendationBoard(id: string, definition: GroupRankRecommendationDefinition): GroupRankBoardDetail {
+  return {
+    id, creatorId: detail.myUserId, status: "open", themeId: "volt", myUserId: detail.myUserId,
+    myProfile: previewProfile(detail.myUserId), ranking: [], myEntries: [],
+    historyHasMore: false, historyNextCursor: null,
+    template: { ...template, ...definition, id: "recommendation", kind: "recommendation", unit: "", description: definition.description || "" },
+    recommendations: { items: [], limit: recommendationLimit },
+  };
+}
+const recommendationBoards: GroupRankBoardDetail[] = JSON.parse(sessionStorage.getItem(recommendationStorage) || "[]");
+const removedRecommendationIds = new Set<string>(JSON.parse(sessionStorage.getItem(removedRecommendationStorage) || "[]"));
+const seededRecommendationId = "preview-mouse-recommendations";
+if (search.get("case") === "recommendations" && !removedRecommendationIds.has(seededRecommendationId) &&
+    !recommendationBoards.some(board => board.id === seededRecommendationId)) {
+  const board = newRecommendationBoard(seededRecommendationId, { name: "鼠标推荐榜", description: "推荐你用过的鼠标。" });
+  board.recommendations!.items = [
+    { id: "mx-master", model: "罗技 MX Master 3S", rank: 1, recommenders: ["preview-wang", "preview-lin", "preview-li", "preview-chen"].map(previewProfile) },
+    { id: "g-pro", model: "罗技 G Pro X Superlight 2", rank: 2, recommenders: [previewProfile("preview-li")] },
+  ];
+  recommendationBoards.push(board);
+}
+function recommendationBoard(id: string) {
+  const board = recommendationBoards.find(board => board.id === id);
+  if (!board) throw new Error("本群没有这张榜单");
+  return board;
+}
+function persistRecommendations() {
+  sessionStorage.setItem(recommendationStorage, JSON.stringify(recommendationBoards));
+}
+function refreshRecommendationRanks(items: GroupRankRecommendationRow[]) {
+  const sorted = items.filter(item => item.recommenders.length).sort((a, b) =>
+    b.recommenders.length - a.recommenders.length || a.id.localeCompare(b.id));
+  let rank = 0;
+  return sorted.map((item, index) => {
+    if (index === 0 || sorted[index - 1].recommenders.length !== item.recommenders.length) rank = index + 1;
+    return { ...item, rank };
+  });
+}
 export const groupApi = {
   background:async (_boardId:string,assetId:string)=>localBackgrounds.get(assetId) || "",
   uploadBackground:async(path:string)=>{const image=new Image();image.src=path;await image.decode();const assetId=crypto.randomUUID();localBackgrounds.set(assetId,path);return {assetId,imageWidth:image.naturalWidth,imageHeight:image.naturalHeight};},
@@ -360,7 +409,7 @@ export const groupApi = {
     if (search.get("art") === "off")
       throw new Error("artwork fallback preview");
     const r = await fetch(
-      "/__design/title-art?name=" + encodeURIComponent(boardId === detail.id ? detail.template.name : cards.find(board => board.id === boardId)?.template.name || detail.template.name),
+      "/__design/title-art?name=" + encodeURIComponent(boardId === detail.id ? detail.template.name : [...recommendationBoards, ...cards].find(board => board.id === boardId)?.template.name || detail.template.name),
     );
     if (!r.ok) throw new Error("preview artwork unavailable");
     return r.json();
@@ -369,7 +418,10 @@ export const groupApi = {
     if (search.get("state") === "error") throw new Error("暂时无法连接，请稍后重试。");
     if (search.get("state") === "loading") return new Promise<GroupRankSpaceDto>(() => {});
     await wait("read");
-    return group;
+    return { ...group, boards: [
+      ...recommendationBoards.filter(board => board.id !== seededRecommendationId || search.get("case") === "recommendations"),
+      ...group.boards,
+    ] };
   },
   templates: async () => { await wait("read"); return [
     { ...template, id: "running-distance", name: "跑步里程", metric:"本次里程", unit: "km", aggregate: "sum" },
@@ -381,6 +433,9 @@ export const groupApi = {
     if (search.get("state") === "error" || search.get("failBoard") === boardId) throw new Error("暂时无法连接，请稍后重试。");
     if (search.get("state") === "loading") return new Promise<GroupRankBoardDetail>(() => {});
     await wait("read");
+    if (removedRecommendationIds.has(boardId)) throw new Error("本群没有这张榜单");
+    const recommendation = recommendationBoards.find(board => board.id === boardId);
+    if (recommendation) return structuredClone(recommendation);
     const selected = cards.find(board => board.id === boardId);
     if (selected && selected.id !== detail.id) {
       const ranking = selected.summary?.leaders || [];
@@ -402,6 +457,42 @@ export const groupApi = {
     if (delay) await new Promise(resolve => setTimeout(resolve, delay));
     return { id: "preview-draft", template: { ...template, ...definition }, expiresAt: null };
   },
+  createRecommendationBoard: async (definition: GroupRankRecommendationDefinition, requestId: string) => {
+    await wait("save");
+    const id = `recommendation-${requestId}`;
+    const existing = recommendationBoards.find(board => board.id === id);
+    if (existing) return existing;
+    const board = newRecommendationBoard(id, definition);
+    recommendationBoards.unshift(board);
+    persistRecommendations();
+    return board;
+  },
+  recommend: async (boardId: string, model: string) => {
+    await wait("save");
+    const board = recommendationBoard(boardId);
+    if (board.status !== "open") throw new Error("榜单已暂停或关闭，暂不能推荐");
+    const items = board.recommendations!.items;
+    let item = items.find(item => recommendationKey(item.model) === recommendationKey(model));
+    const mine = (row: GroupRankRecommendationRow) => row.recommenders.some(person => person.userId === board.myUserId);
+    if (item && mine(item)) return;
+    if (items.filter(mine).length >= recommendationLimit) throw new Error("推荐名额已满");
+    if (!item) {
+      item = { id: crypto.randomUUID(), model: model.normalize("NFKC").trim().replace(/\s+/gu, " "), rank: 0, recommenders: [] };
+      items.push(item);
+    }
+    item.recommenders.push(previewProfile(board.myUserId));
+    board.recommendations!.items = refreshRecommendationRanks(items);
+    persistRecommendations();
+  },
+  withdrawRecommendation: async (boardId: string, itemId: string) => {
+    await wait("save");
+    const board = recommendationBoard(boardId);
+    const items = board.recommendations!.items;
+    const item = items.find(row => row.id === itemId);
+    if (item) item.recommenders = item.recommenders.filter(person => person.userId !== board.myUserId);
+    board.recommendations!.items = refreshRecommendationRanks(items);
+    persistRecommendations();
+  },
   createDraftBoard: async () => detail,
   createBoard: async () => detail,
   setAppearance: async (id: string, themeId: GroupRankThemeId,background:any,accentColor?:string|null) => {
@@ -414,9 +505,24 @@ export const groupApi = {
   submit: async () => { await wait("save"); },
   edit: async () => { await wait("save"); },
   remove: async () => {},
-  status: async (_id:string,status:any) => { detail.status=status; },
+  status: async (id: string, status: GroupRankBoardDto["status"]) => {
+    const board = recommendationBoards.find(board => board.id === id);
+    if (board) {
+      board.status = status;
+      persistRecommendations();
+    } else {
+      detail.status = status;
+    }
+  },
   report: async () => {},
-  removeBoard: async () => {},
+  removeBoard: async (id: string) => {
+    const index = recommendationBoards.findIndex(board => board.id === id);
+    if (index === -1) return;
+    recommendationBoards.splice(index, 1);
+    removedRecommendationIds.add(id);
+    sessionStorage.setItem(removedRecommendationStorage, JSON.stringify([...removedRecommendationIds]));
+    persistRecommendations();
+  },
   proxySubmit: async () => { await wait("save"); },
   proxyEntries: async () => search.get("proxyHistory") === "long" ? Array.from({length:20},(_,i)=>({id:`proxy-entry-${i}`,value:String(668-i),revision:1,createdAt:"2026-11-11T08:00:00Z"})) : [],
   proxyEdit: async () => {},

@@ -27,7 +27,7 @@ export function DirectoryHeading({ count, disabled = false, onCreate }: {
 
 export function DirectoryIndex({ boards, onOpen = noAction }: { boards: GroupRankBoardDto[]; onOpen?: (id: string) => void }) {
   return <View className="home-section">
-    <View className="directory-index-head"><Text>页码</Text><Text>榜首成绩</Text></View>
+    <View className="directory-index-head"><Text>页码</Text><Text>{boards.some(board => board.template.kind === "recommendation") ? "榜首" : "榜首成绩"}</Text></View>
     <View className="group-board-list">
       {boards.map((board, index) =>
         <BookCard key={board.id} board={board} pageNumber={folio(index)} onOpen={() => onOpen(board.id)} />

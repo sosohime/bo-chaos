@@ -27,7 +27,13 @@ export type GroupRankBoardStatus = "open" | "paused" | "closed";
 
 export type GroupRankEntryMode = "single" | "multiple";
 
+export interface GroupRankRecommendationDefinition {
+  name: string;
+  description?: string;
+}
+
 export interface GroupRankTemplate {
+  kind?: "recommendation";
   entryMode?: GroupRankEntryMode;
   background?: GroupRankBackground | null;
   themeId?: GroupRankThemeId;
@@ -99,11 +105,19 @@ export interface GroupRankRow {
   rank: number;
 }
 
+export interface GroupRankRecommendationRow {
+  id: string;
+  model: string;
+  rank: number;
+  recommenders: GroupRankProfile[];
+}
+
 export interface GroupRankBoardDetail extends GroupRankBoardDto {
   myUserId: string;
   myProfile?: GroupRankProfile;
   ranking: GroupRankRow[];
   myEntries: GroupRankEntryDto[];
+  recommendations?: { items: GroupRankRecommendationRow[]; limit: number };
   proxyParticipants?: GroupRankProxyParticipantDto[];
   historyHasMore: boolean;
   historyNextCursor: string | null;

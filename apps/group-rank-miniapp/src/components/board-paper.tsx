@@ -2,6 +2,7 @@ import { Button, Text, View } from "@tarojs/components";
 import type { GroupRankBoardDetail, GroupRankRow } from "@mono/types";
 import type { CSSProperties } from "react";
 import BoardRanking from "./board-ranking";
+import { myRecommendations } from "./recommendation-ranking";
 import { paletteStyle } from "../lib/palette";
 import { themeId } from "../lib/theme";
 import { useViewport } from "../lib/viewport";
@@ -27,6 +28,8 @@ type PaperActions = {
   onMore: () => void;
   onShare: () => void;
   onProxy?: () => void;
+  onPeople?: (id: string) => void;
+  onMyRecommendations?: () => void;
   onHistory: () => void;
   onProfile: () => void;
   onRankAction: (row: GroupRankRow) => (() => void) | undefined;
@@ -64,8 +67,13 @@ export default function BoardPaper({ detail, actions, busy = false }: {
       onMore={actions?.onMore}
       onShare={actions?.onShare}
       onProxy={actions?.onProxy}
+      onPeople={actions?.onPeople}
     />
     <View className="notebook-own">
+      {detail.recommendations && <Button className="notebook-history-link" disabled={busy}
+        onClick={actions?.onMyRecommendations}>
+        <Text>我的推荐 {myRecommendations(detail).length}/{detail.recommendations.limit}</Text><Text aria-hidden>›</Text>
+      </Button>}
       {showHistory && <Button
         className="notebook-history-link"
         ariaLabel="我的成绩记录"

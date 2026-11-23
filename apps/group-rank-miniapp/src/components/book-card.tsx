@@ -81,7 +81,7 @@ export default function BookCard({
       unit={board.template.unit}
       onOpen={onOpen}
     >
-      {first ? (
+      {board.template.kind === "recommendation" ? <Text>好物推荐榜</Text> : first ? (
         <Text className="directory-row-leader">
           {first.displayName}{winnerCount > 1 ? `等 ${winnerCount} 位并列第一` : ""}
         </Text>
