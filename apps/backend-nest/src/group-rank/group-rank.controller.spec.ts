@@ -14,6 +14,7 @@ describe('group ranking HTTP boundary', () => {
     createBoard: jest.fn(),
     createRecommendationBoard: jest.fn().mockResolvedValue({ id: 'recommendation-board' }),
     recommend: jest.fn().mockResolvedValue({ recommended: true }),
+    updateRecommendationNote: jest.fn().mockResolvedValue({ updated: true }),
     withdrawRecommendation: jest.fn().mockResolvedValue({ withdrawn: true }),
     detail: jest.fn(),
     setAppearance: jest.fn(),
@@ -115,6 +116,13 @@ describe('group ranking HTTP boundary', () => {
       .send({ model: 'MX Master 3S', note: '字'.repeat(121) }).expect(400);
     await request(app.getHttpServer()).post(votes).set('Authorization', 'Bearer token')
       .send({ model: 'MX Master 3S', note: { text: '很顺滑' } }).expect(400);
+    const noteUrl = `${votes}/model-a/note`;
+    await request(app.getHttpServer()).patch(noteUrl).send({ note: '滚轮很顺滑' }).expect(401);
+    await request(app.getHttpServer()).patch(noteUrl).set('Authorization', 'Bearer token')
+      .send({ note: '滚轮很顺滑', userId: 'another-user' }).expect(400);
+    await request(app.getHttpServer()).patch(noteUrl).set('Authorization', 'Bearer token').send({ note: '' }).expect(400);
+    await request(app.getHttpServer()).patch(noteUrl).set('Authorization', 'Bearer token').send({ note: '滚轮很顺滑' }).expect(200);
+    expect(service.updateRecommendationNote).toHaveBeenCalledWith(identity, 'recommendation-board', 'model-a', '滚轮很顺滑');
     await request(app.getHttpServer()).delete(`${votes}/model-a`).set('Authorization', 'Bearer token').expect(200);
     expect(service.withdrawRecommendation).toHaveBeenCalledWith(identity, 'recommendation-board', 'model-a');
   });

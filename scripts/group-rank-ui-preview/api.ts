@@ -506,6 +506,17 @@ export const groupApi = {
     board.recommendations!.items = refreshRecommendationRanks(items);
     persistRecommendations();
   },
+  updateRecommendationNote: async (boardId: string, itemId: string, note: string) => {
+    await wait("save");
+    const board = recommendationBoard(boardId);
+    if (board.status !== "open") throw new Error("榜单已暂停或关闭，暂不能修改推荐语");
+    const item = board.recommendations!.items.find(row => row.id === itemId);
+    const vote = item?.recommenders.find(person => person.userId === board.myUserId);
+    if (!vote) throw new Error("没有找到你的这条推荐");
+    vote.note = note;
+    persistRecommendations();
+    return { updated: true };
+  },
   createDraftBoard: async () => detail,
   createBoard: async () => detail,
   setAppearance: async (id: string, themeId: GroupRankThemeId,background:any,accentColor?:string|null) => {

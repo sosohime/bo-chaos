@@ -1,10 +1,15 @@
 import { Prisma } from '@mono/prisma-client';
 import type { GroupRankBoardDetail, GroupRankBoardDto, GroupRankTemplate } from '@mono/types';
+import { shortText } from './definitions';
 import { mapProfile } from './profile.service';
 
 export const RECOMMENDATION_TEMPLATE_ID = 'recommendation';
 export const RECOMMENDATION_LIMIT = 5;
 export const RECOMMENDATION_NOTE_MAX_LENGTH = 120;
+
+export function normalizeRecommendationNote(input: string, required = true) {
+  return shortText(input.replace(/[\r\n]+/g, ' '), '推荐语', RECOMMENDATION_NOTE_MAX_LENGTH, required);
+}
 
 export function isRecommendation(snapshot: Prisma.JsonValue) {
   return (snapshot as unknown as GroupRankTemplate | null)?.kind === 'recommendation';

@@ -112,6 +112,7 @@
 .recommendation-person-note { display: block; margin-top: 4px; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
 .recommendation-sheet-row .recommendation-model { flex: 1; min-width: 0; }
 .recommendation-sheet-row .text-action { flex: none; }
+.recommendation-sheet-row .recommendation-note-action { color: var(--accent-readable, var(--accent)); }
 .recommendation-own-list, .recommendation-people-list { margin-top: 10px; }
 .recommendation-tabs { display: flex; gap: 16px; padding-inline: 16px; border-bottom: 1px solid var(--border); }
 .recommendation-tab { flex: 1; min-height: 44Px; border-bottom: 2px solid transparent; color: var(--text-secondary); font-size: 14px; }

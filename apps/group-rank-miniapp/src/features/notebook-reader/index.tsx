@@ -434,6 +434,14 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
     return act(() => groupApi.withdrawRecommendation(boardId, item.id), false, "已撤回");
   }
 
+  function updateRecommendationNote(itemId: string, note: string) {
+    if (detail?.status !== "open" || lock.current || !note.trim()) return;
+    setScoreError("");
+    void Promise.resolve(Taro.hideKeyboard?.()).catch(() => {});
+    return act(() => groupApi.updateRecommendationNote(boardId, itemId, note.trim()),
+      false, "推荐语已保存", () => setRecommendationDraft(null));
+  }
+
   function openProxy(participantId = "") {
     if (!detail || turning || detail.creatorId !== detail.myUserId || lock.current) return;
     // Proxy names belong only to pending participants, never to the creator's profile flow.
@@ -1059,7 +1067,7 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
             onQueryChange={value => { setModelQuery(value); setRecommendationDraft(null); setScoreError(""); }}
             onDraftChange={changeRecommendationDraft}
             onClose={() => setRecommendationMode(null)}
-            onRecommend={recommendModel} onWithdraw={withdrawRecommendation} />}
+            onRecommend={recommendModel} onUpdateNote={updateRecommendationNote} onWithdraw={withdrawRecommendation} />}
           {scoreOpen && !profileOpen && (
             <BottomSheet
               className="score-sheet"

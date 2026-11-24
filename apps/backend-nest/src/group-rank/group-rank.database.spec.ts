@@ -1079,6 +1079,38 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
     expect(text).toHaveBeenLastCalledWith('GPX 2 适合趴握', expect.any(String), 4);
   });
 
+  it('fills and edits the owner’s note in place without adding a recommendation', async () => {
+    const board = await service.createRecommendationBoard(a, { name: '推荐语编辑' }, 'edit-recommendation-note');
+    await service.recommend(a, board.id, 'GPX 2');
+    const [item] = (await service.detail(a, board.id)).recommendations!.items;
+    const where = { itemId_userId: { itemId: item.id, userId: a.userId } };
+    const originalTime = new Date('2026-10-01T00:00:00Z');
+    await prisma.groupRankRecommendation.update({ where, data: { createdAt: originalTime } });
+    const summary = async () => (await service.currentGroup(a)).boards.find(row => row.id === board.id)?.recommendationSummary;
+    const originalSummary = await summary();
+    const text = jest.fn().mockResolvedValue(null);
+    const voting = new GroupRankService(prisma, {} as any, { text } as any);
+
+    await expect(voting.updateRecommendationNote(a2, board.id, item.id, '别人的推荐')).rejects.toBeInstanceOf(NotFoundException);
+    await expect(voting.updateRecommendationNote(b, board.id, item.id, '其他群')).rejects.toBeInstanceOf(NotFoundException);
+    expect(text).not.toHaveBeenCalled();
+    await voting.updateRecommendationNote(a, board.id, item.id, '握着稳');
+    expect(text).toHaveBeenLastCalledWith('握着稳', expect.any(String), 4);
+    text.mockRejectedValueOnce(new BadRequestException('内容未通过检查'));
+    await expect(voting.updateRecommendationNote(a, board.id, item.id, '候选内容')).rejects.toThrow('内容未通过检查');
+    expect(await prisma.groupRankRecommendation.findUnique({ where })).toMatchObject({ note: '握着稳', createdAt: originalTime });
+
+    await voting.updateRecommendationNote(a, board.id, item.id, '侧键好够');
+    await voting.updateRecommendationNote(a, board.id, item.id, '侧键好够');
+    expect(text).toHaveBeenCalledTimes(3);
+    expect(await prisma.groupRankRecommendation.findUnique({ where })).toMatchObject({ note: '侧键好够', createdAt: originalTime });
+    expect(await summary()).toEqual(originalSummary);
+    expect((await service.detail(a2, board.id)).recommendations!.items[0].recommenders)
+      .toMatchObject([{ userId: a.userId, note: '侧键好够' }]);
+    await service.setStatus(a, board.id, 'paused');
+    await expect(voting.updateRecommendationNote(a, board.id, item.id, '暂停后编辑')).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
   it('ranks distinct recommenders and enforces the five-model limit under concurrent writes', async () => {
     const definition = { name: '鼠标推荐榜', description: '分享用过的鼠标' };
     const board = await service.createRecommendationBoard(a, definition, 'mouse-recommendations');

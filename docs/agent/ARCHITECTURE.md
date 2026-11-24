@@ -77,6 +77,8 @@ The directory reads score and recommendation summaries in the same current-group
 
 The recommendation detail flow confirms each model separately. The existing recommendation endpoint accepts an optional usage note, applies group text review, and stores the note on that member's vote. The client shows notes in the group's recommender sheet.
 
+The note edit endpoint reviews the new text, then updates the existing group member's vote under the board lock. The update guards against a withdrawal or a different note edit occurring during review.
+
 The server orders the group directory by board activity time. The client uses that order for page numbers and captures it when opening the reader. Returning to the directory refreshes the order from the server.
 
 Group members claim proxy records directly. One board transaction validates group membership and the per-period single-entry rule, then transfers the original scores, times and recorder attribution to the member. The same member can retry the claim without duplicating records.

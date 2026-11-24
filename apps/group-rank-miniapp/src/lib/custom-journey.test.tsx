@@ -42,6 +42,7 @@ const state = vi.hoisted(() => ({
   board: vi.fn(),
   currentGroup: vi.fn(),
   recommend: vi.fn(),
+  updateRecommendationNote: vi.fn(),
   withdrawRecommendation: vi.fn(),
   submit: vi.fn(),
   edit: vi.fn(),
@@ -114,6 +115,7 @@ vi.mock("./api", () => ({
     board: state.board,
     currentGroup: state.currentGroup,
     recommend: state.recommend,
+    updateRecommendationNote: state.updateRecommendationNote,
     withdrawRecommendation: state.withdrawRecommendation,
     submit: state.submit,
     edit: state.edit,
@@ -895,6 +897,37 @@ it("confirms one model at a time, shows the note to group members, and withdraws
   await click("查看 GPX 2 的推荐人");
   expect(sheet().querySelectorAll(".recommendation-person")).toHaveLength(2);
   expect(sheet().querySelector(".recommendation-person-note")?.textContent).toBe("打 FPS 跟手");
+});
+
+it("uses the same note edit action for old recommendations and existing notes", async () => {
+  const old: GroupRankRecommendationRow = { id: "old", model: "G502", rank: 1, recommenders: [completeProfile] };
+  const written: GroupRankRecommendationRow = { id: "written", model: "GPX 2", rank: 1, recommenders: [
+    { ...completeProfile, note: "握着稳" },
+  ] };
+  await mountBoard({
+    myProfile: completeProfile,
+    template: { name: "群鼠标", kind: "recommendation" },
+    recommendations: { items: [old, written], limit: 5 },
+  });
+  await click("我的推荐 2/5");
+  await click("修改推荐语 G502");
+  expect(container.querySelector("textarea")?.value).toBe("");
+  await click("保存推荐语");
+  expect(state.updateRecommendationNote).not.toHaveBeenCalled();
+  await input("推荐语", "  侧键好够  ");
+  const detail = await state.board();
+  const filled = { ...old, recommenders: [{ ...completeProfile, note: "侧键好够" }] };
+  state.board.mockResolvedValue({ ...detail, recommendations: { items: [filled, written], limit: 5 } });
+  await click("保存推荐语");
+  expect(state.updateRecommendationNote).toHaveBeenLastCalledWith("custom-board", "old", "侧键好够");
+  expect(container.querySelector(".recommendation-tabs")?.textContent).toContain("我的推荐 2/5");
+  await click("修改推荐语 GPX 2");
+  expect(container.querySelector("textarea")?.value).toBe("握着稳");
+  await input("推荐语", "滚轮顺滑");
+  await click("保存推荐语");
+  expect(state.updateRecommendationNote).toHaveBeenLastCalledWith("custom-board", "written", "滚轮顺滑");
+  expect(state.recommend).not.toHaveBeenCalled();
+  expect(state.withdrawRecommendation).not.toHaveBeenCalled();
 });
 
 it("dismisses the search keyboard and lets a new model be confirmed with the note blank", async () => {

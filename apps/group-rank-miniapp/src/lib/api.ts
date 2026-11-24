@@ -404,6 +404,8 @@ export const groupApi = {
     request<GroupRankBoardDto>("/boards", "POST", { recommendation, requestId }),
   recommend: (boardId: string, model: string, note?: string) =>
     request<{ recommended: true }>(`/boards/${encodeURIComponent(boardId)}/recommendations`, "POST", { model, ...(note ? { note } : {}) }),
+  updateRecommendationNote: (boardId: string, itemId: string, note: string) =>
+    request<{ updated: true }>(`/boards/${encodeURIComponent(boardId)}/recommendations/${encodeURIComponent(itemId)}/note`, "PATCH", { note }),
   withdrawRecommendation: (boardId: string, itemId: string) =>
     request<{ withdrawn: true }>(`/boards/${encodeURIComponent(boardId)}/recommendations/${encodeURIComponent(itemId)}`, "DELETE"),
   createDraftBoard: (draftId: string, requestId: string) =>

@@ -31,7 +31,7 @@ import { customTemplate, findDraft, normalizeAccentColor, shortText } from './de
 import { mapProfile } from './profile.service';
 import type { GroupRankDefinition } from '@mono/types';
 import { GroupRankContentService } from './content.service';
-import { isRecommendation, readRecommendations, readRecommendationSummaries, RECOMMENDATION_LIMIT, RECOMMENDATION_NOTE_MAX_LENGTH, RECOMMENDATION_TEMPLATE_ID } from './recommendations';
+import { isRecommendation, normalizeRecommendationNote, readRecommendations, readRecommendationSummaries, RECOMMENDATION_LIMIT, RECOMMENDATION_TEMPLATE_ID } from './recommendations';
 import { touchBoard } from './board-activity';
 
 type Board = {
@@ -226,7 +226,7 @@ export class GroupRankService {
 
   async recommend(identity: GroupRankIdentity, boardId: string, input: string, inputNote?: string) {
     const model = shortText(input, '型号', 80).replace(/\s+/gu, ' ');
-    const note = shortText(inputNote?.replace(/[\r\n]+/g, ' ') ?? '', '使用感受', RECOMMENDATION_NOTE_MAX_LENGTH, false);
+    const note = normalizeRecommendationNote(inputNote ?? '', false);
     const modelKey = model.replace(/ /g, '').toLowerCase();
     const board = await this.board(identity, boardId);
     this.requireRecommendationBoard(board);
@@ -258,6 +258,36 @@ export class GroupRankService {
       await tx.groupRankRecommendation.create({ data: { itemId, userId, note: note || null } });
       await touchBoard(tx, boardId);
       return { recommended: true };
+    });
+  }
+
+  async updateRecommendationNote(identity: GroupRankIdentity, boardId: string, itemId: string, input: string) {
+    const note = normalizeRecommendationNote(input);
+    const board = await this.board(identity, boardId);
+    this.requireRecommendationBoard(board);
+    if (board.status !== 'open') throw new ForbiddenException('榜单已暂停或关闭，暂不能修改推荐语');
+
+    const where = { itemId, userId: identity.userId, item: { boardId } };
+    const vote = await this.prisma.groupRankRecommendation.findFirst({ where, select: { note: true, createdAt: true } });
+    if (!vote) throw new NotFoundException('没有找到你的这条推荐');
+    if (vote.note === note) return { updated: true };
+    await this.reviewText(identity, note);
+
+    return this.withWritableBoard(identity, boardId, async (tx, lockedBoard) => {
+      this.requireRecommendationBoard(lockedBoard);
+      if (lockedBoard.status !== 'open') throw new ForbiddenException('榜单已暂停或关闭，暂不能修改推荐语');
+      const sameVote = { ...where, createdAt: vote.createdAt };
+      const { count } = await tx.groupRankRecommendation.updateMany({
+        where: { ...sameVote, note: vote.note },
+        data: { note },
+      });
+      if (count) {
+        await touchBoard(tx, boardId);
+        return { updated: true };
+      }
+      const current = await tx.groupRankRecommendation.findFirst({ where: sameVote, select: { note: true } });
+      if (current?.note === note) return { updated: true };
+      throw new ConflictException('这条推荐已变化，请刷新后再修改');
     });
   }
 
