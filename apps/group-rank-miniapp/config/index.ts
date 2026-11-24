@@ -19,7 +19,7 @@ export default defineConfig({
       {from:"src/assets/brand/boge-smile.png",to:"dist/assets/brand/boge-smile.png"},
       { from: "src/assets/brand/boge-writing.jpg", to: "dist/assets/brand/boge-writing.jpg" },
       ...["gold","silver","bronze"].map(name => ({from:`src/assets/arena/crown-${name}-v1.png`,to:`dist/assets/arena/crown-${name}-v1.png`})),
-      ...["catalog-title", "brand-title", "catalog-star-v2", "hero-ribbon-v3"].map((name) => ({
+      ...["brand-title", "catalog-star-v2", "hero-ribbon-v3"].map((name) => ({
         from: `src/assets/arena/${name}.png`,
         to: `dist/assets/arena/${name}.png`,
       })),
