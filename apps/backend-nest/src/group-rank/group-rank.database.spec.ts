@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp = require('sharp');
 import { createCipheriv } from 'node:crypto';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/library/prisma.service';
 import {
   GroupRankAuthService,
@@ -963,6 +963,152 @@ databaseTests('group ranking on an isolated PostgreSQL instance', () => {
         await single.$disconnect();
       }
     } finally { delete process.env.GROUP_RANK_AVATAR_ROOT;await rm(root,{recursive:true,force:true}); }
+  });
+
+  it('orders the directory by the latest score or recommendation change and ignores retries', async () => {
+    const score = await service.createBoard(a, 'game-score', 'updated-directory-score');
+    const recommendation = await service.createRecommendationBoard(a, { name: '鼠标更新顺序' }, 'updated-directory-recommendation');
+    const ids = [score.id, recommendation.id];
+    const directoryOrder = async () => (await service.currentGroup(a)).boards.map(board => board.id).filter(id => ids.includes(id));
+    await prisma.groupRankBoard.update({ where: { id: score.id }, data: { updatedAt: new Date(1) } });
+    await prisma.groupRankBoard.update({ where: { id: recommendation.id }, data: { updatedAt: new Date(2) } });
+    expect(await directoryOrder()).toEqual([recommendation.id, score.id]);
+
+    const entry = await service.submit(a, score.id, '8', 'updated-directory-entry');
+    expect(await directoryOrder()).toEqual([score.id, recommendation.id]);
+    await service.recommend(a, recommendation.id, 'MX Master 3S');
+    expect(await directoryOrder()).toEqual([recommendation.id, score.id]);
+    await service.submit(a, score.id, '8', 'updated-directory-entry');
+    await service.createBoard(a, 'game-score', 'updated-directory-score');
+    expect(await directoryOrder()).toEqual([recommendation.id, score.id]);
+
+    await service.edit(a, score.id, entry.id, '9', entry.revision);
+    await service.recommend(a, recommendation.id, 'mxmaster3s');
+    expect(await directoryOrder()).toEqual([score.id, recommendation.id]);
+    const [item] = (await service.detail(a, recommendation.id)).recommendations!.items;
+    await service.withdrawRecommendation(a2, recommendation.id, item.id);
+    expect(await directoryOrder()).toEqual([score.id, recommendation.id]);
+    await service.withdrawRecommendation(a, recommendation.id, item.id);
+    expect(await directoryOrder()).toEqual([recommendation.id, score.id]);
+    await service.remove(a, score.id, entry.id);
+    expect(await directoryOrder()).toEqual([score.id, recommendation.id]);
+  });
+
+  it('tracks proxy activity and actual appearance and status changes in the board timestamp', async () => {
+    const board = await service.createBoard(a, 'game-score', 'updated-directory-proxy');
+    const proxy = new GroupRankProxyService(prisma, { text: jest.fn().mockResolvedValue(null) } as any);
+    const baseline = new Date(1);
+    async function afterBackdating(operation: () => Promise<unknown>) {
+      await prisma.groupRankBoard.update({ where: { id: board.id }, data: { updatedAt: baseline } });
+      await operation();
+      return (await prisma.groupRankBoard.findUniqueOrThrow({ where: { id: board.id } })).updatedAt.getTime();
+    }
+
+    const input = { name: '目录代填', value: '10', requestId: 'updated-directory-proxy-entry' };
+    await prisma.groupRankBoard.update({ where: { id: board.id }, data: { updatedAt: baseline } });
+    const entry = await proxy.submit(a, board.id, input);
+    expect((await prisma.groupRankBoard.findUniqueOrThrow({ where: { id: board.id } })).updatedAt.getTime()).toBeGreaterThan(1);
+    expect(await afterBackdating(() => proxy.submit(a, board.id, input))).toBe(1);
+    expect(await afterBackdating(() => proxy.edit(a, board.id, entry.id, '11', entry.revision))).toBeGreaterThan(1);
+    expect(await afterBackdating(() => proxy.claim(a2, board.id, entry.participantId))).toBeGreaterThan(1);
+    const removable = await proxy.submit(a, board.id, { name: '可删除代填', value: '9', requestId: 'updated-directory-proxy-removable' });
+    expect(await afterBackdating(() => proxy.remove(a, board.id, removable.id))).toBeGreaterThan(1);
+
+    expect(await afterBackdating(() => service.setAppearance(a, board.id, 'coral'))).toBeGreaterThan(1);
+    expect(await afterBackdating(() => service.setAppearance(a, board.id, 'coral'))).toBe(1);
+    expect(await afterBackdating(() => service.setStatus(a, board.id, 'paused'))).toBeGreaterThan(1);
+    expect(await afterBackdating(() => service.setStatus(a, board.id, 'paused'))).toBe(1);
+    expect(await afterBackdating(() => service.report(a, board.id, 'other'))).toBe(1);
+  });
+
+  it('summarizes current-group recommendations, Shanghai-day activity, and ties', async () => {
+    const definition = { name: '群鼠标' };
+    const board = await service.createRecommendationBoard(a, definition, 'directory-recommendations');
+    const other = await service.createRecommendationBoard(b, definition, 'directory-recommendations');
+    const readSummary = async () => {
+      const group = await service.currentGroup(a);
+      expect(group.boards.some(item => item.id === other.id)).toBe(false);
+      return group.boards.find(item => item.id === board.id)!.recommendationSummary;
+    };
+    const empty = { recommendationCount: 0, todayCount: 0, leaderModel: null, winnerCount: 0 };
+    expect(await readSummary()).toEqual(empty);
+
+    await service.recommend(a, board.id, 'MX Master 3S');
+    await service.recommend(a2, board.id, 'MX Master 3S');
+    await service.recommend(a, board.id, 'GPX 2');
+    await service.recommend(b, other.id, '其他群的型号');
+    const [leader, runnerUp] = (await service.detail(a, board.id)).recommendations!.items;
+    await prisma.groupRankRecommendation.update({
+      where: { itemId_userId: { itemId: leader.id, userId: a.userId } },
+      data: { createdAt: new Date(Date.now() - 86_400_000) },
+    });
+    expect(await readSummary()).toEqual({ recommendationCount: 3, todayCount: 2, leaderModel: leader.model, winnerCount: 1 });
+
+    await service.withdrawRecommendation(a2, board.id, leader.id);
+    const [first] = (await service.detail(a, board.id)).recommendations!.items;
+    expect(await readSummary()).toEqual({ recommendationCount: 2, todayCount: 1, leaderModel: first.model, winnerCount: 2 });
+
+    await service.withdrawRecommendation(a, board.id, leader.id);
+    await service.withdrawRecommendation(a, board.id, runnerUp.id);
+    expect(await readSummary()).toEqual(empty);
+  });
+
+  it('moderates optional recommendation notes and keeps them scoped to each vote', async () => {
+    const board = await service.createRecommendationBoard(a, { name: '鼠标感受' }, 'recommendation-notes');
+    const text = jest.fn().mockResolvedValue(null);
+    const voting = new GroupRankService(prisma, {} as any, { text } as any);
+    await voting.recommend(a, board.id, 'MX Master 3S');
+    expect(text).toHaveBeenLastCalledWith('MX Master 3S', expect.any(String), 4);
+    text.mockRejectedValueOnce(new BadRequestException('内容未通过检查'));
+    await expect(voting.recommend(a2, board.id, 'MX Master 3S', '握着稳')).rejects.toThrow('内容未通过检查');
+    expect((await voting.detail(a, board.id)).recommendations!.items[0].recommenders).toHaveLength(1);
+
+    await voting.recommend(a2, board.id, 'MX Master 3S', '  握着稳\n侧键好够  ');
+    expect(text).toHaveBeenLastCalledWith('握着稳 侧键好够', expect.any(String), 4);
+    await voting.recommend(a2, board.id, 'mxmaster3s', '重试时替换');
+    const [item] = (await voting.detail(a, board.id)).recommendations!.items;
+    expect(item.recommenders.find(person => person.userId === a.userId)).not.toHaveProperty('note');
+    expect(item.recommenders.find(person => person.userId === a2.userId)?.note).toBe('握着稳 侧键好够');
+    await expect(voting.detail(b, board.id)).rejects.toBeInstanceOf(NotFoundException);
+    expect((await voting.currentGroup(a)).boards.find(row => row.id === board.id)).not.toHaveProperty('recommendations');
+
+    await voting.withdrawRecommendation(a2, board.id, item.id);
+    const [remaining] = (await voting.detail(a, board.id)).recommendations!.items;
+    expect(remaining.recommenders).toMatchObject([{ userId: a.userId }]);
+    await voting.recommend(a2, board.id, 'GPX 2', '适合趴握');
+    expect(text).toHaveBeenLastCalledWith('GPX 2 适合趴握', expect.any(String), 4);
+  });
+
+  it('fills and edits the owner’s note in place without adding a recommendation', async () => {
+    const board = await service.createRecommendationBoard(a, { name: '推荐语编辑' }, 'edit-recommendation-note');
+    await service.recommend(a, board.id, 'GPX 2');
+    const [item] = (await service.detail(a, board.id)).recommendations!.items;
+    const where = { itemId_userId: { itemId: item.id, userId: a.userId } };
+    const originalTime = new Date('2026-10-01T00:00:00Z');
+    await prisma.groupRankRecommendation.update({ where, data: { createdAt: originalTime } });
+    const summary = async () => (await service.currentGroup(a)).boards.find(row => row.id === board.id)?.recommendationSummary;
+    const originalSummary = await summary();
+    const text = jest.fn().mockResolvedValue(null);
+    const voting = new GroupRankService(prisma, {} as any, { text } as any);
+
+    await expect(voting.updateRecommendationNote(a2, board.id, item.id, '别人的推荐')).rejects.toBeInstanceOf(NotFoundException);
+    await expect(voting.updateRecommendationNote(b, board.id, item.id, '其他群')).rejects.toBeInstanceOf(NotFoundException);
+    expect(text).not.toHaveBeenCalled();
+    await voting.updateRecommendationNote(a, board.id, item.id, '握着稳');
+    expect(text).toHaveBeenLastCalledWith('握着稳', expect.any(String), 4);
+    text.mockRejectedValueOnce(new BadRequestException('内容未通过检查'));
+    await expect(voting.updateRecommendationNote(a, board.id, item.id, '候选内容')).rejects.toThrow('内容未通过检查');
+    expect(await prisma.groupRankRecommendation.findUnique({ where })).toMatchObject({ note: '握着稳', createdAt: originalTime });
+
+    await voting.updateRecommendationNote(a, board.id, item.id, '侧键好够');
+    await voting.updateRecommendationNote(a, board.id, item.id, '侧键好够');
+    expect(text).toHaveBeenCalledTimes(3);
+    expect(await prisma.groupRankRecommendation.findUnique({ where })).toMatchObject({ note: '侧键好够', createdAt: originalTime });
+    expect(await summary()).toEqual(originalSummary);
+    expect((await service.detail(a2, board.id)).recommendations!.items[0].recommenders)
+      .toMatchObject([{ userId: a.userId, note: '侧键好够' }]);
+    await service.setStatus(a, board.id, 'paused');
+    await expect(voting.updateRecommendationNote(a, board.id, item.id, '暂停后编辑')).rejects.toBeInstanceOf(ForbiddenException);
   });
 
   it('ranks distinct recommenders and enforces the five-model limit under concurrent writes', async () => {

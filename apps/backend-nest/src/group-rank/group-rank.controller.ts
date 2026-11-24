@@ -32,6 +32,7 @@ import {
   type GroupRankIdentity,
 } from './group-auth.service';
 import { GroupRankService } from './group-rank.service';
+import { RECOMMENDATION_NOTE_MAX_LENGTH } from './recommendations';
 import { GROUP_RANK_TEMPLATES } from './templates';
 
 class SessionBody {
@@ -45,6 +46,10 @@ class RecommendationDefinitionBody {
 }
 class RecommendationBody {
   @IsString() @Length(1, 80) model!: string;
+  @IsOptional() @IsString() @Length(0, RECOMMENDATION_NOTE_MAX_LENGTH) note?: string;
+}
+class RecommendationNoteBody {
+  @IsString() @Length(1, RECOMMENDATION_NOTE_MAX_LENGTH) note!: string;
 }
 class CreateBoardBody {
   @IsOptional() @IsObject() @ValidateNested() @Type(() => RecommendationDefinitionBody)
@@ -156,7 +161,16 @@ export class GroupRankController {
     @Param('boardId') boardId: string,
     @Body() body: RecommendationBody,
   ) {
-    return ok(await this.service.recommend(req.groupRankIdentity, boardId, body.model));
+    return ok(await this.service.recommend(req.groupRankIdentity, boardId, body.model, body.note));
+  }
+  @Patch('boards/:boardId/recommendations/:itemId/note')
+  async updateRecommendationNote(
+    @Req() req: GroupRequest,
+    @Param('boardId') boardId: string,
+    @Param('itemId') itemId: string,
+    @Body() body: RecommendationNoteBody,
+  ) {
+    return ok(await this.service.updateRecommendationNote(req.groupRankIdentity, boardId, itemId, body.note));
   }
   @Delete('boards/:boardId/recommendations/:itemId')
   async withdrawRecommendation(

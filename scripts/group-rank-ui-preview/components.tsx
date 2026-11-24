@@ -6,20 +6,23 @@ export const RootPortal=({children}:any)=>createPortal(children,document.body);
 export const PageMeta=({pageStyle,scrollTop}:any)=>{useLayoutEffect(()=>{const body=document.body.style.cssText;const html=document.documentElement.style.overflow;if(pageStyle){document.body.style.cssText+=';'+pageStyle;document.documentElement.style.overflow="hidden";}if(scrollTop&&!pageStyle)window.scrollTo(0,parseFloat(scrollTop));return()=>{document.body.style.cssText=body;document.documentElement.style.overflow=html}},[pageStyle,scrollTop]);return null};
 export const Text=({children,...props}:any)=>(React.createElement("text",props,children));
 export const Button=({children,onClick,openType,formType,loading,disabled,hoverClass,hoverStartTime,hoverStayTime,ariaLabel,...props}:any)=><button {...props} aria-label={ariaLabel} type={formType==='submit'?'submit':'button'} disabled={disabled} onMouseDown={e=>{if(document.activeElement?.getAttribute('data-hold-keyboard')==='true')e.preventDefault();}} onClick={openType === "share" ? previewShare : onClick}>{children}</button>;
-export const Input=({onInput,onNickNameReview,onBlur,onFocus,onKeyboardHeightChange,adjustPosition,holdKeyboard,cursorSpacing,type,maxlength,confirmType,focus,placeholderClass,...props}:any)=>{
+const PreviewTextField=({multiline,onInput,onNickNameReview,onBlur,onFocus,onKeyboardHeightChange,adjustPosition,holdKeyboard,cursorSpacing,type,maxlength,confirmType,focus,placeholderClass,fixed,disableDefaultPadding,ariaLabel,...props}:any)=>{
  const [keyboard,setKeyboard]=useState(false);
- const ref=useRef<HTMLInputElement>(null);
+ const ref=useRef<HTMLInputElement & HTMLTextAreaElement>(null);
  const height=Number(new URLSearchParams(location.search).get('keyboard')||0);
- // Mirror ordinary native Input auto-pan. Portal SheetInput opts out and owns
+ // Mirror ordinary native field auto-pan. Portal fields opt out and own
  // its ScrollView focus anchor; this adapter never pans those fields.
  useLayoutEffect(()=>{if(!keyboard||height<=0||adjustPosition===false||!ref.current)return;const bottom=innerHeight-height-Math.max(0,Number(cursorSpacing)||0);const delta=ref.current.getBoundingClientRect().bottom-bottom;if(delta>0)window.scrollTo({top:window.scrollY+delta,behavior:'instant' as ScrollBehavior});},[keyboard,height,adjustPosition,cursorSpacing]);
- return <><input {...props} ref={ref} data-hold-keyboard={holdKeyboard?'true':undefined} type={type==='digit'?'text':type==='nickname'?'text':type||'text'} maxLength={maxlength}
+ const Field=multiline?'textarea':'input';
+ return <><Field {...props} ref={ref} aria-label={ariaLabel} data-hold-keyboard={holdKeyboard?'true':undefined} type={multiline?undefined:type==='digit'||type==='nickname'?'text':type||'text'} maxLength={maxlength}
    onFocus={e=>{setKeyboard(true);emitPreviewKeyboardHeight(height);onFocus?.({detail:{height,value:e.target.value}});}}
    onBlur={e=>{setKeyboard(false);emitPreviewKeyboardHeight(0);onKeyboardHeightChange?.({detail:{height:0}});onBlur?.(e);}}
    onChange={e=>onInput?.({detail:{value:e.target.value}})} />
    {keyboard&&height>0&&<div className="preview-keyboard" style={{height}}><span>模拟键盘 · {height}px</span><button type="button" onMouseDown={e=>e.preventDefault()} onClick={()=>{ref.current?.blur();setKeyboard(false);onKeyboardHeightChange?.({detail:{height:0}});}}>完成</button></div>}
  </>;
 };
+export const Input=(props:any)=><PreviewTextField {...props}/>;
+export const Textarea=(props:any)=><PreviewTextField {...props} multiline/>;
 export const Image=({mode,src,...props}:any)=><img {...props} src={src} style={{...props.style,objectFit:mode==='aspectFit'?'contain':mode==='aspectFill'?'cover':'fill'}}/>;
 export const Form=({onSubmit,children,...props}:any)=><form {...props} onSubmit={e=>{e.preventDefault();onSubmit?.({detail:{value:Object.fromEntries(new FormData(e.currentTarget).entries())}})}}>{children}</form>;
 export const Picker=({children,range,value,onChange,disabled}:any)=><div className="preview-picker">{children}<select disabled={disabled} value={value} onChange={e=>onChange?.({detail:{value:e.target.value}})}>{range?.map((s:string,i:number)=><option key={i} value={i}>{s}</option>)}</select></div>;

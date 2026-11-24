@@ -14,6 +14,7 @@ import { shortText } from './definitions';
 import { validateScore } from './templates';
 import { isRecommendation } from './recommendations';
 import { assertSingleClaim, singleRecordScope } from './record-policy';
+import { touchBoard } from './board-activity';
 
 @Injectable()
 export class GroupRankProxyService {
@@ -177,6 +178,7 @@ export class GroupRankProxyService {
           value,
         },
       });
+      await touchBoard(tx, boardId);
       return {
         ...this.entry(entry, board.creatorId),
         participantId: person.id,
@@ -229,13 +231,14 @@ export class GroupRankProxyService {
       });
       if (changed.count !== 1)
         throw new ConflictException('记录已变化或已认领，请刷新后再修改');
+      await touchBoard(tx, boardId);
       return { updated: true };
     });
   }
   async remove(identity: GroupRankIdentity, boardId: string, entryId: string) {
     return this.locked(identity, boardId, async (tx) => {
       await this.board(tx, identity, boardId);
-      await tx.groupRankProxyEntry.updateMany({
+      const { count } = await tx.groupRankProxyEntry.updateMany({
         where: {
           id: entryId,
           boardId,
@@ -248,6 +251,7 @@ export class GroupRankProxyService {
           revision: { increment: 1 },
         },
       });
+      if (count) await touchBoard(tx, boardId);
       return { deleted: true };
     });
   }
@@ -323,6 +327,7 @@ export class GroupRankProxyService {
           claimantUserId: null,
         },
       });
+      await touchBoard(tx, boardId);
       return { claimed: true };
     });
   }

@@ -41,6 +41,10 @@
 
 群排行专用测试库只执行三项GroupRank增量SQL：`20261026000000_group_rank_direct_entry`、`20261030000000_group_rank_custom_profile`、`20261030010000_group_rank_proxy`。后两项应用前各备份并验证恢复，在事务内应用；不恢复运行库。**不要对该独立库直接执行整个 monorepo 的历史 migrate deploy**：旧迁移属于 BoFans，当前独立库只需要群排行表。应用的 SQL 哈希在候选 `release.json` 及安装记录中，可用它审查后续迁移。
 
+好物榜使用感受版本需要在独立群排行库先应用 `20261124000000_group_rank_recommendation_note`，再切换该版本的后端。此增量要求已应用 `20261123000000_group_rank_recommendations`，给 `GroupRankRecommendation` 新增可空的 `note` 列，旧推荐无需回填。
+
+目录按更新时间排序的后端依赖 `20261124010000_group_rank_board_updated_at`。先停止旧群排行后端接收写入并等待在途写入结束，单独执行自带事务的迁移文件，再切换到新后端并恢复写入。迁移用保留的成绩、代填和推荐记录回填 `GroupRankBoard.updatedAt`，无活动的榜单用创建时间，并替换目录排序索引。全程暂停旧版写入，避免切换间隙的成绩和推荐漏记更新时间。
+
 BoFans 的仓库、运行环境、数据库和原 PM2 进程未被替换；原有进程 PID 保持不变。主页及原 `/rpg` 路由未切换。没有推送、提审或微信后台写入。
 
 ## HTTPS 路由与防护

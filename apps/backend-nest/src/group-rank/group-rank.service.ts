@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from 'node:util';
 import { GroupRankBackgroundService } from './background.service';
 import { backgroundRenditions } from './background-rendition';
 import type {
@@ -30,7 +31,8 @@ import { customTemplate, findDraft, normalizeAccentColor, shortText } from './de
 import { mapProfile } from './profile.service';
 import type { GroupRankDefinition } from '@mono/types';
 import { GroupRankContentService } from './content.service';
-import { isRecommendation, readRecommendations, RECOMMENDATION_LIMIT, RECOMMENDATION_TEMPLATE_ID } from './recommendations';
+import { isRecommendation, normalizeRecommendationNote, readRecommendations, readRecommendationSummaries, RECOMMENDATION_LIMIT, RECOMMENDATION_TEMPLATE_ID } from './recommendations';
+import { touchBoard } from './board-activity';
 
 type Board = {
   id: string;
@@ -104,14 +106,18 @@ export class GroupRankService {
         const [boards, memberCount, profile] = await Promise.all([
           tx.groupRankBoard.findMany({
             where: { spaceId: identity.spaceId, deletedAt: null },
-            orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+            orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }, { id: 'desc' }],
           }),
           tx.groupRankMember.count({
             where: { spaceId: identity.spaceId },
           }),
           tx.groupRankUser.findUnique({ where: { id: identity.userId } }),
         ]);
-        const summaries = await groupSummaries(tx, identity.spaceId, boards);
+        const recommendations = boards.filter(board => isRecommendation(board.templateSnapshot));
+        const [summaries, recommendationSummaries] = await Promise.all([
+          groupSummaries(tx, identity.spaceId, boards),
+          readRecommendationSummaries(tx, identity.spaceId, recommendations.map(board => board.id)),
+        ]);
         return {
           id: identity.spaceId,
           myUserId: identity.userId,
@@ -120,6 +126,7 @@ export class GroupRankService {
           boards: boards.map((board) => ({
             ...this.mapBoard(board),
             summary: summaries.get(board.id),
+            recommendationSummary: recommendationSummaries.get(board.id),
           })),
         };
       },
@@ -217,20 +224,26 @@ export class GroupRankService {
       throw new BadRequestException('这张榜单只接受好物推荐');
   }
 
-  async recommend(identity: GroupRankIdentity, boardId: string, input: string) {
+  async recommend(identity: GroupRankIdentity, boardId: string, input: string, inputNote?: string) {
     const model = shortText(input, '型号', 80).replace(/\s+/gu, ' ');
+    const note = normalizeRecommendationNote(inputNote ?? '', false);
     const modelKey = model.replace(/ /g, '').toLowerCase();
     const board = await this.board(identity, boardId);
     this.requireRecommendationBoard(board);
     if (board.status !== 'open') throw new ForbiddenException('榜单已暂停或关闭，暂不能推荐');
+    const userId = identity.userId;
     const where = { boardId_modelKey: { boardId, modelKey } };
-    if (!await this.prisma.groupRankRecommendationItem.findUnique({ where, select: { id: true } }))
-      await this.reviewText(identity, model);
+    const existing = await this.prisma.groupRankRecommendationItem.findUnique({
+      where,
+      select: { recommendations: { where: { userId }, select: { userId: true } } },
+    });
+    if (existing?.recommendations.length) return { recommended: true };
+    const textToReview = existing ? note : [model, note].filter(Boolean).join(' ');
+    if (textToReview) await this.reviewText(identity, textToReview);
 
     return this.withWritableBoard(identity, boardId, async (tx, lockedBoard) => {
       this.requireRecommendationBoard(lockedBoard);
       if (lockedBoard.status !== 'open') throw new ForbiddenException('榜单已暂停或关闭，暂不能推荐');
-      const userId = identity.userId;
       const item = await tx.groupRankRecommendationItem.findUnique({ where, select: { id: true } });
       if (item && await tx.groupRankRecommendation.findUnique({
         where: { itemId_userId: { itemId: item.id, userId } },
@@ -242,17 +255,49 @@ export class GroupRankService {
       const { id: itemId } = item || await tx.groupRankRecommendationItem.create({
         data: { boardId, model, modelKey }, select: { id: true },
       });
-      await tx.groupRankRecommendation.create({ data: { itemId, userId } });
+      await tx.groupRankRecommendation.create({ data: { itemId, userId, note: note || null } });
+      await touchBoard(tx, boardId);
       return { recommended: true };
+    });
+  }
+
+  async updateRecommendationNote(identity: GroupRankIdentity, boardId: string, itemId: string, input: string) {
+    const note = normalizeRecommendationNote(input);
+    const board = await this.board(identity, boardId);
+    this.requireRecommendationBoard(board);
+    if (board.status !== 'open') throw new ForbiddenException('榜单已暂停或关闭，暂不能修改推荐语');
+
+    const where = { itemId, userId: identity.userId, item: { boardId } };
+    const vote = await this.prisma.groupRankRecommendation.findFirst({ where, select: { note: true, createdAt: true } });
+    if (!vote) throw new NotFoundException('没有找到你的这条推荐');
+    if (vote.note === note) return { updated: true };
+    await this.reviewText(identity, note);
+
+    return this.withWritableBoard(identity, boardId, async (tx, lockedBoard) => {
+      this.requireRecommendationBoard(lockedBoard);
+      if (lockedBoard.status !== 'open') throw new ForbiddenException('榜单已暂停或关闭，暂不能修改推荐语');
+      const sameVote = { ...where, createdAt: vote.createdAt };
+      const { count } = await tx.groupRankRecommendation.updateMany({
+        where: { ...sameVote, note: vote.note },
+        data: { note },
+      });
+      if (count) {
+        await touchBoard(tx, boardId);
+        return { updated: true };
+      }
+      const current = await tx.groupRankRecommendation.findFirst({ where: sameVote, select: { note: true } });
+      if (current?.note === note) return { updated: true };
+      throw new ConflictException('这条推荐已变化，请刷新后再修改');
     });
   }
 
   async withdrawRecommendation(identity: GroupRankIdentity, boardId: string, itemId: string) {
     return this.withWritableBoard(identity, boardId, async (tx, board) => {
       this.requireRecommendationBoard(board);
-      await tx.groupRankRecommendation.deleteMany({
+      const { count } = await tx.groupRankRecommendation.deleteMany({
         where: { itemId, userId: identity.userId, item: { boardId } },
       });
+      if (count) await touchBoard(tx, boardId);
       return { withdrawn: true };
     });
   }
@@ -470,31 +515,22 @@ export class GroupRankService {
       if (board.status !== 'open')
         throw new ForbiddenException('榜单已暂停或关闭，暂不能提交');
       await this.requireParticipantProfile(tx, identity.userId);
-      const score = validateScore(value, this.mapBoard(board).template);
       const template = this.mapBoard(board).template;
-      if (template.entryMode === 'single') {
-        const previous = await tx.groupRankEntry.findFirst({
-          where: { boardId, userId: identity.userId, requestId },
-        });
-        if (!previous && await tx.groupRankEntry.findFirst({
-          where: { boardId, userId: identity.userId, deletedAt: null, ...singleRecordScope(template) },
-        })) throw new ConflictException('此榜每人一笔，请修改已有成绩');
-      }
-      const entry = await tx.groupRankEntry.upsert({
-        where: {
-          boardId_userId_requestId: {
-            boardId,
-            userId: identity.userId,
-            requestId,
-          },
-        },
-        create: { boardId, userId: identity.userId, requestId, value: score },
-        update: {},
+      const score = validateScore(value, template);
+      const previous = await tx.groupRankEntry.findUnique({
+        where: { boardId_userId_requestId: { boardId, userId: identity.userId, requestId } },
+      });
+      if (!previous && template.entryMode === 'single' && await tx.groupRankEntry.findFirst({
+        where: { boardId, userId: identity.userId, deletedAt: null, ...singleRecordScope(template) },
+      })) throw new ConflictException('此榜每人一笔，请修改已有成绩');
+      const entry = previous ?? await tx.groupRankEntry.create({
+        data: { boardId, userId: identity.userId, requestId, value: score },
       });
       if (entry.deletedAt || !entry.value)
         throw new ConflictException('这次提交的成绩已删除，请重新填写');
       if (!entry.value.equals(score))
         throw new ConflictException('同一次提交请求不能更换成绩');
+      if (!previous) await touchBoard(tx, boardId);
       return this.mapEntry(entry);
     });
   }
@@ -533,6 +569,7 @@ export class GroupRankService {
       });
       if (result.count !== 1)
         throw new ConflictException('成绩已发生变化，请刷新后再修改');
+      await touchBoard(tx, boardId);
       return { updated: true };
     });
   }
@@ -540,7 +577,7 @@ export class GroupRankService {
   async remove(identity: GroupRankIdentity, boardId: string, entryId: string) {
     return this.withWritableBoard(identity, boardId, async (tx, board) => {
       this.requireScoreBoard(board);
-      await tx.groupRankEntry.updateMany({
+      const { count } = await tx.groupRankEntry.updateMany({
         where: {
           id: entryId,
           boardId,
@@ -553,6 +590,7 @@ export class GroupRankService {
           revision: { increment: 1 },
         },
       });
+      if (count) await touchBoard(tx, boardId);
       return { deleted: true };
     });
   }
@@ -674,22 +712,22 @@ export class GroupRankService {
                 ?.assetId,
               tx,
             );
-      return this.mapBoard(
-        await tx.groupRankBoard.update({
-          where: { id: boardId },
-          data: {
-            themeId,
-            ...(color !== undefined ? { accentColor: color } : {}),
-            ...(resolved !== undefined
-              ? {
-                  background: resolved
-                    ? (resolved as unknown as Prisma.InputJsonValue)
-                    : Prisma.DbNull,
-                }
-              : {}),
-          },
-        }),
-      );
+      const changed = themeId !== board.themeId ||
+        (color !== undefined && color !== board.accentColor) ||
+        (resolved !== undefined && !isDeepStrictEqual(resolved, board.background));
+      if (!changed) return this.mapBoard(board);
+      const updated = await tx.groupRankBoard.update({
+        where: { id: boardId },
+        data: {
+          themeId,
+          ...(color !== undefined ? { accentColor: color } : {}),
+          ...(resolved !== undefined
+            ? { background: resolved ? (resolved as unknown as Prisma.InputJsonValue) : Prisma.DbNull }
+            : {}),
+        },
+      });
+      await touchBoard(tx, boardId);
+      return this.mapBoard(updated);
     });
   }
 
@@ -703,12 +741,10 @@ export class GroupRankService {
         throw new ForbiddenException('只有榜单创建者可以管理开放状态');
       if (board.status === 'closed' && status !== 'closed')
         throw new ConflictException('已关闭的榜单不能重新开放');
-      return this.mapBoard(
-        await tx.groupRankBoard.update({
-          where: { id: boardId },
-          data: { status },
-        }),
-      );
+      if (board.status === status) return this.mapBoard(board);
+      const updated = await tx.groupRankBoard.update({ where: { id: boardId }, data: { status } });
+      await touchBoard(tx, boardId);
+      return this.mapBoard(updated);
     });
   }
 }

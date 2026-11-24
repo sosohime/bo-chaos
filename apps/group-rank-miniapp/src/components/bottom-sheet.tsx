@@ -10,7 +10,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { Form, Input, RootPortal, ScrollView, View } from "@tarojs/components";
+import { Form, Input, RootPortal, ScrollView, Textarea, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import {
   sheetViewportHeight,
@@ -27,14 +27,19 @@ let fieldSequence = 0;
 const SheetMeasureContext = createContext<() => void>(() => {});
 export const useSheetLayout = () => useContext(SheetMeasureContext);
 
+function useSheetKeyboardField() {
+  const updateKeyboard = useContext(KeyboardContext);
+  const [id] = useState(() => `sheet-field-${++fieldSequence}`);
+  return { id, reportHeight: (height?: number) => updateKeyboard(height, id) };
+}
+
 /** Sheet inputs leave all keyboard movement to their shared viewport owner. */
 export function SheetInput({
   onFocus,
   onKeyboardHeightChange,
   ...props
 }: ComponentProps<typeof Input>) {
-  const updateKeyboard = useContext(KeyboardContext);
-  const [id] = useState(() => `sheet-field-${++fieldSequence}`);
+  const { id, reportHeight } = useSheetKeyboardField();
   return (
     <View className="sheet-input" id={id}>
       <Input
@@ -45,14 +50,39 @@ export function SheetInput({
         cursorSpacing={16}
         confirmType="done"
         onFocus={(event) => {
-          updateKeyboard(
-            event.detail.height > 0 ? event.detail.height : undefined,
-            id,
-          );
+          reportHeight(event.detail.height > 0 ? event.detail.height : undefined);
           onFocus?.(event);
         }}
         onKeyboardHeightChange={(event) => {
-          updateKeyboard(event.detail.height, id);
+          reportHeight(event.detail.height);
+          onKeyboardHeightChange?.(event);
+        }}
+      />
+    </View>
+  );
+}
+
+export function SheetTextarea({
+  onFocus,
+  onKeyboardHeightChange,
+  ...props
+}: ComponentProps<typeof Textarea>) {
+  const { id, reportHeight } = useSheetKeyboardField();
+  return (
+    <View id={id}>
+      <Textarea
+        {...props}
+        adjustPosition={false}
+        holdKeyboard
+        fixed
+        cursorSpacing={16}
+        disableDefaultPadding
+        onFocus={event => {
+          reportHeight(event.detail.height > 0 ? event.detail.height : undefined);
+          onFocus?.(event);
+        }}
+        onKeyboardHeightChange={event => {
+          reportHeight(event.detail.height);
           onKeyboardHeightChange?.(event);
         }}
       />
@@ -81,6 +111,7 @@ export default function BottomSheet({
   footer,
   onSubmit,
   bodyScrollTop,
+  bodyScrollIntoView,
   onBodyScroll,
   className = "",
 }: {
@@ -90,6 +121,7 @@ export default function BottomSheet({
   onSubmit?: ComponentProps<typeof Form>["onSubmit"];
   className?: string;
   bodyScrollTop?: number;
+  bodyScrollIntoView?: string;
   onBodyScroll?: ComponentProps<typeof ScrollView>["onScroll"];
 }) {
   const theme = useContext(FrameTheme);
@@ -264,7 +296,7 @@ export default function BottomSheet({
         scrollY
         scrollTop={bodyScrollTop}
         onScroll={onBodyScroll}
-        scrollIntoView={focusAnchor}
+        scrollIntoView={focusAnchor || bodyScrollIntoView}
         scrollWithAnimation={false}
       >
         <View id={`${sheetId}-content`} className="profile-sheet-content">{children}</View>

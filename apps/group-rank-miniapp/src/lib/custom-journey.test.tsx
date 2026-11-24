@@ -2,7 +2,7 @@
 import { act, createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import type { GroupRankEntryDto } from "@mono/types";
+import type { GroupRankEntryDto, GroupRankRecommendationRow } from "@mono/types";
 import TitleArtwork from "../components/title-artwork";
 
 const state = vi.hoisted(() => ({
@@ -41,6 +41,9 @@ const state = vi.hoisted(() => ({
   downloadAvatar: vi.fn(),
   board: vi.fn(),
   currentGroup: vi.fn(),
+  recommend: vi.fn(),
+  updateRecommendationNote: vi.fn(),
+  withdrawRecommendation: vi.fn(),
   submit: vi.fn(),
   edit: vi.fn(),
   remove: vi.fn(),
@@ -111,6 +114,9 @@ vi.mock("./api", () => ({
     avatar: state.downloadAvatar,
     board: state.board,
     currentGroup: state.currentGroup,
+    recommend: state.recommend,
+    updateRecommendationNote: state.updateRecommendationNote,
+    withdrawRecommendation: state.withdrawRecommendation,
     submit: state.submit,
     edit: state.edit,
     remove: state.remove,
@@ -169,6 +175,10 @@ vi.mock("@tarojs/components", () => ({
       name: props.name,
       placeholder: props.placeholder,
     });
+  },
+  Textarea: (props: Record<string, any>) => {
+    state.fields.set(props.ariaLabel, props);
+    return createElement("textarea", { value: props.value, readOnly: true, "aria-label": props.ariaLabel });
   },
   Form: ({ onSubmit, children, ...props }: Record<string, any>) => {
     state.form = onSubmit;
@@ -841,6 +851,143 @@ const completeProfile = {
   nickname: "我的昵称",
   avatarVersion: "v1",
 };
+
+it("confirms one model at a time, shows the note to group members, and withdraws from the management tab", async () => {
+  const owned: GroupRankRecommendationRow = { id: "g502", model: "G502", rank: 1, recommenders: [completeProfile] };
+  const candidate: GroupRankRecommendationRow = { id: "gpx", model: "GPX 2", rank: 1, recommenders: [
+    { userId: "other", nickname: "小周", avatarVersion: null },
+  ] };
+  await mountBoard({
+    myProfile: completeProfile,
+    template: { name: "群鼠标", kind: "recommendation" },
+    recommendations: { items: [owned, candidate], limit: 5 },
+  });
+  await click("推荐型号");
+  const sheet = () => container.querySelector(".recommendation-sheet")!;
+  expect(sheet().textContent).toContain("✓ 已推荐");
+  expect(sheet().textContent).toContain("我的推荐 1/5");
+  expect(sheet().textContent).not.toContain("撤回");
+  await click("推荐 GPX 2");
+  expect(state.recommend).not.toHaveBeenCalled();
+  expect(sheet().textContent).toContain("我的推荐 1/5");
+  await click("取消");
+  expect(sheet().querySelector("textarea")).toBeNull();
+  await click("推荐 GPX 2");
+  await input("使用感受（选填）", "  打 FPS 跟手  ");
+  state.recommend.mockRejectedValueOnce(new Error("审核暂不可用"));
+  await click("确认推荐");
+  expect(sheet().textContent).toContain("审核暂不可用");
+  expect(sheet().querySelector("textarea")?.value).toBe("  打 FPS 跟手  ");
+
+  const current = await state.board();
+  const updated = { ...candidate, recommenders: [...candidate.recommenders, { ...completeProfile, note: "打 FPS 跟手" }] };
+  state.board.mockResolvedValue({ ...current, recommendations: { items: [updated, owned], limit: 5 } });
+  await click("确认推荐");
+  expect(state.recommend).toHaveBeenLastCalledWith("custom-board", "GPX 2", "打 FPS 跟手");
+  expect(sheet().textContent).toContain("我的推荐 2/5");
+  expect(sheet().querySelector("textarea")).toBeNull();
+  await click("我的推荐 2/5");
+  expect(sheet().querySelector('input[placeholder="搜索或输入型号"]')).toBeNull();
+  expect(sheet().querySelectorAll(".recommendation-sheet-row")).toHaveLength(2);
+  state.board.mockResolvedValue({ ...current, recommendations: { items: [updated], limit: 5 } });
+  await click("撤回 G502");
+  expect(state.withdrawRecommendation).toHaveBeenCalledWith("custom-board", "g502");
+  expect(sheet().textContent).toContain("我的推荐 1/5");
+  await click("关闭");
+  await click("查看 GPX 2 的推荐人");
+  expect(sheet().querySelectorAll(".recommendation-person")).toHaveLength(2);
+  expect(sheet().querySelector(".recommendation-person-note")?.textContent).toBe("打 FPS 跟手");
+});
+
+it("uses the same note edit action for old recommendations and existing notes", async () => {
+  const old: GroupRankRecommendationRow = { id: "old", model: "G502", rank: 1, recommenders: [completeProfile] };
+  const written: GroupRankRecommendationRow = { id: "written", model: "GPX 2", rank: 1, recommenders: [
+    { ...completeProfile, note: "握着稳" },
+  ] };
+  await mountBoard({
+    myProfile: completeProfile,
+    template: { name: "群鼠标", kind: "recommendation" },
+    recommendations: { items: [old, written], limit: 5 },
+  });
+  await click("我的推荐 2/5");
+  await click("修改推荐语 G502");
+  expect(container.querySelector("textarea")?.value).toBe("");
+  await click("保存推荐语");
+  expect(state.updateRecommendationNote).not.toHaveBeenCalled();
+  await input("推荐语", "  侧键好够  ");
+  const detail = await state.board();
+  const filled = { ...old, recommenders: [{ ...completeProfile, note: "侧键好够" }] };
+  state.board.mockResolvedValue({ ...detail, recommendations: { items: [filled, written], limit: 5 } });
+  await click("保存推荐语");
+  expect(state.updateRecommendationNote).toHaveBeenLastCalledWith("custom-board", "old", "侧键好够");
+  expect(container.querySelector(".recommendation-tabs")?.textContent).toContain("我的推荐 2/5");
+  await click("修改推荐语 GPX 2");
+  expect(container.querySelector("textarea")?.value).toBe("握着稳");
+  await input("推荐语", "滚轮顺滑");
+  await click("保存推荐语");
+  expect(state.updateRecommendationNote).toHaveBeenLastCalledWith("custom-board", "written", "滚轮顺滑");
+  expect(state.recommend).not.toHaveBeenCalled();
+  expect(state.withdrawRecommendation).not.toHaveBeenCalled();
+});
+
+it("dismisses the search keyboard and lets a new model be confirmed with the note blank", async () => {
+  const taro = (await import("@tarojs/taro")).default;
+  const original = taro.hideKeyboard;
+  const hide = vi.fn(async () => {
+    state.keyboardChanged({ height: 0 });
+    return { errMsg: "hideKeyboard:ok" };
+  });
+  taro.hideKeyboard = hide;
+  try {
+    state.windowInfo.mockReturnValue({ windowHeight: 667, windowWidth: 375, statusBarHeight: 20 });
+    await mountBoard({
+      myProfile: completeProfile,
+      template: { name: "群鼠标", kind: "recommendation" },
+      recommendations: { items: [], limit: 5 },
+    });
+    await click("推荐型号");
+    const search = state.fields.get("搜索或输入型号")!;
+    await act(async () => search.onFocus({ detail: { height: 300 } }));
+    await input("搜索或输入型号", "有线鼠标");
+    expect(container.querySelector(".profile-keyboard-open")).not.toBeNull();
+    expect(hide).not.toHaveBeenCalled();
+
+    await click("新增并推荐 有线鼠标");
+    expect(hide).toHaveBeenCalledTimes(1);
+    expect(container.querySelector(".profile-keyboard-open")).toBeNull();
+    expect(container.querySelector(".profile-sheet-body")?.getAttribute("data-scroll-target")).toBe("recommendation-draft-new");
+    expect(state.recommend).not.toHaveBeenCalled();
+    expect(container.querySelector("textarea")).not.toBeNull();
+    await click("确认推荐");
+    expect(state.recommend).toHaveBeenCalledWith("custom-board", "有线鼠标", undefined);
+  } finally {
+    taro.hideKeyboard = original;
+  }
+});
+
+it("retains the drafted note when the required profile sheet is dismissed or saved", async () => {
+  await mountBoard({
+    template: { name: "群鼠标", kind: "recommendation" },
+    recommendations: { items: [], limit: 5 },
+  });
+  state.canIUse.mockReturnValue(false);
+  await click("推荐型号");
+  await input("搜索或输入型号", "有线鼠标");
+  await click("新增并推荐 有线鼠标");
+  await input("使用感受（选填）", "侧键好够");
+  await click("确认推荐");
+  expect(state.recommend).not.toHaveBeenCalled();
+  expect(container.querySelector(".profile-sheet")?.textContent).toContain("保存并推荐");
+
+  await click("关闭");
+  expect(container.querySelector("textarea")?.value).toBe("侧键好够");
+  await click("确认推荐");
+  await act(async () => state.avatar({ detail: { avatarUrl: "wxfile://chosen" } }));
+  state.saveProfile.mockResolvedValue(completeProfile);
+  await act(async () => state.form({ detail: { value: { nickname: completeProfile.nickname } } }));
+  expect(state.recommend).toHaveBeenCalledExactlyOnceWith("custom-board", "有线鼠标", "侧键好够");
+});
+
 const proxyPerson = {
   id: "pending-person",
   displayName: "小林",

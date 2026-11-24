@@ -31,9 +31,23 @@
 .directory-row-name { display: block; color: #f2f2ef; font-size: 16px; font-weight: 750; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .directory-row-result { min-width: 0; margin-top: 3px; font-size: 12px; line-height: 1.35; color: #a3aab3; }
 .directory-row-leader { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.directory-recommendation-activity { display: flex; flex-wrap: wrap; gap: 1px 6px; }
+.directory-recommendation-activity > text { white-space: nowrap; }
+.directory-recommendation-today { color: #b4c987; }
 .directory-row-score { flex: 0 0 auto; min-width: 0; max-width: 31%; text-align: right; }
 .directory-score-value { display: block; color: #f0f1ee; font-family: var(--score-font); font-size: 21px; line-height: 1.05; overflow-wrap: anywhere; word-break: break-all; }
 .directory-score-long { font-size: 16px; }
+.directory-model-value {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  color: #f0f1ee;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+}
 .directory-score-unit { display: block; margin-top: 2px; color: #a3aab3; font-size: 11px; line-height: 1.25; overflow-wrap: anywhere; }
 .directory-row-arrow {
   flex: none;

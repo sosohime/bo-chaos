@@ -27,7 +27,9 @@ export class GroupRankHealthController {
           AND to_regclass('"GroupRankRecommendation"') IS NOT NULL
           AND (SELECT COUNT(*) = 1 FROM pg_attribute WHERE attrelid = to_regclass('"GroupRankEntry"') AND attname = 'recordedById' AND NOT attisdropped)
           AND (SELECT COUNT(*) = 2 FROM pg_attribute WHERE attrelid = to_regclass('"GroupRankUser"') AND attname IN ('nickname', 'avatarKey') AND NOT attisdropped)
-          AND (SELECT COUNT(*) = 5 FROM pg_attribute WHERE attrelid = to_regclass('"GroupRankBoard"') AND attname IN ('draftId', 'deletedAt', 'themeId', 'background', 'accentColor') AND NOT attisdropped) AND to_regclass('"GroupRankBackground"') IS NOT NULL AS ready
+          AND (SELECT COUNT(*) = 6 FROM pg_attribute WHERE attrelid = to_regclass('"GroupRankBoard"') AND attname IN ('draftId', 'deletedAt', 'themeId', 'background', 'accentColor', 'updatedAt') AND NOT attisdropped)
+          AND (SELECT COUNT(*) = 1 FROM pg_attribute WHERE attrelid = to_regclass('"GroupRankRecommendation"') AND attname = 'note' AND NOT attisdropped)
+          AND to_regclass('"GroupRankBackground"') IS NOT NULL AS ready
       `;
       if (!rows[0]?.ready) throw new Error('missing schema');
     } catch {

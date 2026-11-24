@@ -166,6 +166,7 @@ model GroupRankBoard {
   draftId          String?
   deletedAt        DateTime? @db.Timestamptz(3)
   createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime @default(now()) @db.Timestamptz(3)
   space            GroupRankSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   creator          GroupRankUser @relation(fields: [creatorId], references: [id])
   entries          GroupRankEntry[]
@@ -176,7 +177,7 @@ model GroupRankBoard {
   proxyEntries GroupRankProxyEntry[]
 
   @@unique([spaceId, creatorId, requestId])
-  @@index([spaceId, createdAt])
+  @@index([spaceId, updatedAt, createdAt, id])
 }
 
 model GroupRankRecommendationItem {
@@ -193,6 +194,7 @@ model GroupRankRecommendationItem {
 model GroupRankRecommendation {
   itemId    String
   userId    String
+  note      String? @db.VarChar(120)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   item      GroupRankRecommendationItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
   user      GroupRankUser @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -44,7 +44,7 @@ for name in ['crystal-card-v3.jpg','track-card-v1.jpg','pixel-card-v4.jpg']:
 assert (dist/'assets/brand/boge-smile.png').read_bytes() == (APP/'design/logo/boge-smile-reference.png').read_bytes()
 assert (dist/'assets/brand/boge-writing.jpg').read_bytes() == (stage/'src/assets/brand/boge-writing.jpg').read_bytes()
 assert (dist/'assets/ArenaDisplay-OFL.txt').is_file()
-for name in ['brand-title','catalog-title','catalog-star-v2','hero-ribbon-v3']:
+for name in ['brand-title','catalog-star-v2','hero-ribbon-v3']:
     assert (dist/f'assets/arena/{name}.png').read_bytes() == (stage/f'src/assets/arena/{name}.png').read_bytes()
 assert (dist/'assets/share-cover.jpg').read_bytes() == (stage/'src/assets/share-cover.jpg').read_bytes()
 for name in ['gold','silver','bronze']:

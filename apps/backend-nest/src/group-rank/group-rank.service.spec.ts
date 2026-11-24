@@ -35,6 +35,7 @@ describe('current-group isolation and score writes', () => {
     };
     prisma = {
       $queryRaw: jest.fn().mockResolvedValue([]),
+      $executeRaw: jest.fn().mockResolvedValue(1),
       groupRankBoard: {
         findFirst: jest.fn(({ where }) =>
           Promise.resolve(
@@ -70,7 +71,8 @@ describe('current-group isolation and score writes', () => {
         ]),
         findMany: jest.fn().mockResolvedValue([entry]),
         findFirst: jest.fn().mockResolvedValue(entry),
-        upsert: jest.fn().mockResolvedValue(entry),
+        findUnique: jest.fn().mockResolvedValue(entry),
+        create: jest.fn().mockResolvedValue(entry),
         updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
     };
@@ -79,11 +81,11 @@ describe('current-group isolation and score writes', () => {
   });
   it('single mode rejects a second request but allows a retry and editing', async () => {
     board.templateSnapshot = {...board.templateSnapshot, entryMode:'single'};
-    prisma.groupRankEntry.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(entry);
+    prisma.groupRankEntry.findUnique.mockResolvedValueOnce(null);
     await expect(service.submit(identity, 'board-a', '100', 'second')).rejects.toThrow('每人一笔');
-    expect(prisma.groupRankEntry.upsert).not.toHaveBeenCalled();
-    prisma.groupRankEntry.findFirst.mockResolvedValue(entry);
+    expect(prisma.groupRankEntry.create).not.toHaveBeenCalled();
     await expect(service.submit(identity, 'board-a', '100', 'request-a')).resolves.toMatchObject({id:'entry-a'});
+    expect(prisma.$executeRaw).not.toHaveBeenCalled();
     await expect(service.edit(identity, 'board-a', 'entry-a', '99', 1)).resolves.toEqual({updated:true});
   });
   it('never queries rankings or entries for a board from another group', async () => {
@@ -104,7 +106,7 @@ describe('current-group isolation and score writes', () => {
       service.setStatus(other, 'board-a', 'paused'),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(prisma.groupRankEntry.groupBy).not.toHaveBeenCalled();
-    expect(prisma.groupRankEntry.upsert).not.toHaveBeenCalled();
+    expect(prisma.groupRankEntry.create).not.toHaveBeenCalled();
     expect(prisma.groupRankEntry.updateMany).not.toHaveBeenCalled();
   });
   it('lists only the token group, without exposing WeChat identifiers', async () => {
@@ -112,6 +114,7 @@ describe('current-group isolation and score writes', () => {
     expect(prisma.groupRankBoard.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { spaceId: 'group-a', deletedAt: null },
+        orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }, { id: 'desc' }],
       }),
     );
     expect(result).not.toHaveProperty('openGid');
@@ -150,7 +153,7 @@ describe('current-group isolation and score writes', () => {
     await expect(
       service.edit(identity, 'board-a', 'entry-a', '100', 1),
     ).rejects.toThrow('先设置头像和昵称');
-    expect(prisma.groupRankEntry.upsert).not.toHaveBeenCalled();
+    expect(prisma.groupRankEntry.create).not.toHaveBeenCalled();
     expect(prisma.groupRankEntry.updateMany).not.toHaveBeenCalled();
     await expect(
       service.remove(identity, 'board-a', 'entry-a'),
