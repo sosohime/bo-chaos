@@ -73,4 +73,10 @@ Astro:
 
 The miniapp at `apps/group-rank-miniapp` uses the standalone Nest entry in `apps/backend-nest/src/group-rank/main.ts` and a separate database. A verified WeChat group determines the current space; the shared card only suggests a board to open. Score and recommendation boards share this entry, directory, and management flow. Recommendation writes use their own endpoints and store one vote per model and group member. See `openspec/specs/group-ranking/spec.md` and `deploy/group-rank/README.md`.
 
+The directory reads score and recommendation summaries in the same current-group transaction. Recommendation summaries use one group-scoped aggregate query for all recommendation boards. Individual recommenders remain in the board detail response.
+
+The recommendation detail flow confirms each model separately. The existing recommendation endpoint accepts an optional usage note, applies group text review, and stores the note on that member's vote. The client shows notes in the group's recommender sheet.
+
+The server orders the group directory by board activity time. The client uses that order for page numbers and captures it when opening the reader. Returning to the directory refreshes the order from the server.
+
 Group members claim proxy records directly. One board transaction validates group membership and the per-period single-entry rule, then transfers the original scores, times and recorder attribution to the member. The same member can retry the claim without duplicating records.

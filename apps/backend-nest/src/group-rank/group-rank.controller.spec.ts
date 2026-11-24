@@ -107,7 +107,14 @@ describe('group ranking HTTP boundary', () => {
       .send({ model: 'MX Master 3S', userId: 'another-user' }).expect(400);
     await request(app.getHttpServer()).post(votes).set('Authorization', 'Bearer token')
       .send({ model: 'MX Master 3S' }).expect(201);
-    expect(service.recommend).toHaveBeenCalledWith(identity, 'recommendation-board', 'MX Master 3S');
+    expect(service.recommend).toHaveBeenCalledWith(identity, 'recommendation-board', 'MX Master 3S', undefined);
+    await request(app.getHttpServer()).post(votes).set('Authorization', 'Bearer token')
+      .send({ model: 'MX Master 3S', note: '滚轮很顺滑' }).expect(201);
+    expect(service.recommend).toHaveBeenLastCalledWith(identity, 'recommendation-board', 'MX Master 3S', '滚轮很顺滑');
+    await request(app.getHttpServer()).post(votes).set('Authorization', 'Bearer token')
+      .send({ model: 'MX Master 3S', note: '字'.repeat(121) }).expect(400);
+    await request(app.getHttpServer()).post(votes).set('Authorization', 'Bearer token')
+      .send({ model: 'MX Master 3S', note: { text: '很顺滑' } }).expect(400);
     await request(app.getHttpServer()).delete(`${votes}/model-a`).set('Authorization', 'Bearer token').expect(200);
     expect(service.withdrawRecommendation).toHaveBeenCalledWith(identity, 'recommendation-board', 'model-a');
   });

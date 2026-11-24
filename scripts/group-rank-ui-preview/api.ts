@@ -400,6 +400,21 @@ function refreshRecommendationRanks(items: GroupRankRecommendationRow[]) {
     return { ...item, rank };
   });
 }
+
+function recommendationDirectoryBoard(board: GroupRankBoardDetail): GroupRankBoardDto {
+  const items = board.recommendations!.items;
+  const recommendationCount = items.reduce((total, item) => total + item.recommenders.length, 0);
+  return {
+    ...board,
+    recommendationSummary: {
+      recommendationCount,
+      todayCount: recommendationCount,
+      leaderModel: items[0]?.model ?? null,
+      winnerCount: items.filter(item => item.rank === 1).length,
+    },
+  };
+}
+
 export const groupApi = {
   background:async (_boardId:string,assetId:string)=>localBackgrounds.get(assetId) || "",
   uploadBackground:async(path:string)=>{const image=new Image();image.src=path;await image.decode();const assetId=crypto.randomUUID();localBackgrounds.set(assetId,path);return {assetId,imageWidth:image.naturalWidth,imageHeight:image.naturalHeight};},
@@ -417,7 +432,7 @@ export const groupApi = {
     if (search.get("state") === "loading") return new Promise<GroupRankSpaceDto>(() => {});
     await wait("read");
     return { ...group, boards: [
-      ...recommendationBoards.filter(board => board.id !== seededRecommendationId || search.get("case") === "recommendations"),
+      ...recommendationBoards.filter(board => board.id !== seededRecommendationId || search.get("case") === "recommendations").map(recommendationDirectoryBoard),
       ...group.boards,
     ] };
   },
@@ -465,7 +480,7 @@ export const groupApi = {
     persistRecommendations();
     return board;
   },
-  recommend: async (boardId: string, model: string) => {
+  recommend: async (boardId: string, model: string, note?: string) => {
     await wait("save");
     const board = recommendationBoard(boardId);
     if (board.status !== "open") throw new Error("榜单已暂停或关闭，暂不能推荐");
@@ -478,7 +493,7 @@ export const groupApi = {
       item = { id: crypto.randomUUID(), model: model.normalize("NFKC").trim().replace(/\s+/gu, " "), rank: 0, recommenders: [] };
       items.push(item);
     }
-    item.recommenders.push(previewProfile(board.myUserId));
+    item.recommenders.push({ ...previewProfile(board.myUserId), ...(note ? { note } : {}) });
     board.recommendations!.items = refreshRecommendationRanks(items);
     persistRecommendations();
   },

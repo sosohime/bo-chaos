@@ -64,6 +64,12 @@ export interface GroupRankBoardDto {
     participantCount: number;
     winnerCount: number;
   };
+  recommendationSummary?: {
+    recommendationCount: number;
+    todayCount: number;
+    leaderModel: string | null;
+    winnerCount: number;
+  };
   id: string;
   creatorId: string;
   status: GroupRankBoardStatus;
@@ -109,7 +115,11 @@ export interface GroupRankRecommendationRow {
   id: string;
   model: string;
   rank: number;
-  recommenders: GroupRankProfile[];
+  recommenders: GroupRankRecommender[];
+}
+
+export interface GroupRankRecommender extends GroupRankProfile {
+  note?: string;
 }
 
 export interface GroupRankBoardDetail extends GroupRankBoardDto {

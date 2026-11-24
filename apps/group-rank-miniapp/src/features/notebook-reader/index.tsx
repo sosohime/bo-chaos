@@ -38,7 +38,7 @@ import { createBoardWarmup } from "../../lib/board-warmup";
 import { ProductIcon } from "../../components/activity-icon";
 import ProxySheet from "../../components/proxy-sheet";
 import ProfileSheet from "../../components/profile-sheet";
-import { myRecommendations, RecommendationSheet, RecommendersSheet } from "../../components/recommendation-ranking";
+import { myRecommendations, RecommendationSheet, RecommendersSheet, type RecommendationDraft, type RecommendationMode } from "../../components/recommendation-ranking";
 import "../../pages/board/index.scss";
 
 export type ReaderPage = {
@@ -241,7 +241,8 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
   const [continueSubmit, setContinueSubmit] = useState(false);
   const [scoreOpen, setScoreOpen] = useState(false);
   const [scoreError, setScoreError] = useState("");
-  const [recommendationMode, setRecommendationMode] = useState<"recommend" | "manage" | null>(null);
+  const [recommendationMode, setRecommendationMode] = useState<RecommendationMode | null>(null);
+  const [recommendationDraft, setRecommendationDraft] = useState<RecommendationDraft | null>(null);
   const [modelQuery, setModelQuery] = useState("");
   const [peopleItemId, setPeopleItemId] = useState("");
   const peopleItem = detail?.recommendations?.items.find(item => item.id === peopleItemId);
@@ -317,6 +318,7 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
     setEditing(null);
     setScoreError("");
     setRecommendationMode(null);
+    setRecommendationDraft(null);
     setModelQuery("");
     setPeopleItemId("");
     setMenuScore(undefined);
@@ -397,24 +399,34 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
     }, true);
   }
 
-  function openRecommendations(mode: "recommend" | "manage") {
+  function openRecommendations(mode: RecommendationMode) {
     setScoreError("");
     setModelQuery("");
+    setRecommendationDraft(null);
     setRecommendationMode(mode);
   }
 
-  function recommendModel(model: string, savedProfile?: GroupRankProfile) {
+  function changeRecommendationDraft(draft: RecommendationDraft | null) {
+    if (draft?.model !== recommendationDraft?.model)
+      void Promise.resolve(Taro.hideKeyboard?.()).catch(() => {});
+    setScoreError("");
+    setRecommendationDraft(draft);
+  }
+
+  function recommendModel(draft: RecommendationDraft, savedProfile?: GroupRankProfile) {
     if (detail?.status !== "open" || lock.current) return;
     setScoreError("");
+    void Promise.resolve(Taro.hideKeyboard?.()).catch(() => {});
     const profile = savedProfile || detail.myProfile;
     if (!profile?.nickname?.trim() || !profile.avatarVersion) {
-      profileContinuation.current = updated => recommendModel(model, updated);
+      profileContinuation.current = updated => recommendModel(draft, updated);
       setProfileSubmitLabel("保存并推荐");
       setContinueSubmit(true);
       setProfileOpen(true);
       return;
     }
-    return act(() => groupApi.recommend(boardId, model), false, "已推荐", () => setRecommendationMode(null));
+    return act(() => groupApi.recommend(boardId, draft.model, draft.note.trim() || undefined),
+      false, "已推荐", () => setRecommendationDraft(null));
   }
 
   function withdrawRecommendation(item: GroupRankRecommendationRow) {
@@ -1037,9 +1049,15 @@ function BoardLeaf({ page, nextDetail, previousDetail, directoryPaper, turning, 
         <>
           {peopleItem && <RecommendersSheet item={peopleItem} onClose={() => setPeopleItemId("")} />}
           {recommendationMode && !profileOpen && detail.recommendations && <RecommendationSheet
-            detail={detail} recommendations={detail.recommendations} manageFirst={recommendationMode === "manage"}
-            busy={busy} error={scoreError}
-            query={modelQuery} onQueryChange={value => { setModelQuery(value); setScoreError(""); }}
+            detail={detail} mode={recommendationMode} busy={busy} error={scoreError}
+            query={modelQuery} draft={recommendationDraft}
+            onModeChange={mode => {
+              if (mode === recommendationMode) return;
+              changeRecommendationDraft(null);
+              setRecommendationMode(mode);
+            }}
+            onQueryChange={value => { setModelQuery(value); setRecommendationDraft(null); setScoreError(""); }}
+            onDraftChange={changeRecommendationDraft}
             onClose={() => setRecommendationMode(null)}
             onRecommend={recommendModel} onWithdraw={withdrawRecommendation} />}
           {scoreOpen && !profileOpen && (

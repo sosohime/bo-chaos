@@ -214,9 +214,14 @@ describe("rendered entry journey with mocked WeChat/server", () => {
       : request(options));
     await clickButton("上一页，目录");
     expect(container.querySelectorAll(".group-board-list .directory-row")).toHaveLength(2);
+    expect(container.querySelector(".group-board-list .directory-row-name")?.textContent).toBe("尿酸王");
     expect(container.textContent).not.toContain("正在加载榜单列表");
     expect(groupRequests()).toBe(2);
+    boards = [boards[1], boards[0]];
     await act(async () => { release?.(); });
+    const rows = [...container.querySelectorAll(".group-board-list .directory-row")];
+    expect(rows.map(row => [row.querySelector(".directory-folio-number")?.textContent, row.querySelector(".directory-row-name")?.textContent]))
+      .toEqual([["01", "跑步里程"], ["02", "尿酸王"]]);
     expect(groupRequests()).toBe(2);
     expect(wx.navigateTo).not.toHaveBeenCalled();
     expect(wx.reLaunch).not.toHaveBeenCalled();
