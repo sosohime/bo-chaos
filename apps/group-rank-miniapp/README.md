@@ -43,6 +43,4 @@ GROUP_RANK_API_BASE_URL=https://yuanbo.online/group-rank pnpm -C apps/group-rank
 - 群来源由服务端通过微信核验，榜单和成员数据按群隔离。小本儿使用独立 PostgreSQL 库，迁移仅执行 GroupRank 增量 SQL。操作顺序见[独立服务部署说明](../../deploy/group-rank/README.md)。
 - 头像昵称由用户主动提供，用于群内榜单展示。录入与个人关联的健康数据时，需要按实际用途告知，并取得本人单独同意。现有录入界面尚未提供单独的健康信息授权流程。
 
-截至 2026-11-24，微信开发版为 **1.0.6**。对应后端已部署群目录排序、好物推荐语和两项数据库迁移。当前开发版已编译并上传，真机交互仍待核对。
-
 [产品规格](../../openspec/specs/group-ranking/spec.md) · [界面与设计记录](DESIGN.md) · [服务健康检查](https://yuanbo.online/group-rank/health)
