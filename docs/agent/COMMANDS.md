@@ -49,7 +49,7 @@ Use exact commands from this file when validating changes.
 | Backend Nest          | `pnpm -C apps/backend-nest start:dev` | `pnpm -C apps/backend-nest build`                    | `pnpm -C apps/backend-nest test`            |
 | Admin Next            | `pnpm -C apps/front-next-admin dev`   | `pnpm -C apps/front-next-admin build`                | no dedicated test script                    |
 | Miniapp Taro          | `pnpm -C apps/miniapp-taro dev:weapp` | `pnpm -C apps/miniapp-taro build:weapp`              | no dedicated test script                    |
-| Astro                 | `pnpm -C apps/frontend-astro dev`     | `pnpm -C apps/frontend-astro build`                  | `pnpm test:astro`                            |
+| Astro                 | `pnpm -C apps/frontend-astro dev`     | `pnpm -C apps/frontend-astro build`                  | `pnpm test:astro`                           |
 | Astro Lighthouse news | none                                  | `pnpm -C apps/frontend-astro update:lighthouse-news` | no dedicated test script                    |
 | Utils package         | none                                  | `pnpm -C packages/utils build`                       | `pnpm -C packages/utils test`               |
 | Const package         | none                                  | `pnpm -C packages/const build`                       | none                                        |
@@ -91,4 +91,4 @@ These actions are part of normal verification and should be recorded in task evi
 
 ## Independent group notebook
 
-Use `pnpm -C apps/group-rank-miniapp typecheck`, `pnpm exec vitest run apps/group-rank-miniapp/src`, and `pnpm -C apps/group-rank-miniapp build:weapp`. For local PostgreSQL integration run `python3 scripts/test-group-rank-database.py` after generating Prisma. Service configuration and deployment are in `deploy/group-rank/README.md`.
+Use `pnpm -C apps/group-rank-miniapp typecheck`, `pnpm exec vitest run apps/group-rank-miniapp/src`, and `pnpm -C apps/group-rank-miniapp build:weapp`. For local PostgreSQL integration run `python3 scripts/test-group-rank-database.py` after generating Prisma. See [the miniapp README](../../apps/group-rank-miniapp/README.md) for build and preview commands and [the standalone deployment notes](../../deploy/group-rank/README.md) for runtime configuration and migrations.

@@ -1,19 +1,21 @@
-> 2026-11-14：新Electric arena、自定义私有背景及第五项迁移目前是本地候选，未改线上current。具体发布材料与回滚顺序见[electric-arena-candidate.md](electric-arena-candidate.md)。下方为已发生的历史部署记录。
-
 # 博哥的小本儿独立后端：yuanbo.online
 
-## 当前运行目标（2026-11-11）
+## 当前运行目标（2026-11-24）
 
 - 主机：SSH 别名 `bo-chaos-101`，`101.34.252.219`，复用现有主机和证书。
 - API 根路径：`https://yuanbo.online/group-rank`。
 - 就绪检查：`https://yuanbo.online/group-rank/health`。
 - 进程：PM2 `group-rank-test`，独立 fork；仅监听 `127.0.0.1:3010`，256MB 重启阈值。
 - 数据库/角色：独立 `group_rank_test` / `group_rank_app`，不是 BoFans 数据库或账号。池最多 5 个连接，角色连接上限 10。
-- 工作目录：`/usr/soso/group-rank`；当前不可变候选：`releases/20261111-notebook-36050e1f47d3`（当前群名显示协议与书布艺术字）；`current` 与 PM2 实际入口一致。前版 `20261103-custom-metrics-c8de8e4599b5` 及历史基线保留供代码回滚。
+- 工作目录：`/usr/soso/group-rank`。当前版本为 `releases/20261124-directory-aeb3363b98cc`，`current` 与 PM2 实际入口一致。回滚基线为 `releases/20261123-recommendations-85cf9f50a66e`。
 - 运行配置：`shared/runtime.env`，root 私有目录、文件权限 600。密钥只在服务器生成及保存，不进入 Git、客户端或聊天输出。
 - PM2 配置源：本目录 `ecosystem.config.cjs`。更新不可变路径时，先保存旧版本路径，仅替换 `group-rank-test` 进程并验证其实际 `pm_exec_path`；不要假定 startOrReload 会更新 fork 进程的入口路径。以独立 `dist/group-rank/main.js` 启动，不加载 BoFans 模块或其环境文件。
 
-## 2026-10-30 账号切换
+该版本包含群目录排序和好物推荐语，两项迁移已在独立库执行。已从备份恢复到临时库演练，候选在任一迁移缺失时返回 503。切换后公网健康返回 ready，模板返回 200，未认证的推荐语修改返回 401。
+
+回滚时保留两个新增字段及现有数据，切回旧版本的 PM2 入口和 `current`。按下方安装与数据边界中的顺序执行新增迁移。相关小程序构建和真机预览见[小程序 README](../../apps/group-rank-miniapp/README.md)。
+
+## 2026-10-30 账号切换（历史）
 
 用户已将私有配置更新为 AppID `wxe185bc2feabae6a8` 并确认域名配置完成；本地项目与构建已同步。仅重新启动 `group-rank-test` 以加载更新后的配置；内部健康检查返回 ready。该检查只证明配置存在，不能证明新 Secret 有效或微信真实 code 交换成功。旧账号的登录验收不能沿用到新账号。
 
@@ -27,7 +29,7 @@
 
 固定失败阶段日志不含原始数据：`cipher_shape / decrypt / group_id / chat_type / single_room / watermark / app_id_missing / app_id / timestamp / future / expired`。不记录 code、密文、iv、session_key、群或用户标识。
 
-## 就绪与未完成项
+## 首次接入验证（历史）
 
 当前 `/health` 返回 HTTP 200、`status: ready`、`database: ready`、`wechat: configured`。2026-10-27 旧账号 AppID 为 `wx27c85260fc7a7163`；密钥仅核对存在性，没有输出。开发者工具真实登录凭证已通过服务端微信交换；故意无效的群载荷在创建身份/空间前被拒绝（401 群来源校验）。真实群来源与小程序发布尚未验收。
 
@@ -39,7 +41,7 @@
 
 首个候选包含 160 个有 SHA256 清单的运行/工作区文件；当前候选清单为198文件，排除编译缓存和 source maps。按冻结锁文件安装 `backend-nest...` 生产依赖，关闭安装脚本，并使用服务器已有同版本 Prisma CLI 生成 Linux 客户端。不要复用其他 checkout 的 node_modules 符号链接，也不要让 Prisma 自动安装改写候选清单。
 
-群排行专用测试库只执行三项GroupRank增量SQL：`20261026000000_group_rank_direct_entry`、`20261030000000_group_rank_custom_profile`、`20261030010000_group_rank_proxy`。后两项应用前各备份并验证恢复，在事务内应用；不恢复运行库。**不要对该独立库直接执行整个 monorepo 的历史 migrate deploy**：旧迁移属于 BoFans，当前独立库只需要群排行表。应用的 SQL 哈希在候选 `release.json` 及安装记录中，可用它审查后续迁移。
+首次接入执行三项 GroupRank 增量 SQL：`20261026000000_group_rank_direct_entry`、`20261030000000_group_rank_custom_profile`、`20261030010000_group_rank_proxy`。后两项应用前各备份并验证恢复，在事务内应用；不恢复运行库。**不要对该独立库直接执行整个 monorepo 的历史 migrate deploy**：旧迁移属于 BoFans，当前独立库只需要群排行表。应用的 SQL 哈希在候选 `release.json` 及安装记录中，可用它审查后续迁移。
 
 好物榜使用感受版本需要在独立群排行库先应用 `20261124000000_group_rank_recommendation_note`，再切换该版本的后端。此增量要求已应用 `20261123000000_group_rank_recommendations`，给 `GroupRankRecommendation` 新增可空的 `note` 列，旧推荐无需回填。
 
@@ -81,7 +83,6 @@ BoFans 的仓库、运行环境、数据库和原 PM2 进程未被替换；原�
 
 前端使用 `GROUP_RANK_API_BASE_URL=https://yuanbo.online/group-rank pnpm -C apps/group-rank-miniapp build:weapp`。项目 AppID 已绑定并导入开发者工具。未导入游客项目，尚未提审或发布；预览上传须记录用户授权及结果。
 
-
 ## 自定义、资料必填及代填候选（2026-10-30）
 
 - 代填功能候选 `20261030-proxy-254cb997cf02`，基线 `20261030-profile-required-72ecec36bd32`，此前 `20261030-custom-09fe49502090`。仅group-rank-test切换，其他PM2 PID保持原值。
@@ -95,9 +96,7 @@ BoFans 的仓库、运行环境、数据库和原 PM2 进程未被替换；原�
 
 代码回滚：保留全部新增schema、数据库与私有头像，使用保留基线的`ecosystem.config.cjs`方式仅替换group-rank-test，确认pm_exec_path和health后原子调整current。不得假定fork的restart/startOrReload会改变入口。审批后的记录已经转入本人，旧版本暂不显示未认领记录；不要为回退代码清表或恢复旧dump。数据恢复必须另行明确授权。
 
-
 最终资料隔离修正：`20261030-proxy-isolation-15f1c762553c`，基线proxy-254cb997cf02；只替换proxy service和只读reports配置检查（loaded声明），没有schema变化。198文件清单摘要 `35a08698bf6a1ba144faa77b4cc954d8a48115a3b3bab36c2c5600e8e841af93`；归档SHA256 `99fbc4bd72e57a2d9431b5326f3fb126c4a42b15c5ab2f5d654dff21705cd51b`。部署后健康ready、实际脚本与current一致、其他PM2 PID不变、只读report queue就绪0条。创建者代填/编辑不再要求本人头像昵称，且不改其资料；自填/认领仍要求完整资料。修正版仅预览包421244字节，原生身份不变重测和双人认领pending。此前初版代填待认领已由用户确认，随后本人资料混淆反馈已据此修正。
-
 
 ## 竞技主题候选（2026-10-30）
 
@@ -119,7 +118,6 @@ BoFans 的仓库、运行环境、数据库和原 PM2 进程未被替换；原�
 
 公网复核：health/templates200，未授权current-group/draft读取401；主页、admin登录、BoFans公开配置均200。实际运行脚本和定义文件哈希二次核验通过。
 
-
 ## 2026-11-11 艺术字上线与微信首版审核
 
 用户明确授权部署/发布。当前 `20261111-title-art-9f92d10bc36a` 只替换 module 与四个 title-art 运行 JS、增加服务端字体和 OFL 许可（共7文件）；无 schema、真实成绩、凭据、鉴权策略或 Nginx 变更。旧基线文件哈希保持一致。当前清单207文件，摘要 `d4beaa94a1a7060af082829776e1a25d6b6dde13525c4424f4fc86e8f7e2069f`；归档 SHA256 `da0293194cc9486cbf18014d2b34952e2886cea444cea03f2c362c3686ec8d0f`。
@@ -130,7 +128,6 @@ Linux 实际 Sharp/Pango 以合成榜名渲染1024×366透明PNG（67010字节�
 
 官方小程序名称“博哥的小本儿”，AppID `wxe185bc2feabae6a8`。已成功上传1.0.0，用户手动提交后报告审核中；尚未正式发布。公众平台页面仍受工具站点安全策略阻断，未绕过；不得将备案/认证通过等同代码审核通过。历史各节的未上传/未提审描述仅适用于其记录日期。
 
-
 ## 2026-11-11 当前群名协议与书布艺术字候选
 
 用户明确允许部署并生成预览二维码。现行群榜服务为`20261111-notebook-36050e1f47d3`，基线`20261111-title-art-9f92d10bc36a`保留。仅增加验证后displayOpenGid响应、替换艺术字轮廓渲染与字体，并隔离复制Fontkit运行依赖；没有旧服务协议兼容路径，无数据库/凭据/鉴权claims/Nginx修改。完整清单962文件，摘要33a7b78f33602627202efafe2ca1327e3b9008f5b04a62265363acd9d4fc24ed。
@@ -139,7 +136,6 @@ Linux实际渲染1024×374 PNG共226321字节，缺字回退/同群授权/请求
 
 备份与自动回滚脚本结果保存在`/usr/soso/group-rank/backups/20261111-notebook-36050e1f47d3/`。回滚只以保留基线ecosystem替换group-rank-test并确认实际入口/current/health，再pm2 save，不恢复数据库。与新session协议配套的手机预览必须使用当前构建；当前手机真实群名仍待用户验收。
 
-
 ## 2026-11-16 接口恢复与新版艺术字真机预览
 
 公网HTTPS、服务器loopback和本机系统代理均验证templates200、health ready。开发者工具重新加载已显示真实三个官方模板；本轮网络已恢复，未修改接口代码、代理、TLS/域名或安全设置，不虚构已定位/修复一个未复现的根因。
@@ -147,7 +143,6 @@ Linux实际渲染1024×374 PNG共226321字节，缺字回退/同群授权/请求
 为当前手机候选同步renderer-only版本`20261116-electric-edge-222a174b098e`，基线`20261111-notebook-36050e1f47d3`。复制基线不可变目录，仅替换title-art-renderer.js及声明文件；JS SHA256 `222a174b098ee4a06990067042298e4b5a5e8b61fee50bed6fb17f6c8d70aed6`，版本electric-edge-v4。字体哈希与原服务器相同；旧有服务、鉴权、schema、背景服务、网关和凭据均保留。候选loopback3011健康/templates通过、私有接口401，Linux合成尿酸王PNG955×248/141798字节。切换仅group-rank-test，实际PM2脚本/current已核对，其他PM2 PID不变。备份/result/render-smoke保存在`/usr/soso/group-rank/backups/20261116-electric-edge-222a174b098e/`。回滚保留数据，将GROUP_RANK_RELEASE_ROOT指向基线ecosystem，只替换group-rank-test、核对健康及实际脚本、原子恢复current后pm2 save；不恢复数据库。
 
 后端123测试通过/21DB opt-in跳过，build通过；没有backend源代码改动。当前普通前端54文件1,529,627字节摘要1af3c137b31c5968e19ee91a31491d3beaf5a60110275f800ebaabb9a1cfc771，wcc与精确源码/配置/类型/物料门禁通过。官方GUI预览成功1473KB，二维码有效至2026-11-16 14:43北京时间，原样复制经系统预览保存为PNG。证据与QR：`/Users/heyesheng/.codex/visualizations/2026/11/16/preview-network/`。仅预览，无正式上传、提审或发布；新自定义背景schema/upload服务仍未部署，不把renderer-only同步当完整背景服务上线。
-
 
 ## 2026-11-16 完整自定义背景服务部署与原生验收
 
@@ -164,7 +159,6 @@ Linux候选用真实微信图片审核验证重编码/幂等/0600文件/0700目�
 前端仅修复系统相册返回的导航保护：用scene/path/query/shareTicket精确区分原生选图返回与新入口；每次App前台仍清空登录凭据/图片缓存，后续写入仍重新核验群来源。普通/变更入口继续大厅重新解析。原生文件选取使用/tmp独立副本，避免在监听项目内选择源图片引起整个DevTools上下文重载；失败中间态保留。266客户端测试/类型通过；后端128测试通过，21DB opt-in测试另在临时PG全部通过，构建通过。最终普通54文件1,530,778字节，摘要6e3c68ffc047ba91536a3547fad98a92ed63591707a740e296574dda409664bf，wcc/源码/配置/类型/素材/包体门禁通过、app.js最后提升，不含QA。证据`/Users/heyesheng/.codex/visualizations/2026/11/16/background-complete/`。
 
 回滚：保留新增schema与图片，指定保留基线的GROUP_RANK_RELEASE_ROOT，只替换group-rank-test并核对PM2实际脚本/health，再原子调整current并pm2 save。只需回滚精度补丁时使用完整背景基线；若回到背景部署前版本，须同步恢复相应旧前端并只移除本次exact上传location、nginx -t后平滑reload。不得整份覆盖后续已变的网关配置，不影响其他进程。
-
 
 ## 2026-11-17 接口链路修复与独立配色后端部署
 
