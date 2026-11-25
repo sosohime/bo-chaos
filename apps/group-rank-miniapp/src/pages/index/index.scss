@@ -1,0 +1,159 @@
+@use "../../components/book-binding" as book;
+
+$directory-bottom: calc(8Px + env(safe-area-inset-bottom));
+
+.home {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--notebook-preview-inset, 0Px));
+  background: var(--page-bg);
+}
+.home-content {
+  flex: 1 0 auto;
+  padding: 0 12px $directory-bottom;
+}
+.home-content.home-content-turnable {
+  touch-action: pan-y;
+  overflow-x: clip;
+}
+.home-corner-space { height: 18Px; }
+.home-book {
+  @include book.binding;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--page-status-height, 0Px) - var(--page-header-height, 0Px) - var(--notebook-preview-inset, 0Px) - #{$directory-bottom});
+  padding: 0 15px 7px 16px;
+  background: linear-gradient(90deg,#15181c 0,#1a1d22 11px,#191c21 100%);
+  border-color: #383d46;
+  border-left-color: #303742;
+  box-shadow: 2px 0 #343b44, 4px 2px #171b22;
+}
+.home-book::after { background: repeating-linear-gradient(180deg,#5f6873 0 2px,transparent 2px 10px); }
+.home .brand-signature-compact .brand-mini-photo { width: 27px; height: 27px; }
+.home-directory-heading {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 116px;
+  padding: 11px 0 15px 2px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #3d444e;
+}
+.directory-cover-art {
+  position: absolute;
+  z-index: -1;
+  bottom: 40px;
+  right: 0;
+  width: 62%;
+  height: 91px;
+  opacity: .85;
+  pointer-events: none;
+}
+.home-directory-heading-copy { min-width: 0; }
+.home-directory-heading-title { display: block; color: #f7f6f0; font-size: 47px; font-weight: 900; letter-spacing: -.035em; line-height: 1; }
+.home-directory-heading-meta { display: block; margin-top: 10px; font-size: 12px; color: #bac0c7; line-height: 1.4; }
+.group-create {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 44Px;
+  padding: 0 11px;
+  border-radius: 3px;
+  background: #c6f45d;
+  color: #182008;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1;
+  white-space: nowrap;
+}
+.directory-create-icon { font-size: 15px; line-height: 1; }
+.directory-index-head {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 17px 2px 2px;
+  color: #a3aab3;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.directory-index-head > text:first-child { display: block; width: 34Px; text-align: center; }
+.group-board-list .directory-row + .directory-row,
+.play-list .directory-row + .directory-row { margin-top: 4px; }
+.home-section + .home-section { margin-top: 17px; }
+.home-state { padding: 12px 9px; color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+.directory-retry { display: flex; align-items: center; justify-content: center; min-height: 44Px; width: fit-content; margin-top: 7px; padding: 0 14px; border: 1px solid var(--border); border-radius: 4px; color: var(--accent-readable,var(--accent)); }
+.shared-rules { margin-bottom: 14px; padding: 13px; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 5px; background: var(--surface); }
+.shared-title { display: block; font-size: 21px; font-weight: 750; margin: 5px 0; }
+.home-kicker { color: var(--text-secondary); font-size: 11px; }
+.shared-rules .small-action { margin-top: 9px; }
+.home-footer-actions { display: flex; align-items: center; margin-top: auto; padding-top: 7px; }
+.home-footer-actions .text-action { font-size: 11px; color: var(--text-secondary); }
+.home-book .examples-toggle { align-self: flex-start; margin-top: 5px; font-size: 13px; font-weight: 650; color: var(--text-primary); }
+.examples-toggle .examples-arrow { margin-left: 6px; }
+.directory-link-pressed { background: var(--surface-muted); border-radius: 4px; }
+.home-lobby .home-book { background: linear-gradient(90deg,#15181c 0,#191f26 11px); }
+.welcome-cover {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0 13px;
+}
+.welcome-photo {
+  flex: none;
+  width: 84Px;
+  height: 109Px;
+  border: 1px solid #51545a;
+  border-radius: 4px;
+}
+.welcome-intro { flex: 1; min-width: 0; }
+.welcome-title {
+  display: block;
+  color: #f7f6f0;
+  font-size: 34px;
+  font-weight: 850;
+  letter-spacing: -.03em;
+  line-height: 1.12;
+}
+.welcome-description { display: block; margin-top: 8px; color: #b5bdc7; font-size: 13px; line-height: 1.45; }
+.welcome-actions { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+.welcome-start { padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.welcome-instruction { display: block; padding: 0 1px 8px; color: #f2f2ef; font-size: 13px; line-height: 1.5; }
+.welcome-actions .welcome-primary { width: 100%; justify-content: space-between; padding-inline: 11px; font-size: 14px; }
+.welcome-primary .directory-row-arrow { color: inherit; border-color: currentColor; opacity: .65; }
+.welcome-create { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44Px; padding: 0 11px; color: #cbd2db; font-size: 13px; text-align: left; }
+.welcome-return {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 58Px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: transparent;
+  text-align: left;
+}
+.welcome-return-copy { flex: 1; min-width: 0; }
+.welcome-return-title { display: block; color: #f2f2ef; font-size: 14px; font-weight: 670; line-height: 1.35; }
+.welcome-return-detail { display: block; margin-top: 3px; color: #b5bdc7; font-size: 12px; line-height: 1.4; }
+.welcome-examples-title { display: block; padding: 0 3px 4px; color: #f2f2ef; font-size: 14px; font-weight: 680; line-height: 1.4; }
+.examples-toggle .examples-arrow { transform: rotate(135deg); }
+.examples-toggle .examples-arrow-open { transform: rotate(-45deg); }
+@media(max-width:350Px) {
+  .home-content { padding-inline: 10px 13px; }
+  .home-book { padding-inline: 12px 10px; }
+  .home-directory-heading-title { font-size: 43px; }
+  .welcome-title { font-size: 28px; }
+  .welcome-photo { width: 76Px; height: 99Px; }
+}
+
+.shared-board-unavailable { margin: 0 0 10px; padding: 9px 11px; border-left: 2px solid var(--accent); }
+.shared-board-unavailable > text { display: block; }
+.shared-board-unavailable > text:first-child { color: var(--text-primary); font-weight: 700; }

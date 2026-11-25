@@ -1,0 +1,44 @@
+:host { display: block; }
+.sheet { position: relative; isolation: isolate; }
+.sheet-front { position: relative; z-index: 1; }
+.sheet-next,.sheet-previous,.sheet-shadow,.sheet-back { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.sheet-next,.sheet-previous {
+  bottom: auto;
+  opacity: 0;
+  background: repeating-linear-gradient(180deg,#1b2728 0 27px,#253134 27px 28px);
+}
+.sheet-target-placeholder { bottom: 0; }
+.sheet-shadow { opacity: 0; }
+.sheet-back { z-index: 2; opacity: 0; background: #303a3e; }
+.corner-hit {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  bottom: 0;
+  width: 74px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  touch-action: none;
+}
+.corner-hit::after { border: 0; }
+.corner-disabled .corner-lip { visibility: hidden; }
+.corner-lip {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 0 0 4px;
+  background: linear-gradient(141deg,#8b9897,#536367 64%,#2e3b3e);
+  clip-path: polygon(100% 0,96% 29%,79% 60%,52% 80%,0 100%,15% 72%,26% 45%,47% 25%,74% 16%);
+  pointer-events: none;
+}
+
+.corner-previous {
+  right: auto;
+  left: 0;
+}

@@ -1,0 +1,9 @@
+page, .theme--volt, .theme--midnight, .theme--coral {
+  --premium-paper-image: var(--street-paper-image);
+  --premium-blue-image: var(--street-blue-image);
+  --premium-ticket-image: var(--street-paper-strip);
+  --premium-yellow-image: var(--street-yellow-strip);
+}
+.theme--midnight, .theme--coral {
+  --premium-blue-image: none;
+}

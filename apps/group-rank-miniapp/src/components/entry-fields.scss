@@ -1,0 +1,112 @@
+.entry-field {
+  margin: 0 0 22px;
+  min-width: 0;
+}
+.entry-label {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.entry-error { display: block; margin-top: 6px; color: var(--danger); font-size: 12px; line-height: 1.45; }
+.entry-control {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  min-height: 44Px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--border-strong);
+  border-radius: 0;
+  color: var(--text-primary);
+  background: transparent;
+  font-size: 18px;
+  line-height: 30px;
+}
+.entry-value {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 72px;
+  border-bottom: 1px solid var(--border-strong);
+  color: var(--text-primary);
+}
+.entry-value .sheet-native-input {
+  display: block;
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  height: 64px;
+  padding: 4px 0;
+  color: var(--text-primary);
+  background: transparent;
+  font-size: 36px;
+  line-height: 56px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.entry-placeholder {
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-weight: 400;
+}
+.entry-value .sheet-native-input::placeholder {
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-weight: 400;
+}
+.entry-value-long .sheet-native-input {
+  font-size: 22px;
+}
+.entry-unit {
+  flex: none;
+  max-width: 35%;
+  margin-left: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-all;
+}
+.entry-person {
+  display: flex;
+  align-items: center;
+  margin: 12px 0 24px;
+  min-width: 0;
+}
+.entry-person > .person-avatar {
+  margin-right: 12px;
+}
+.entry-person-name {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  word-break: break-all;
+}
+.entry-main {
+  flex: 1;
+  min-width: 0;
+}
+.entry-note {
+  display: block;
+  margin: 12px 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.entry-choose {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: -14px 0 8px;
+}
+.entry-choose .text-action {
+  padding-right: 0;
+  font-size: 12px;
+}

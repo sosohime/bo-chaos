@@ -106,3 +106,202 @@ model PhotoVote {
   @@unique([photoId, userOpenId])
   @@index([userOpenId])
 }
+
+model GroupRankUser {
+  id        String @id @default(cuid())
+  appId     String
+  openId    String
+  nickname  String? @db.VarChar(24)
+  avatarKey String? @db.VarChar(80)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  backgrounds GroupRankBackground[]
+  drafts    GroupRankDraft[]
+  reports   GroupRankReport[]
+  members   GroupRankMember[]
+  boards    GroupRankBoard[]
+  entries   GroupRankEntry[]
+  recommendations GroupRankRecommendation[]
+  recordedEntries GroupRankEntry[] @relation("GroupRankRecorder")
+  claimRequests GroupRankProxyParticipant[] @relation("GroupRankClaimant")
+  claimedParticipants GroupRankProxyParticipant[] @relation("GroupRankClaimed")
+
+  @@unique([appId, openId])
+}
+
+model GroupRankSpace {
+  id        String @id @default(cuid())
+  appId     String
+  openGid   String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  members   GroupRankMember[]
+  boards    GroupRankBoard[]
+
+  @@unique([appId, openGid])
+}
+
+model GroupRankMember {
+  spaceId    String
+  userId     String
+  joinedAt   DateTime @default(now()) @db.Timestamptz(3)
+  lastSeenAt DateTime @default(now()) @db.Timestamptz(3)
+  space      GroupRankSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  user       GroupRankUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([spaceId, userId])
+  @@index([userId])
+}
+
+model GroupRankBoard {
+  id               String @id @default(cuid())
+  spaceId          String
+  creatorId        String
+  requestId        String
+  templateId       String
+  templateVersion  Int
+  themeId          String @default("volt")
+  accentColor      String?
+  background       Json?
+  templateSnapshot Json
+  status           String @default("open")
+  draftId          String?
+  deletedAt        DateTime? @db.Timestamptz(3)
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime @default(now()) @db.Timestamptz(3)
+  space            GroupRankSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  creator          GroupRankUser @relation(fields: [creatorId], references: [id])
+  entries          GroupRankEntry[]
+  recommendationItems GroupRankRecommendationItem[]
+  draft            GroupRankDraft? @relation(fields: [draftId], references: [id])
+  reports          GroupRankReport[]
+  proxyParticipants GroupRankProxyParticipant[]
+  proxyEntries GroupRankProxyEntry[]
+
+  @@unique([spaceId, creatorId, requestId])
+  @@index([spaceId, updatedAt, createdAt, id])
+}
+
+model GroupRankRecommendationItem {
+  id       String @id @default(cuid())
+  boardId  String
+  model    String @db.VarChar(80)
+  modelKey String
+  board    GroupRankBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  recommendations GroupRankRecommendation[]
+
+  @@unique([boardId, modelKey])
+}
+
+model GroupRankRecommendation {
+  itemId    String
+  userId    String
+  note      String? @db.VarChar(120)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  item      GroupRankRecommendationItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  user      GroupRankUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, userId])
+  @@index([userId])
+}
+
+model GroupRankEntry {
+  id        String @id @default(cuid())
+  boardId   String
+  userId    String
+  requestId String
+  recordedById String?
+  recordedBy GroupRankUser? @relation("GroupRankRecorder", fields: [recordedById], references: [id])
+  value     Decimal? @db.Decimal(14, 3)
+  deletedAt DateTime? @db.Timestamptz(3)
+  revision  Int @default(1)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  board     GroupRankBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user      GroupRankUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([boardId, userId, requestId])
+  @@index([boardId, createdAt, userId])
+  @@index([boardId, userId, createdAt])
+}
+
+model GroupRankDraft {
+  id          String @id @default(uuid())
+  appId       String
+  creatorId   String
+  requestId   String
+  definition  Json
+  reviewTrace String?
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  expiresAt   DateTime? @db.Timestamptz(3)
+  creator     GroupRankUser @relation(fields: [creatorId], references: [id])
+  boards      GroupRankBoard[]
+
+  @@unique([creatorId, requestId])
+  @@index([appId, expiresAt])
+}
+
+model GroupRankReport {
+  id         String @id @default(cuid())
+  boardId    String
+  reporterId String
+  reason     String
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  board      GroupRankBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  reporter   GroupRankUser @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@unique([boardId, reporterId])
+  @@index([createdAt])
+}
+
+
+// A board-local name is not a WeChat identity. Only an approved claim links it.
+model GroupRankProxyParticipant {
+  id String @id @default(cuid())
+  boardId String
+  displayName String @db.VarChar(24)
+  requestId String
+  claimantUserId String?
+  claimedUserId String?
+  claimedAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  board GroupRankBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  claimant GroupRankUser? @relation("GroupRankClaimant", fields: [claimantUserId], references: [id])
+  claimedUser GroupRankUser? @relation("GroupRankClaimed", fields: [claimedUserId], references: [id])
+  entries GroupRankProxyEntry[]
+
+  @@unique([boardId, requestId])
+  @@unique([id, boardId])
+  @@index([boardId, claimedUserId])
+}
+
+model GroupRankProxyEntry {
+  id String @id @default(cuid())
+  boardId String
+  participantId String
+  requestId String
+  value Decimal? @db.Decimal(14, 3)
+  deletedAt DateTime? @db.Timestamptz(3)
+  revision Int @default(1)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  board GroupRankBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  participant GroupRankProxyParticipant @relation(fields: [participantId, boardId], references: [id, boardId], onDelete: Cascade)
+
+  @@unique([boardId, requestId])
+  @@index([participantId, createdAt])
+}
+
+// Immutable, moderated private images. Crops live in draft/board appearance JSON.
+model GroupRankBackground {
+  id String @id @default(uuid())
+  appId String
+  ownerId String
+  requestId String @db.VarChar(64)
+  storageKey String @db.VarChar(80)
+  digest String @db.VarChar(64)
+  imageWidth Int
+  imageHeight Int
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  owner GroupRankUser @relation(fields: [ownerId], references: [id])
+  @@unique([ownerId, requestId])
+  @@index([ownerId, createdAt])
+}

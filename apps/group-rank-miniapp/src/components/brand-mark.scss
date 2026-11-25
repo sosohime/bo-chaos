@@ -1,0 +1,8 @@
+ .brand-signature {display:flex;align-items:center;gap:10px;min-width:0;}
+.brand-mini-photo {display:block;flex:none;width:34px;height:34px;border:1px solid #dce2df;border-radius:3px;box-sizing:border-box;}
+.brand-wordmark {position:relative;min-width:0;padding-bottom:3px;}
+.brand-signature-name {display:block;color:#f3f5f4;font-size:17px;font-weight:750;line-height:1.2;white-space:nowrap;}
+.brand-signature-slash {position:absolute;left:0;bottom:0;width:64px;height:3px;background:var(--accent);transform:rotate(-8deg);clip-path:polygon(0 100%,20% 0,100% 0,86% 100%);}
+.brand-signature-compact {gap:8px;}
+.brand-signature-compact .brand-mini-photo {width:26px;height:26px;}
+.brand-signature-compact .brand-signature-name {font-size:15px;}

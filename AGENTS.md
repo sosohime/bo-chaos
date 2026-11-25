@@ -40,6 +40,7 @@ Default to maximum autonomy for normal engineering work:
 - `apps/backend-nest`: NestJS API for bofans features, auth, uploads, review, categories, kowtow stats, and Bo daily cards.
 - `apps/front-next-admin`: Next.js admin UI under base path `/rpg/admin`.
 - `apps/miniapp-taro`: Taro WeChat mini app.
+- `apps/group-rank-miniapp`: independent Taro WeChat notebook for group rankings. See `apps/group-rank-miniapp/README.md` for setup and `openspec/specs/group-ranking/spec.md` for behavior.
 - `apps/frontend-astro`: Astro public pages.
 - `apps/bo-retire-vsc-extension`: VS Code retirement countdown extension.
 - `packages/prisma-client`: Prisma schema, generated client, migrations.
