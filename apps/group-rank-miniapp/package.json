@@ -1,0 +1,44 @@
+{
+  "name": "group-rank-miniapp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "群排行独立微信小程序",
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.21.5",
+    "@tarojs/components": "4.0.9",
+    "@tarojs/helper": "4.0.9",
+    "@tarojs/plugin-platform-weapp": "4.0.9",
+    "@tarojs/runtime": "4.0.9",
+    "@tarojs/shared": "4.0.9",
+    "@tarojs/taro": "4.0.9",
+    "@tarojs/plugin-framework-react": "4.0.9",
+    "@tarojs/react": "4.0.9",
+    "react-dom": "^18.0.0",
+    "react": "^18.0.0"
+  },
+  "devDependencies": {
+    "@mono/types": "workspace:*",
+    "@babel/preset-react": "^7.24.1",
+    "@babel/core": "^7.8.0",
+    "@tarojs/cli": "4.0.9",
+    "@types/react": "^18.0.0",
+    "@types/webpack-env": "^1.13.6",
+    "webpack": "5.78.0",
+    "@tarojs/taro-loader": "4.0.9",
+    "@tarojs/webpack5-runner": "4.0.9",
+    "babel-preset-taro": "4.0.9",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.5",
+    "react-refresh": "^0.11.0",
+    "ts-node": "^10.9.1",
+    "@types/node": "^18.15.11"
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ]
+}

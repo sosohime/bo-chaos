@@ -1,0 +1,65 @@
+/* Responsive frames are real CSS geometry: no sliced mockup edges or baked text. */
+.arena-podium-person,
+.group-board-card,
+.create-live-preview,
+.lobby-hero {
+  --corner: 10px;
+  --facet-height: 9px;
+  --facet-width: 73%;
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(var(--corner) 0, calc(100% - var(--corner)) 0, 100% var(--corner), 100% calc(100% - var(--corner)), calc(100% - var(--corner)) 100%, var(--corner) 100%, 0 calc(100% - var(--corner)), 0 var(--corner));
+  background: linear-gradient(135deg, #275bba, #81949e 15%, #637c77 38%, var(--accent-readable,var(--accent)) 70%, var(--accent-readable,var(--accent)));
+}
+.arena-podium-person::before,
+.group-board-card::before,
+.create-live-preview::before,
+.lobby-hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 1px;
+  clip-path: polygon(var(--corner) 0, calc(100% - var(--corner)) 0, 100% var(--corner), 100% calc(100% - var(--corner)), calc(100% - var(--corner)) 100%, var(--corner) 100%, 0 calc(100% - var(--corner)), 0 var(--corner));
+  background: linear-gradient(115deg, #ffffff05, transparent 48%), radial-gradient(ellipse at 94% 125%, var(--accent-soft), transparent 62%), linear-gradient(125deg, #192125, #0b1014 70%);
+  box-shadow: inset 0 1px 0 #ffffff12;
+  pointer-events: none;
+}
+.arena-podium-person::after,
+.group-board-card::after,
+.create-live-preview::after,
+.lobby-hero::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  left: auto;
+  width: var(--facet-width);
+  height: var(--facet-height);
+  transform: none;
+  transform-origin: center;
+  border: 0;
+  border-radius: 0;
+  box-sizing: border-box;
+  clip-path: polygon(0 100%, 100% 0, 100% 65%, 98% 100%);
+  background: linear-gradient(90deg, transparent, var(--accent-readable,var(--accent)) 48%, var(--accent-readable,var(--accent)));
+  pointer-events: none;
+}
+
+.arena-art-alt {position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;}
+.create-live-preview > .arena-background {inset:1px;}
+.lobby-hero > .arena-background {left:1px;right:1px;bottom:1px;}
+
+.lobby-hero,
+.create-live-preview {background:var(--accent-readable,var(--accent));}
+.lobby-hero {--facet-height:12px;--facet-width:80%;}
+.create-live-preview {--facet-height:5px;--facet-width:65%;}
+.arena-podium-runner {--facet-height:5px;--facet-width:65%;}
+/* The image viewport shares the frame silhouette; a rectangular child must not
+   paint over the diagonal outline. The source bitmap itself stays untouched. */
+.lobby-hero > .arena-background,
+.create-live-preview > .arena-background {clip-path:inherit;}
+
+.arena-control-pressed {opacity:.78;}

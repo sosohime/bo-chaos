@@ -1,0 +1,18 @@
+@mixin binding {
+  // The left seam and right fore-edge belong to the whole sheet.
+  position: relative;
+  box-sizing: border-box;
+  border: 1px solid #37464a;
+  border-left: 4px solid #303d42;
+  border-radius: 3px 7px 7px 3px;
+  background: linear-gradient(90deg,#162025 0,#202a2e 17px,#1a2429 100%);
+  box-shadow: 2px 0 #29363b;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 7px auto 7px -3px;
+    width: 1px;
+    background: repeating-linear-gradient(180deg,#647477 0 2px,transparent 2px 11px);
+    pointer-events: none;
+  }
+}

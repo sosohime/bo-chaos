@@ -1,0 +1,303 @@
+// Points are measured from the grabbed bottom tip, inward along each edge.
+function clip(points, nx, ny, edge, keepAbove) {
+  var result = [];
+  for (var i = 0; i < points.length; i++) {
+    var a = points[i];
+    var b = points[(i + 1) % points.length];
+    var first = a[0] * nx + a[1] * ny - edge;
+    var second = b[0] * nx + b[1] * ny - edge;
+    var aInside = keepAbove ? first >= 0 : first <= 0;
+    var bInside = keepAbove ? second >= 0 : second <= 0;
+    if (aInside) result.push(a);
+    if (aInside !== bInside) {
+      var ratio = first / (first - second);
+      result.push([a[0] + (b[0] - a[0]) * ratio, a[1] + (b[1] - a[1]) * ratio]);
+    }
+  }
+  return result;
+}
+
+function polygon(points, width, height, backwards) {
+  var text = [];
+  for (var i = 0; i < points.length; i++) {
+    var x = backwards ? points[i][0] : width - points[i][0];
+    text.push(Math.round(x * 2) / 2 + 'px ' + Math.round((height - points[i][1]) * 2) / 2 + 'px');
+  }
+  return text.length > 2 ? 'polygon(' + text.join(',') + ')' : 'polygon(0 0,0 0,0 0)';
+}
+
+function roll(points, nx, ny, crease, radius) {
+  var result = [];
+  for (var i = 0; i < points.length; i++) {
+    var a = points[i];
+    var b = points[(i + 1) % points.length];
+    // Map samples along the physical edge to a cylinder, then to the flat paper back.
+    for (var k = 0; k < 8; k++) {
+      var ratio = k / 8;
+      var u = a[0] + (b[0] - a[0]) * ratio;
+      var v = a[1] + (b[1] - a[1]) * ratio;
+      var normal = u * nx + v * ny;
+      var angle = (crease - normal) / radius;
+      var displacement = angle > Math.PI
+        ? (angle * 2 - Math.PI) * radius
+        : (angle - Math.sin(angle)) * radius;
+      result.push([u + nx * displacement, v + ny * displacement]);
+    }
+  }
+  return result;
+}
+
+function fold(offsetX, offsetY, width, height, sweep, nextHeight, backwards) {
+  width = width || 375;
+  height = height || 620;
+  var left = Math.max(0, offsetX);
+  var up = Math.max(0, offsetY);
+  var travel = Math.sqrt(left * left + up * up);
+  var angle = Math.min(1.25, Math.max(0.13, Math.atan2(up + 5, left + 14)));
+  var nx = Math.cos(angle);
+  var ny = Math.sin(angle);
+  var radius = Math.min(34, 3 + travel * 0.11);
+  var crease = (travel + Math.PI * radius) / 2;
+  var sweepTo = width * nx + height * ny + radius * Math.PI + 22;
+  crease += (sweepTo - crease) * (sweep || 0);
+  var sheet = [[0, 0], [width, 0], [width, height], [0, height]];
+  var edge = crease - radius;
+  // The near half of the cylinder also occludes the sheet below. The original
+  // face supplies that coverage until the reverse is visible. Overlap by one
+  // CSS pixel so independently antialiased masks cannot leave a seam.
+  var front = clip(sheet, nx, ny, edge - 1, true);
+  // The actual target can be taller than the current sheet. Reveal its own
+  // bottom during the sweep so switching to it cannot extend the paper suddenly.
+  nextHeight = nextHeight || height;
+  var revealHeight = Math.min(height, nextHeight) + Math.max(0, nextHeight - height) * (sweep || 0);
+  var nextBottom = height - revealHeight;
+  var target = [[0, nextBottom], [width, nextBottom], [width, height], [0, height]];
+  var exposed = clip(target, nx, ny, edge, false);
+  // Beyond the cylinder's silhouette the opaque paper back faces the reader.
+  // Clipping the model there also prevents both sides of the curve tracing over each other.
+  var reverse = clip(sheet, nx, ny, crease - radius * Math.PI / 2, false);
+  var curled = roll(reverse, nx, ny, crease, radius);
+  var direction = 270 + Math.round(angle * 180 / Math.PI);
+  if (backwards) direction = 360 - direction;
+  function px(value) { return Math.round(value * 10) / 10 + 'px'; }
+  return {
+    front: polygon(front, width, height, backwards),
+    exposed: polygon(exposed, width, height, backwards),
+    back: polygon(curled, width, height, backwards),
+    shade: 'linear-gradient(' + direction + 'deg,#606b6c ' + px(edge) +
+      ',#a4adab ' + px(edge + radius * 0.14) + ',#758184 ' + px(edge + radius * 0.48) +
+      ',#4b585c ' + px(crease) + ',#374347 ' + px(crease + radius * 1.25) +
+      ',#303a3e ' + px(crease + radius * 3) + ')',
+    shadow: 'linear-gradient(' + direction + 'deg,transparent ' + px(edge - radius * 0.55) +
+      ',#08111599 ' + px(edge) + ',transparent ' + px(crease) + ')',
+    angle: angle,
+    turns: travel >= Math.min(150, width * 0.34)
+  };
+}
+
+function point(touch) {
+  if (typeof touch.clientX === 'number') return { x: touch.clientX, y: touch.clientY };
+  if (typeof touch.pageX === 'number') return { x: touch.pageX, y: touch.pageY };
+  return { x: touch.x, y: touch.y };
+}
+
+function paint(owner, state, sweep) {
+  var backwards = state.direction === -1;
+  var shape = fold(state.left, state.up, state.width, state.height, sweep, state.targetHeight, backwards);
+  var front = owner.selectComponent('.sheet-front');
+  if (!front) return shape;
+  var target = owner.selectComponent(backwards ? '.sheet-previous' : '.sheet-next');
+  target.setStyle({ opacity: '1', 'clip-path': shape.exposed });
+  front.setStyle({ 'clip-path': shape.front });
+  owner.selectComponent('.sheet-shadow').setStyle({ opacity: '1', 'background-image': shape.shadow });
+  owner.selectComponent('.sheet-back').setStyle({ opacity: '1', 'clip-path': shape.back, 'background-image': shape.shade });
+  return shape;
+}
+
+function flag(value) {
+  return value === true || value === 'true';
+}
+
+function cornerOpacity(owner, opacity) {
+  var next = owner.selectComponent('.corner-next');
+  var previous = owner.selectComponent('.corner-previous');
+  if (next) next.setStyle({ opacity: opacity });
+  if (previous) previous.setStyle({ opacity: opacity });
+}
+
+function reset(owner) {
+  if (!owner.selectComponent('.sheet-front')) return;
+  owner.selectComponent('.sheet-next').setStyle({ opacity: '0' });
+  owner.selectComponent('.sheet-previous').setStyle({ opacity: '0' });
+  owner.selectComponent('.sheet-back').setStyle({ opacity: '0' });
+  owner.selectComponent('.sheet-shadow').setStyle({ opacity: '0' });
+  owner.selectComponent('.sheet-front').setStyle({ 'clip-path': 'none' });
+  cornerOpacity(owner, '1');
+}
+
+function directionAllowed(data, direction) {
+  return direction === -1 ? flag(data.canback) : flag(data.cannext);
+}
+
+function aim(state, data, direction) {
+  state.direction = direction;
+  state.targetHeight = direction === -1 ? data.backheight : data.nextheight;
+  state.ready = flag(direction === -1 ? data.backready : data.ready);
+}
+
+function start(event, owner) {
+  var root = owner.selectComponent('.sheet');
+  var data = root.getDataset();
+  var state = root.getState();
+  if (event.touches.length !== 1 || flag(data.locked) || state.committing) return;
+  var direction = (event.currentTarget.dataset.direction || 0) * 1;
+  if (direction ? !directionAllowed(data, direction) : !flag(data.canback)) return;
+  state.start = point(event.touches[0]);
+  state.body = direction === 0;
+  state.left = 0;
+  state.up = 0;
+  state.width = data.width;
+  state.height = data.height;
+  state.revision = (state.revision || 0) + 1;
+  aim(state, data, direction);
+  reset(owner);
+  if (direction) {
+    cornerOpacity(owner, '0');
+    paint(owner, state, 0);
+  }
+}
+
+function follow(owner, state, data, last) {
+  var horizontal = state.start.x - last.x;
+  var vertical = state.start.y - last.y;
+  if (!state.direction) {
+    if (Math.max(Math.abs(horizontal), Math.abs(vertical)) < 12) return;
+    var direction = horizontal > 0 ? 1 : -1;
+    if (Math.abs(horizontal) <= Math.abs(vertical) * 1.3 || !directionAllowed(data, direction)) {
+      state.start = null;
+      return;
+    }
+    aim(state, data, direction);
+    cornerOpacity(owner, '0');
+  }
+  state.left = horizontal * state.direction;
+  state.up = vertical;
+  paint(owner, state, 0);
+  return true;
+}
+
+function move(event, owner) {
+  var root = owner.selectComponent('.sheet');
+  var state = root.getState();
+  var data = root.getDataset();
+  if (!state.start) return;
+  if (event.touches.length !== 1 || flag(data.locked)) {
+    cancel(event, owner);
+    return;
+  }
+  if (follow(owner, state, data, point(event.touches[0]))) return false;
+}
+
+function close(owner, state) {
+  var revision = state.revision;
+  var x = state.left;
+  var y = state.up;
+  var duration = 145;
+  var startTime = getDate().getTime();
+  function tick() {
+    if (state.revision !== revision) return;
+    var progress = Math.min(1, (getDate().getTime() - startTime) / duration);
+    state.left = x * (1 - progress) * (1 - progress);
+    state.up = y * (1 - progress) * (1 - progress);
+    if (progress < 1) {
+      paint(owner, state, 0);
+      owner.requestAnimationFrame(tick);
+    } else reset(owner);
+  }
+  owner.requestAnimationFrame(tick);
+}
+
+function finish(owner, state) {
+  if (!state.ready) {
+    close(owner, state);
+    owner.callMethod('finishGesture', { turn: true, direction: state.direction });
+    return;
+  }
+  state.committing = true;
+  var startTime = getDate().getTime();
+  function tick() {
+    if (!state.committing) return;
+    var progress = Math.min(1, (getDate().getTime() - startTime) / 165);
+    paint(owner, state, progress * (2 - progress));
+    if (progress < 1) owner.requestAnimationFrame(tick);
+    else {
+      state.committing = false;
+      owner.callMethod('finishGesture', { turn: true, direction: state.direction });
+    }
+  }
+  owner.requestAnimationFrame(tick);
+}
+
+function end(event, owner) {
+  var root = owner.selectComponent('.sheet');
+  var state = root.getState();
+  var data = root.getDataset();
+  if (!state.start || !state.direction) {
+    state.start = null;
+    return;
+  }
+  if (event.changedTouches.length) follow(owner, state, data, point(event.changedTouches[0]));
+  state.start = null;
+  var shape = paint(owner, state, 0);
+  var tap = !state.body && Math.abs(state.left) + Math.abs(state.up) < 7;
+  var enough = state.left >= 0 && (state.body ? state.left >= 40 : shape.turns);
+  if (flag(data.locked) || (!tap && !enough)) {
+    close(owner, state);
+    owner.callMethod('finishGesture', { turn: false, direction: state.direction });
+  } else finish(owner, state);
+  return false;
+}
+
+function cancel(_event, owner) {
+  var state = owner.selectComponent('.sheet').getState();
+  if (!state.start && !state.committing) return;
+  state.start = null;
+  state.committing = false;
+  if (state.direction) close(owner, state);
+}
+
+function replace(_next, _previous, owner) {
+  var root = owner.selectComponent('.sheet');
+  if (!root) return;
+  var state = root.getState();
+  state.revision = (state.revision || 0) + 1;
+  state.start = null;
+  state.committing = false;
+  reset(owner);
+}
+
+function available(pending, previous, owner) {
+  if (!flag(pending) && flag(previous)) replace(null, null, owner);
+}
+
+function request(value, previous, owner) {
+  if (!value || value === previous) return;
+  var root = owner.selectComponent('.sheet');
+  if (!root) return;
+  var state = root.getState();
+  var data = root.getDataset();
+  var direction = value < 0 ? -1 : 1;
+  if (state.committing || flag(data.locked) || !directionAllowed(data, direction)) return;
+  state.revision = (state.revision || 0) + 1;
+  state.start = null;
+  state.width = data.width;
+  state.height = data.height;
+  state.left = 35;
+  state.up = 16;
+  aim(state, data, direction);
+  reset(owner);
+  cornerOpacity(owner, '0');
+  finish(owner, state);
+}
+
+module.exports = { fold: fold, start: start, move: move, end: end, cancel: cancel, replace: replace, available: available, request: request };

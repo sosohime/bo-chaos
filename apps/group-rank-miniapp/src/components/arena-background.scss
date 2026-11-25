@@ -1,0 +1,16 @@
+.arena-background { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.arena-preset-image { width:100%; height:100%; }
+.arena-crop-image { position:absolute; max-width:none; }
+.arena-rendition { inset:0; width:100%; height:100%; }
+.arena-image-dim,.arena-image-shade { position:absolute; inset:0; }
+.arena-image-shade { background:linear-gradient(90deg,#0a1015eb 0%,#0a101558 58%,#0a101510),linear-gradient(0deg,#0a101588,transparent 65%); }
+.arena-background-card .arena-image-shade { background:linear-gradient(90deg,transparent 40%,#0a101580); }
+
+.arena-preset-detail {position:absolute;right:0;top:0;width:52%;height:100%;}
+
+.arena-preset-detail ~ .arena-image-shade {background:linear-gradient(90deg,#0a1015 40%,transparent 75%),linear-gradient(0deg,#0a101540,transparent 60%);}
+.arena-preset-preview {position:absolute;inset:0;width:100%;height:100%;}
+.arena-preset-preview ~ .arena-image-shade {background:linear-gradient(90deg,#0a1015b0,#0a101550 45%,transparent 75%);}
+
+.rank-cover .arena-crop-image { transition: opacity 120ms ease-out; }
+.rank-cover .arena-cover-decoding { opacity: 0; }

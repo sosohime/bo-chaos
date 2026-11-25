@@ -1,0 +1,62 @@
+.score-value {
+  font-variant-numeric: tabular-nums;
+}
+.score-number {
+  display: inline-block;
+  max-width: none;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+  font-size: inherit;
+  font-family: var(--score-font);
+  font-weight: 400;
+  line-height: 1.05;
+}
+.score-value-unit {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  max-width: 100%;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+.score-compact .score-number {
+  font-family: var(--score-font);
+  font-size: calc(var(--score-compact-size) * var(--score-scale));
+  letter-spacing: -0.15px;
+  line-height: 1.25;
+}
+.score-compact .score-value-unit {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.score-layout-podium {
+  --score-compact-size: 12px;
+}
+.score-layout-standing {
+  --score-compact-size: 19px;
+}
+.score-layout-row {
+  --score-compact-size: 14px;
+}
+.score-layout-card {
+  --score-compact-size: 14px;
+}
+// Keep a physical CSS-pixel breakpoint: Taro converts lowercase px to viewport-relative rpx.
+// prettier-ignore
+@media (max-width: 350Px) {
+  .score-layout-podium {
+    --score-compact-size: 10.5px;
+  }
+  .score-layout-standing {
+    --score-compact-size: 17px;
+  }
+  .score-layout-row {
+    --score-compact-size: 13px;
+  }
+  .score-layout-card {
+    --score-compact-size: 12px;
+  }
+}

@@ -20,6 +20,7 @@ Use this file to locate the right code area before broad search.
 | Prisma, DB, migration, model, generated client            | `packages/prisma-client/prisma/schema.prisma`                | backend services, `docs/agent/DATA_MODEL.md`                            |
 | shared date/image/class utils                             | `packages/utils/src/`                                        | package tests in `packages/utils/src/*.test.ts`                         |
 | constants, photo status, birthday, bofans                 | `packages/const/src/`                                        | consuming apps                                                          |
+| 群排行、小本儿、群内直达 | `apps/group-rank-miniapp/src/pages/` | `apps/backend-nest/src/group-rank/` and `openspec/specs/group-ranking/spec.md` |
 
 ## Routing Rules
 

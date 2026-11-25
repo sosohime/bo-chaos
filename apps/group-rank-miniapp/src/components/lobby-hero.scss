@@ -1,0 +1,13 @@
+ .lobby-stage {padding:0 16px;}
+.lobby-hero {position:relative;isolation:isolate;height:188px;overflow:hidden;box-sizing:border-box;background:var(--page-bg);clip-path:none;border:0;}
+.lobby-hero::before,.lobby-hero::after {display:none;}
+.lobby-hero>.arena-background {inset:0 -16px;clip-path:none;}
+.lobby-hero>.arena-background .arena-image-shade {background:linear-gradient(180deg,#11171b 0%,#11171b00 70%);}
+.lobby-hero-copy {position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;padding-top:26px;}
+.lobby-hero-title {width:242px;max-width:76%;height:46px;}
+.lobby-hero-note {margin-top:12px;font-size:17px;line-height:1.5;color:#eef1ef;}
+.lobby-hero-star {position:absolute;z-index:1;width:136px;height:136px;right:-23px;top:51px;}
+.lobby-create {display:flex;align-items:center;justify-content:center;position:relative;width:100%;min-height:52Px;padding:12px 40px;background:var(--accent);color:var(--accent-ink);border-radius:9px;font-size:21px;font-weight:750;line-height:1.3;}
+.lobby-create-label {display:flex;align-items:center;justify-content:center;gap:10px;}
+.lobby-create .product-icon {flex:none;width:23px;height:23px;filter:var(--accent-icon-filter,brightness(0));}
+.lobby-create-arrow {position:absolute;right:19px;top:50%;width:10px;height:10px;border-top:2px solid currentColor;border-right:2px solid currentColor;transform:translateY(-50%) rotate(45deg);}

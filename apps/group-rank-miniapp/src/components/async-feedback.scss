@@ -1,0 +1,37 @@
+.async-spinner {box-sizing:border-box;flex:none;width:16Px;height:16Px;border:2Px solid currentColor;border-right-color:transparent;border-radius:50%;animation:async-spin .75s linear infinite;}
+.action-pending,.action-pending[disabled] {gap:10px;color:var(--accent-ink);background:var(--accent);}
+.load-status {display:flex;align-items:center;justify-content:center;gap:9px;min-height:44Px;color:var(--text-secondary);font-size:13px;line-height:1.4;}
+.load-status-compact {min-height:32Px;justify-content:flex-start;font-size:12px;}
+.load-status .async-spinner {width:14Px;height:14Px;border-width:1.5Px;}
+.page-skeleton {padding:4px 0 20px;}
+.page-skeleton>.load-status {justify-content:flex-start;margin-bottom:12px;}
+.skeleton-fill {position:relative;overflow:hidden;background:#222b32;border-radius:4px;}
+.skeleton-fill::after {content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,#ffffff0d,transparent);animation:async-shimmer 1.4s ease-in-out infinite;}
+.skeleton-rows {display:flex;flex-direction:column;gap:12px;}
+.skeleton-row {display:flex;align-items:center;gap:16px;box-sizing:border-box;height:84px;padding:12px;border:1px solid var(--border);background:#11191e;border-radius:8px;}
+.skeleton-thumbnail {width:60px;height:60px;flex:none;}
+.skeleton-copy {flex:1;min-width:0;}
+.skeleton-name {width:68%;height:21px;margin-bottom:12px;}
+.skeleton-meta {width:82%;height:12px;}
+.page-skeleton-board .skeleton-row {height:50px;}
+.page-skeleton-board .skeleton-thumbnail {width:28px;height:28px;border-radius:50%;}
+.page-skeleton-board .skeleton-name {height:14px;margin:0;}
+.page-skeleton-board .skeleton-meta {display:none;}
+.asset-loading {position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,transparent,#ffffff0c,transparent);animation:asset-pulse 1.2s ease-in-out infinite;}
+@keyframes async-spin {to {transform:rotate(360deg);}}
+@keyframes async-shimmer {to {transform:translateX(100%);}}
+@keyframes asset-pulse {50% {opacity:.25;}}
+@media (prefers-reduced-motion:reduce) {.async-spinner,.skeleton-fill::after,.asset-loading {animation:none;}}
+.page-skeleton-board { padding: 0 12px 20px; }
+.page-skeleton-board > .load-status { margin-bottom: 0; padding: 0 12px; }
+.skeleton-cover {
+  display: flex;
+  align-items: center;
+  min-height: 114px;
+  padding: 0 15px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px 6px 3px 3px;
+  background: #141d23;
+}
+.skeleton-title { width: 65%; height: 34px; }

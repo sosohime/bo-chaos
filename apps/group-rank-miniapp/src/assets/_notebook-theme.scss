@@ -1,0 +1,8 @@
+// Shared by page surfaces and root-portal sheets; portals cannot inherit page tokens.
+@mixin tokens {
+  --brand: #212a3b; --accent: #212a3b; --accent-ink: #f3e9d7;
+  --surface: #f2eadd; --surface-muted: #e6dccd; --page-bg: #f4efe8;
+  --text-primary: #302d2a; --text-secondary: #897b6b; --text-tertiary: #897b6b;
+  --border: #c8b8a3; --border-strong: #b19b79;
+  --display-font: "Songti SC", "STSong", serif;
+}

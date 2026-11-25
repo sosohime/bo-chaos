@@ -1,0 +1,49 @@
+html,body,#root{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}body{background:#0a1015;color:#f3f5f3}*{box-sizing:border-box}button,input,select{font:inherit}button{cursor:pointer;border:0}span{white-space:normal}img{display:block}input{min-width:0;background:transparent;border:0;outline:none}button::after{border:0}.preview-picker{position:relative}.preview-picker select{position:absolute;inset:0;width:100%;opacity:0}.preview-toast{position:fixed;left:50%;top:45%;transform:translateX(-50%);background:#171b16;color:white;padding:12px 18px;border-radius:12px;z-index:100}body::before{content:"设计预览 · 示例数据";display:block;background:#171b16;color:#f5f3eb;font-size:10px;letter-spacing:1px;text-align:center;line-height:24px}body{padding-top:0}page{display:block}#root{padding-bottom:0}#root>.page,#root>.home{min-height:calc(100dvh - 24px)}
+
+view{display:block}text{display:inline}
+
+input{display:block;width:100%}
+/* Mobile scrollbars do not reserve a desktop scrollbar gutter. */
+html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
+.preview-chrome{position:absolute;top:24px;left:0;right:0;height:44px;pointer-events:none;z-index:2;padding:12px 20px;font-size:12px;font-weight:600}.preview-capsule{position:absolute;right:8px;top:52px;width:88px;height:32px;line-height:30px;border:1px solid #b5ab9660;border-radius:18px;text-align:center;background:#fff9;font-size:15px}.preview-chrome-android{height:24px;padding-top:4px}.preview-chrome-android .preview-capsule{top:32px}
+
+
+.preview-chrome{position:fixed;z-index:50;width:min(100%,500px);left:50%;right:auto;transform:translateX(-50%)}
+
+body::before{position:fixed;top:0;left:0;right:0;z-index:60}body{padding-top:24px}
+.page-frame .page-frame-status{top:24px}
+.page-frame .page-frame-header{top:calc(24px + var(--page-status-height,0px))}
+.arena-stage-anchor.page-sticky{top:calc(24px + var(--page-status-height,0px) + var(--page-header-height,54px))}
+
+.preview-keyboard { position: fixed; z-index: 1000; bottom: 0; left: 0; right: 0; box-sizing: border-box; padding: 20px; background: #d6d7db; border-top: 1px solid #aaa; color: #60636a; display:flex; justify-content:space-between; align-items:flex-start; font:13px sans-serif; }
+.preview-keyboard button { border:0; border-radius:6px; padding:8px 14px; background:#f5f5f6; color:#26559b; }
+
+/* The design-only 24px banner precedes the native page root. Keep it when that root freezes. */
+.page-frame-locked{margin-top:24px}
+
+.profile-sheet-body{scrollbar-width:none}.profile-sheet-body::-webkit-scrollbar{display:none}
+/* Frozen sticky layers use the frame's local origin, which already includes
+   the synthetic 24px banner. Do not add that banner a second time. */
+.page-frame-locked .page-frame-status {top:0}
+.page-frame-locked .page-frame-header {top:var(--page-status-height,0px)}
+.page-frame-locked .arena-stage-anchor.page-sticky {top:calc(var(--page-status-height,0px) + var(--page-header-height,54px))}
+
+/* Synthetic source viewport for direct target comparison; not a native build. */
+.preview-comparison body {padding-top:0}
+.preview-comparison body::before {display:none}
+.preview-comparison .page-frame-status {top:0}
+.preview-comparison .page-frame-header {top:var(--page-status-height,0px)}
+.preview-comparison .arena-stage-anchor.page-sticky {top:calc(var(--page-status-height,0px) + var(--page-header-height,54px))}
+.preview-comparison .page-frame-locked {margin-top:0}
+
+.preview-comparison .preview-chrome {top:0;}
+html:not(.preview-comparison) { --notebook-preview-inset: 24px; }
+
+.preview-capsule {background:#11171b55;color:#f3f5f3;border-color:#65717b80;}
+
+.preview-share { width: min(320px, calc(100vw - 40px)); margin: auto; border: 1px solid #ddd; border-radius: 12px; background: #fff; color: #20252a; padding: 16px; }
+.preview-share::backdrop { background: rgb(0 0 0 / .65); }
+.preview-share p { margin: 0 0 12px; color: #536067; font-size: 12px; }
+.preview-share strong { display: block; margin: 0 0 8px; font-size: 15px; }
+.preview-share img { display: block; width: 100%; aspect-ratio: 5 / 4; object-fit: contain; }
+.preview-share button { width: 100%; min-height: 44px; margin-top: 10px; background: #eef2f4; color: #20252a; border-radius: 6px; }

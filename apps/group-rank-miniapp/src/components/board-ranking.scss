@@ -1,0 +1,139 @@
+.rank-cover {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 12px 12px 0;
+  border-bottom: 2px solid var(--accent);
+  background: var(--surface);
+}
+.rank-cover .arena-background { z-index: -1; }
+.rank-cover-meta,
+.rank-cover-controls {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #f1f3f4;
+}
+.rank-cover .title-artwork { display: flex; align-items: center; min-height: 47px; margin-top: 5px; }
+.rank-cover-controls { min-height: 44Px; }
+.rank-cover-controls .group-name-display { flex: 1; min-width: 0; }
+.rank-cover-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: 44Px;
+  min-height: 44Px;
+  padding-inline: 4px;
+  color: #f1f3f4;
+}
+.rank-line {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 51px;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.rank-line[disabled] { opacity: 1; }
+.rank-lead { min-height: 62px; }
+.rank-number {
+  flex: none;
+  min-width: 26px;
+  color: var(--text-secondary);
+  font: 700 14px monospace;
+}
+.rank-medal-1 .rank-number { color: #e2c384; }
+.rank-medal-2 .rank-number { color: #d3dce8; }
+.rank-medal-3 .rank-number { color: #d5a386; }
+.rank-avatar { position: relative; flex: none; width: 39px; height: 39px; }
+.rank-avatar .person-avatar, .rank-avatar .person-avatar-image { width: 100%; height: 100%; font-size: 13px; }
+.rank-avatar-crowned .person-avatar { position: absolute; left: 10%; top: 19%; width: 80%; height: 80%; }
+.rank-crown { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.rank-person { flex: 1; min-width: 0; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; word-break: break-word; }
+.rank-person-identity { display: flex; align-items: flex-start; gap: 5px; }
+.rank-person-name { min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rank-proxy-badge {
+  flex: none;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: #f2c77f;
+  color: #382713;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.rank-person-action { display: block; margin-top: 2px; font-size: 11px; font-weight: 400; color: var(--text-secondary); }
+.rank-person-link { color: var(--accent-readable,var(--accent)); }
+.rank-claim-chip { display: inline-block; margin-top: 4px; padding: 2px 7px; border: 1px solid currentColor; border-radius: 4px; color: var(--accent-readable,var(--accent)); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.rank-result {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+  max-width: 49%;
+  min-width: 0;
+  text-align: right;
+}
+.rank-score {
+  max-width: 100%;
+  font-family: var(--score-font);
+  font-size: 24px;
+  line-height: 1.17;
+  overflow-wrap: anywhere;
+}
+.rank-lead .rank-score { font-size: 29px; }
+.rank-line-long .rank-score { font-size: 19px; }
+.rank-unit { max-width: 100%; font-size: 11px; color: var(--text-secondary); overflow-wrap: anywhere; }
+.rank-empty { padding: 17px 3px 12px; font-size: 15px; color: var(--text-secondary); border-bottom: 1px solid var(--border); }
+
+.rank-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 0 4px; border-bottom: 1px solid var(--border); }
+.rank-shortcuts .rank-cover-action { padding: 0 10px; font-size: 13px; }
+.rank-shortcuts .rank-share-action { color: var(--accent-readable,var(--accent)); font-weight: 750; }
+
+.recommendation-line { align-items: flex-start; padding-block: 9px; }
+.recommendation-line .rank-number { padding-top: 3px; }
+.recommendation-row-copy { min-width: 0; flex: 1; }
+.recommendation-model { display: block; font-weight: 650; overflow-wrap: anywhere; word-break: break-word; }
+.recommendation-people { display: flex; align-items: center; gap: 8px; width: fit-content; min-height: 36px; color: var(--accent-readable, var(--accent)); font-size: 12px; }
+.recommendation-avatars { display: flex; align-items: center; gap: 3px; }
+.recommendation-avatars .person-avatar, .recommendation-avatars .person-avatar-image { width: 23px; height: 23px; font-size: 11px; }
+.recommendation-more { padding-inline: 2px; color: var(--text-secondary); }
+.recommendation-description { display: block; margin: 10px 0 2px; color: var(--text-secondary); font-size: 13px; overflow-wrap: anywhere; }
+.recommendation-person, .recommendation-sheet-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.recommendation-person { align-items: flex-start; padding-block: 10px; }
+.recommendation-person .person-avatar { flex: none; }
+.recommendation-person-copy { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.recommendation-person-note { display: block; margin-top: 4px; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+.recommendation-sheet-row .recommendation-model { flex: 1; min-width: 0; }
+.recommendation-sheet-row .text-action { flex: none; }
+.recommendation-sheet-row .recommendation-note-action { color: var(--accent-readable, var(--accent)); }
+.recommendation-own-list, .recommendation-people-list { margin-top: 10px; }
+.recommendation-tabs { display: flex; gap: 16px; padding-inline: 16px; border-bottom: 1px solid var(--border); }
+.recommendation-tab { flex: 1; min-height: 44Px; border-bottom: 2px solid transparent; color: var(--text-secondary); font-size: 14px; }
+.recommendation-tab-active { border-color: var(--accent); color: var(--text-primary); font-weight: 700; }
+.recommendation-sheet .entry-field { margin-bottom: 10px; }
+.recommendation-selected { flex: none; color: var(--text-secondary); font-size: 13px; }
+.recommendation-composer { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.recommendation-note-field {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 72px;
+  min-height: 60Px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--surface-muted, #11171b);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.45;
+  resize: none;
+}
+.recommendation-note-field:focus { outline: 1px solid var(--accent); outline-offset: -1px; }
+.recommendation-composer .action { width: 100%; margin-top: 8px; }
